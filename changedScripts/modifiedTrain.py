@@ -129,7 +129,6 @@ def main():
         envs6x6.append(utils.make_env(DOORKEY_6x6, args.seed + 10000 * i))
         envs5x5.append(utils.make_env(DOORKEY_5x5, args.seed + 10000 * i))
     txt_logger.info("Environments loaded\n")
-    activeEnv = envs5x5
 
     # Load training status
     try:
@@ -164,27 +163,21 @@ def main():
     # Load algo
     start = time.time()
     print("start = ", start)
-    algo = torch_ac.PPOAlgo(activeEnv, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
+    algo = torch_ac.PPOAlgo(envs16x16, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                             args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                             args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
-    mid = start - time.time()
-
-    algo8x8 = algo
-    """algo8x8 = torch_ac.PPOAlgo(envs8x8, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
+    algo8x8 = torch_ac.PPOAlgo(envs8x8, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                                args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
-                               args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss8x8)"""
-    print(mid - time.time())
+                               args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss8x8)
 
-    print(ParallelEnv(envs16x16))
-    print("Algorithm loaded")
+    print("Algorithm loaded", (start - time.time()))
 
     """algo6x6 = torch_ac.PPOAlgo(envs6x6, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                                args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                                args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss6x6)
     algo5x5 = torch_ac.PPOAlgo(envs5x5, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                                args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
-                               args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss5x5)
-    algo6x6.env = envs5x5"""
+                               args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss5x5)"""
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
@@ -197,16 +190,10 @@ def main():
     currentEnv = DOORKEY_8x8
     lastReturn = -1
 
-    FRAMES_TO_TRAIN_16x16 = 100000
-    FRAMES_TO_TRAIN_8x8 = 150000
-
     order = [DOORKEY_8x8, DOORKEY_16x16, DOORKEY_8x8, DOORKEY_16x16]
     HORIZON_LENGTH = 500000
     currentHorizonLength = 0
-    if currentEnv == DOORKEY_16x16:
-        switchAfter = FRAMES_TO_TRAIN_16x16
-    else:
-        switchAfter = FRAMES_TO_TRAIN_8x8
+
     SWITCH_AFTER = 50000
     switchAfter = SWITCH_AFTER
     UPDATES_BEFORE_SWITCH = 5
@@ -215,22 +202,24 @@ def main():
     performanceDecline = False
     converged = False
 
-    while False and num_frames < args.frames * 10:
+    while num_frames < args.frames * 10:
         update_start_time = time.time()
         if currentEnv == DOORKEY_16x16:
             exps, logs1 = algo.collect_experiences()
             logs2 = algo.update_parameters(exps)
-        elif currentEnv == DOORKEY_8x8:
+        else:
             exps, logs1 = algo8x8.collect_experiences()
             logs2 = algo8x8.update_parameters(exps)
-        elif currentEnv == DOORKEY_6x6:
+        """ elif currentEnv == DOORKEY_6x6:
+            print("6x6 selected")
             pass
             # exps, logs1 = algo6x6.collect_experiences()
             # logs2 = algo6x6.update_parameters(exps)
         else:
+            raise Exception("5x5 selected")
             pass
             # exps, logs1 = algo5x5.collect_experiences()
-            # logs2 = algo5x5.update_parameters(exps)
+            # logs2 = algo5x5.update_parameters(exps)"""
         logs = {**logs1, **logs2}
         update_end_time = time.time()
 
@@ -240,11 +229,6 @@ def main():
 
         num_frames += logs["num_frames"]
         update += 1
-
-        if currentHorizonLength > HORIZON_LENGTH:
-            pass
-            # rewards = evaluateAgent()
-            # currentHorizonLength = 0
 
         # Print logs
         if update % args.log_interval == 0:
