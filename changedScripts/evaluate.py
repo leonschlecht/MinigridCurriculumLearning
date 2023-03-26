@@ -6,7 +6,6 @@ from torch_ac.utils.penv import ParallelEnv
 import utils
 from utils import device
 
-
 # Parse arguments
 
 parser = argparse.ArgumentParser()
@@ -104,6 +103,13 @@ if __name__ == "__main__":
           .format(num_frames, fps, duration,
                   *return_per_episode.values(),
                   *num_frames_per_episode.values()))
+    returnValues = "{}".format(*return_per_episode.values())
+    print(return_per_episode)
+    mean = return_per_episode["mean"]
+    maxRet = return_per_episode["max"]
+    with open('storage/' + args.model + '/' + args.env + '_evaluation.txt', 'w') as f:
+        f.write("meanRet " + str(mean) + "\n")
+        f.write("maxRet" + str(maxRet) + "\n")
 
     # Print worst episodes
 
@@ -113,4 +119,5 @@ if __name__ == "__main__":
 
         indexes = sorted(range(len(logs["return_per_episode"])), key=lambda k: logs["return_per_episode"][k])
         for i in indexes[:n]:
-            print("- episode {}: R={}, F={}".format(i, logs["return_per_episode"][i], logs["num_frames_per_episode"][i]))
+            print(
+                "- episode {}: R={}, F={}".format(i, logs["return_per_episode"][i], logs["num_frames_per_episode"][i]))
