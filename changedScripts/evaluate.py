@@ -2,6 +2,7 @@ import argparse
 import time
 import torch
 from torch_ac.utils.penv import ParallelEnv
+import json
 
 import utils
 from utils import device
@@ -107,9 +108,14 @@ if __name__ == "__main__":
     print(return_per_episode)
     mean = return_per_episode["mean"]
     maxRet = return_per_episode["max"]
-    with open('storage/' + args.model + '/' + args.env + '_evaluation.txt', 'w') as f:
-        f.write("meanRet " + str(mean) + "\n")
-        f.write("maxRet" + str(maxRet) + "\n")
+    dictionary = {
+        "meanRet": mean,
+        "maxRet": maxRet
+    }
+
+    json_object = json.dumps(dictionary, indent=4)
+    with open('storage/' + args.model + '/' + args.env + '_evaluation.json', 'w') as f:
+        f.write(json_object)
 
     # Print worst episodes
 
