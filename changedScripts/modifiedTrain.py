@@ -2,22 +2,25 @@ import argparse
 import time
 import datetime
 import torch_ac
+from torch_ac.utils import DictList, ParallelEnv
 import tensorboardX
 import sys
+import os
 
 import utils
 from utils import device
 from model import ACModel
 
-# Parse arguments
-
 parser = argparse.ArgumentParser()
+DOORKEY_5x5 = "MiniGrid-DoorKey-5x5"
+DOORKEY_6x6 = "MiniGrid-DoorKey-6x6"
+DOORKEY_8x8 = "MiniGrid-DoorKey-8x8"
+DOORKEY_16x16 = "MiniGrid-DoorKey-16x16-v0"
+allEnvs = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_8x8, DOORKEY_16x16]
 
 # General parameters
-parser.add_argument("--algo", required=True,
+parser.add_argument("--algo", default="ppo",
                     help="algorithm to use: a2c | ppo (REQUIRED)")
-parser.add_argument("--env", required=True,
-                    help="name of the environment to train on (REQUIRED)")
 parser.add_argument("--model", default=None,
                     help="name of the model (default: {ENV}_{ALGO}_{TIME})")
 parser.add_argument("--seed", type=int, default=1,
@@ -62,12 +65,42 @@ parser.add_argument("--text", action="store_true", default=False,
                     help="add a GRU to the model to handle text input")
 
 
+def evaluateAgent():
+    reward = 0
+    for testEnv in allEnvs:
+        os.system("python -m scripts.evaluate --episodes 10 --procs 32 --env " + testEnv + " --model " + args.model)
+        # TODO: Read Json contents, then test this
+        with open('storage/' + args.model + '/evaluation.json', 'r') as f:
+            text = f.readlines()
+            print(text)
+            # reward = tex["meanRet"] # ?
+
+    return reward
+
+
+def nextEnv(currentEnv):
+    if currentEnv == DOORKEY_8x8:
+        return DOORKEY_16x16
+    if currentEnv == DOORKEY_6x6:
+        return DOORKEY_8x8
+    if currentEnv == DOORKEY_5x5:
+        return DOORKEY_6x6
+    raise Exception("Next Env ??")
+
+
+def prevEnv(currentEnv):
+    if currentEnv == DOORKEY_16x16:
+        return DOORKEY_8x8
+    if currentEnv == DOORKEY_8x8:
+        return DOORKEY_6x6
+    if currentEnv == DOORKEY_6x6:
+        return DOORKEY_5x5
+    return DOORKEY_5x5
+
+
 def main():
     # Set run dir
-    date = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
-    default_model_name = f"{args.env}_{args.algo}_seed{args.seed}_{date}"
-
-    model_name = args.model or default_model_name
+    model_name = args.model
     model_dir = utils.get_model_dir(model_name)
 
     # Load loggers and Tensorboard writer
@@ -86,13 +119,17 @@ def main():
     txt_logger.info(f"Device: {device}\n")
 
     # Load environments
-    envs = []
+    envs16x16 = []
     envs8x8 = []
-    DOORKEY_8x8 = "MiniGrid-DoorKey-8x8"
+    envs6x6 = []
+    envs5x5 = []
     for i in range(args.procs):
-        envs.append(utils.make_env(args.env, args.seed + 10000 * i))
+        envs16x16.append(utils.make_env(DOORKEY_16x16, args.seed + 10000 * i))
         envs8x8.append(utils.make_env(DOORKEY_8x8, args.seed + 10000 * i))
+        envs6x6.append(utils.make_env(DOORKEY_6x6, args.seed + 10000 * i))
+        envs5x5.append(utils.make_env(DOORKEY_5x5, args.seed + 10000 * i))
     txt_logger.info("Environments loaded\n")
+    activeEnv = envs5x5
 
     # Load training status
     try:
@@ -102,15 +139,21 @@ def main():
     txt_logger.info("Training status loaded\n")
 
     # Load observations preprocessor
-    obs_space, preprocess_obss = utils.get_obss_preprocessor(envs[0].observation_space)
+    obs_space, preprocess_obss = utils.get_obss_preprocessor(envs16x16[0].observation_space)
     obs_space8x8, preprocess_obss8x8 = utils.get_obss_preprocessor(envs8x8[0].observation_space)
+    obs_space6x6, preprocess_obss6x6 = utils.get_obss_preprocessor(envs6x6[0].observation_space)
+    obs_space5x5, preprocess_obss5x5 = utils.get_obss_preprocessor(envs5x5[0].observation_space)
+    print(obs_space, preprocess_obss)
+    print(obs_space8x8, preprocess_obss8x8)
+    print(obs_space6x6, preprocess_obss6x6)
+    print(obs_space5x5, preprocess_obss5x5)
     if "vocab" in status:
         preprocess_obss.vocab.load_vocab(status["vocab"])
         preprocess_obss8x8.vocab.load_vocab(status["vocab"])
     txt_logger.info("Observations preprocessor loaded")
 
     # Load model
-    acmodel = ACModel(obs_space, envs[0].action_space, args.mem, args.text)
+    acmodel = ACModel(obs_space, envs16x16[0].action_space, args.mem, args.text)
 
     if "model_state" in status:
         acmodel.load_state_dict(status["model_state"])
@@ -119,20 +162,29 @@ def main():
     txt_logger.info("Acmodel 16x16: {}\n".format(acmodel))
 
     # Load algo
-    if args.algo == "a2c":
-        algo = torch_ac.A2CAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
-                                args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
-                                args.optim_alpha, args.optim_eps, preprocess_obss)
-        algo8x8 = None
-    elif args.algo == "ppo":
-        algo = torch_ac.PPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
-                                args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
-                                args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
-        algo8x8 = torch_ac.PPOAlgo(envs8x8, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
-                                   args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
-                                   args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss8x8)
-    else:
-        raise ValueError("Incorrect algorithm name: {}".format(args.algo))
+    start = time.time()
+    print("start = ", start)
+    algo = torch_ac.PPOAlgo(activeEnv, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
+                            args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
+                            args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
+    mid = start - time.time()
+
+    algo8x8 = algo
+    """algo8x8 = torch_ac.PPOAlgo(envs8x8, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
+                               args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
+                               args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss8x8)"""
+    print(mid - time.time())
+
+    print(ParallelEnv(envs16x16))
+    print("Algorithm loaded")
+
+    """algo6x6 = torch_ac.PPOAlgo(envs6x6, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
+                               args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
+                               args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss6x6)
+    algo5x5 = torch_ac.PPOAlgo(envs5x5, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
+                               args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
+                               args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss5x5)
+    algo6x6.env = envs5x5"""
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
@@ -142,42 +194,57 @@ def main():
     num_frames = status["num_frames"]
     update = status["update"]
     start_time = time.time()
-    use16x16 = args.env == "MiniGrid-DoorKey-16x16-v0"
-    print("use 16x16?", use16x16)
+    currentEnv = DOORKEY_8x8
+    lastReturn = -1
+
     FRAMES_TO_TRAIN_16x16 = 100000
     FRAMES_TO_TRAIN_8x8 = 150000
-    if use16x16:
+
+    order = [DOORKEY_8x8, DOORKEY_16x16, DOORKEY_8x8, DOORKEY_16x16]
+    HORIZON_LENGTH = 500000
+    currentHorizonLength = 0
+    if currentEnv == DOORKEY_16x16:
         switchAfter = FRAMES_TO_TRAIN_16x16
     else:
         switchAfter = FRAMES_TO_TRAIN_8x8
+    SWITCH_AFTER = 50000
+    switchAfter = SWITCH_AFTER
+    UPDATES_BEFORE_SWITCH = 5
+    updatesLeft = UPDATES_BEFORE_SWITCH
+    framesWithThisEnv = 0
+    performanceDecline = False
+    converged = False
 
-    while num_frames < args.frames * 10:
+    while False and num_frames < args.frames * 10:
         update_start_time = time.time()
-        if use16x16:
-            # Update model parameters
-            print("16x16", end=": ")
+        if currentEnv == DOORKEY_16x16:
             exps, logs1 = algo.collect_experiences()
             logs2 = algo.update_parameters(exps)
-            logs = {**logs1, **logs2}
-
-        else:
-            print("8x8", end=": ")
+        elif currentEnv == DOORKEY_8x8:
             exps, logs1 = algo8x8.collect_experiences()
             logs2 = algo8x8.update_parameters(exps)
-            logs = {**logs1, **logs2}
+        elif currentEnv == DOORKEY_6x6:
+            pass
+            # exps, logs1 = algo6x6.collect_experiences()
+            # logs2 = algo6x6.update_parameters(exps)
+        else:
+            pass
+            # exps, logs1 = algo5x5.collect_experiences()
+            # logs2 = algo5x5.update_parameters(exps)
+        logs = {**logs1, **logs2}
         update_end_time = time.time()
 
         switchAfter -= logs["num_frames"]
-        print("NumFrames = ", logs["num_frames"], "; ", switchAfter)
-        if switchAfter < 0:
-            if use16x16:
-                switchAfter = FRAMES_TO_TRAIN_8x8
-            else:
-                switchAfter = FRAMES_TO_TRAIN_16x16
-            use16x16 = not use16x16
+        framesWithThisEnv += logs["num_frames"]
+        currentHorizonLength += logs["num_frames"]
 
         num_frames += logs["num_frames"]
         update += 1
+
+        if currentHorizonLength > HORIZON_LENGTH:
+            pass
+            # rewards = evaluateAgent()
+            # currentHorizonLength = 0
 
         # Print logs
         if update % args.log_interval == 0:
@@ -197,8 +264,8 @@ def main():
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
 
             txt_logger.info(
-                "U {} | F {:06} | FPS {:04.0f} | D {} | rR:msmM {:.4f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.3f} | V {:.6f} | pL {:.6f} | vL {:.6f} | g {:.6f}"
-                .format(*data))
+                "{} {} U {} | F {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f} | {} {} {}"
+                .format(currentEnv, framesWithThisEnv, *data, performanceDecline, converged, updatesLeft))
 
             header += ["return_" + key for key in return_per_episode.keys()]
             data += return_per_episode.values()
@@ -210,6 +277,30 @@ def main():
 
             for field, value in zip(header, data):
                 tb_writer.add_scalar(field, value, num_frames)
+
+            currentReturn = rreturn_per_episode["mean"]
+            value = logs["value"]
+            converged = value >= 0.78
+            policyLoss = logs["policy_loss"]
+            performanceDecline = lastReturn >= currentReturn + .1 or currentReturn < 0.1 or \
+                                 value < 0.05 or abs(policyLoss) < 0.02
+            # print(value, round(lastReturn, 5), round(currentReturn, 5), end=" ")
+
+            if abs(policyLoss) < 0.03:
+                currentEnv = prevEnv(currentEnv)
+                switchAfter = SWITCH_AFTER
+                framesWithThisEnv = 0
+            if converged:
+                updatesLeft -= 1
+            if updatesLeft < UPDATES_BEFORE_SWITCH:
+                updatesLeft -= 1
+                if updatesLeft < 0:
+                    currentEnv = nextEnv(currentEnv)
+                    updatesLeft = UPDATES_BEFORE_SWITCH
+                    switchAfter = SWITCH_AFTER
+                    framesWithThisEnv = 0
+            # print(logs["num_frames"], framesWithThisEnv, performanceDecline, converged, updatesLeft, sep="; ")
+            lastReturn = currentReturn
 
         # Save status
 
