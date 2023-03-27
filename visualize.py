@@ -83,6 +83,7 @@ for episode in range(args.episodes):
         break
 
 if args.gif:
+
     print("Saving gif... ", end="")
     write_gif(numpy.array(frames), args.gif+".gif", fps=1/args.pause)
     print("Done.")
