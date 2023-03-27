@@ -3,6 +3,7 @@ import argparse
 import json
 import numpy as np
 import shutil
+import utils
 from pathlib import Path
 from distutils.dir_util import copy_tree
 
@@ -62,155 +63,9 @@ parser.add_argument("--recurrence", type=int, default=1,
 parser.add_argument("--text", action="store_true", default=False,
                     help="add a GRU to the model to handle text input")
 
-# TODO copy back
-import time
-import torch_ac
-import tensorboardX
-import sys
 
-import utils
-from utils import device
-from model import ACModel
-
-
-def main(args):
-    # Set run dir
-    model_name = args.model
-    model_dir = utils.get_model_dir(model_name)
-
-    # Load loggers and Tensorboard writer
-    txt_logger = utils.get_txt_logger(model_dir)
-    csv_file, csv_logger = utils.get_csv_logger(model_dir)
-    tb_writer = tensorboardX.SummaryWriter(model_dir)
-
-    # Log command and all script arguments
-    txt_logger.info("{}\n".format(" ".join(sys.argv)))
-    txt_logger.info("{}\n".format(args))
-
-    # Set seed for all randomness sources
-    utils.seed(args.seed)
-
-    # Set device
-    txt_logger.info(f"Device: {device}\n")
-
-    # Load environments
-    envs = []
-    for i in range(args.procs):
-        envs.append(utils.make_env(args.env, args.seed + 10000 * i))
-    txt_logger.info("Environments loaded\n")
-
-    # Load training status
-    try:
-        status = utils.get_status(model_dir)
-    except OSError:
-        status = {"num_frames": 0, "update": 0}
-    txt_logger.info("Training status loaded\n")
-
-    # Load observations preprocessor
-    obs_space, preprocess_obss = utils.get_obss_preprocessor(envs[0].observation_space)
-
-    if "vocab" in status:
-        preprocess_obss.vocab.load_vocab(status["vocab"])
-    txt_logger.info("Observations preprocessor loaded")
-
-    # Load model
-    acmodel = ACModel(obs_space, envs[0].action_space, args.mem, args.text)
-
-    if "model_state" in status:
-        acmodel.load_state_dict(status["model_state"])
-    acmodel.to(device)
-    txt_logger.info("Model loaded\n")
-    txt_logger.info("Acmodel 16x16: {}\n".format(acmodel))
-
-    # Load algo
-    start = time.time()
-    print("Loading algorithm. . . ")
-    algo = torch_ac.PPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
-                            args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
-                            args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
-
-    print("Algorithm loaded in", round(-start + time.time(), 2), "sec")
-
-    if "optimizer_state" in status:
-        algo.optimizer.load_state_dict(status["optimizer_state"])
-    txt_logger.info("Optimizer loaded\n")
-
-    # Train model
-    num_frames = status["num_frames"]
-    update = status["update"]
-    start_time = time.time()
-
-    framesWithThisEnv = 0
-
-    while num_frames < args.frames:
-        update_start_time = time.time()
-
-        exps, logs1 = algo.collect_experiences()
-        logs2 = algo.update_parameters(exps)
-        logs = {**logs1, **logs2}
-        update_end_time = time.time()
-
-        framesWithThisEnv += logs["num_frames"]
-
-        num_frames += logs["num_frames"]
-        update += 1
-
-        # Print logs
-        if update % args.log_interval == 0:
-            fps = logs["num_frames"] / (update_end_time - update_start_time)
-            duration = int(time.time() - start_time)
-            return_per_episode = utils.synthesize(logs["return_per_episode"])
-            rreturn_per_episode = utils.synthesize(logs["reshaped_return_per_episode"])
-            num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
-
-            header = ["update", "frames", "FPS", "duration"]
-            data = [update, num_frames, fps, duration]
-            header += ["rreturn_" + key for key in rreturn_per_episode.keys()]
-            data += rreturn_per_episode.values()
-            header += ["num_frames_" + key for key in num_frames_per_episode.keys()]
-            data += num_frames_per_episode.values()
-            header += ["entropy", "value", "policy_loss", "value_loss", "grad_norm"]
-            data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
-
-            txt_logger.info(
-                "{} {} U {} | F {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
-                .format(args.env, framesWithThisEnv, *data))
-
-            header += ["return_" + key for key in return_per_episode.keys()]
-            data += return_per_episode.values()
-
-            if status["num_frames"] == 0:
-                csv_logger.writerow(header)
-            csv_logger.writerow(data)
-            csv_file.flush()
-
-            for field, value in zip(header, data):
-                tb_writer.add_scalar(field, value, num_frames)
-
-        # Save status
-        if update % args.save_interval == 0:
-            status = {"num_frames": num_frames, "update": update,
-                      "model_state": acmodel.state_dict(), "optimizer_state": algo.optimizer.state_dict()}
-            if hasattr(preprocess_obss, "vocab"):
-                status["vocab"] = preprocess_obss.vocab.vocab
-            utils.save_status(status, model_dir)
-            txt_logger.info("Status saved")
-
-    # Save status  after training is done
-    if update % args.save_interval == 0:
-        status = {"num_frames": num_frames, "update": update,
-                  "model_state": acmodel.state_dict(), "optimizer_state": algo.optimizer.state_dict()}
-        if hasattr(preprocess_obss, "vocab"):
-            status["vocab"] = preprocess_obss.vocab.vocab
-        utils.save_status(status, model_dir)
-        txt_logger.info("Status saved")
-    print("NOT DONE YET")
-
-
-############
 def evaluateAgent(model):
     reward = 0
-    return 1
     for testEnv in allEnvs:
         os.system("python -m scripts.evaluate --episodes 5 --procs 32 --env " + testEnv + " --model " + model)
         with open('storage/' + model + '/' + testEnv + '_evaluation.json', 'r') as f:
@@ -241,30 +96,35 @@ def prevEnv(currentEnv):
     return DOORKEY_5x5
 
 
-def train(frames, env, model):
+def train(frames, model, env):
     args.env = env
     args.model = model
     args.frames = frames
-    main(args)
-    print('Trained ' + args.env + ' using ppo to folder ' + model + ' with ' + str(0) + ' frames')
-    time.sleep(1)
+    # main(args)
+    # time.sleep(1)
 
 
 def trainEnv(allCurricula):
-    # TODO Pretrain every model on 5x5 or 6x6 for x iterations?
+    # ITERATIONS_PER_CURRICULUM = args.procs * 128 * 25 + 1  # 128 is from frames-per-proc # roughly 100k with * 25
     ITERATIONS_PER_CURRICULUM = 20000
     HORIZON_LENGTH = ITERATIONS_PER_CURRICULUM * len(allCurricula[0])
-    rewards = []
+    rewards = {}
+    for i in range(len(allCurricula)):
+        rewards[str(i)] = []
     selectedModel = args.model
     bestCurricula = []
-    if args.pretraining: # TODO or not exists
-        train(50000, DOORKEY_5x5, selectedModel)  # pretraining
-        previousFrames = 0
+    modelPath = os.getcwd() + "\\storage\\" + selectedModel
+    if not os.path.isdir(modelPath):
+        PRE_TRAIN_FRAMES = 30000
+        os.system("python -m scripts.train --procs {} --save-interval 3 --frames {} --model {} --env {}"
+                  .format(args.procs, PRE_TRAIN_FRAMES, selectedModel, DOORKEY_5x5))
+        previousFrames = PRE_TRAIN_FRAMES
     else:
-        status = utils.get_status(os.getcwd() + "\\storage\\" + selectedModel)
+        status = utils.get_status(modelPath)
         previousFrames = status["num_frames"]
 
-    FRAMES_PER_CURRICULUM = ITERATIONS_PER_CURRICULUM  # TODO load frame status from file and set it
+    FRAMES_PER_CURRICULUM = ITERATIONS_PER_CURRICULUM
+
     for epoch in range(3):
         for i in range(len(allCurricula)):
             curriculum = allCurricula[i]
@@ -272,36 +132,38 @@ def trainEnv(allCurricula):
             copyAgent(selectedModel, currentModel)
 
             for j in range(HORIZON_LENGTH // ITERATIONS_PER_CURRICULUM):
-                # train(FRAMES_PER_CURRICULUM * (j + 1) + previousFrames, curriculum[j], currentModel)
-                os.system("python -m baseScripts.train --algo ppo --procs 32 --save-interval 3 --frames {} --model {} --env {}"
-                          .format(FRAMES_PER_CURRICULUM * (j + 1) + previousFrames, currentModel, curriculum[j]))
+                os.system("python -m scripts.train --procs 32 --save-interval 3 --frames {} --model {} --env {}"
+                          .format(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1) + previousFrames,
+                                  currentModel, curriculum[j]))
                 if j == 0:
                     copyAgent(src=currentModel, dest=selectedModel + "_CANDIDATE_" + str(i))
-            rewards.append(evaluateAgent(currentModel))
+
+            rewards[str(i)].append(evaluateAgent(currentModel))
         chosenSimulation = np.argmax(rewards)
+        print("Best results came from curriculum " + str(chosenSimulation))
         bestCurricula.append(chosenSimulation)
         copyAgent(selectedModel + "_CANDIDATE_" + str(chosenSimulation), selectedModel)
-        time.sleep(2)
+
         for i in range(len(allCurricula)):
             deleteDirectory(selectedModel + "_" + str(i))
             deleteDirectory(selectedModel + "_CANDIDATE_" + str(i))
-        print("iter: ", epoch, "success")
+        print("EPOCH: ", epoch, "SUCCESS")
+    print("----TRAINING END-----")
+    print(bestCurricula)
+    print(rewards)
 
 
 def copyAgent(src, dest):
     pathPrefix = os.getcwd() + '\\storage\\'
-    src = pathPrefix + src
-    dest = pathPrefix + dest
+    fullSrcPath = pathPrefix + src
+    fullDestPath = pathPrefix + dest
 
-    # Path(dest).mkdir(exist_ok=True)
-    fileName = '/status.pt'
-    not_exists = not os.path.isdir(dest)
-    if not_exists:
-        # shutil.copy2(src + fileName, dst + fileName)
-        shutil.copytree(src, dest)
-        # TODO set num_frames and update to 0 in dst (or not, in order to see num_frames in MAIN)
-        print(('Copied ' + src + ' to ' + dest))
-    print("End")
+    if os.path.isdir(fullDestPath):
+        print("deleting ", dest)
+        deleteDirectory(dest)
+    shutil.copytree(fullSrcPath, fullDestPath)
+    # TODO set num_frames and update to 0 in dst (or not, in order to see num_frames in MAIN)
+    print('Copied Agent! ' + src + ' to ' + dest)
 
 
 def deleteDirectory(directory):
@@ -311,9 +173,10 @@ def deleteDirectory(directory):
 if __name__ == "__main__":
     args = parser.parse_args()
     args.mem = args.recurrence > 1
-    uniformCurriculum = [DOORKEY_5x5, DOORKEY_6x6]
-    other = [DOORKEY_5x5, DOORKEY_5x5, DOORKEY_5x5]
-    curricula = [uniformCurriculum]
+    uniformCurriculum = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_8x8]
+    other = [DOORKEY_8x8, DOORKEY_8x8, DOORKEY_8x8]
+    # TODO Add Curricula: Adaptive, Random Order, TryNextWithCurrent
+    curricula = [uniformCurriculum, other]
     trainEnv(curricula)
 
 """

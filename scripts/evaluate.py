@@ -93,22 +93,22 @@ if __name__ == "__main__":
     end_time = time.time()
 
     # Print logs
-
     num_frames = sum(logs["num_frames_per_episode"])
     fps = num_frames / (end_time - start_time)
     duration = int(end_time - start_time)
     return_per_episode = utils.synthesize(logs["return_per_episode"])
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
 
-    print("F {} | FPS {:.0f} | D {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}"
-          .format(num_frames, fps, duration,
+    print("{} {} F {} | FPS {:.0f} | D {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}"
+          .format(args.env, args.model, num_frames, fps, duration,
                   *return_per_episode.values(),
                   *num_frames_per_episode.values()))
     returnValues = "{}".format(*return_per_episode.values())
-    print(return_per_episode)
     mean = return_per_episode["mean"]
     maxRet = return_per_episode["max"]
     dictionary = {
+        "model": args.model,
+        "env": args.env,
         "meanRet": mean,
         "maxRet": maxRet
     }
@@ -118,8 +118,7 @@ if __name__ == "__main__":
         f.write(json_object)
 
     # Print worst episodes
-
-    n = max(args.worst_episodes_to_show, args.episodes)
+    """    n = min(args.worst_episodes_to_show, args.episodes)
     if n > 0:
         print("\n{} worst episodes:".format(n))
 
@@ -127,3 +126,4 @@ if __name__ == "__main__":
         for i in indexes[:n]:
             print(
                 "- episode {}: R={}, F={}".format(i, logs["return_per_episode"][i], logs["num_frames_per_episode"][i]))
+    """
