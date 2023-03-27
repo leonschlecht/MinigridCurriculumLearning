@@ -126,7 +126,7 @@ def main(args):
                             args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                             args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
 
-    print("Algorithm loaded", (start - time.time()))
+    print("Algorithm loaded in", (round(-start + time.time(), 2), "sec"))
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
@@ -208,11 +208,12 @@ def main(args):
 def evaluateAgent(model):
     reward = 0
     for testEnv in allEnvs:
-        os.system("python -m scripts.evaluate --episodes 10 --procs 32 --env " + testEnv + " --model " + model)
+        os.system("python -m scripts.evaluate --episodes 4 --procs 32 --env " + testEnv + " --model " + model)
         # TODO: Read Json contents, then test this
-        with open('storage/' + model + '/evaluation.json', 'r') as f:
+        with open('storage/' + model + '/' + testEnv + '_evaluation.json', 'r') as f:
             text = f.readlines()
             print(text)
+            reward += text["meanRet"]
             # reward = tex["meanRet"] # ?
 
     return reward
