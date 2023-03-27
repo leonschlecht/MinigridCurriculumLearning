@@ -1,7 +1,10 @@
 import os
 import argparse
-# import train
-
+import json
+import numpy as np
+import shutil
+from pathlib import Path
+from distutils.dir_util import copy_tree
 
 DOORKEY_5x5 = "MiniGrid-DoorKey-5x5"
 DOORKEY_6x6 = "MiniGrid-DoorKey-6x6"
@@ -14,7 +17,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--algo", default="ppo",
                     help="algorithm to use: a2c | ppo (REQUIRED)")
 parser.add_argument("--env",
-                    help="environemnt ") # TODO
+                    help="environemnt ")  # TODO
+parser.add_argument("--pretraining", default=False, action="store_true", help="use pretraining on new model")
 parser.add_argument("--model", default=None,
                     help="name of the model (default: {ENV}_{ALGO}_{TIME})")
 parser.add_argument("--seed", type=int, default=1,
@@ -58,7 +62,6 @@ parser.add_argument("--recurrence", type=int, default=1,
 parser.add_argument("--text", action="store_true", default=False,
                     help="add a GRU to the model to handle text input")
 
-
 # TODO copy back
 import time
 import torch_ac
@@ -69,8 +72,8 @@ import utils
 from utils import device
 from model import ACModel
 
+
 def main(args):
-    print(args)
     # Set run dir
     model_name = args.model
     model_dir = utils.get_model_dir(model_name)
@@ -126,7 +129,7 @@ def main(args):
                             args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                             args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
 
-    print("Algorithm loaded in", (round(-start + time.time(), 2), "sec"))
+    print("Algorithm loaded in", round(-start + time.time(), 2), "sec")
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
@@ -201,20 +204,19 @@ def main(args):
             status["vocab"] = preprocess_obss.vocab.vocab
         utils.save_status(status, model_dir)
         txt_logger.info("Status saved")
-
+    print("NOT DONE YET")
 
 
 ############
 def evaluateAgent(model):
     reward = 0
+    return 1
     for testEnv in allEnvs:
-        os.system("python -m scripts.evaluate --episodes 4 --procs 32 --env " + testEnv + " --model " + model)
-        # TODO: Read Json contents, then test this
+        os.system("python -m scripts.evaluate --episodes 5 --procs 32 --env " + testEnv + " --model " + model)
         with open('storage/' + model + '/' + testEnv + '_evaluation.json', 'r') as f:
-            text = f.readlines()
-            print(text)
-            reward += text["meanRet"]
-            # reward = tex["meanRet"] # ?
+            json_object = json.load(f)
+            print(json_object)
+            reward += json_object["meanRet"]
 
     return reward
 
@@ -248,27 +250,71 @@ def train(frames, env, model):
     time.sleep(1)
 
 
-def trainEnv():
-    HORIZON_LENGTH = 400000
-    ITERATIONS_PER_CURRICULUM = 100000
-    frames = ITERATIONS_PER_CURRICULUM  # TODO load frame status and set it
-    modelName = args.model
+def trainEnv(allCurricula):
+    # TODO Pretrain every model on 5x5 or 6x6 for x iterations?
+    ITERATIONS_PER_CURRICULUM = 20000
+    HORIZON_LENGTH = ITERATIONS_PER_CURRICULUM * len(allCurricula[0])
+    rewards = []
+    selectedModel = args.model
+    bestCurricula = []
+    if args.pretraining: # TODO or not exists
+        train(50000, DOORKEY_5x5, selectedModel)  # pretraining
+        previousFrames = 0
+    else:
+        status = utils.get_status(os.getcwd() + "\\storage\\" + selectedModel)
+        previousFrames = status["num_frames"]
 
-    for i in range(HORIZON_LENGTH // ITERATIONS_PER_CURRICULUM):
-        break
-        if i % 2 == 0:
-            env = DOORKEY_5x5
-        else:
-            env = DOORKEY_6x6
-        train(frames * (i+1), env, modelName)
-    rewards = evaluateAgent(modelName)
-    print("Rewards = ", rewards)
+    FRAMES_PER_CURRICULUM = ITERATIONS_PER_CURRICULUM  # TODO load frame status from file and set it
+    for epoch in range(3):
+        for i in range(len(allCurricula)):
+            curriculum = allCurricula[i]
+            currentModel = selectedModel + '_' + str(i)
+            copyAgent(selectedModel, currentModel)
+
+            for j in range(HORIZON_LENGTH // ITERATIONS_PER_CURRICULUM):
+                # train(FRAMES_PER_CURRICULUM * (j + 1) + previousFrames, curriculum[j], currentModel)
+                os.system("python -m baseScripts.train --algo ppo --procs 32 --save-interval 3 --frames {} --model {} --env {}"
+                          .format(FRAMES_PER_CURRICULUM * (j + 1) + previousFrames, currentModel, curriculum[j]))
+                if j == 0:
+                    copyAgent(src=currentModel, dest=selectedModel + "_CANDIDATE_" + str(i))
+            rewards.append(evaluateAgent(currentModel))
+        chosenSimulation = np.argmax(rewards)
+        bestCurricula.append(chosenSimulation)
+        copyAgent(selectedModel + "_CANDIDATE_" + str(chosenSimulation), selectedModel)
+        time.sleep(2)
+        for i in range(len(allCurricula)):
+            deleteDirectory(selectedModel + "_" + str(i))
+            deleteDirectory(selectedModel + "_CANDIDATE_" + str(i))
+        print("iter: ", epoch, "success")
+
+
+def copyAgent(src, dest):
+    pathPrefix = os.getcwd() + '\\storage\\'
+    src = pathPrefix + src
+    dest = pathPrefix + dest
+
+    # Path(dest).mkdir(exist_ok=True)
+    fileName = '/status.pt'
+    not_exists = not os.path.isdir(dest)
+    if not_exists:
+        # shutil.copy2(src + fileName, dst + fileName)
+        shutil.copytree(src, dest)
+        # TODO set num_frames and update to 0 in dst (or not, in order to see num_frames in MAIN)
+        print(('Copied ' + src + ' to ' + dest))
+    print("End")
+
+
+def deleteDirectory(directory):
+    shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
     args.mem = args.recurrence > 1
-    trainEnv()
+    uniformCurriculum = [DOORKEY_5x5, DOORKEY_6x6]
+    other = [DOORKEY_5x5, DOORKEY_5x5, DOORKEY_5x5]
+    curricula = [uniformCurriculum]
+    trainEnv(curricula)
 
 """
     lastReturn = -1
@@ -277,11 +323,7 @@ if __name__ == "__main__":
     switchAfter = SWITCH_AFTER
     UPDATES_BEFORE_SWITCH = 5
     updatesLeft = UPDATES_BEFORE_SWITCH
-    framesWithThisEnv = 0
-    performanceDecline = False
-    converged = False
 """
-
 
 """
 

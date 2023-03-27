@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
     # Print worst episodes
 
-    n = args.worst_episodes_to_show
+    n = max(args.worst_episodes_to_show, args.episodes)
     if n > 0:
         print("\n{} worst episodes:".format(n))
 
