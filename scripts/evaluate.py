@@ -10,12 +10,10 @@ from utils import device
 # Parse arguments
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--env", required=True,
-                    help="name of the environment (REQUIRED)")
 parser.add_argument("--model", required=True,
                     help="name of the trained model (REQUIRED)")
-parser.add_argument("--episodes", type=int, default=100,
-                    help="number of episodes of evaluation (default: 100)")
+parser.add_argument("--episodes", type=int, default=10,
+                    help="number of episodes of evaluation (default: 10)")
 parser.add_argument("--seed", type=int, default=0,
                     help="random seed (default: 0)")
 parser.add_argument("--procs", type=int, default=16,
@@ -29,42 +27,28 @@ parser.add_argument("--memory", action="store_true", default=False,
 parser.add_argument("--text", action="store_true", default=False,
                     help="add a GRU to the model")
 
-if __name__ == "__main__":
-    args = parser.parse_args()
 
-    # Set seed for all randomness sources
-
-    utils.seed(args.seed)
-
-    # Set device
-
-    print(f"Device: {device}\n")
-
+def evaluateAgentInAllEnvs(evalEnv):
     # Load environments
-
     envs = []
     for i in range(args.procs):
-        env = utils.make_env(args.env, args.seed + 10000 * i)
+        env = utils.make_env(evalEnv, args.seed + 10000 * i)
         envs.append(env)
     env = ParallelEnv(envs)
-    print("Environments loaded\n")
+    # print("Environments loaded")
 
     # Load agent
-
     model_dir = utils.get_model_dir(args.model)
     agent = utils.Agent(env.observation_space, env.action_space, model_dir,
                         argmax=args.argmax, num_envs=args.procs,
                         use_memory=args.memory, use_text=args.text)
-    print("Agent loaded\n")
+    # print("Agent loaded")
 
     # Initialize logs
-
     logs = {"num_frames_per_episode": [], "return_per_episode": []}
 
     # Run agent
-
     start_time = time.time()
-
     obss = env.reset()
 
     log_done_counter = 0
@@ -100,30 +84,39 @@ if __name__ == "__main__":
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
 
     print("{} {} F {} | FPS {:.0f} | D {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}"
-          .format(args.env, args.model, num_frames, fps, duration,
+          .format(evalEnv, args.model, num_frames, fps, duration,
                   *return_per_episode.values(),
                   *num_frames_per_episode.values()))
-    returnValues = "{}".format(*return_per_episode.values())
+
     mean = return_per_episode["mean"]
     maxRet = return_per_episode["max"]
-    dictionary = {
-        "model": args.model,
-        "env": args.env,
+    minRet = return_per_episode["min"]
+    evaluationResult = {
         "meanRet": mean,
-        "maxRet": maxRet
+        "maxRet": maxRet,
+        "minRet": minRet
     }
 
-    json_object = json.dumps(dictionary, indent=4)
-    with open('storage/' + args.model + '/' + args.env + '_evaluation.json', 'w') as f:
+    env.reset()
+    return evaluationResult
+
+
+DOORKEY_5x5 = "MiniGrid-DoorKey-5x5-v0"
+DOORKEY_6x6 = "MiniGrid-DoorKey-6x6-v0"
+DOORKEY_8x8 = "MiniGrid-DoorKey-8x8-v0"
+DOORKEY_16x16 = "MiniGrid-DoorKey-16x16-v0"
+allEnvs = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_8x8, DOORKEY_16x16]
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    utils.seed(args.seed)
+
+    # print(f"Device: {device}")
+    results = {"model": args.model}
+    for evaluationEnv in allEnvs:
+        results[evaluationEnv] = evaluateAgentInAllEnvs(evaluationEnv)
+    json_object = json.dumps(results, indent=4)
+    with open('storage/' + args.model + '/' + 'evaluation.json', 'w') as f:
         f.write(json_object)
-
-    # Print worst episodes
-    """    n = min(args.worst_episodes_to_show, args.episodes)
-    if n > 0:
-        print("\n{} worst episodes:".format(n))
-
-        indexes = sorted(range(len(logs["return_per_episode"])), key=lambda k: logs["return_per_episode"][k])
-        for i in indexes[:n]:
-            print(
-                "- episode {}: R={}, F={}".format(i, logs["return_per_episode"][i], logs["num_frames_per_episode"][i]))
-    """
+    print(f"Evaluation of {args.model} succeeded")

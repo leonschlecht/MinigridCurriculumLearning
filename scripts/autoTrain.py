@@ -66,13 +66,13 @@ parser.add_argument("--text", action="store_true", default=False,
 
 def evaluateAgent(model):
     reward = 0
-    for testEnv in allEnvs:
-        os.system("python -m scripts.evaluate --episodes 5 --procs 32 --env " + testEnv + " --model " + model)
-        with open('storage/' + model + '/' + testEnv + '_evaluation.json', 'r') as f:
-            json_object = json.load(f)
-            print(json_object)
-            reward += json_object["meanRet"]
-
+    os.system("python -m scripts.evaluate --episodes 5 --procs 32 --model " + model)
+    with open('storage/' + model + '/' + 'evaluation.json', 'r') as f:
+        json_object = json.load(f)
+        print(json_object)
+        for evalEnv in allEnvs:
+            reward += json_object[evalEnv]["meanRet"] # TODO use weights, maybe depending on progress
+            # TODO maybe use something else like Value / Policy Loss / Frames
     return reward
 
 
@@ -96,7 +96,7 @@ def prevEnv(currentEnv):
     return DOORKEY_5x5
 
 
-def startStraining(frames, model, env):
+def startTraining(frames, model, env):
     os.system("python -m scripts.train --procs {} --save-interval {} --frames {} --model {} --env {}"
               .format(args.procs, args.save_interval, frames, model, env))
 
@@ -113,7 +113,7 @@ def trainEnv(allCurricula):
     modelPath = os.getcwd() + "\\storage\\" + selectedModel
     if not os.path.isdir(modelPath):
         PRE_TRAIN_FRAMES = 75000
-        startStraining(PRE_TRAIN_FRAMES, selectedModel, DOORKEY_5x5)
+        startTraining(PRE_TRAIN_FRAMES, selectedModel, DOORKEY_5x5)
         previousFrames = PRE_TRAIN_FRAMES
     else:
         status = utils.get_status(modelPath)
@@ -132,15 +132,15 @@ def trainEnv(allCurricula):
                 jOffset = consecutiveCurriculum
             print("J offset = ", jOffset)
             for j in range(jOffset, len(allCurricula[i])):
-                startStraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1 - jOffset) + previousFrames,
-                               currentModel, allCurricula[i][j])
+                startTraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1 - jOffset) + previousFrames,
+                              currentModel, allCurricula[i][j])
                 if j == jOffset:
                     copyAgent(src=currentModel, dest=selectedModel + "_CANDIDATE_" + str(i))
             # finish the level that were skipped due to this curriculum being chosen multiple times
             additionalOffset = len(allCurricula[i]) - jOffset
             for j in range(jOffset):
-                startStraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1)
-                               + previousFrames, currentModel, allCurricula[i][j])
+                startTraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1)
+                              + previousFrames, currentModel, allCurricula[i][j])
 
             rewards[str(i)].append(evaluateAgent(currentModel))
         chosenCurriculum = np.argmax(rewards)
