@@ -7,9 +7,9 @@ import utils
 from pathlib import Path
 from distutils.dir_util import copy_tree
 
-DOORKEY_5x5 = "MiniGrid-DoorKey-5x5"
-DOORKEY_6x6 = "MiniGrid-DoorKey-6x6"
-DOORKEY_8x8 = "MiniGrid-DoorKey-8x8"
+DOORKEY_5x5 = "MiniGrid-DoorKey-5x5-v0"
+DOORKEY_6x6 = "MiniGrid-DoorKey-6x6-v0"
+DOORKEY_8x8 = "MiniGrid-DoorKey-8x8-v0"
 DOORKEY_16x16 = "MiniGrid-DoorKey-16x16-v0"
 allEnvs = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_8x8, DOORKEY_16x16]
 
@@ -96,17 +96,14 @@ def prevEnv(currentEnv):
     return DOORKEY_5x5
 
 
-def train(frames, model, env):
-    args.env = env
-    args.model = model
-    args.frames = frames
-    # main(args)
-    # time.sleep(1)
+def startStraining(frames, model, env):
+    os.system("python -m scripts.train --procs {} --save-interval {} --frames {} --model {} --env {}"
+              .format(args.procs, args.save_interval, frames, model, env))
 
 
 def trainEnv(allCurricula):
     # ITERATIONS_PER_CURRICULUM = args.procs * 128 * 25 + 1  # 128 is from frames-per-proc # roughly 100k with * 25
-    ITERATIONS_PER_CURRICULUM = 20000
+    ITERATIONS_PER_CURRICULUM = 75000
     HORIZON_LENGTH = ITERATIONS_PER_CURRICULUM * len(allCurricula[0])
     rewards = {}
     for i in range(len(allCurricula)):
@@ -115,34 +112,48 @@ def trainEnv(allCurricula):
     bestCurricula = []
     modelPath = os.getcwd() + "\\storage\\" + selectedModel
     if not os.path.isdir(modelPath):
-        PRE_TRAIN_FRAMES = 30000
-        os.system("python -m scripts.train --procs {} --save-interval 3 --frames {} --model {} --env {}"
-                  .format(args.procs, PRE_TRAIN_FRAMES, selectedModel, DOORKEY_5x5))
+        PRE_TRAIN_FRAMES = 75000
+        startStraining(PRE_TRAIN_FRAMES, selectedModel, DOORKEY_5x5)
         previousFrames = PRE_TRAIN_FRAMES
     else:
         status = utils.get_status(modelPath)
         previousFrames = status["num_frames"]
 
     FRAMES_PER_CURRICULUM = ITERATIONS_PER_CURRICULUM
-
+    lastChosenCurriculum = -1
+    chosenCurriculum = -1
+    consecutiveCurriculum = 0
     for epoch in range(3):
         for i in range(len(allCurricula)):
-            curriculum = allCurricula[i]
             currentModel = selectedModel + '_' + str(i)
             copyAgent(selectedModel, currentModel)
-
-            for j in range(HORIZON_LENGTH // ITERATIONS_PER_CURRICULUM):
-                os.system("python -m scripts.train --procs 32 --save-interval 3 --frames {} --model {} --env {}"
-                          .format(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1) + previousFrames,
-                                  currentModel, curriculum[j]))
-                if j == 0:
+            jOffset = 0
+            if chosenCurriculum == i:
+                jOffset = consecutiveCurriculum
+            print("J offset = ", jOffset)
+            for j in range(jOffset, len(allCurricula[i])):
+                startStraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1 - jOffset) + previousFrames,
+                               currentModel, allCurricula[i][j])
+                if j == jOffset:
                     copyAgent(src=currentModel, dest=selectedModel + "_CANDIDATE_" + str(i))
+            # finish the level that were skipped due to this curriculum being chosen multiple times
+            additionalOffset = len(allCurricula[i]) - jOffset
+            for j in range(jOffset):
+                startStraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1)
+                               + previousFrames, currentModel, allCurricula[i][j])
 
             rewards[str(i)].append(evaluateAgent(currentModel))
-        chosenSimulation = np.argmax(rewards)
-        print("Best results came from curriculum " + str(chosenSimulation))
-        bestCurricula.append(chosenSimulation)
-        copyAgent(selectedModel + "_CANDIDATE_" + str(chosenSimulation), selectedModel)
+        chosenCurriculum = np.argmax(rewards)
+        print("Best results came from curriculum " + str(chosenCurriculum))
+        bestCurricula.append(chosenCurriculum)
+        copyAgent(selectedModel + "_CANDIDATE_" + str(chosenCurriculum), selectedModel)
+        if epoch > 0 and chosenCurriculum == lastChosenCurriculum:
+            consecutiveCurriculum += 1
+            if consecutiveCurriculum > len(allCurricula[chosenCurriculum]):
+                consecutiveCurriculum = 0
+        else:
+            consecutiveCurriculum = 0
+        lastChosenCurriculum = chosenCurriculum
 
         for i in range(len(allCurricula)):
             deleteDirectory(selectedModel + "_" + str(i))
@@ -159,7 +170,6 @@ def copyAgent(src, dest):
     fullDestPath = pathPrefix + dest
 
     if os.path.isdir(fullDestPath):
-        print("deleting ", dest)
         deleteDirectory(dest)
     shutil.copytree(fullSrcPath, fullDestPath)
     # TODO set num_frames and update to 0 in dst (or not, in order to see num_frames in MAIN)
@@ -173,8 +183,8 @@ def deleteDirectory(directory):
 if __name__ == "__main__":
     args = parser.parse_args()
     args.mem = args.recurrence > 1
-    uniformCurriculum = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_8x8]
-    other = [DOORKEY_8x8, DOORKEY_8x8, DOORKEY_8x8]
+    uniformCurriculum = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_5x5, DOORKEY_6x6]
+    other = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_5x5, DOORKEY_8x8]
     # TODO Add Curricula: Adaptive, Random Order, TryNextWithCurrent
     curricula = [uniformCurriculum, other]
     trainEnv(curricula)

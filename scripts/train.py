@@ -1,4 +1,3 @@
-# TODO copy back
 import time
 import torch_ac
 import tensorboardX
@@ -15,7 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--algo", default="ppo",
                     help="algorithm to use: a2c | ppo (REQUIRED)")
 parser.add_argument("--env",
-                    help="environemnt ")  # TODO
+                    help="name of the environment to train on")
 parser.add_argument("--pretraining", default=False, action="store_true", help="use pretraining on new model")
 parser.add_argument("--model", default=None,
                     help="name of the model (default: {ENV}_{ALGO}_{TIME})")
@@ -79,27 +78,27 @@ def main():
     utils.seed(args.seed)
 
     # Set device
-    txt_logger.info(f"Device: {device}\n")
+    # txt_logger.info(f"Device: {device}\n")
 
     # Load environments
     envs = []
     for i in range(args.procs):
         envs.append(utils.make_env(args.env, args.seed + 10000 * i))
-    txt_logger.info("Environments loaded\n")
+    # txt_logger.info("Environments loaded\n")
 
     # Load training status
     try:
         status = utils.get_status(model_dir)
     except OSError:
         status = {"num_frames": 0, "update": 0}
-    txt_logger.info("Training status loaded\n")
+    # txt_logger.info("Training status loaded\n")
 
     # Load observations preprocessor
     obs_space, preprocess_obss = utils.get_obss_preprocessor(envs[0].observation_space)
 
     if "vocab" in status:
         preprocess_obss.vocab.load_vocab(status["vocab"])
-    txt_logger.info("Observations preprocessor loaded")
+    # txt_logger.info("Observations preprocessor loaded")
 
     # Load model
     acmodel = ACModel(obs_space, envs[0].action_space, args.mem, args.text)
@@ -107,7 +106,7 @@ def main():
     if "model_state" in status:
         acmodel.load_state_dict(status["model_state"])
     acmodel.to(device)
-    txt_logger.info("Model loaded\n")
+    # txt_logger.info("Model loaded\n")
     # txt_logger.info("Acmodel {}\n".format(acmodel))
 
     # Load algo
@@ -121,7 +120,8 @@ def main():
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
-    txt_logger.info("Optimizer loaded\n")
+    # txt_logger.info("Optimizer loaded\n")
+
 
     # Train model
     num_frames = status["num_frames"]
@@ -129,8 +129,8 @@ def main():
     start_time = time.time()
 
     framesWithThisEnv = 0
-
-    while num_frames < args.frames:
+    lastUpdateDone = False
+    while num_frames < args.frames or not lastUpdateDone:
         update_start_time = time.time()
 
         exps, logs1 = algo.collect_experiences()
@@ -161,7 +161,7 @@ def main():
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
 
             txt_logger.info(
-                "{} {} {} U {} | F {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
+                " {} | {} | {} | U {} | AllF {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
                 .format(args.env, args.model, framesWithThisEnv, *data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
@@ -177,6 +177,8 @@ def main():
 
         # Save status
         if update % args.save_interval == 0:
+            if num_frames >= args.frames:
+                lastUpdateDone = True
             status = {"num_frames": num_frames, "update": update,
                       "model_state": acmodel.state_dict(), "optimizer_state": algo.optimizer.state_dict()}
             if hasattr(preprocess_obss, "vocab"):
@@ -185,14 +187,7 @@ def main():
             txt_logger.info("Status saved")
 
     # Save status  AFTER training is done
-    if update % args.save_interval == 0:
-        status = {"num_frames": num_frames, "update": update,
-                  "model_state": acmodel.state_dict(), "optimizer_state": algo.optimizer.state_dict()}
-        if hasattr(preprocess_obss, "vocab"):
-            status["vocab"] = preprocess_obss.vocab.vocab
-        utils.save_status(status, model_dir)
-        txt_logger.info("Status saved")
-    print('Trained ' + args.env + ' using ppo to folder ' + args.model + ' with ' + str(0) + ' frames')
+    print('Trained ' + args.env + ' using ppo to folder ' + args.model + ' with ' + str(args.frames) + ' frames')
 
 
 if __name__ == "__main__":
