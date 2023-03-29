@@ -4,8 +4,7 @@ import json
 import numpy as np
 import shutil
 import utils
-from pathlib import Path
-from distutils.dir_util import copy_tree
+from scripts import evaluate, train
 
 DOORKEY_5x5 = "MiniGrid-DoorKey-5x5-v0"
 DOORKEY_6x6 = "MiniGrid-DoorKey-6x6-v0"
@@ -63,16 +62,23 @@ parser.add_argument("--recurrence", type=int, default=1,
 parser.add_argument("--text", action="store_true", default=False,
                     help="add a GRU to the model to handle text input")
 
+# Evaluation Arguments
+parser.add_argument("--episodes", type=int, default=10,
+                    help="number of episodes of evaluation (default: 10)")
+parser.add_argument("--argmax", action="store_true", default=False,
+                    help="action with highest probability is selected")
+parser.add_argument("--worst-episodes-to-show", type=int, default=10,
+                    help="how many worst episodes to show")
+parser.add_argument("--memory", action="store_true", default=False,
+                    help="add a LSTM to the model")
+
 
 def evaluateAgent(model):
     reward = 0
-    os.system("python -m scripts.evaluate --episodes 5 --procs 32 --model " + model)
-    with open('storage/' + model + '/' + 'evaluation.json', 'r') as f:
-        json_object = json.load(f)
-        print(json_object)
-        for evalEnv in allEnvs:
-            reward += json_object[evalEnv]["meanRet"] # TODO use weights, maybe depending on progress
-            # TODO maybe use something else like Value / Policy Loss / Frames
+    evaluationResult = evaluate.evaluateAll(model, args)
+    for evalEnv in allEnvs:
+        reward += float(evaluationResult[evalEnv]["meanRet"])  # TODO use weights, maybe depending on progress
+        # TODO maybe use something else like Value / Policy Loss / Frames
     return reward
 
 
@@ -187,7 +193,8 @@ if __name__ == "__main__":
     other = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_5x5, DOORKEY_8x8]
     # TODO Add Curricula: Adaptive, Random Order, TryNextWithCurrent
     curricula = [uniformCurriculum, other]
-    trainEnv(curricula)
+    # trainEnv(curricula)
+    print(evaluateAgent(args.model))
 
 """
     lastReturn = -1

@@ -1,5 +1,5 @@
 
-
+"""
 class Individual:
     # 	id, horizonLength, snapShotAfter, environment, <otherHyperparameters>
     def __init__(self, name, horizonLength, snapshotAfter, environment):
@@ -19,4 +19,6 @@ HORIZON_LENGTH = 500000
 SNAPSHOT_AFTER = 100000
 
 ind = Individual(0, HORIZON_LENGTH, SNAPSHOT_AFTER, environment="")
-ind.simulate(20000)
+# ind.simulate(20000)
+
+"""

@@ -67,7 +67,7 @@ def save_enjoy_commands():
 def main():
     global frames
     frames = 80000
-    train("MiniGrid-DoorKey-5x5-v0", "DoorKey-5x5")
+    # train("MiniGrid-DoorKey-5x5-v0", "DoorKey-5x5")
     """
     train("MiniGrid-DoorKey-6x6-v0","DoorKey-6x6")
     train("MiniGrid-DoorKey-8x8-v0","DoorKey-8x8")
