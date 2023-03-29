@@ -5,14 +5,11 @@ import numpy as np
 import shutil
 import utils
 from scripts import evaluate, train
-
-DOORKEY_5x5 = "MiniGrid-DoorKey-5x5-v0"
-DOORKEY_6x6 = "MiniGrid-DoorKey-6x6-v0"
-DOORKEY_8x8 = "MiniGrid-DoorKey-8x8-v0"
-DOORKEY_16x16 = "MiniGrid-DoorKey-16x16-v0"
-allEnvs = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_8x8, DOORKEY_16x16]
+from constants import ENV_NAMES
+from utils import device
 
 parser = argparse.ArgumentParser()
+
 # General parameters
 parser.add_argument("--algo", default="ppo",
                     help="algorithm to use: a2c | ppo (REQUIRED)")
@@ -25,10 +22,10 @@ parser.add_argument("--seed", type=int, default=1,
                     help="random seed (default: 1)")
 parser.add_argument("--log-interval", type=int, default=1,
                     help="number of updates between two logs (default: 1)")
-parser.add_argument("--save-interval", type=int, default=10,
-                    help="number of updates between two saves (default: 10, 0 means no saving)")
-parser.add_argument("--procs", type=int, default=16,
-                    help="number of processes (default: 16)")
+parser.add_argument("--save-interval", type=int, default=2,
+                    help="number of updates between two saves (default: 2, 0 means no saving)")
+parser.add_argument("--procs", type=int, default=32,
+                    help="number of processes (default: 32)")
 parser.add_argument("--frames", type=int, default=10 ** 7,
                     help="number of frames of training (default: 1e7)")
 
@@ -76,40 +73,39 @@ parser.add_argument("--memory", action="store_true", default=False,
 def evaluateAgent(model):
     reward = 0
     evaluationResult = evaluate.evaluateAll(model, args)
-    for evalEnv in allEnvs:
+    for evalEnv in ENV_NAMES.ALL_ENVS:
         reward += float(evaluationResult[evalEnv]["meanRet"])  # TODO use weights, maybe depending on progress
         # TODO maybe use something else like Value / Policy Loss / Frames
     return reward
 
 
 def nextEnv(currentEnv):
-    if currentEnv == DOORKEY_8x8:
-        return DOORKEY_16x16
-    if currentEnv == DOORKEY_6x6:
-        return DOORKEY_8x8
-    if currentEnv == DOORKEY_5x5:
-        return DOORKEY_6x6
+    if currentEnv == ENV_NAMES.DOORKEY_8x8:
+        return ENV_NAMES.DOORKEY_16x16
+    if currentEnv == ENV_NAMES.DOORKEY_6x6:
+        return ENV_NAMES.DOORKEY_8x8
+    if currentEnv == ENV_NAMES.DOORKEY_5x5:
+        return ENV_NAMES.DOORKEY_6x6
     raise Exception("Next Env ??")
 
 
 def prevEnv(currentEnv):
-    if currentEnv == DOORKEY_16x16:
-        return DOORKEY_8x8
-    if currentEnv == DOORKEY_8x8:
-        return DOORKEY_6x6
-    if currentEnv == DOORKEY_6x6:
-        return DOORKEY_5x5
-    return DOORKEY_5x5
+    if currentEnv == ENV_NAMES.DOORKEY_16x16:
+        return ENV_NAMES.DOORKEY_8x8
+    if currentEnv == ENV_NAMES.DOORKEY_8x8:
+        return ENV_NAMES.DOORKEY_6x6
+    if currentEnv == ENV_NAMES.DOORKEY_6x6:
+        return ENV_NAMES.DOORKEY_5x5
+    return ENV_NAMES.DOORKEY_5x5
 
 
 def startTraining(frames, model, env):
-    os.system("python -m scripts.train --procs {} --save-interval {} --frames {} --model {} --env {}"
-              .format(args.procs, args.save_interval, frames, model, env))
+    train.main(frames, model, env, args)
 
 
 def trainEnv(allCurricula):
-    # ITERATIONS_PER_CURRICULUM = args.procs * 128 * 25 + 1  # 128 is from frames-per-proc # roughly 100k with * 25
-    ITERATIONS_PER_CURRICULUM = 75000
+    # ITERATIONS_PER_CURRICULUM = args.procs * args.frames_per_proc * 25 + 1  # roughly 100k with * 25
+    ITERATIONS_PER_CURRICULUM = 20000
     HORIZON_LENGTH = ITERATIONS_PER_CURRICULUM * len(allCurricula[0])
     rewards = {}
     for i in range(len(allCurricula)):
@@ -118,10 +114,12 @@ def trainEnv(allCurricula):
     bestCurricula = []
     modelPath = os.getcwd() + "\\storage\\" + selectedModel
     if not os.path.isdir(modelPath):
-        PRE_TRAIN_FRAMES = 75000
-        startTraining(PRE_TRAIN_FRAMES, selectedModel, DOORKEY_5x5)
+        print("Pretraining. . .")
+        PRE_TRAIN_FRAMES = 25000
+        startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
         previousFrames = PRE_TRAIN_FRAMES
     else:
+        print("No pretraining done")
         status = utils.get_status(modelPath)
         previousFrames = status["num_frames"]
 
@@ -142,13 +140,16 @@ def trainEnv(allCurricula):
                               currentModel, allCurricula[i][j])
                 if j == jOffset:
                     copyAgent(src=currentModel, dest=selectedModel + "_CANDIDATE_" + str(i))
-            # finish the level that were skipped due to this curriculum being chosen multiple times
+                print("Trained iteration j", j, "(offset:)", jOffset)
+
+            # finish the environments that were skipped due to this curriculum being chosen multiple times
             additionalOffset = len(allCurricula[i]) - jOffset
             for j in range(jOffset):
                 startTraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1)
                               + previousFrames, currentModel, allCurricula[i][j])
+                print("__Trained iteration j", j, "(offset:)", jOffset)
 
-            rewards[str(i)].append(evaluateAgent(currentModel))
+            rewards[str(i)].append(evaluateAgent(currentModel)) # TODO
         chosenCurriculum = np.argmax(rewards)
         print("Best results came from curriculum " + str(chosenCurriculum))
         bestCurricula.append(chosenCurriculum)
@@ -162,8 +163,11 @@ def trainEnv(allCurricula):
         lastChosenCurriculum = chosenCurriculum
 
         for i in range(len(allCurricula)):
-            deleteDirectory(selectedModel + "_" + str(i))
-            deleteDirectory(selectedModel + "_CANDIDATE_" + str(i))
+            try:
+                deleteDirectory(selectedModel + "_" + str(i))
+                deleteDirectory(selectedModel + "_CANDIDATE_" + str(i))
+            except WindowsError as e:
+                print(e)
         print("EPOCH: ", epoch, "SUCCESS")
     print("----TRAINING END-----")
     print(bestCurricula)
@@ -189,12 +193,14 @@ def deleteDirectory(directory):
 if __name__ == "__main__":
     args = parser.parse_args()
     args.mem = args.recurrence > 1
-    uniformCurriculum = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_5x5, DOORKEY_6x6]
-    other = [DOORKEY_5x5, DOORKEY_6x6, DOORKEY_5x5, DOORKEY_8x8]
+
+    print(f"Device: {device}")
+
+    uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_5x5]
+    other = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_8x8]
     # TODO Add Curricula: Adaptive, Random Order, TryNextWithCurrent
-    curricula = [uniformCurriculum, other]
-    # trainEnv(curricula)
-    print(evaluateAgent(args.model))
+    curricula = [uniformCurriculum]
+    trainEnv(curricula)
 
 """
     lastReturn = -1
