@@ -7,6 +7,7 @@ import utils
 from scripts import evaluate, train
 from constants import ENV_NAMES
 from utils import device
+import time
 
 parser = argparse.ArgumentParser()
 
@@ -109,61 +110,71 @@ def trainEachCurriculum(allCurricula, HORIZON_LENGTH, FRAMES_PER_CURRICULUM, i, 
 
 
 def trainEnv(allCurricula):
-    # ITERATIONS_PER_CURRICULUM = args.procs * args.frames_per_proc * 25 + 1  # roughly 100k with * 25
-    ITERATIONS_PER_CURRICULUM = 20000
-    HORIZON_LENGTH = ITERATIONS_PER_CURRICULUM * len(allCurricula[0])  # TODO maybe move this inside the loop
-    rewards = {}
+    # ITERATIONS_PER_ENV = args.procs * args.frames_per_proc * 25 + 1  # roughly 100k with * 25
+    ITERATIONS_PER_ENV = 4000
+    HORIZON_LENGTH = ITERATIONS_PER_ENV * len(
+        allCurricula[0])  # TODO maybe move this inside the loop if not every curriculum has same length
+    rewards = {}  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
     for i in range(len(allCurricula)):
         rewards[str(i)] = []
-    selectedModel = args.model
+    selectedModel = args.model + "_e0"  # TODO if not exists ; else load ; TODO add a a dir \args.model & store all there
     bestCurricula = []
     modelPath = os.getcwd() + "\\storage\\" + selectedModel
     txtLogger.info("Pretraining. . .")
-    PRE_TRAIN_FRAMES = 25000
+    PRE_TRAIN_FRAMES = 20000
     startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
     status = utils.get_status(modelPath)
     previousFrames = status["num_frames"]
 
-    FRAMES_PER_CURRICULUM = ITERATIONS_PER_CURRICULUM
+    FRAMES_PER_CURRICULUM = ITERATIONS_PER_ENV
     envHistory = []  # TODO Load from file
     lastChosenCurriculum = -1
     indexOfLastChosenCurriculum = -1
     curriculumChosenConsecutivelyTimes = 0
     jOffset = 0
-    for epoch in range(6):
+    # TODO Load latest version
+
+    copyAgent(src=selectedModel, dest=args.model+"_e1") # e0 -> e1
+
+    for epoch in range(1, 6):
+        selectedModel = args.model + "_e" + str(epoch)
         for i in range(len(allCurricula)):
-            currentModel = selectedModel + '_e' + str(epoch) + '_i' + str(i)  # TEST --> TEST_e0_i0
-            copyAgent(selectedModel, currentModel)
+            nameOfCurriculumI = getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_i0
+            copyAgent(src=selectedModel, dest=nameOfCurriculumI)
             jOffset = 0
             if indexOfLastChosenCurriculum == i:
                 jOffset = curriculumChosenConsecutivelyTimes
+
             txtLogger.info(f"J offset {jOffset}")
             for j in range(jOffset, len(allCurricula[i])):
-                startTraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1 - jOffset) + previousFrames,
-                              currentModel, allCurricula[i][j])
-                txtLogger.warn(
+                startTraining(4000,
+                              nameOfCurriculumI, allCurricula[i][j])
+                txtLogger.warning(
                     f"Offset {epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1 - jOffset) + previousFrames}")
                 if j == jOffset:
-                    copyAgent(src=currentModel, dest=selectedModel + "_CANDIDATE_e" + str(epoch) + "_" + str(
-                        i))  # TEST_e0_i0 -> TEST_CANDIDATE_e0_i0
+                    copyAgent(src=nameOfCurriculumI, dest=getModelWithCandidatePrefix(nameOfCurriculumI)) # save TEST_e1_i0 -> + _CANDIDATE
                 txtLogger.info(f"Trained iteration j {j} (offset {jOffset}")
+                if j >= 0:
+                    break
 
             # finish the environments that were skipped due to the ith curriculum being chosen jOffset times
             additionalOffset = len(allCurricula[i]) - jOffset
+            """
             for j in range(jOffset):
                 startTraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1)
-                              + previousFrames, currentModel, allCurricula[i][j])
+                              + previousFrames, nameOfCurriculumI, allCurricula[i][j])
                 txtLogger.info(f"__Trained iteration j {j} offset {jOffset}")
-                txtLogger.warn(
+                txtLogger.warning(
                     f"Offset {epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1) + previousFrames}")
-
-            rewards[str(i)].append(evaluateAgent(currentModel))
-        indexOfLastChosenCurriculum = np.argmax(rewards)
+            """
+            # rewards[str(i)].append(evaluateAgent(nameOfCurriculumI))
+        indexOfLastChosenCurriculum = np.argmax(rewards)  # TODO fix: should use last index
         txtLogger.info(f"Best results in epoch {epoch} came from curriculum {str(indexOfLastChosenCurriculum)}")
         bestCurricula.append(indexOfLastChosenCurriculum)
-        # Take snapshot and make it main model
-        copyAgent(selectedModel + "_CANDIDATE_" + str(indexOfLastChosenCurriculum),
-                  selectedModel)  # TEST_CANDIDATE_e0_i0 --> TEST
+
+        copyAgent(src=getModelWithCandidatePrefix(getModelName(selectedModel, indexOfLastChosenCurriculum)),
+                  dest=args.model + "_e" + str(epoch+1)) # -> should be _e2, as it is the base for next iteration
+
         envHistory.append(allCurricula[indexOfLastChosenCurriculum][jOffset])
         if epoch > 0 and indexOfLastChosenCurriculum == lastChosenCurriculum:
             curriculumChosenConsecutivelyTimes += 1
@@ -181,17 +192,29 @@ def trainEnv(allCurricula):
     txtLogger.info("-------------------")
 
 
+def getModelName(model, curriculumNr):
+    fullModelName = model
+    fullModelName += "_curric" + str(curriculumNr)
+    return fullModelName
+
+
+def getModelWithCandidatePrefix(model):
+    return model + "_CANDIDATE"
+
+
 def copyAgent(src, dest):
     pathPrefix = os.getcwd() + '\\storage\\'
     fullSrcPath = pathPrefix + src
     fullDestPath = pathPrefix + dest
+    print("copy @ ",src, dest)
 
     if os.path.isdir(fullDestPath):
-        # txtLogger.warn(f"Path already exists! {fullDestPath}")
-        raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
+        txtLogger.warning(f"Path already exists! {fullDestPath} --> DELETING")
+        # deleteDirectory(dest)
+        # raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
     else:
         shutil.copytree(fullSrcPath, fullDestPath)
-        print('Copied Agent! ' + src + ' to ' + dest)
+        print('Copied Agent! ' + src + ' ---> ' + dest)
 
 
 def deleteDirectory(directory):
@@ -206,7 +229,7 @@ if __name__ == "__main__":
 
     print(f"Device: {device}")
 
-    uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_5x5]
+    uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6]
     other = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8]
     # TODO Add Curricula: Adaptive, Random Order
     curricula = [uniformCurriculum, other]

@@ -135,7 +135,5 @@ def main(frames, model, env, args):
             txt_logger.info("Status saved")
 
     print('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')
-    algo.env.reset()
-    # TODO Close Threads from @envs
-
-
+    algo.env.close()
+    tb_writer.close()
