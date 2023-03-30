@@ -59,7 +59,7 @@ def main(frames, model, env, args):
 
     # Load algo
     start = time.time()
-    print("\tLoading algorithm. . . ")
+    print("\tLoading algorithm. . . ", end=" ")
     algo = torch_ac.PPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                             args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                             args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
@@ -135,5 +135,7 @@ def main(frames, model, env, args):
             txt_logger.info("Status saved")
 
     print('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')
+    algo.env.reset()
+    # TODO Close Threads from @envs
 
 

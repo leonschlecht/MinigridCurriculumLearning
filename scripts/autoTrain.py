@@ -103,75 +103,82 @@ def startTraining(frames, model, env):
     train.main(frames, model, env, args)
 
 
+def trainEachCurriculum(allCurricula, HORIZON_LENGTH, FRAMES_PER_CURRICULUM, i, previousFrames, jOffset, epoch,
+                        currentModel, selectedModel):
+    pass
+
+
 def trainEnv(allCurricula):
     # ITERATIONS_PER_CURRICULUM = args.procs * args.frames_per_proc * 25 + 1  # roughly 100k with * 25
     ITERATIONS_PER_CURRICULUM = 20000
-    HORIZON_LENGTH = ITERATIONS_PER_CURRICULUM * len(allCurricula[0])
+    HORIZON_LENGTH = ITERATIONS_PER_CURRICULUM * len(allCurricula[0])  # TODO maybe move this inside the loop
     rewards = {}
     for i in range(len(allCurricula)):
         rewards[str(i)] = []
     selectedModel = args.model
     bestCurricula = []
     modelPath = os.getcwd() + "\\storage\\" + selectedModel
-    if not os.path.isdir(modelPath):
-        print("Pretraining. . .")
-        PRE_TRAIN_FRAMES = 25000
-        startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
-        previousFrames = PRE_TRAIN_FRAMES
-    else:
-        print("No pretraining done")
-        status = utils.get_status(modelPath)
-        previousFrames = status["num_frames"]
+    txtLogger.info("Pretraining. . .")
+    PRE_TRAIN_FRAMES = 25000
+    startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
+    status = utils.get_status(modelPath)
+    previousFrames = status["num_frames"]
 
     FRAMES_PER_CURRICULUM = ITERATIONS_PER_CURRICULUM
+    envHistory = []  # TODO Load from file
     lastChosenCurriculum = -1
-    chosenCurriculum = -1
-    consecutiveCurriculum = 0
-    for epoch in range(3):
+    indexOfLastChosenCurriculum = -1
+    curriculumChosenConsecutivelyTimes = 0
+    jOffset = 0
+    for epoch in range(6):
         for i in range(len(allCurricula)):
-            currentModel = selectedModel + '_' + str(i)
+            currentModel = selectedModel + '_e' + str(epoch) + '_i' + str(i)  # TEST --> TEST_e0_i0
             copyAgent(selectedModel, currentModel)
             jOffset = 0
-            if chosenCurriculum == i:
-                jOffset = consecutiveCurriculum
-            print("J offset = ", jOffset)
+            if indexOfLastChosenCurriculum == i:
+                jOffset = curriculumChosenConsecutivelyTimes
+            txtLogger.info(f"J offset {jOffset}")
             for j in range(jOffset, len(allCurricula[i])):
                 startTraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1 - jOffset) + previousFrames,
                               currentModel, allCurricula[i][j])
+                txtLogger.warn(
+                    f"Offset {epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (j + 1 - jOffset) + previousFrames}")
                 if j == jOffset:
-                    copyAgent(src=currentModel, dest=selectedModel + "_CANDIDATE_" + str(i))
-                print("Trained iteration j", j, "(offset:)", jOffset)
+                    copyAgent(src=currentModel, dest=selectedModel + "_CANDIDATE_e" + str(epoch) + "_" + str(
+                        i))  # TEST_e0_i0 -> TEST_CANDIDATE_e0_i0
+                txtLogger.info(f"Trained iteration j {j} (offset {jOffset}")
 
-            # finish the environments that were skipped due to this curriculum being chosen multiple times
+            # finish the environments that were skipped due to the ith curriculum being chosen jOffset times
             additionalOffset = len(allCurricula[i]) - jOffset
             for j in range(jOffset):
                 startTraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1)
                               + previousFrames, currentModel, allCurricula[i][j])
-                print("__Trained iteration j", j, "(offset:)", jOffset)
+                txtLogger.info(f"__Trained iteration j {j} offset {jOffset}")
+                txtLogger.warn(
+                    f"Offset {epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1) + previousFrames}")
 
-            rewards[str(i)].append(evaluateAgent(currentModel)) # TODO
-        chosenCurriculum = np.argmax(rewards)
-        print("Best results came from curriculum " + str(chosenCurriculum))
-        bestCurricula.append(chosenCurriculum)
-        copyAgent(selectedModel + "_CANDIDATE_" + str(chosenCurriculum), selectedModel)
-        if epoch > 0 and chosenCurriculum == lastChosenCurriculum:
-            consecutiveCurriculum += 1
-            if consecutiveCurriculum > len(allCurricula[chosenCurriculum]):
-                consecutiveCurriculum = 0
+            rewards[str(i)].append(evaluateAgent(currentModel))
+        indexOfLastChosenCurriculum = np.argmax(rewards)
+        txtLogger.info(f"Best results in epoch {epoch} came from curriculum {str(indexOfLastChosenCurriculum)}")
+        bestCurricula.append(indexOfLastChosenCurriculum)
+        # Take snapshot and make it main model
+        copyAgent(selectedModel + "_CANDIDATE_" + str(indexOfLastChosenCurriculum),
+                  selectedModel)  # TEST_CANDIDATE_e0_i0 --> TEST
+        envHistory.append(allCurricula[indexOfLastChosenCurriculum][jOffset])
+        if epoch > 0 and indexOfLastChosenCurriculum == lastChosenCurriculum:
+            curriculumChosenConsecutivelyTimes += 1
+            if curriculumChosenConsecutivelyTimes > len(allCurricula[indexOfLastChosenCurriculum]):
+                curriculumChosenConsecutivelyTimes = 0
         else:
-            consecutiveCurriculum = 0
-        lastChosenCurriculum = chosenCurriculum
+            curriculumChosenConsecutivelyTimes = 0
+        lastChosenCurriculum = indexOfLastChosenCurriculum
 
-        for i in range(len(allCurricula)):
-            try:
-                deleteDirectory(selectedModel + "_" + str(i))
-                deleteDirectory(selectedModel + "_CANDIDATE_" + str(i))
-            except WindowsError as e:
-                print(e)
-        print("EPOCH: ", epoch, "SUCCESS")
-    print("----TRAINING END-----")
-    print(bestCurricula)
-    print(rewards)
+        txtLogger.info(f"EPOCH: {epoch} SUCCESS")
+    txtLogger.info("----TRAINING END-----")
+    txtLogger.info(f"Best Curricula {bestCurricula}")
+    txtLogger.info("Trained in Envs:", envHistory)
+    txtLogger.info("Rewards:", rewards)
+    txtLogger.info("-------------------")
 
 
 def copyAgent(src, dest):
@@ -180,10 +187,11 @@ def copyAgent(src, dest):
     fullDestPath = pathPrefix + dest
 
     if os.path.isdir(fullDestPath):
-        deleteDirectory(dest)
-    shutil.copytree(fullSrcPath, fullDestPath)
-    # TODO set num_frames and update to 0 in dst (or not, in order to see num_frames in MAIN)
-    print('Copied Agent! ' + src + ' to ' + dest)
+        # txtLogger.warn(f"Path already exists! {fullDestPath}")
+        raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
+    else:
+        shutil.copytree(fullSrcPath, fullDestPath)
+        print('Copied Agent! ' + src + ' to ' + dest)
 
 
 def deleteDirectory(directory):
@@ -194,47 +202,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.mem = args.recurrence > 1
 
+    txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
+
     print(f"Device: {device}")
 
     uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_5x5]
-    other = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_8x8]
-    # TODO Add Curricula: Adaptive, Random Order, TryNextWithCurrent
-    curricula = [uniformCurriculum]
+    other = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8]
+    # TODO Add Curricula: Adaptive, Random Order
+    curricula = [uniformCurriculum, other]
     trainEnv(curricula)
-
-"""
-    lastReturn = -1
-
-    SWITCH_AFTER = 50000
-    switchAfter = SWITCH_AFTER
-    UPDATES_BEFORE_SWITCH = 5
-    updatesLeft = UPDATES_BEFORE_SWITCH
-"""
-
-"""
-
-            currentReturn = rreturn_per_episode["mean"]
-            value = logs["value"]
-            converged = value >= 0.78
-            policyLoss = logs["policy_loss"]
-            performanceDecline = lastReturn >= currentReturn + .1 or currentReturn < 0.1 or \
-                                 value < 0.05 or abs(policyLoss) < 0.02
-
-            if abs(policyLoss) < 0.03:
-                currentEnv = DOORKEY_8x8
-                algo = setAlgo(envs8x8, acmodel, preprocess_obss8x8)
-                switchAfter = SWITCH_AFTER
-                framesWithThisEnv = 0
-            if converged:
-                updatesLeft -= 1
-            if updatesLeft < UPDATES_BEFORE_SWITCH:
-                updatesLeft -= 1
-                if updatesLeft < 0:
-                    currentEnv = nextEnv(currentEnv)
-                    algo = setAlgo(envs16x16, acmodel, preprocess_obss)
-                    updatesLeft = UPDATES_BEFORE_SWITCH
-                    switchAfter = SWITCH_AFTER
-                    framesWithThisEnv = 0
-            lastReturn = currentReturn
-            
-"""

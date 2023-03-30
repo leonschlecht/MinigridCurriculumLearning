@@ -1,6 +1,3 @@
-from enum import Enum
-
-
 class ENV_NAMES:
     DOORKEY_5x5 = "MiniGrid-DoorKey-5x5-v0"
     DOORKEY_6x6 = "MiniGrid-DoorKey-6x6-v0"
