@@ -147,7 +147,8 @@ if __name__ == "__main__":
     num_frames = status["num_frames"]
     update = status["update"]
     start_time = time.time()
-
+    values = []
+    startCountingValue = False
     while num_frames < args.frames:
         # Update model parameters
         update_start_time = time.time()
@@ -176,9 +177,8 @@ if __name__ == "__main__":
             data += num_frames_per_episode.values()
             header += ["entropy", "value", "policy_loss", "value_loss", "grad_norm"]
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
-            # "U {} | F {:06} | FPS {:04.0f} | D {} | rR:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {} | H {:.3f} | V {:.3f} | pL {:.3f} | vL {:.3f} | ∇ {:.3f}"
             txt_logger.info(
-                "U {} | F {:06} | FPS {:04.0f} | D {} | rR:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {} | H {:.3f} | V {:.3f} | pL {:.3f} | vL {:.3f} | ∇ {:.3f}"
+                "U {} | F {:06} | FPS {:04.0f} | D {} | rR:msmM {:.2f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.3f} | V {:.3f} | pL {:.3f} | vL {:.3f} | g {:.3f}"
                 .format(*data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
@@ -193,6 +193,19 @@ if __name__ == "__main__":
                 tb_writer.add_scalar(field, value, num_frames)
 
         # Save status
+        if logs["value"] > 0.75 and not startCountingValue:
+            startCountingValue = True
+            values = []
+        if startCountingValue:
+            values.append(logs["value"])
+            if len(values) > 10:
+                startCountingValue = False
+                import numpy as np
+                if np.mean(values) > 0.75:
+                    print("NEXT")
+                    break
+        else:
+            startCountingValue = False
 
         if args.save_interval > 0 and update % args.save_interval == 0:
             status = {"num_frames": num_frames, "update": update,
