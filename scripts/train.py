@@ -109,7 +109,7 @@ def main(frames, model, env, args):
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
 
             txt_logger.info(
-                " {} | {} | trained {} | U {} | AllF {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
+                "\t{} | {} | trained {} | U {} | AllF {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
                 .format(env, model, framesWithThisEnv, *data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
@@ -134,6 +134,8 @@ def main(frames, model, env, args):
             utils.save_status(status, model_dir)
             txt_logger.info("Status saved")
 
-    print('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')
+    txt_logger.info('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')
     algo.env.close()
     tb_writer.close()
+    return status["num_frames"]
+
