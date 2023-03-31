@@ -77,8 +77,7 @@ def main(frames, model, env, args):
     start_time = time.time()
 
     framesWithThisEnv = 0
-    lastUpdateDone = False
-    while num_frames < frames or not lastUpdateDone:
+    while num_frames < frames:
         update_start_time = time.time()
 
         exps, logs1 = algo.collect_experiences()
@@ -109,7 +108,7 @@ def main(frames, model, env, args):
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
 
             txt_logger.info(
-                "\t{} | {} | trained {} | U {} | AllF {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
+                "\t{} | {} | curF {} | U {} | AllF {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
                 .format(env, model, framesWithThisEnv, *data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
@@ -124,15 +123,13 @@ def main(frames, model, env, args):
                 tb_writer.add_scalar(field, value, num_frames)
 
         # Save status
-        if update % args.save_interval == 0:
-            if num_frames >= frames:
-                lastUpdateDone = True
+        if update % args.save_interval == 0 or num_frames >= frames:
             status = {"num_frames": num_frames, "update": update,
                       "model_state": acmodel.state_dict(), "optimizer_state": algo.optimizer.state_dict()}
             if hasattr(preprocess_obss, "vocab"):
                 status["vocab"] = preprocess_obss.vocab.vocab
             utils.save_status(status, model_dir)
-            txt_logger.info("Status saved")
+            txt_logger.info("\t\tStatus saved")
 
     txt_logger.info('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')
     algo.env.close()

@@ -105,26 +105,30 @@ def startTraining(frames, model, env) -> int:
     return train.main(frames, model, env, args)
 
 
-def trainEachCurriculum(allCurricula, HORIZON_LENGTH, ITERATIONS_PER_CURRICULUM, i, pretrainIterations, epoch,
-                        selectedModel, indexOfLastChosenCurriculum, curriculumChosenConsecutivelyTimes) -> int:
+def trainEachCurriculum(allCurricula, i, iterationsDone, selectedModel, jOffset,
+                        curriculumChosenConsecutivelyTimes) -> int:
     """
     Simulates a horizon and returns the rewards obtained after evaluation the state at the end of the horizon
+
+    :param jOffset:
+    :param allCurricula:
+    :param i:
+    :param iterationsDone:
+    :param selectedModel:
+    :param curriculumChosenConsecutivelyTimes:
+    :return:
     """
-    # TODO caps variables should be global after being read
     nameOfCurriculumI = getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
     copyAgent(src=selectedModel, dest=nameOfCurriculumI)
-    jOffset = 0
-    if indexOfLastChosenCurriculum == i:
-        jOffset = curriculumChosenConsecutivelyTimes
-    iterationsDone = pretrainIterations
+    print(f"joff {jOffset} curriculuConsec {curriculumChosenConsecutivelyTimes}")
     for j in range(jOffset, len(allCurricula[i])):
-        iterationsDone = startTraining(iterationsDone + ITERATIONS_PER_CURRICULUM, nameOfCurriculumI,
+        iterationsDone = startTraining(iterationsDone + ITERATIONS_PER_ENV, nameOfCurriculumI,
                                        allCurricula[i][j])
-        txtLogger.warning(f"Offset {iterationsDone}")
+        txtLogger.info(f"Iterations Done {iterationsDone}")
         if j == jOffset:
             copyAgent(src=nameOfCurriculumI,
                       dest=getModelWithCandidatePrefix(nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
-        txtLogger.info(f"Trained iteration j {j} (offset {jOffset}")
+        txtLogger.info(f"Trained iteration j {j} (offset {jOffset}) of curriculum {i}")
 
     return 1
     # return evaluateAgent(nameOfCurriculumI)
@@ -141,10 +145,7 @@ def initializeRewards(N):
     return rewards
 
 
-def trainEnv(allCurricula):
-    # ITERATIONS_PER_ENV = args.procs * args.frames_per_proc * 25 + 1  # roughly 100k with * 25
-    ITERATIONS_PER_ENV = 25000
-    HORIZON_LENGTH = ITERATIONS_PER_ENV * len(allCurricula[0])
+def trainEnv(allCurricula: list) -> None:
     modelPath = os.getcwd() + "\\storage\\" + args.model
     logFilePath = modelPath + "\\status.json"
 
@@ -157,17 +158,13 @@ def trainEnv(allCurricula):
         startEpoch = trainingInfoJson["epochsDone"]
 
         rewards = trainingInfoJson["rewards"]
-        txtLogger.info(f"Restoring from {startEpoch}... ")
-        # copyAgent(src=selectedModel, dest=args.model + "_e" + str(startEpoch + 1))  # eSTART -> eSTART+1 # TODO ??
-
+        txtLogger.info(f"Continung training from epoch {startEpoch}... ")
     else:
-        PRE_TRAIN_FRAMES = 25000  # TODO set to 100k
+        PRE_TRAIN_FRAMES = 15000  # TODO set to 100k
         startEpoch = 1
         rewards = initializeRewards(len(allCurricula))  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
 
         selectedModel = args.model + "_e" + str(0)
-
-        modelPath = os.getcwd() + "\\storage\\" + selectedModel
         txtLogger.info("Pretraining. . .")
         previousFrames = startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
         trainingInfoJson = {"selectedEnvs": [],
@@ -177,49 +174,50 @@ def trainEnv(allCurricula):
                             "numFrames": previousFrames}
         with open(logFilePath, 'w') as f:
             f.write(json.dumps(trainingInfoJson, indent=4))
-        copyAgent(src=selectedModel, dest=args.model + "_e" + str(startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
-
-    print("Loading from ", modelPath)
+        copyAgent(src=selectedModel, dest=args.model + "_e" + str(
+            startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
 
     lastChosenCurriculum = -1
-    indexOfLastChosenCurriculum = -1
     curriculumChosenConsecutivelyTimes = 0
     jOffset = 0
 
-    for epoch in range(startEpoch, 3):
+    for epoch in range(startEpoch, 6):
         selectedModel = args.model + "_e" + str(epoch)
-        previousFrames += ITERATIONS_PER_ENV
         for i in range(len(allCurricula)):
-            reward = trainEachCurriculum(allCurricula, HORIZON_LENGTH, ITERATIONS_PER_ENV, i, previousFrames, epoch,
-                                         selectedModel, indexOfLastChosenCurriculum, curriculumChosenConsecutivelyTimes)
+            jOffset = 0
+            if i == lastChosenCurriculum:
+                curriculumChosenConsecutivelyTimes += 1
+                jOffset = curriculumChosenConsecutivelyTimes
+            reward = trainEachCurriculum(allCurricula, i, previousFrames, selectedModel, jOffset,
+                                         curriculumChosenConsecutivelyTimes)
             rewards[str(i)].append(reward)
-        indexOfLastChosenCurriculum = int(
-            np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
-        txtLogger.info(f"Best results in epoch {epoch} came from curriculum {str(indexOfLastChosenCurriculum)}")
+        previousFrames += ITERATIONS_PER_ENV
+        currentBestCurriculum = int(np.argmax([lst[-1] for lst in rewards.values()]))  # only access latest reward
+        txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
 
-        copyAgent(src=getModelWithCandidatePrefix(getModelName(selectedModel, indexOfLastChosenCurriculum)),
+        copyAgent(src=getModelWithCandidatePrefix(getModelName(selectedModel, currentBestCurriculum)),
                   dest=args.model + "_e" + str(epoch + 1))  # -> should be _e2, as it is the base for next iteration
 
-        if epoch > 1 and indexOfLastChosenCurriculum == lastChosenCurriculum:
-            curriculumChosenConsecutivelyTimes += 1
-            if curriculumChosenConsecutivelyTimes > len(allCurricula[indexOfLastChosenCurriculum]):
-                curriculumChosenConsecutivelyTimes = 0
-        else:
+        if currentBestCurriculum != lastChosenCurriculum \
+                or curriculumChosenConsecutivelyTimes + 1 >= len(allCurricula[0]):
             curriculumChosenConsecutivelyTimes = 0
-        lastChosenCurriculum = indexOfLastChosenCurriculum
+            if currentBestCurriculum == lastChosenCurriculum:
+                curriculumChosenConsecutivelyTimes = -1 # TODO find better way
+        lastChosenCurriculum = currentBestCurriculum
 
         trainingInfoJson["epochsDone"] = epoch + 1
         trainingInfoJson["numFrames"] = previousFrames
         trainingInfoJson["selectedEnvs"].append(
-            allCurricula[indexOfLastChosenCurriculum][jOffset])  # TODO Test if this works properly
-        trainingInfoJson["bestCurriculaIds"].append(indexOfLastChosenCurriculum)
+            allCurricula[currentBestCurriculum][jOffset])  # TODO Test if this works properly
+        trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
         trainingInfoJson["rewards"] = rewards
 
-        txtLogger.info(f"EPOCH: {epoch} SUCCESS")
         with open(logFilePath, 'w') as f:
             f.write(json.dumps(trainingInfoJson, indent=4))
-        if epoch >= 2:
+        if epoch >= 3:
             break
+        txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
+
     txtLogger.info("----TRAINING END-----")
     txtLogger.info(f"Best Curricula {trainingInfoJson['bestCurriculaIds']}")
     txtLogger.info(f"Trained in Envs {trainingInfoJson['selectedEnvs']}")
@@ -227,17 +225,17 @@ def trainEnv(allCurricula):
     txtLogger.info("-------------------")
 
 
-def getModelName(model, curriculumNr):
+def getModelName(model, curriculumNr) -> str:
     fullModelName = model
     fullModelName += "_curric" + str(curriculumNr)
     return fullModelName
 
 
-def getModelWithCandidatePrefix(model):
+def getModelWithCandidatePrefix(model) -> str:
     return model + "_CANDIDATE"
 
 
-def copyAgent(src, dest):
+def copyAgent(src, dest) -> None:
     pathPrefix = os.getcwd() + '\\storage\\'
     fullSrcPath = pathPrefix + src
     fullDestPath = pathPrefix + dest
@@ -250,7 +248,7 @@ def copyAgent(src, dest):
         txtLogger.info(f'Copied Agent! {src} ---> {dest}')
 
 
-def deleteDirectory(directory):
+def deleteDirectory(directory) -> None:
     shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
 
 
@@ -259,13 +257,15 @@ if __name__ == "__main__":
     args.mem = args.recurrence > 1
 
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
-
     txtLogger.info(f"Device: {device}")
 
     uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6]
     other = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8]
 
     curricula = [uniformCurriculum]
+    ITERATIONS_PER_ENV = 25000
+    HORIZON_LENGTH = ITERATIONS_PER_ENV * len(curricula[0])
+
     trainEnv(curricula)
 
 """

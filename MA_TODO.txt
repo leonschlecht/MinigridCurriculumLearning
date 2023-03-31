@@ -1,10 +1,25 @@
-- Dir structure & subdirectories
+- Dir structure & subdirectories (2h)
+- Log what each curriculum looked like at each timestep (1h)
+
+- Baseline: abwechselnder 16-8 einbauen (1-2h)
+
+- Probedurchlauf mit 2 Curricula mit je 3 Leveln
+- Docstrings und Kommentare
+- Loop Code auslagern
+
+------------------------------------------
+
+- Ladezeiten optimieren
 
 - os.getcwd() + "\\storage\\" + directory)  # TODO us os . join for these things
 -    # TODO Add Curricula: Adaptive, Random Order
 - Going around circular in curriculm if offset > 0? (Probably just remove)
 - Evaluation: use weights, maybe depending on progress ;  maybe use something else like Value / Policy Loss / Frames
 - HORIZON_LENGTH : vllt in den Loop, falls Curricula nicht alle gleich lang sind (eher nicht)
+
+
+- Wenn man während des Trainings abbricht, sollten entweder alle _curric_ status gelöscht werden oder noch zusätzlich gespeichert werden
+- assert dass neuladen gleiche anzahl an curricula wie vorher ist
 
 -------------------------------
 - RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist
@@ -19,8 +34,7 @@ random curricula zum anfang
 - Plot überlappen
 
 
-- Auswählen
-- Tracking
+- Auswählen ; Tracking
 
 
 5 Mio insg;
@@ -45,9 +59,3 @@ Hyperparameter: Epochs, HorizonLength, pretraining, ggf die Curricula??
 
 - besseres args unpacking
 ---------------------------
-
-
-- testen, ob die FrameNr stimmen
-- testen, ob reload funktioniert
-- testen ob 2 Curricula funktionieren
-- import train / evaluate
