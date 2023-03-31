@@ -15,9 +15,6 @@ parser = argparse.ArgumentParser()
 # General parameters
 parser.add_argument("--algo", default="ppo",
                     help="algorithm to use: a2c | ppo (REQUIRED)")
-parser.add_argument("--env",
-                    help="environemnt ")  # TODO
-parser.add_argument("--pretraining", default=False, action="store_true", help="use pretraining on new model")
 parser.add_argument("--model", default=None,
                     help="name of the model (default: {ENV}_{ALGO}_{TIME})")
 parser.add_argument("--seed", type=int, default=1,
@@ -28,8 +25,6 @@ parser.add_argument("--save-interval", type=int, default=2,
                     help="number of updates between two saves (default: 2, 0 means no saving)")
 parser.add_argument("--procs", type=int, default=32,
                     help="number of processes (default: 32)")
-parser.add_argument("--frames", type=int, default=10 ** 7,
-                    help="number of frames of training (default: 1e7)")
 
 # Parameters for main algorithm
 parser.add_argument("--epochs", type=int, default=4,
@@ -101,8 +96,7 @@ def evaluateAgent(model) -> int:
     reward = 0
     evaluationResult = evaluate.evaluateAll(model, args)
     for evalEnv in ENV_NAMES.ALL_ENVS:
-        reward += float(evaluationResult[evalEnv]["meanRet"])  # TODO use weights, maybe depending on progress
-        # TODO maybe use something else like Value / Policy Loss / Frames
+        reward += float(evaluationResult[evalEnv]["meanRet"])
     return reward
 
 
@@ -150,8 +144,7 @@ def initializeRewards(N):
 def trainEnv(allCurricula):
     # ITERATIONS_PER_ENV = args.procs * args.frames_per_proc * 25 + 1  # roughly 100k with * 25
     ITERATIONS_PER_ENV = 25000
-    HORIZON_LENGTH = ITERATIONS_PER_ENV * len(
-        allCurricula[0])  # TODO maybe move this inside the loop if not every curriculum has same length
+    HORIZON_LENGTH = ITERATIONS_PER_ENV * len(allCurricula[0])
     modelPath = os.getcwd() + "\\storage\\" + args.model
     logFilePath = modelPath + "\\status.json"
 
@@ -165,7 +158,6 @@ def trainEnv(allCurricula):
 
         rewards = trainingInfoJson["rewards"]
         txtLogger.info(f"Restoring from {startEpoch}... ")
-        selectedModel = args.model + "_e" + str(startEpoch)
         # copyAgent(src=selectedModel, dest=args.model + "_e" + str(startEpoch + 1))  # eSTART -> eSTART+1 # TODO ??
 
     else:
@@ -185,16 +177,14 @@ def trainEnv(allCurricula):
                             "numFrames": previousFrames}
         with open(logFilePath, 'w') as f:
             f.write(json.dumps(trainingInfoJson, indent=4))
-        copyAgent(src=selectedModel, dest=args.model + "_e" + str(startEpoch))  # e0 -> e1 # TODO only if first use
+        copyAgent(src=selectedModel, dest=args.model + "_e" + str(startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
 
     print("Loading from ", modelPath)
-    # TODO selectedModel outsource ?
 
     lastChosenCurriculum = -1
     indexOfLastChosenCurriculum = -1
     curriculumChosenConsecutivelyTimes = 0
     jOffset = 0
-    # TODO directory structure beginning from args.model & having a main log file there + the subdirectories; Maybe even having one for each epoch
 
     for epoch in range(startEpoch, 3):
         selectedModel = args.model + "_e" + str(epoch)
@@ -261,7 +251,7 @@ def copyAgent(src, dest):
 
 
 def deleteDirectory(directory):
-    shutil.rmtree(os.getcwd() + "\\storage\\" + directory)  # TODO us os . join for these things
+    shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
 
 
 if __name__ == "__main__":
@@ -274,7 +264,7 @@ if __name__ == "__main__":
 
     uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6]
     other = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8]
-    # TODO Add Curricula: Adaptive, Random Order
+
     curricula = [uniformCurriculum]
     trainEnv(curricula)
 
@@ -291,7 +281,6 @@ if __name__ == "__main__":
 
 """
     # finish the environments that were skipped due to the ith curriculum being chosen jOffset times
-    # TODO remove this because it is probably a bad idea
 
 
     additionalOffset = len(allCurricula[i]) - jOffset
