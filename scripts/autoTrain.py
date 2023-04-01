@@ -101,14 +101,20 @@ def evaluateAgent(model) -> int:
 
 
 def startTraining(frames, model, env) -> int:
-    """Starts the training. Returns the amount of iterations trained"""
+    """
+    Starts the training.
+    :param frames:
+    :param model:
+    :param env:
+    :return: Returns the amount of iterations trained
+    """
     return train.main(frames, model, env, args)
 
 
 def trainEachCurriculum(allCurricula, i, iterationsDone, selectedModel, jOffset,
                         curriculumChosenConsecutivelyTimes) -> int:
     """
-    Simulates a horizon and returns the rewards obtained after evaluation the state at the end of the horizon
+    Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
 
     :param jOffset:
     :param allCurricula:
@@ -146,7 +152,11 @@ def initializeRewards(N):
 
 
 def trainEnv(allCurricula: list) -> None:
-    modelPath = os.getcwd() + "\\storage\\" + args.model
+    """
+
+    :param allCurricula:
+    """
+    modelPath = os.getcwd() + "\\storage\\" + args.model # use this ??
     logFilePath = modelPath + "\\status.json"
 
     if os.path.exists(logFilePath):
@@ -154,7 +164,7 @@ def trainEnv(allCurricula: list) -> None:
             trainingInfoJson = json.loads(f.read())
 
         txtLogger.info(trainingInfoJson)
-        previousFrames = trainingInfoJson["numFrames"]
+        iterationsDoneSoFar = trainingInfoJson["numFrames"]
         startEpoch = trainingInfoJson["epochsDone"]
 
         rewards = trainingInfoJson["rewards"]
@@ -164,49 +174,49 @@ def trainEnv(allCurricula: list) -> None:
         startEpoch = 1
         rewards = initializeRewards(len(allCurricula))  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
 
-        selectedModel = args.model + "_e" + str(0)
+        selectedModel = args.model + "\\epoch_" + str(0)
         txtLogger.info("Pretraining. . .")
-        previousFrames = startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
+        iterationsDoneSoFar = startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
         trainingInfoJson = {"selectedEnvs": [],
                             "bestCurriculaIds": [],
                             "rewards": rewards,
                             "epochsDone": startEpoch,
-                            "numFrames": previousFrames}
+                            "numFrames": iterationsDoneSoFar}
         with open(logFilePath, 'w') as f:
             f.write(json.dumps(trainingInfoJson, indent=4))
-        copyAgent(src=selectedModel, dest=args.model + "_e" + str(
+        copyAgent(src=selectedModel, dest=args.model + "\\epoch_" + str(
             startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
 
-    lastChosenCurriculum = -1
+    lastChosenCurriculum = None
     curriculumChosenConsecutivelyTimes = 0
     jOffset = 0
 
     for epoch in range(startEpoch, 6):
-        selectedModel = args.model + "_e" + str(epoch)
+        selectedModel = args.model + "\\epoch_" + str(epoch)
         for i in range(len(allCurricula)):
             jOffset = 0
             if i == lastChosenCurriculum:
                 curriculumChosenConsecutivelyTimes += 1
                 jOffset = curriculumChosenConsecutivelyTimes
-            reward = trainEachCurriculum(allCurricula, i, previousFrames, selectedModel, jOffset,
+            reward = trainEachCurriculum(allCurricula, i, iterationsDoneSoFar, selectedModel, jOffset,
                                          curriculumChosenConsecutivelyTimes)
             rewards[str(i)].append(reward)
-        previousFrames += ITERATIONS_PER_ENV
-        currentBestCurriculum = int(np.argmax([lst[-1] for lst in rewards.values()]))  # only access latest reward
+        iterationsDoneSoFar += ITERATIONS_PER_ENV
+        currentBestCurriculum = int(np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
         txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
 
         copyAgent(src=getModelWithCandidatePrefix(getModelName(selectedModel, currentBestCurriculum)),
-                  dest=args.model + "_e" + str(epoch + 1))  # -> should be _e2, as it is the base for next iteration
+                  dest=args.model + "\\epoch_" + str(epoch + 1))  # -> should be _e2, as it is the base for next iteration
 
         if currentBestCurriculum != lastChosenCurriculum \
                 or curriculumChosenConsecutivelyTimes + 1 >= len(allCurricula[0]):
             curriculumChosenConsecutivelyTimes = 0
             if currentBestCurriculum == lastChosenCurriculum:
-                curriculumChosenConsecutivelyTimes = -1 # TODO find better way
+                curriculumChosenConsecutivelyTimes = -1  # TODO find better way
         lastChosenCurriculum = currentBestCurriculum
 
         trainingInfoJson["epochsDone"] = epoch + 1
-        trainingInfoJson["numFrames"] = previousFrames
+        trainingInfoJson["numFrames"] = iterationsDoneSoFar
         trainingInfoJson["selectedEnvs"].append(
             allCurricula[currentBestCurriculum][jOffset])  # TODO Test if this works properly
         trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
@@ -221,14 +231,13 @@ def trainEnv(allCurricula: list) -> None:
     txtLogger.info("----TRAINING END-----")
     txtLogger.info(f"Best Curricula {trainingInfoJson['bestCurriculaIds']}")
     txtLogger.info(f"Trained in Envs {trainingInfoJson['selectedEnvs']}")
-    txtLogger.info("Rewards:", rewards)
+    txtLogger.info(f"Rewards: {rewards}")
     txtLogger.info("-------------------")
 
 
 def getModelName(model, curriculumNr) -> str:
-    fullModelName = model
-    fullModelName += "_curric" + str(curriculumNr)
-    return fullModelName
+    print(model)
+    return model + "_curric" + str(curriculumNr)
 
 
 def getModelWithCandidatePrefix(model) -> str:
@@ -239,16 +248,19 @@ def copyAgent(src, dest) -> None:
     pathPrefix = os.getcwd() + '\\storage\\'
     fullSrcPath = pathPrefix + src
     fullDestPath = pathPrefix + dest
+    print(fullSrcPath, "\n", fullDestPath)
     if os.path.isdir(fullDestPath):
         txtLogger.warning(f"Path already exists! {fullDestPath} --> ???")
-        # deleteDirectory(dest)
         # raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
     else:
         shutil.copytree(fullSrcPath, fullDestPath)
         txtLogger.info(f'Copied Agent! {src} ---> {dest}')
 
 
-def deleteDirectory(directory) -> None:
+def deleteModel(directory) -> None:
+    """
+    :param directory: of the model to be deleted
+    """
     shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
 
 
@@ -260,7 +272,8 @@ if __name__ == "__main__":
     txtLogger.info(f"Device: {device}")
 
     uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6]
-    other = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8]
+    # noinspection INSPECTION_NAME
+    other =             [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8]
 
     curricula = [uniformCurriculum]
     ITERATIONS_PER_ENV = 25000

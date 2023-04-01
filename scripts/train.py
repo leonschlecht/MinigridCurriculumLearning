@@ -8,7 +8,15 @@ from utils import device
 from model import ACModel
 
 
-def main(frames, model, env, args):
+def main(frames: int, model: str, env: str, args) -> int:
+    """
+
+    :param frames: the number of iterations
+    :param model: name of the model - where the training will be saved
+    :param env: the name of the environment
+    :param args: the command lines arguments that get parsed and passed through
+    :return: the exact number of iterations done
+    """
     # Set run dir
     model_name = model
     model_dir = utils.get_model_dir(model_name)
@@ -69,7 +77,6 @@ def main(frames, model, env, args):
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
     # txt_logger.info("Optimizer loaded\n")
-
 
     # Train model
     num_frames = status["num_frames"]
@@ -135,4 +142,3 @@ def main(frames, model, env, args):
     algo.env.close()
     tb_writer.close()
     return status["num_frames"]
-
