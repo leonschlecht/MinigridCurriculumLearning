@@ -126,7 +126,6 @@ def trainEachCurriculum(allCurricula, i, iterationsDone, selectedModel, jOffset,
     """
     nameOfCurriculumI = getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
     copyAgent(src=selectedModel, dest=nameOfCurriculumI)
-    print(f"joff {jOffset} curriculuConsec {curriculumChosenConsecutivelyTimes}")
     for j in range(jOffset, len(allCurricula[i])):
         iterationsDone = startTraining(iterationsDone + ITERATIONS_PER_ENV, nameOfCurriculumI,
                                        allCurricula[i][j])
@@ -136,8 +135,7 @@ def trainEachCurriculum(allCurricula, i, iterationsDone, selectedModel, jOffset,
                       dest=getModelWithCandidatePrefix(nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
         txtLogger.info(f"Trained iteration j {j} (offset {jOffset}) of curriculum {i}")
 
-    return 1
-    # return evaluateAgent(nameOfCurriculumI)
+    return evaluateAgent(nameOfCurriculumI)
 
 
 def initializeRewards(N):
@@ -151,11 +149,19 @@ def initializeRewards(N):
     return rewards
 
 
+def getCurriculaEnvDetails(allCurricula) -> dict:
+    full_env_list = {}
+    for i in range(len(allCurricula)):
+        full_env_list[i] = allCurricula[i]
+    return full_env_list
+
+
 def trainEnv(allCurricula: list) -> None:
     """
 
     :param allCurricula:
     """
+    trainStart = time.time()
     modelPath = os.getcwd() + "\\storage\\" + args.model # use this ??
     logFilePath = modelPath + "\\status.json"
 
@@ -166,19 +172,21 @@ def trainEnv(allCurricula: list) -> None:
         txtLogger.info(trainingInfoJson)
         iterationsDoneSoFar = trainingInfoJson["numFrames"]
         startEpoch = trainingInfoJson["epochsDone"]
+        curriculaEnvDetails = trainingInfoJson["curriculaEnvDetails"]
 
         rewards = trainingInfoJson["rewards"]
         txtLogger.info(f"Continung training from epoch {startEpoch}... ")
     else:
-        PRE_TRAIN_FRAMES = 15000  # TODO set to 100k
         startEpoch = 1
         rewards = initializeRewards(len(allCurricula))  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
 
         selectedModel = args.model + "\\epoch_" + str(0)
         txtLogger.info("Pretraining. . .")
         iterationsDoneSoFar = startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
+        curriculaEnvDetails = {}
         trainingInfoJson = {"selectedEnvs": [],
                             "bestCurriculaIds": [],
+                            "curriculaEnvDetails": curriculaEnvDetails,
                             "rewards": rewards,
                             "epochsDone": startEpoch,
                             "numFrames": iterationsDoneSoFar}
@@ -191,7 +199,7 @@ def trainEnv(allCurricula: list) -> None:
     curriculumChosenConsecutivelyTimes = 0
     jOffset = 0
 
-    for epoch in range(startEpoch, 6):
+    for epoch in range(startEpoch, 10):
         selectedModel = args.model + "\\epoch_" + str(epoch)
         for i in range(len(allCurricula)):
             jOffset = 0
@@ -221,22 +229,23 @@ def trainEnv(allCurricula: list) -> None:
             allCurricula[currentBestCurriculum][jOffset])  # TODO Test if this works properly
         trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
         trainingInfoJson["rewards"] = rewards
+        trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = getCurriculaEnvDetails(allCurricula)
 
         with open(logFilePath, 'w') as f:
             f.write(json.dumps(trainingInfoJson, indent=4))
-        if epoch >= 3:
-            break
+        txtLogger.info(f"CurriculaEnvDetails {trainingInfoJson['curriculaEnvDetails']}")
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
 
     txtLogger.info("----TRAINING END-----")
     txtLogger.info(f"Best Curricula {trainingInfoJson['bestCurriculaIds']}")
     txtLogger.info(f"Trained in Envs {trainingInfoJson['selectedEnvs']}")
     txtLogger.info(f"Rewards: {rewards}")
-    txtLogger.info("-------------------")
+    txtLogger.info(f"Rewards: {rewards}")
+    txtLogger.info(f"Time ended at {time.time()} , total training time: {trainStart - time.time()}")
+    txtLogger.info("----------COLOR---------")
 
 
 def getModelName(model, curriculumNr) -> str:
-    print(model)
     return model + "_curric" + str(curriculumNr)
 
 
@@ -248,7 +257,6 @@ def copyAgent(src, dest) -> None:
     pathPrefix = os.getcwd() + '\\storage\\'
     fullSrcPath = pathPrefix + src
     fullDestPath = pathPrefix + dest
-    print(fullSrcPath, "\n", fullDestPath)
     if os.path.isdir(fullDestPath):
         txtLogger.warning(f"Path already exists! {fullDestPath} --> ???")
         # raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
@@ -271,12 +279,14 @@ if __name__ == "__main__":
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
     txtLogger.info(f"Device: {device}")
 
-    uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6]
-    # noinspection INSPECTION_NAME
-    other =             [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8]
+    uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16]
+    other =             [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_8x8]
+    difficult =         [ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_8x8]
 
-    curricula = [uniformCurriculum]
-    ITERATIONS_PER_ENV = 25000
+    curricula = [uniformCurriculum, other, difficult]
+
+    ITERATIONS_PER_ENV = 150000
+    PRE_TRAIN_FRAMES = 100000
     HORIZON_LENGTH = ITERATIONS_PER_ENV * len(curricula[0])
 
     trainEnv(curricula)
