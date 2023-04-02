@@ -105,6 +105,7 @@ def register_minigrid_envs():
         kwargs={"size": 8},
     )
 
+
     register(
         id="MiniGrid-DoorKey-16x16-v0",
         entry_point="minigrid.envs:DoorKeyEnv",
@@ -182,9 +183,9 @@ def register_minigrid_envs():
     )
 
     register(
-        id="MiniGrid-Empty-Random,8x8-v0",
+        id="MiniGrid-Empty-Random-8x8-v0",
         entry_point="minigrid.envs:EmptyEnv",
-        kwargs={"size": 6, "agent_start_pos": None},
+        kwargs={"size": 8, "agent_start_pos": None},
     )
 
     register(

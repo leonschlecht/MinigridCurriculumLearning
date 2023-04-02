@@ -301,22 +301,26 @@ def deleteModel(directory) -> None:
     shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
 
 
-def manualCurriculum():
+def adaptiveCurriculum():
     iterationsDoneSoFar = 0  # TODO load
-    env = ENV_NAMES.DOORKEY_8x8
-    for epoch in range(1, 11):
-        iterationsDoneSoFar = startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, env)
+    currentEnv = ENV_NAMES.DOORKEY_6x6
+    nextEnvi = nextEnv(currentEnv)
+    for epoch in range(1, 25):
+        iterationsDoneSoFar = startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, currentEnv)
+        iterationsDoneSoFar = startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, nextEnvi)
+        iterationsDoneSoFar = startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, currentEnv)
+
         score = evaluateAgent(args.model)
         if score <= 1:
-            env = ENV_NAMES.DOORKEY_5x5
+            currentEnv = ENV_NAMES.DOORKEY_5x5
         elif score <= 2:
-            env = ENV_NAMES.DOORKEY_6x6
+            currentEnv = ENV_NAMES.DOORKEY_6x6
         elif score <= 3:
-            env = ENV_NAMES.DOORKEY_8x8
+            currentEnv = ENV_NAMES.DOORKEY_8x8
         else:
-            env = ENV_NAMES.DOORKEY_8x8
-        print(f"score in epoch {epoch}: {score} ---> next Env: {env}")
-        # TODO maybe not do it after every training; only after a set curriculum eg
+            currentEnv = ENV_NAMES.DOORKEY_16x16
+        nextEnvi = nextEnv(currentEnv)
+        txtLogger.info(f"score in ep {epoch}: {score} ---> next Env: {currentEnv}; iterations: {iterationsDoneSoFar}")
 
 
     print("Done")
@@ -330,38 +334,15 @@ if __name__ == "__main__":
     txtLogger.info(f"Device: {device}")
 
     uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16]
-    other = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_8x8]
-    difficult = [ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_8x8]
+    focus8 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_6x6]
+    mix16_8 = [ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_8x8]
+    idk = [ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
 
-    curricula = [uniformCurriculum, other, difficult]
+    curricula = [uniformCurriculum, focus8, mix16_8, idk]
 
     ITERATIONS_PER_ENV = 150000
     PRE_TRAIN_FRAMES = 100000
     HORIZON_LENGTH = ITERATIONS_PER_ENV * len(curricula[0])
 
     # startCurriculumTraining(curricula)
-    manualCurriculum()
-
-"""
-        txtLogger.info("Hello")
-        # the folder will already exist with an empty log.txt file
-        csv_path = os.path.join(os.getcwd() + "\\storage\\" + args.model, "log.csv")
-        csv_file = open(csv_path, "a")
-        csv_file, csv_logger = csv_file, csv.writer(csv_file)
-        csv_logger.writerow(["epochsDone", "numFrames", "selectedEnvs", "bestCurriculaIds", "rewards"])
-        csv_logger.writerow([0, PRE_TRAIN_FRAMES, [1,2,3,5,5,5,6], [], {"0": [1,2,3], "1": [4,5,6]}])
-        csv_file.flush()
-"""
-
-"""
-    # finish the environments that were skipped due to the ith curriculum being chosen jOffset times
-
-
-    additionalOffset = len(allCurricula[i]) - jOffset
-    for j in range(jOffset):
-        startTraining(epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1)
-                      + previousFrames, nameOfCurriculumI, allCurricula[i][j])
-        txtLogger.info(f"__Trained iteration j {j} offset {jOffset}")
-        txtLogger.warning(
-            f"Offset {epoch * HORIZON_LENGTH + FRAMES_PER_CURRICULUM * (additionalOffset + j + 1) + previousFrames}")
-"""
+    adaptiveCurriculum()
