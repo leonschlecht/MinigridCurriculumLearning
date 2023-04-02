@@ -302,7 +302,7 @@ def deleteModel(directory) -> None:
 
 
 def adaptiveCurriculum():
-    iterationsDoneSoFar = 0  # TODO load
+    iterationsDoneSoFar = 450000  # TODO load
     currentEnv = ENV_NAMES.DOORKEY_6x6
     nextEnvi = nextEnv(currentEnv)
     for epoch in range(1, 25):
