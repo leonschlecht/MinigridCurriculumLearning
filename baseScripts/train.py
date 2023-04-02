@@ -149,7 +149,7 @@ if __name__ == "__main__":
     start_time = time.time()
     values = []
     startCountingValue = False
-    while num_frames < args.frames:
+    while num_frames < args.frames * 10:
         # Update model parameters
         update_start_time = time.time()
         exps, logs1 = algo.collect_experiences()
@@ -178,8 +178,8 @@ if __name__ == "__main__":
             header += ["entropy", "value", "policy_loss", "value_loss", "grad_norm"]
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
             txt_logger.info(
-                "U {} | F {:06} | FPS {:04.0f} | D {} | rR:msmM {:.2f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.3f} | V {:.3f} | pL {:.3f} | vL {:.3f} | g {:.3f}"
-                .format(*data))
+                "{} U {} | F {:06} | FPS {:04.0f} | D {} | rR:msmM {:.2f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.3f} | V {:.3f} | pL {:.3f} | vL {:.3f} | g {:.3f}"
+                .format(args.env, *data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
             data += return_per_episode.values()
@@ -203,7 +203,7 @@ if __name__ == "__main__":
                 import numpy as np
                 if np.mean(values) > 0.75:
                     print("NEXT")
-                    break
+                    # break
         else:
             startCountingValue = False
 

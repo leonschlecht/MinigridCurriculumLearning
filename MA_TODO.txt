@@ -1,41 +1,42 @@
-- Dir structure & subdirectories (2h)
-- Log what each curriculum looked like at each timestep (1h)
-
-- Baseline: abwechselnder 16-8 einbauen (1-2h)
-
-- Probedurchlauf mit 2 Curricula mit je 3 Leveln
-- Docstrings und Kommentare
-- Loop Code auslagern
-
+Random Gedanken
+- Wie damit umgehen, dass man evtl nicht alles 1:1 gleich lang machen muss? zB Man kann 200k trainieren 16x16, und 100k 8x8 reicht zum stabilisieren
+- Darf ich händisch etwas zum abbrechen einbauen oder sind die extra iterationen dann noch sinnvoll? zB value > .8
+- RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist
+- Gefahr der schnellen Konvergenz: gerade 5&6 sind zu easy. 8x8
+- Gefahr für feste Iterationslänge? Wenn man 250k fest hat, aber zB manchmal 400k das eine, dann 500k das andere besser ist (oder ist das so unwahrscheinlich dass das einfluss auf die gelernten gewichte etc hätte?
+- Nach 100k + Iterationen verlernt er bei 16x16 alles --> schlechtes ergebnis
 ------------------------------------------
+Features/Main
+- Docstrings und Kommentare
+- Baseline weiter
+- ggf doktorn mit random empty16x16
+- Baseline: abwechselnder 16-8 einbauen (1-2h
+- Add Curricula: Adaptive, Random Order
+- Wenn man während des Trainings abbricht, sollten entweder alle _curric_ status gelöscht werden oder noch zusätzlich gespeichert werden, damit man exakt weiß, wo man war
+- später:  curricula  evol erstellen (oder varianten)
 
+- später: Visualisieren, wann was gelernt wurde und co
+
+
+Paar Ideen / Maybes
 - Ladezeiten optimieren
-
-- os.getcwd() + "\\storage\\" + directory)  # TODO us os . join for these things
--    # TODO Add Curricula: Adaptive, Random Order
-- Going around circular in curriculm if offset > 0? (Probably just remove)
 - Evaluation: use weights, maybe depending on progress ;  maybe use something else like Value / Policy Loss / Frames
-- HORIZON_LENGTH : vllt in den Loop, falls Curricula nicht alle gleich lang sind (eher nicht)
-
-
-- Wenn man während des Trainings abbricht, sollten entweder alle _curric_ status gelöscht werden oder noch zusätzlich gespeichert werden
 - assert dass neuladen gleiche anzahl an curricula wie vorher ist
 
--------------------------------
-- RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist
-- Gefahr der schnellen Konvergenz: gerade 5&6 sind zu easy. 8x8 
+Small Refactorings
+- use os . join for these things os.getcwd() + "\\storage\\" + directory)
+- HORIZON_LENGTH : vllt in den Loop, falls Curricula nicht alle gleich lang sind (eher nicht)
+- besseres args unpacking
+
+---------------
 
 
 TODO Nächste Woche:
 - log
-später: random curricula oder evol erstellen (oder varianten)
-random curricula zum anfang
+später:  curricula  evol erstellen (oder varianten), random curricula zum anfang
 - rewards loggen
 - Plot überlappen
-
-
 - Auswählen ; Tracking
-
 
 5 Mio insg;
 alle 250k  ändern
@@ -44,18 +45,10 @@ alle 250k  ändern
 Mi 14 Uhr
 
 
-Bedenken an CL verfahren: händische Curricula
-
 ----
 
 - Zustand backup nach jedem Curriculum, und das dann am Anfang laden
-- Mainloop wird falsch überschrieben
 
-- mehr debug logs beim Training
-loggen in datei, welches curriculum von wann bis wann genutzt wurde (+die env)
 Hyperparameter: Epochs, HorizonLength, pretraining, ggf die Curricula??
 
 - Load status to read exact number of frames ( and calculate how much can be done)
-
-- besseres args unpacking
----------------------------

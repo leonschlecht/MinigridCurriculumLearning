@@ -67,7 +67,7 @@ def main(frames: int, model: str, env: str, args) -> int:
 
     # Load algo
     start = time.time()
-    print("\tLoading algorithm. . . ", end=" ")
+    # print("\tLoading algorithm. . . ", end=" ")
     algo = torch_ac.PPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                             args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                             args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
@@ -136,7 +136,7 @@ def main(frames: int, model: str, env: str, args) -> int:
             if hasattr(preprocess_obss, "vocab"):
                 status["vocab"] = preprocess_obss.vocab.vocab
             utils.save_status(status, model_dir)
-            txt_logger.info("\t\tStatus saved")
+            # txt_logger.info("\t\tStatus saved")
 
     txt_logger.info('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')
     algo.env.close()
