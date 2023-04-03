@@ -198,6 +198,14 @@ def startCurriculumTraining(allCurricula: list) -> None:
         updateTrainingInfo(trainingInfoJson, logFilePath, epoch, iterationsDoneSoFar,
                            allCurricula[currentBestCurriculum][jOffset], currentBestCurriculum, rewards,
                            getCurriculaEnvDetails(allCurricula))
+        # TODO : EVOLUTIONARY
+        # Muss man speichern, was vorher gut war?
+        # Muss man die bestimmten Envs schwierigkeitsgrade zuweisen, um die neuen evol. Curricula zu generieren?
+        #
+        # Man kann evtl. speichern, wann das Model den besten Reward erhalten hat, um darauf zurückzugriefen; aber overfitting ist ja auch so eine sache hier weil man keine test/train untescheidung hat
+        # wir haben die rewards für die jeweiligen curricula;
+        # Ist der interessante Teil das gute erstellen von curricula mithilfe von EA; oder einfach nur dass man
+        # eine gute Gesamtidee findet?
 
     printFinalLogs(trainingInfoJson, trainStart)
 
