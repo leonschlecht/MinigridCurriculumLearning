@@ -5,8 +5,7 @@ from torch_ac.utils.penv import ParallelEnv
 import json
 
 import utils
-from utils import device
-from constants import ENV_NAMES
+from utils import device, ENV_NAMES
 
 
 def evaluateAgentInAllEnvs(args, model, evalEnv) -> dict:

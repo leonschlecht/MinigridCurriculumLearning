@@ -2,69 +2,11 @@ import os
 import argparse
 import json
 import numpy as np
-import shutil
 import utils
 from scripts import evaluate, train
-from constants import ENV_NAMES
-from utils import device
+from utils import ENV_NAMES
+from utils import device, getModelWithCandidatePrefix
 import time
-
-parser = argparse.ArgumentParser()
-
-# General parameters
-parser.add_argument("--algo", default="ppo",
-                    help="algorithm to use: a2c | ppo (REQUIRED)")
-parser.add_argument("--model", default=None,
-                    help="name of the model (default: {ENV}_{ALGO}_{TIME})")
-parser.add_argument("--seed", type=int, default=1,
-                    help="random seed (default: 1)")
-parser.add_argument("--log-interval", type=int, default=1,
-                    help="number of updates between two logs (default: 1)")
-parser.add_argument("--save-interval", type=int, default=2,
-                    help="number of updates between two saves (default: 2, 0 means no saving)")
-parser.add_argument("--procs", type=int, default=32,
-                    help="number of processes (default: 32)")
-
-# Parameters for main algorithm
-parser.add_argument("--epochs", type=int, default=4,
-                    help="number of epochs for PPO (default: 4)")
-parser.add_argument("--batch-size", type=int, default=256,
-                    help="batch size for PPO (default: 256)")
-parser.add_argument("--frames-per-proc", type=int, default=None,
-                    help="number of frames per process before update (default: 5 for A2C and 128 for PPO)")
-parser.add_argument("--discount", type=float, default=0.99,
-                    help="discount factor (default: 0.99)")
-parser.add_argument("--lr", type=float, default=0.001,
-                    help="learning rate (default: 0.001)")
-parser.add_argument("--gae-lambda", type=float, default=0.95,
-                    help="lambda coefficient in GAE formula (default: 0.95, 1 means no gae)")
-parser.add_argument("--entropy-coef", type=float, default=0.01,
-                    help="entropy term coefficient (default: 0.01)")
-parser.add_argument("--value-loss-coef", type=float, default=0.5,
-                    help="value loss term coefficient (default: 0.5)")
-parser.add_argument("--max-grad-norm", type=float, default=0.5,
-                    help="maximum norm of gradient (default: 0.5)")
-parser.add_argument("--optim-eps", type=float, default=1e-8,
-                    help="Adam and RMSprop optimizer epsilon (default: 1e-8)")
-parser.add_argument("--optim-alpha", type=float, default=0.99,
-                    help="RMSprop optimizer alpha (default: 0.99)")
-parser.add_argument("--clip-eps", type=float, default=0.2,
-                    help="clipping epsilon for PPO (default: 0.2)")
-parser.add_argument("--recurrence", type=int, default=1,
-                    help="number of time-steps gradient is backpropagated (default: 1). If > 1, a LSTM is added to the model to have memory.")
-parser.add_argument("--text", action="store_true", default=False,
-                    help="add a GRU to the model to handle text input")
-
-# Evaluation Arguments
-parser.add_argument("--episodes", type=int, default=10,
-                    help="number of episodes of evaluation (default: 10)")
-parser.add_argument("--argmax", action="store_true", default=False,
-                    help="action with highest probability is selected")
-parser.add_argument("--worst-episodes-to-show", type=int, default=10,
-                    help="how many worst episodes to show")
-parser.add_argument("--memory", action="store_true", default=False,
-                    help="add a LSTM to the model")
-
 
 def nextEnv(currentEnv):
     if currentEnv == ENV_NAMES.DOORKEY_8x8:
@@ -121,15 +63,16 @@ def trainEachCurriculum(allCurricula, i, iterationsDone, selectedModel, jOffset)
     :param selectedModel:
     :return:
     """
-    nameOfCurriculumI = getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
-    copyAgent(src=selectedModel, dest=nameOfCurriculumI)
+    nameOfCurriculumI = utils.getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
+    utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
     for j in range(jOffset, len(allCurricula[i])):
         iterationsDone = startTraining(iterationsDone + ITERATIONS_PER_ENV, nameOfCurriculumI,
                                        allCurricula[i][j])
         txtLogger.info(f"Iterations Done {iterationsDone}")
         if j == jOffset:
-            copyAgent(src=nameOfCurriculumI,
-                      dest=getModelWithCandidatePrefix(nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+            utils.copyAgent(src=nameOfCurriculumI,
+                            dest=utils.getModelWithCandidatePrefix(
+                                nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
         txtLogger.info(f"Trained iteration j {j} (offset {jOffset}) of curriculum {i}")
 
     return evaluateAgent(nameOfCurriculumI)
@@ -226,7 +169,7 @@ def startCurriculumTraining(allCurricula: list) -> None:
     assert len(allCurricula) > 0
 
     trainStart = time.time()
-    modelPath = os.getcwd() + "\\storage\\" + args.model  # use this ??
+    modelPath = os.getcwd() + "\\storage\\" + args.model
     logFilePath = modelPath + "\\status.json"
 
     if os.path.exists(logFilePath):
@@ -245,7 +188,7 @@ def startCurriculumTraining(allCurricula: list) -> None:
         txtLogger.info("Pretraining. . .")
         iterationsDoneSoFar = startTraining(PRE_TRAIN_FRAMES, selectedModel, ENV_NAMES.DOORKEY_5x5)
         trainingInfoJson = initTrainingInfo(logFilePath, rewards, iterationsDoneSoFar)
-        copyAgent(src=selectedModel, dest=args.model + "\\epoch_" + str(
+        utils.copyAgent(src=selectedModel, dest=args.model + "\\epoch_" + str(
             startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
 
     lastChosenCurriculum = None
@@ -260,8 +203,8 @@ def startCurriculumTraining(allCurricula: list) -> None:
         iterationsDoneSoFar += ITERATIONS_PER_ENV
         currentBestCurriculum = int(np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
 
-        copyAgent(src=getModelWithCandidatePrefix(getModelName(selectedModel, currentBestCurriculum)),
-                  dest=args.model + "\\epoch_" + str(epoch + 1))  # the model for the next epoch
+        utils.copyAgent(src=getModelWithCandidatePrefix(utils.getModelName(selectedModel, currentBestCurriculum)),
+                        dest=args.model + "\\epoch_" + str(epoch + 1))  # the model for the next epoch
 
         curriculumChosenConsecutivelyTimes = calculateConsecutivelyChosen(curriculumChosenConsecutivelyTimes,
                                                                           currentBestCurriculum, lastChosenCurriculum,
@@ -273,32 +216,6 @@ def startCurriculumTraining(allCurricula: list) -> None:
                            getCurriculaEnvDetails(allCurricula))
 
     printFinalLogs(trainingInfoJson, trainStart)
-
-
-def getModelName(model, curriculumNr) -> str:
-    return model + "_curric" + str(curriculumNr)
-
-
-def getModelWithCandidatePrefix(model) -> str:
-    return model + "_CANDIDATE"
-
-
-def copyAgent(src, dest) -> None:
-    pathPrefix = os.getcwd() + '\\storage\\'
-    fullSrcPath = pathPrefix + src
-    fullDestPath = pathPrefix + dest
-    if os.path.isdir(fullDestPath):
-        raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
-    else:
-        shutil.copytree(fullSrcPath, fullDestPath)
-        txtLogger.info(f'Copied Agent! {src} ---> {dest}')
-
-
-def deleteModel(directory) -> None:
-    """
-    :param directory: name of the model to be deleted, which is stored in /storage
-    """
-    shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
 
 
 def calculateNextEnvs(score):
@@ -334,13 +251,13 @@ def adaptiveCurriculum():
         startEpoch = 0
         iterationsDoneSoFar = 0
         easierEnv = ENV_NAMES.DOORKEY_6x6
-        trainingInfo = {
+        trainingInfoJson = {
             "curriculaEnvs": [],  # list of lists
             "rewards": [],
             "epochsDone": 0,
             "numFrames": 0}
         with open(logFilePath, 'w') as f:
-            f.write(json.dumps(trainingInfo, indent=4))
+            f.write(json.dumps(trainingInfoJson, indent=4))
 
     harderEnv = nextEnv(easierEnv)
     for epoch in range(startEpoch, 25):
@@ -357,12 +274,12 @@ def adaptiveCurriculum():
         txtLogger.info(
             f"evaluationScore in ep {epoch}: {evaluationScore} ---> next Env: {easierEnv}; iterations: {iterationsDoneSoFar}")
         with open(logFilePath, 'w') as f:
-            f.write(json.dumps(trainingInfo, indent=4))
+            f.write(json.dumps(trainingInfoJson, indent=4))
     print("Done")
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
+    args = utils.initializeParser()
     args.mem = args.recurrence > 1
 
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
@@ -379,5 +296,5 @@ if __name__ == "__main__":
     PRE_TRAIN_FRAMES = 100000
     HORIZON_LENGTH = ITERATIONS_PER_ENV * len(curricula[0])
 
-    # startCurriculumTraining(curricula)
-    adaptiveCurriculum()
+    startCurriculumTraining(curricula)
+    # adaptiveCurriculum()
