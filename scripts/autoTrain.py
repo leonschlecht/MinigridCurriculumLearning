@@ -93,7 +93,7 @@ def evaluateAgent(model) -> int:
     :return: the average reward
     """
     reward = 0
-    evaluationResult = evaluate.evaluateAll(model, args) # TODO decide if argmax or not
+    evaluationResult = evaluate.evaluateAll(model, args)  # TODO decide if argmax or not
     for evalEnv in ENV_NAMES.ALL_ENVS:
         reward += float(evaluationResult[evalEnv]["meanRet"])
     return reward
@@ -220,8 +220,8 @@ def calculateJOffset(curriculumChosenConsecutivelyTimes, isZero) -> int:
 
 def startCurriculumTraining(allCurricula: list) -> None:
     """
-
-    :param allCurricula:
+    Starts The RH Curriculum Training
+    :param allCurricula: the curriculums for which the training will be done
     """
     assert len(allCurricula) > 0
 
@@ -296,33 +296,68 @@ def copyAgent(src, dest) -> None:
 
 def deleteModel(directory) -> None:
     """
-    :param directory: of the model to be deleted
+    :param directory: name of the model to be deleted, which is stored in /storage
     """
     shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
 
 
+def calculateNextEnvs(score):
+    if score <= 1:
+        easierEnv = ENV_NAMES.DOORKEY_5x5
+    elif score <= 2:
+        easierEnv = ENV_NAMES.DOORKEY_6x6
+    elif score <= 3:
+        easierEnv = ENV_NAMES.DOORKEY_8x8
+    else:
+        easierEnv = ENV_NAMES.DOORKEY_16x16
+    return easierEnv, nextEnv(easierEnv)
+
+
 def adaptiveCurriculum():
-    iterationsDoneSoFar = 450000  # TODO load
-    currentEnv = ENV_NAMES.DOORKEY_6x6
-    nextEnvi = nextEnv(currentEnv)
-    for epoch in range(1, 25):
-        iterationsDoneSoFar = startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, currentEnv)
-        iterationsDoneSoFar = startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, nextEnvi)
-        iterationsDoneSoFar = startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, currentEnv)
+    """
+    Trains on an adaptive curriculum, i.e. depending on the performance of the agent, the next envs will be determined
+    """
 
-        score = evaluateAgent(args.model)
-        if score <= 1:
-            currentEnv = ENV_NAMES.DOORKEY_5x5
-        elif score <= 2:
-            currentEnv = ENV_NAMES.DOORKEY_6x6
-        elif score <= 3:
-            currentEnv = ENV_NAMES.DOORKEY_8x8
-        else:
-            currentEnv = ENV_NAMES.DOORKEY_16x16
-        nextEnvi = nextEnv(currentEnv)
-        txtLogger.info(f"score in ep {epoch}: {score} ---> next Env: {currentEnv}; iterations: {iterationsDoneSoFar}")
+    modelPath = os.getcwd() + "\\storage\\" + args.model
+    logFilePath = modelPath + "\\status.json"
 
+    if os.path.exists(logFilePath):
+        with open(logFilePath, 'r') as f:
+            trainingInfoJson = json.loads(f.read())
 
+        iterationsDoneSoFar = trainingInfoJson["numFrames"]
+        startEpoch = trainingInfoJson["epochsDone"]
+        rewards = trainingInfoJson["rewards"]
+        easierEnv = calculateNextEnvs(rewards[-1])
+        txtLogger.info(f"Continung training from epoch {startEpoch}... ")
+    else:
+        startEpoch = 0
+        iterationsDoneSoFar = 0
+        easierEnv = ENV_NAMES.DOORKEY_6x6
+        trainingInfo = {
+            "curriculaEnvs": [],  # list of lists
+            "rewards": [],
+            "epochsDone": 0,
+            "numFrames": 0}
+        with open(logFilePath, 'w') as f:
+            f.write(json.dumps(trainingInfo, indent=4))
+
+    harderEnv = nextEnv(easierEnv)
+    for epoch in range(startEpoch, 25):
+        curriculum = [harderEnv, easierEnv, harderEnv, easierEnv]
+        for env in curriculum:
+            iterationsDoneSoFar = startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, env)
+
+        evaluationScore = evaluateAgent(args.model)
+        easierEnv, harderEnv = calculateNextEnvs(evaluationScore)
+        trainingInfoJson["curriculaEnvs"].append([curriculum])  # list of lists
+        trainingInfoJson["rewards"].append(evaluationScore)
+        trainingInfoJson["epochsDone"] = epoch
+        trainingInfoJson["numFrames"] = iterationsDoneSoFar
+        txtLogger.info(
+            f"evaluationScore in ep {epoch}: {evaluationScore} ---> next Env: {easierEnv}; iterations: {iterationsDoneSoFar}")
+        with open(logFilePath, 'w') as f:
+            f.write(json.dumps(trainingInfo, indent=4))
     print("Done")
 
 
