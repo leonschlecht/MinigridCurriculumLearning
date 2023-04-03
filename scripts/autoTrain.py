@@ -8,6 +8,7 @@ from utils import ENV_NAMES
 from utils import device, getModelWithCandidatePrefix
 import time
 
+
 def nextEnv(currentEnv):
     if currentEnv == ENV_NAMES.DOORKEY_8x8:
         return ENV_NAMES.DOORKEY_16x16
@@ -44,9 +45,6 @@ def evaluateAgent(model) -> int:
 def startTraining(frames, model, env) -> int:
     """
     Starts the training.
-    :param frames:
-    :param model:
-    :param env:
     :return: Returns the amount of iterations trained
     """
     return train.main(frames, model, env, args)
@@ -55,13 +53,6 @@ def startTraining(frames, model, env) -> int:
 def trainEachCurriculum(allCurricula, i, iterationsDone, selectedModel, jOffset) -> int:
     """
     Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
-
-    :param jOffset:
-    :param allCurricula:
-    :param i:
-    :param iterationsDone:
-    :param selectedModel:
-    :return:
     """
     nameOfCurriculumI = utils.getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
     utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
@@ -98,22 +89,14 @@ def getCurriculaEnvDetails(allCurricula) -> dict:
 
 def updateTrainingInfo(trainingInfoJson, logFilePath, epoch, iterationsDoneSoFar, selectedEnv, currentBestCurriculum,
                        rewards, curriculaEnvDetails) -> None:
-    """
-
-    :param trainingInfoJson:
-    :param logFilePath:
-    :param epoch:
-    :param iterationsDoneSoFar:
-    :param selectedEnv:
-    :param currentBestCurriculum:
-    :param rewards:
-    :param curriculaEnvDetails:
-    """
     trainingInfoJson["epochsDone"] = epoch + 1
     trainingInfoJson["numFrames"] = iterationsDoneSoFar
-    trainingInfoJson["selectedEnvs"].append(selectedEnv)  # TODO Test if this works properly
+    trainingInfoJson["selectedEnvs"].append(
+        selectedEnv)  # TODO Test if this works properly / also maybe remove bcs redundant
     trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
     trainingInfoJson["rewards"] = rewards
+    currentScore = evaluateAgent(args.model + "\\epoch_" + str(epoch + 1))
+    trainingInfoJson["actualPerformance"].append([currentScore, selectedEnv])
     trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = curriculaEnvDetails
 
     with open(logFilePath, 'w') as f:
@@ -148,6 +131,7 @@ def initTrainingInfo(logFilePath, rewards, pretrainingIterations):
                     "bestCurriculaIds": [],
                     "curriculaEnvDetails": {},
                     "rewards": rewards,
+                    "actualPerformance": [],
                     "epochsDone": 1,
                     "numFrames": pretrainingIterations}
     with open(logFilePath, 'w') as f:
@@ -278,6 +262,21 @@ def adaptiveCurriculum():
     print("Done")
 
 
+def evaluateCurriculumResults():
+    pass
+    # ["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
+    # ["actualPerformance"][1] ---> zeigt die zuletzt benutzte Umgebung zu dem Zeitpunkt an
+    #
+    tmp = []
+    i = 0
+    for reward, env in tmp:
+        print(reward, env)
+        i += 1
+
+    # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
+    # # Aber warum? Und wie will man das nach 20+ durhcläufen plotten
+
+
 if __name__ == "__main__":
     args = utils.initializeParser()
     args.mem = args.recurrence > 1
@@ -298,3 +297,5 @@ if __name__ == "__main__":
 
     startCurriculumTraining(curricula)
     # adaptiveCurriculum()
+
+    # evaluateCurriculumResults(trainingInfoJson)
