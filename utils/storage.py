@@ -60,8 +60,9 @@ def get_txt_logger(model_dir):
             logging.StreamHandler(sys.stdout)
         ]
     )
-
-    return logging.getLogger()
+    txtLogger = logging.getLogger()
+    txtLogger.info(f"Device: {device}")
+    return txtLogger
 
 
 def get_csv_logger(model_dir):

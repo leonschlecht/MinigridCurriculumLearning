@@ -10,7 +10,8 @@ Features/Main
 Baseline: 20 Mio iterationen (zb 1,2,4, 15 mio) --> nachher 2h laufenlassen
 Baseline2: 8x8 in 2 Mio lernen, dann toggle zwischen 16 und 8 für jeweils X iterationen
 Random rH: 5 Mio curriculum insg?
-
+# Curriculum where every time the order changes for the next iteration
+# or maybe do linear with that order then ??
 
 mail:
 - EA ausbauen (Representation extending
@@ -18,16 +19,16 @@ mail:
 - Vergleich mit Baseline (stück für stück steigern)
 
 
-- Baseline weiter
+--- andere todos ---
+- Baseline trainieren & abspeichern
+- argparse verbessern
+- train/evaluate in anderen Ordner, scripts nur für ausführbares
+-
 
 
-- Docstrings und Kommentare
 
-- Baseline: abwechselnder 16-8 einbauen (1-2h
-- Add Curricula: Adaptive, Random Order
 - Wenn man während des Trainings abbricht, sollten entweder alle _curric_ status gelöscht werden oder noch zusätzlich gespeichert werden, damit man exakt weiß, wo man war
 - später:  curricula  evol erstellen (oder varianten)
-
 - später: Visualisieren, wann was gelernt wurde und co
 
 
@@ -38,7 +39,6 @@ Paar Ideen / Maybes
 
 Small Refactorings
 - use os . join for these things os.getcwd() + "\\storage\\" + directory)
-- HORIZON_LENGTH : vllt in den Loop, falls Curricula nicht alle gleich lang sind (eher nicht)
 - besseres args unpacking
 
 ---------------

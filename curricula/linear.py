@@ -1,29 +1,28 @@
 import utils
 from scripts import train, evaluate
-from utils import initializeParser, ENV_NAMES
+from utils import initializeArgParser, ENV_NAMES
 import time
 import os
 import json
 
 """
-    Trains each curriculum in order for a pre-set amount of iterations
+Trains each curriculum in order for a pre-set amount of iterations
 """
 
 
-def doBaselineTraining():
+def startLinearCurriculum(args, startTime, txtLogger):
     TOTAL_ITERATIONS = 20000000
-    iterations5x5 = 50000
+    iterations5x5 = 500000
     iterations6x6 = 500000
     iterations8x8 = 4000000
     iterations16x16 = TOTAL_ITERATIONS - iterations8x8 - iterations6x6 - iterations5x5
     curriculum = [iterations5x5, iterations6x6, iterations8x8, iterations16x16]
     iterationsDone = 0
-    txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
     evaluation = []
     trainingInfoJson = {}
 
     for i in range(len(curriculum)):
-        iterationsDone = train.main(5000, args.model, ENV_NAMES.ALL_ENVS[i], args)
+        iterationsDone = train.main(iterationsDone + curriculum[i], args.model, ENV_NAMES.ALL_ENVS[i], args)
         evaluation[i] = evaluate.evaluateAll(args.model, args)
         txtLogger.info(f"---Finished curriculum {ENV_NAMES.ALL_ENVS[i]} \n")
     # save iterations, training Duration
@@ -41,6 +40,7 @@ def doBaselineTraining():
 
 def evaluateModel(trainingInfoJson):
     meanRewards = []
+    # evaluateModel(trainingJson["scoreAfterEachEnv"])
     envRewards = {}
     evaluation = trainingInfoJson["scoreAfterEachEnv"]
     print("evaluation=", evaluation)
@@ -57,12 +57,4 @@ def evaluateModel(trainingInfoJson):
     print(envRewards)
     print(meanRewards)
 
-
-if __name__ == "__main__":
-    parser = initializeParser()
-    args = parser.parse_args()
-    args.mem = args.recurrence > 1
-    startTime = time.time()
-    trainingJson = doBaselineTraining()#7027
-
-    evaluateModel(trainingJson["scoreAfterEachEnv"])
+#7027

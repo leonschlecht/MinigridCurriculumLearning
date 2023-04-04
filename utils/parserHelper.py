@@ -1,9 +1,16 @@
 import argparse
 
 
-def initializeParser():
+def initializeArgParser():
     parser = argparse.ArgumentParser()
     # General parameters
+    parser.add_argument("--trainAdaptive", default=False, action="store_true",
+                        help="Decides what training method will be used. If set, adaptive curriculum will be used")
+    parser.add_argument("--trainLinear", default=False, action="store_true",
+                        help="Decides what training method will be used. If set, linear curriculum will be used")
+    parser.add_argument("--trainEvolutionary", default=True,
+                        help="Decides what training method will be used")
+
     parser.add_argument("--algo", default="ppo",
                         help="algorithm to use: a2c | ppo (REQUIRED)")
     parser.add_argument("--model", default=None,
@@ -56,4 +63,8 @@ def initializeParser():
                         help="how many worst episodes to show")
     parser.add_argument("--memory", action="store_true", default=False,
                         help="add a LSTM to the model")
-    return parser
+    args = parser.parse_args()
+    args.mem = args.recurrence > 1
+    if args.trainLinear or args.trainAdaptive:
+        args.trainEvolutionary = False
+    return args
