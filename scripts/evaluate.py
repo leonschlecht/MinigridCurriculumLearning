@@ -5,8 +5,7 @@ from torch_ac.utils.penv import ParallelEnv
 import json
 
 import utils
-from utils import device
-from constants import ENV_NAMES
+from utils import device, ENV_NAMES
 
 
 def evaluateAgentInAllEnvs(args, model, evalEnv) -> dict:
@@ -88,3 +87,16 @@ def evaluateAll(model, args) -> dict:
         f.write(evaluationResults)
     print(f"Evaluation of {model} succeeded")
     return results
+
+
+def evaluateAgent(model, args) -> int:
+    """
+    Evaluates and calculates the average performance in ALL environments
+    :param model: the name of the model
+    :return: the average reward
+    """
+    reward = 0
+    evaluationResult = evaluateAll(model, args)  # TODO decide if argmax or not
+    for evalEnv in ENV_NAMES.ALL_ENVS:
+        reward += float(evaluationResult[evalEnv]["meanRet"])
+    return reward
