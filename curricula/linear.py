@@ -20,10 +20,14 @@ def startLinearCurriculum(args, startTime, txtLogger):
     iterationsDone = 0
     evaluation = []
     trainingInfoJson = {}
+    # TODO load iterationsDone and decide where to continue training from
+    print(len(curriculum))
+    print(len(ENV_NAMES.ALL_ENVS))
+    #igrid python -m scripts.trainCurriculum --model Linear10 --trainLinear
 
     for i in range(len(curriculum)):
-        iterationsDone = train.main(iterationsDone + curriculum[i], args.model, ENV_NAMES.ALL_ENVS[i], args)
-        evaluation[i] = evaluate.evaluateAll(args.model, args)
+        iterationsDone = train.main(iterationsDone + curriculum[i], args.model, ENV_NAMES.ALL_ENVS[i], args, txtLogger)
+        evaluation.append(evaluate.evaluateAll(args.model, args))
         txtLogger.info(f"---Finished curriculum {ENV_NAMES.ALL_ENVS[i]} \n")
     # save iterations, training Duration
     duration = time.time() - startTime

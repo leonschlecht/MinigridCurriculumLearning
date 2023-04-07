@@ -22,21 +22,21 @@ class EvolutionaryCurriculum:
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
         self.startCurriculumTraining()
 
-    def trainEachCurriculum(self, i, iterationsDone, selectedModel, jOffset) -> int:
+    def trainEachCurriculum(self, i, iterationsDone, selectedModel, startingIndex) -> int:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         nameOfCurriculumI = utils.getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
         utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
-        for j in range(jOffset, len(self.curricula[i])):
+        for j in range(startingIndex, len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
-                                        self.curricula[i][j], self.args)
+                                        self.curricula[i][j], self.args, self.txtLogger)
             self.txtLogger.info(f"Iterations Done {iterationsDone}")
-            if j == jOffset:
+            if j == startingIndex:
                 utils.copyAgent(src=nameOfCurriculumI,
                                 dest=utils.getModelWithCandidatePrefix(
                                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
-            self.txtLogger.info(f"Trained iteration j {j} (offset {jOffset}) of curriculum {i}")
+            self.txtLogger.info(f"Trained iteration j {j} (offset {startingIndex}) of curriculum {i}")
 
         return evaluate.evaluateAgent(nameOfCurriculumI, self.args)
 
@@ -60,26 +60,6 @@ class EvolutionaryCurriculum:
             fullEnvList[i] = self.curricula[i]
         return fullEnvList
 
-    def updateTrainingInfo(self, epoch, iterationsDoneSoFar, selectedEnv,
-                           currentBestCurriculum,
-                           rewards, curriculaEnvDetails) -> None:
-        self.trainingInfoJson["epochsDone"] = epoch + 1
-        self.trainingInfoJson["numFrames"] = iterationsDoneSoFar
-        self.trainingInfoJson["selectedEnvs"].append(
-            selectedEnv)  # TODO Test if this works properly / maybe remove bcs redundant
-        self.trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
-        self.trainingInfoJson["rewards"] = rewards
-        currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
-        self.trainingInfoJson["actualPerformance"].append([currentScore, selectedEnv])
-        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = curriculaEnvDetails
-
-        with open(self.logFilePath, 'w') as f:
-            f.write(json.dumps(self.trainingInfoJson, indent=4))
-
-        self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
-        self.txtLogger.info(f"CurriculaEnvDetails {self.trainingInfoJson['curriculaEnvDetails']}")
-        self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
-
     def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum,
                                      curriculaList) -> int:
         if consecutiveCount + 1 >= len(curriculaList[0]) or currentBestCurriculum != lastChosenCurriculum:
@@ -99,16 +79,37 @@ class EvolutionaryCurriculum:
 
     def initTrainingInfo(self, rewards, pretrainingIterations):
         self.trainingInfoJson = {"selectedEnvs": [],
-                             "bestCurriculaIds": [],
-                             "curriculaEnvDetails": {},
-                             "rewards": rewards,
-                             "actualPerformance": [],
-                             "epochsDone": 1,
-                             "numFrames": pretrainingIterations}
+                                 "bestCurriculaIds": [],
+                                 "curriculaEnvDetails": {},
+                                 "rewards": rewards,
+                                 "actualPerformance": [],
+                                 "epochsDone": 1,
+                                 "numFrames": pretrainingIterations}
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4))
 
-    def calculateJOffset(self, curriculumChosenConsecutivelyTimes, isZero) -> int:
+    def updateTrainingInfo(self, epoch, iterationsDoneSoFar, selectedEnv,
+                           currentBestCurriculum,
+                           rewards, curriculaEnvDetails, curriculumConsecutivelyChosen) -> None:
+        self.trainingInfoJson["epochsDone"] = epoch + 1
+        self.trainingInfoJson["numFrames"] = iterationsDoneSoFar
+        self.trainingInfoJson["selectedEnvs"].append(
+            selectedEnv)  # TODO Test if this works properly / maybe remove bcs redundant
+        self.trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
+        self.trainingInfoJson["rewards"] = rewards
+        currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
+        self.trainingInfoJson["actualPerformance"].append([currentScore, selectedEnv])
+        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = curriculaEnvDetails
+        self.trainingInfoJson["consecutive"] = curriculumConsecutivelyChosen
+
+        with open(self.logFilePath, 'w') as f:
+            f.write(json.dumps(self.trainingInfoJson, indent=4))
+
+        self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
+        self.txtLogger.info(f"CurriculaEnvDetails {self.trainingInfoJson['curriculaEnvDetails']}")
+        self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
+
+    def calculateStartingIndex(self, curriculumChosenConsecutivelyTimes, isZero) -> int:
         if isZero:
             return 0
         return curriculumChosenConsecutivelyTimes
@@ -116,9 +117,7 @@ class EvolutionaryCurriculum:
     def startCurriculumTraining(self) -> None:
         """
         Starts The RH Curriculum Training
-        :param allCurricula: the curriculums for which the training will be done
         """
-
         if os.path.exists(self.logFilePath):
             with open(self.logFilePath, 'r') as f:
                 self.trainingInfoJson = json.loads(f.read())
@@ -126,6 +125,8 @@ class EvolutionaryCurriculum:
             iterationsDoneSoFar = self.trainingInfoJson["numFrames"]
             startEpoch = self.trainingInfoJson["epochsDone"]
             rewards = self.trainingInfoJson["rewards"]
+            curriculumChosenConsecutivelyTimes = self.trainingInfoJson["consecutive"]
+            lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
 
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
@@ -133,19 +134,19 @@ class EvolutionaryCurriculum:
             rewards = self.initializeRewards()  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
             selectedModel = self.args.model + "\\epoch_" + str(0)
             self.txtLogger.info("Pretraining. . .")
-            iterationsDoneSoFar = train.main(self.ITERATIONS_PER_ENV, selectedModel, ENV_NAMES.DOORKEY_5x5, self.args)
+            iterationsDoneSoFar = train.main(self.ITERATIONS_PER_ENV, selectedModel, ENV_NAMES.DOORKEY_5x5, self.args,
+                                             self.txtLogger)
             self.initTrainingInfo(rewards, iterationsDoneSoFar)
             utils.copyAgent(src=selectedModel, dest=self.args.model + "\\epoch_" + str(
                 startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
-
-        lastChosenCurriculum = None
-        curriculumChosenConsecutivelyTimes = 0
+            curriculumChosenConsecutivelyTimes = 0
+            lastChosenCurriculum = None
 
         for epoch in range(startEpoch, 11):
             selectedModel = self.args.model + "\\epoch_" + str(epoch)
             for i in range(len(self.curricula)):
-                jOffset = self.calculateJOffset(curriculumChosenConsecutivelyTimes, i == lastChosenCurriculum)
-                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel, jOffset)
+                startingIndex = self.calculateStartingIndex(curriculumChosenConsecutivelyTimes, i == lastChosenCurriculum)
+                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel, startingIndex)
                 rewards[str(i)].append(reward)
             iterationsDoneSoFar += self.ITERATIONS_PER_ENV
             currentBestCurriculum = int(
@@ -161,24 +162,16 @@ class EvolutionaryCurriculum:
             lastChosenCurriculum = currentBestCurriculum
 
             self.updateTrainingInfo(epoch, iterationsDoneSoFar,
-                                    self.curricula[currentBestCurriculum][jOffset], currentBestCurriculum, rewards,
-                                    self.getCurriculaEnvDetails())
+                                    self.curricula[currentBestCurriculum][startingIndex], currentBestCurriculum, rewards,
+                                    self.getCurriculaEnvDetails(), curriculumChosenConsecutivelyTimes)
             # TODO : EVOLUTIONARY
-            # Muss man speichern, was vorher gut war?
-            # Muss man die bestimmten Envs schwierigkeitsgrade zuweisen, um die neuen evol. Curricula zu generieren?
-            #
-            # Man kann evtl. speichern, wann das Model den besten Reward erhalten hat, um darauf zurückzugriefen; aber overfitting ist ja auch so eine sache hier weil man keine test/train untescheidung hat
-            # wir haben die rewards für die jeweiligen curricula;
-            # Woher weiß man, wann die Schwierigkeit erhöht werden sollte?
-
-            # Ist der interessante Teil das gute erstellen von curricula mithilfe von EA; oder einfach nur dass man
-            # eine gute Gesamtidee findet?
 
         self.printFinalLogs()
 
-def evaluateCurriculumResults( evaluationDictionary):
-    # ["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
-    # ["actualPerformance"][1] ---> zeigt die zuletzt benutzte Umgebung zu dem Zeitpunkt an
+
+def evaluateCurriculumResults(evaluationDictionary):
+    # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
+    # evaluationDictionary["actualPerformance"][1] ---> zeigt die zuletzt benutzte Umgebung zu dem Zeitpunkt an
     #
     tmp = []
     i = 0
@@ -187,4 +180,4 @@ def evaluateCurriculumResults( evaluationDictionary):
         i += 1
 
     # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
-    # # Aber warum? Und wie will man das nach 20+ durhcläufen plotten
+    # # Aber warum? Und wie will man das nach 20+ durchläufen plotten

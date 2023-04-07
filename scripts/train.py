@@ -8,7 +8,7 @@ from utils import device
 from model import ACModel
 
 
-def main(frames: int, model: str, env: str, args) -> int:
+def main(frames: int, model: str, env: str, args, txt_logger) -> int:
     """
 
     :param frames: the number of iterations
@@ -21,8 +21,6 @@ def main(frames: int, model: str, env: str, args) -> int:
     model_name = model
     model_dir = utils.get_model_dir(model_name)
 
-    # Load loggers and Tensorboard writer
-    txt_logger = utils.get_txt_logger(model_dir)
     csv_file, csv_logger = utils.get_csv_logger(model_dir)
     tb_writer = tensorboardX.SummaryWriter(model_dir)
 
@@ -72,7 +70,7 @@ def main(frames: int, model: str, env: str, args) -> int:
                             args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                             args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
 
-    print("\tAlgorithm loaded in", round(-start + time.time(), 2), "sec")
+    txt_logger.info("\tAlgorithm loaded in", round(-start + time.time(), 2), "sec")
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])

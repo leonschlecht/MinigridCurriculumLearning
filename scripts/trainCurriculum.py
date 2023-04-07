@@ -3,6 +3,7 @@ from utils import ENV_NAMES
 from curricula import linear, adaptive, EvolutionaryCurriculum
 import time
 
+
 if __name__ == "__main__":
     args = utils.initializeArgParser()
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
@@ -24,12 +25,12 @@ if __name__ == "__main__":
     startTime = time.time()
     if args.trainEvolutionary:
         e = EvolutionaryCurriculum(ITERATIONS_PER_ENV, txtLogger, startTime, curricula, args)
-        print(2)
+
     if args.trainAdaptive:
         adaptive.adaptiveCurriculum(args, ITERATIONS_PER_ENV, txtLogger, startTime)
-        print(1)
+
     if args.trainLinear:
         linear.startLinearCurriculum(args, startTime, txtLogger)
-        print(0)
+
 
     # evaluateCurriculumResults(trainingInfoJson)
