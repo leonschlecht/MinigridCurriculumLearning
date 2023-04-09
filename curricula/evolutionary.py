@@ -11,7 +11,7 @@ from utils import ENV_NAMES, getModelWithCandidatePrefix
 
 class EvolutionaryCurriculum:
 
-    def __init__(self, ITERATIONS_PER_ENV: int, txtLogger, startTime, curricula: list, args):
+    def __init__(self, ITERATIONS_PER_ENV: int, txtLogger, startTime, curricula: list, args, gamma=.9):
         self.ITERATIONS_PER_ENV = ITERATIONS_PER_ENV
         self.txtLogger = txtLogger
         self.args = args
@@ -20,6 +20,8 @@ class EvolutionaryCurriculum:
         self.trainingInfoJson = {}
         assert len(curricula) > 0
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
+        self.gamma = gamma
+
         self.startCurriculumTraining()
 
     def trainEachCurriculum(self, i, iterationsDone, selectedModel, startingIndex) -> int:
@@ -27,6 +29,7 @@ class EvolutionaryCurriculum:
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         nameOfCurriculumI = utils.getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
+        rewards = 0
         utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
         for j in range(startingIndex, len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
@@ -36,9 +39,10 @@ class EvolutionaryCurriculum:
                 utils.copyAgent(src=nameOfCurriculumI,
                                 dest=utils.getModelWithCandidatePrefix(
                                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+                # TODO save reward separately here?
             self.txtLogger.info(f"Trained iteration j {j} (offset {startingIndex}) of curriculum {i}")
-
-        return evaluate.evaluateAgent(nameOfCurriculumI, self.args)
+            rewards += self.gamma ** i * evaluate.evaluateAgent(nameOfCurriculumI, self.args)  # TODO or (i+1) ?
+        return rewards
 
     def initializeRewards(self):
         """
@@ -145,7 +149,8 @@ class EvolutionaryCurriculum:
         for epoch in range(startEpoch, 11):
             selectedModel = self.args.model + "\\epoch_" + str(epoch)
             for i in range(len(self.curricula)):
-                startingIndex = self.calculateStartingIndex(curriculumChosenConsecutivelyTimes, i == lastChosenCurriculum)
+                startingIndex = self.calculateStartingIndex(curriculumChosenConsecutivelyTimes,
+                                                            i == lastChosenCurriculum)
                 reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel, startingIndex)
                 rewards[str(i)].append(reward)
             iterationsDoneSoFar += self.ITERATIONS_PER_ENV
@@ -162,7 +167,8 @@ class EvolutionaryCurriculum:
             lastChosenCurriculum = currentBestCurriculum
 
             self.updateTrainingInfo(epoch, iterationsDoneSoFar,
-                                    self.curricula[currentBestCurriculum][startingIndex], currentBestCurriculum, rewards,
+                                    self.curricula[currentBestCurriculum][startingIndex], currentBestCurriculum,
+                                    rewards,
                                     self.getCurriculaEnvDetails(), curriculumChosenConsecutivelyTimes)
             # TODO : EVOLUTIONARY
 

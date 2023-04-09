@@ -6,6 +6,10 @@ import time
 
 if __name__ == "__main__":
     args = utils.initializeArgParser()
+    # TODO --individualNrs, --iterationsPerEnv
+    # TODO load time or set initially
+    # TODO refactor to some utils method (for all methods)
+
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
 
     uniformCurriculum = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16]
@@ -31,6 +35,3 @@ if __name__ == "__main__":
 
     if args.trainLinear:
         linear.startLinearCurriculum(args, startTime, txtLogger)
-
-
-    # evaluateCurriculumResults(trainingInfoJson)
