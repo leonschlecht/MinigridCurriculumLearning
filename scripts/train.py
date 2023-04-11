@@ -70,7 +70,7 @@ def main(frames: int, model: str, env: str, args, txt_logger) -> int:
                             args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                             args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
 
-    txt_logger.info("\tAlgorithm loaded in", round(-start + time.time(), 2), "sec")
+    txt_logger.info(f"\tAlgorithm loaded in {round(-start + time.time(), 2)} sec")
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])

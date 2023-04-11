@@ -1,4 +1,4 @@
-pymoo --> usually used for multiobjective; could use that one;  could be used for
+pymoo --> usually used for multiobjective;
 define problem: minigrid with curriclum
 return reward
 (non dominatesd sorting algoirthm, NSGA-III
@@ -7,17 +7,9 @@ discount factor
 use multiple reward milestones
 
 
-
-code structure
-
-gamma^i
-using other envs ?
-
-
 # 15-16 Di vortrag in # R1307
 # Tuesday 14
 # Topic itself, problem to be solving, current solutions out there (RW), why does it need to be improved; plan waht should happen until next month
-frame limiting
 
 
 -------
@@ -25,23 +17,13 @@ frame limiting
 
 Random Gedanken
 - Wie damit umgehen, dass man evtl nicht alles 1:1 gleich lang machen muss? zB Man kann 200k trainieren 16x16, und 100k 8x8 reicht zum stabilisieren
-- Darf ich händisch etwas zum abbrechen einbauen oder sind die extra iterationen dann noch sinnvoll? zB value > .8
 - RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist
-- Gefahr der schnellen Konvergenz: gerade 5&6 sind zu easy. 8x8
-- Gefahr für feste Iterationslänge? Wenn man 250k fest hat, aber zB manchmal 400k das eine, dann 500k das andere besser ist (oder ist das so unwahrscheinlich dass das einfluss auf die gelernten gewichte etc hätte?
-- Nach 100k + Iterationen verlernt er bei 16x16 alles --> schlechtes ergebnis
 ------------------------------------------
 Features/Main
-Baseline: 20 Mio iterationen (zb 1,2,4, 15 mio) --> nachher 2h laufenlassen
 Baseline2: 8x8 in 2 Mio lernen, dann toggle zwischen 16 und 8 für jeweils X iterationen
 Random rH: 5 Mio curriculum insg?
 # Curriculum where every time the order changes for the next iteration
 # or maybe do linear with that order then ??
-
-mail:
-- EA ausbauen (Representation extending
-- Auswertung eines Trainingsrun
-- Vergleich mit Baseline (stück für stück steigern)
 
 
 --- andere todos ---
@@ -51,9 +33,7 @@ mail:
 -
 
 
-
 - Wenn man während des Trainings abbricht, sollten entweder alle _curric_ status gelöscht werden oder noch zusätzlich gespeichert werden, damit man exakt weiß, wo man war
-- später:  curricula  evol erstellen (oder varianten)
 - später: Visualisieren, wann was gelernt wurde und co
 
 
@@ -70,7 +50,6 @@ Small Refactorings
 
 
 TODO Nächste Woche:
-- log
 später:  curricula  evol erstellen (oder varianten), random curricula zum anfang
 - rewards loggen
 - Plot überlappen

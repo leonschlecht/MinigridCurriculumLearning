@@ -36,12 +36,13 @@ class EvolutionaryCurriculum:
                                         self.curricula[i][j], self.args, self.txtLogger)
             self.txtLogger.info(f"Iterations Done {iterationsDone}")
             if j == startingIndex:
-                utils.copyAgent(src=nameOfCurriculumI,
-                                dest=utils.getModelWithCandidatePrefix(
-                                    nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+                utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
+                    nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
                 # TODO save reward separately here?
-            self.txtLogger.info(f"Trained iteration j {j} (offset {startingIndex}) of curriculum {i}")
-            rewards += self.gamma ** i * evaluate.evaluateAgent(nameOfCurriculumI, self.args)  # TODO or (i+1) ?
+            self.txtLogger.info(f"Trained iteration j={j} (offset {startingIndex}) of curriculum {nameOfCurriculumI} ")
+            rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
+        self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
+        # TODO divide by (length - startingIndex) ?
         return rewards
 
     def initializeRewards(self):
@@ -64,11 +65,11 @@ class EvolutionaryCurriculum:
             fullEnvList[i] = self.curricula[i]
         return fullEnvList
 
-    def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum,
-                                     curriculaList) -> int:
-        if consecutiveCount + 1 >= len(curriculaList[0]) or currentBestCurriculum != lastChosenCurriculum:
-            return 0
-        return consecutiveCount + 1
+    def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum) -> int:
+        if consecutiveCount + 1 < len(self.curricula[0]) and \
+                (currentBestCurriculum == lastChosenCurriculum or lastChosenCurriculum is None):
+            return consecutiveCount + 1
+        return 0
 
     def printFinalLogs(self) -> None:
         """
@@ -88,35 +89,41 @@ class EvolutionaryCurriculum:
                                  "rewards": rewards,
                                  "actualPerformance": [],
                                  "epochsDone": 1,
+                                 "consecutive": 0,
                                  "numFrames": pretrainingIterations}
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4))
 
-    def updateTrainingInfo(self, epoch, iterationsDoneSoFar, selectedEnv,
+    def updateTrainingInfo(self, epoch, iterationsDoneSoFar,
                            currentBestCurriculum,
-                           rewards, curriculaEnvDetails, curriculumConsecutivelyChosen) -> None:
+                           rewards, curriculumConsecutivelyChosen) -> None:
         self.trainingInfoJson["epochsDone"] = epoch + 1
         self.trainingInfoJson["numFrames"] = iterationsDoneSoFar
-        self.trainingInfoJson["selectedEnvs"].append(
-            selectedEnv)  # TODO Test if this works properly / maybe remove bcs redundant
+        curriculumConsecutivelyChosen = curriculumConsecutivelyChosen - 1
+        if curriculumConsecutivelyChosen < 0:
+            curriculumConsecutivelyChosen = 0
+
+        selectedEnv = self.curricula[currentBestCurriculum][curriculumConsecutivelyChosen]
+        self.trainingInfoJson["selectedEnvs"].append(selectedEnv)
         self.trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
         self.trainingInfoJson["rewards"] = rewards
         currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
         self.trainingInfoJson["actualPerformance"].append([currentScore, selectedEnv])
-        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = curriculaEnvDetails
+        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = self.getCurriculaEnvDetails()
         self.trainingInfoJson["consecutive"] = curriculumConsecutivelyChosen
 
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4))
 
         self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
-        self.txtLogger.info(f"CurriculaEnvDetails {self.trainingInfoJson['curriculaEnvDetails']}")
+        self.txtLogger.info(
+            f"CurriculaEnvDetails {self.trainingInfoJson['curriculaEnvDetails']}; selectedEnv: {selectedEnv}")
         self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
 
-    def calculateStartingIndex(self, curriculumChosenConsecutivelyTimes, isZero) -> int:
-        if isZero:
-            return 0
-        return curriculumChosenConsecutivelyTimes
+    def calculateStartingIndex(self, curriculumChosenConsecutivelyTimes, isLastChosenCurriculum) -> int:
+        if isLastChosenCurriculum:
+            return curriculumChosenConsecutivelyTimes
+        return 0
 
     def startCurriculumTraining(self) -> None:
         """
@@ -153,23 +160,21 @@ class EvolutionaryCurriculum:
                                                             i == lastChosenCurriculum)
                 reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel, startingIndex)
                 rewards[str(i)].append(reward)
-            iterationsDoneSoFar += self.ITERATIONS_PER_ENV
+            iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value
             currentBestCurriculum = int(
                 np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
 
             utils.copyAgent(src=getModelWithCandidatePrefix(utils.getModelName(selectedModel, currentBestCurriculum)),
                             dest=self.args.model + "\\epoch_" + str(epoch + 1))  # the model for the next epoch
 
-            curriculumChosenConsecutivelyTimes = self.calculateConsecutivelyChosen(curriculumChosenConsecutivelyTimes,
-                                                                                   currentBestCurriculum,
-                                                                                   lastChosenCurriculum,
-                                                                                   self.curricula)
+            curriculumChosenConsecutivelyTimes = \
+                self.calculateConsecutivelyChosen(curriculumChosenConsecutivelyTimes, currentBestCurriculum,
+                                                  lastChosenCurriculum)
             lastChosenCurriculum = currentBestCurriculum
 
             self.updateTrainingInfo(epoch, iterationsDoneSoFar,
-                                    self.curricula[currentBestCurriculum][startingIndex], currentBestCurriculum,
-                                    rewards,
-                                    self.getCurriculaEnvDetails(), curriculumChosenConsecutivelyTimes)
+                                    currentBestCurriculum, rewards,
+                                    curriculumChosenConsecutivelyTimes)
             # TODO : EVOLUTIONARY
 
         self.printFinalLogs()
