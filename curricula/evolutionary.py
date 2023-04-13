@@ -97,6 +97,7 @@ class EvolutionaryCurriculum:
                                  "numFrames": pretrainingIterations}
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4))
+        # TODO how expensive is it to always overwrite everything?
 
     def updateTrainingInfo(self, epoch, iterationsDoneSoFar,
                            currentBestCurriculum,
@@ -197,12 +198,12 @@ class EvolutionaryCurriculum:
         # TODO maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
         assert len(self.curricula) == numberOfCurricula
 
-    def initializeTrainingVariables(self, isFirstUse) -> tuple:
+    def initializeTrainingVariables(self, modelExists) -> tuple:
         """
         Initializes and returns all the necessary training variables
-        :param isFirstUse: whether the path to the model already exists or not
+        :param modelExists: whether the path to the model already exists or not
         """
-        if isFirstUse:
+        if not modelExists:
             with open(self.logFilePath, 'r') as f:
                 self.trainingInfoJson = json.loads(f.read())
 
@@ -214,6 +215,14 @@ class EvolutionaryCurriculum:
             self.curricula = self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(startEpoch)]
             self.startTime = self.trainingInfoJson["startTime"]
             # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO is this useful?
+            # delete existing folders, that were created
+            for k in range(self.args.numberOfCurricula):
+                path = self.logFilePath + "\\epoch" + str(k)
+                if os.path.exists(path):
+                    utils.deleteModel(path)
+                    utils.deleteModel(path + "\\_CANDIDATE")
+                else:
+                    break
 
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
