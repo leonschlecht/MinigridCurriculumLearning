@@ -10,7 +10,7 @@ Trains each curriculum in order for a pre-set amount of iterations
 """
 
 
-def startLinearCurriculum(args, startTime, txtLogger):
+def startLinearCurriculum(txtLogger, startTime, args):
     TOTAL_ITERATIONS = 20000000
     iterations5x5 = 500000
     iterations6x6 = 500000

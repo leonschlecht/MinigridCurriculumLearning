@@ -13,7 +13,25 @@ register(
 )
 
 register(
-    id="MiniGrid-DoorKey-12x12-v0",
+    id="MiniGrid-DoorKey-16x16-custom",
     entry_point="minigrid.envs:DoorKeyEnv",
-    kwargs={"size": 12},
+    kwargs={"size": 16, "max_steps": 300},
+)
+
+register(
+    id="MiniGrid-DoorKey-8x8-custom",
+    entry_point="minigrid.envs:DoorKeyEnv",
+    kwargs={"size": 8, "max_steps": 200},
+)
+
+register(
+    id="MiniGrid-DoorKey-6x6-custom",
+    entry_point="minigrid.envs:DoorKeyEnv",
+    kwargs={"size": 6, "max_steps": 125},
+)
+
+register(
+    id="MiniGrid-DoorKey-5x5-custom",
+    entry_point="minigrid.envs:DoorKeyEnv",
+    kwargs={"size": 5, "max_steps": 100},
 )

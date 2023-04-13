@@ -11,14 +11,18 @@ from utils import ENV_NAMES, getModelWithCandidatePrefix
 
 class EvolutionaryCurriculum:
 
-    def __init__(self, ITERATIONS_PER_ENV: int, txtLogger, startTime, curricula: list, args, gamma=.9):
-        self.ITERATIONS_PER_ENV = ITERATIONS_PER_ENV
+    def __init__(self, txtLogger, startTime, args, gamma=.9):
+        assert args.envsPerCurriculum > 0
+        assert args.numberOfCurricula > 0
+        assert args.iterationsPerEnv > 0
+
+        self.ITERATIONS_PER_ENV = args.iterationsPerEnv
         self.txtLogger = txtLogger
         self.args = args
         self.startTime = startTime
-        self.curricula = curricula
+        # trainingInfoJson & curricula will be initialized in the @startTraining method
         self.trainingInfoJson = {}
-        assert len(curricula) > 0
+        self.curricula = []
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
         self.gamma = gamma
 
@@ -42,7 +46,6 @@ class EvolutionaryCurriculum:
             self.txtLogger.info(f"Trained iteration j={j} (offset {startingIndex}) of curriculum {nameOfCurriculumI} ")
             rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
-        # TODO divide by (length - startingIndex) ?
         return rewards
 
     def initializeRewards(self):
@@ -90,6 +93,7 @@ class EvolutionaryCurriculum:
                                  "actualPerformance": [],
                                  "epochsDone": 1,
                                  "consecutive": 0,
+                                 "startTime": self.startTime,
                                  "numFrames": pretrainingIterations}
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4))
@@ -138,6 +142,8 @@ class EvolutionaryCurriculum:
             rewards = self.trainingInfoJson["rewards"]
             curriculumChosenConsecutivelyTimes = self.trainingInfoJson["consecutive"]
             lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
+            self.curricula = self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(startEpoch)]
+            self.startTime = self.trainingInfoJson["startTime"]
 
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
@@ -150,6 +156,7 @@ class EvolutionaryCurriculum:
             self.initTrainingInfo(rewards, iterationsDoneSoFar)
             utils.copyAgent(src=selectedModel, dest=self.args.model + "\\epoch_" + str(
                 startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
+            self.curricula = self.initializeCurricula(self.args.numberOfCurricula, self.args.envsPerCurriculum)
             curriculumChosenConsecutivelyTimes = 0
             lastChosenCurriculum = None
 
@@ -160,7 +167,7 @@ class EvolutionaryCurriculum:
                                                             i == lastChosenCurriculum)
                 reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel, startingIndex)
                 rewards[str(i)].append(reward)
-            iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value
+            iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
             currentBestCurriculum = int(
                 np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
 
@@ -175,9 +182,44 @@ class EvolutionaryCurriculum:
             self.updateTrainingInfo(epoch, iterationsDoneSoFar,
                                     currentBestCurriculum, rewards,
                                     curriculumChosenConsecutivelyTimes)
-            # TODO : EVOLUTIONARY
+            self.updateCurriculaAfterHorizon(self.curricula[currentBestCurriculum], self.args.numberOfCurricula)
 
         self.printFinalLogs()
+
+    @staticmethod
+    def initializeCurricula(numberOfCurricula: int, envsPerCurriculum: int) -> list:
+        """
+        Initializes the list of Curricula randomly
+        :param numberOfCurricula: how many curricula will be generated
+        :param envsPerCurriculum: how many environment each curriculum has
+        """
+        curricula = []
+        i = 0
+        while i < numberOfCurricula:
+            newCurriculum = []
+            for j in range(envsPerCurriculum):
+                val = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
+                curricula[i].append(ENV_NAMES.ALL_ENVS[val])
+            if newCurriculum not in curricula:  # TODO find better duplicate checking method
+                curricula.append(newCurriculum)
+                i += 1
+        assert len(curricula) == numberOfCurricula
+        return curricula
+
+    def updateCurriculaAfterHorizon(self, bestCurriculum: list, numberOfCurricula: int) -> None:
+        """
+        Updates the List of curricula by using the last N-1 Envs, and randomly selecting a last new one
+        :param numberOfCurricula:
+        :param bestCurriculum: full env list of the curriculum that performed best during last epoch
+                (i.e. needs to be cut by 1 element!)
+        """
+        self.curricula = []
+        for i in range(numberOfCurricula):
+            self.curricula.append(bestCurriculum[1:])
+            val = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
+            self.curricula[i].append(ENV_NAMES.ALL_ENVS[val])
+        # TODO maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
+        assert len(self.curricula) == numberOfCurricula
 
 
 def evaluateCurriculumResults(evaluationDictionary):
