@@ -1,72 +1,28 @@
 pymoo --> usually used for multiobjective;
-define problem: minigrid with curriclum
-return reward
-(non dominatesd sorting algoirthm, NSGA-III
+define problem: minigrid with curriclum; return reward; eg use non dominatesd sorting algoirthm, NSGA-III
+----------------------------------------------------------------------------
 
-discount factor
-use multiple reward milestones
-
-
---
-Frage: wie kann man denn "etwas besser lernen" feststellen in minigrid? Entweder kann der agent es oder nicht
-Kann man vllt so die Minigrid anpassen, dass ich nicht manuell auf register(...) in meinen inits zurückgreifen muss?
-Das Unlearning Problem: wie genau funktionieren die updates überhaupt (2560 update schritte, oder 1x pro level)
+- Was für Env-Iterationen, Curriculum-Länge & -Anzahl werden überhaupt angestrebt?
+- wie kann man denn "etwas besser lernen" feststellen in minigrid? Entweder kann der agent es oder nicht
+- Kann man vllt so die Minigrid anpassen, dass ich nicht manuell auf register(...) in meinen inits zurückgreifen muss?
+- Das Unlearning Problem: wie genau funktionieren die updates überhaupt (2560 update schritte, oder 1x pro level)
 
 
--------
-
-
-Random Gedanken
+-------------------
 - Wie damit umgehen, dass man evtl nicht alles 1:1 gleich lang machen muss? zB Man kann 200k trainieren 16x16, und 100k 8x8 reicht zum stabilisieren
-- RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist
+- RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist & die Iterationen pro Env noch niedriger sind
 ------------------------------------------
-Features/Main
-Baseline2: 8x8 in 2 Mio lernen, dann toggle zwischen 16 und 8 für jeweils X iterationen
-Random rH: 5 Mio curriculum insg?
-# Curriculum where every time the order changes for the next iteration
-# or maybe do linear with that order then ??
-
-
---- andere todos ---
-- Baseline trainieren & abspeichern
-- argparse verbessern
-- train/evaluate in anderen Ordner, scripts nur für ausführbares
--
 
 
 - Wenn man während des Trainings abbricht, sollten entweder alle _curric_ status gelöscht werden oder noch zusätzlich gespeichert werden, damit man exakt weiß, wo man war
-- später: Visualisieren, wann was gelernt wurde und co
 
 
 Paar Ideen / Maybes
 - Ladezeiten optimieren
 - Evaluation: use weights, maybe depending on progress ;  maybe use something else like Value / Policy Loss / Frames
-- assert dass neuladen gleiche anzahl an curricula wie vorher ist
 
 Small Refactorings
 - use os . join for these things os.getcwd() + "\\storage\\" + directory)
-- besseres args unpacking
 
----------------
+-------------------
 
-
-TODO Nächste Woche:
-später:  curricula  evol erstellen (oder varianten), random curricula zum anfang
-- rewards loggen
-- Plot überlappen
-- Auswählen ; Tracking
-
-5 Mio insg;
-alle 250k  ändern
-
-
-Mi 14 Uhr
-
-
-----
-
-- Zustand backup nach jedem Curriculum, und das dann am Anfang laden
-
-Hyperparameter: Epochs, HorizonLength, pretraining, ggf die Curricula??
-
-- Load status to read exact number of frames ( and calculate how much can be done)

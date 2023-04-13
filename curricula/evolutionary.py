@@ -133,32 +133,8 @@ class EvolutionaryCurriculum:
         """
         Starts The RH Curriculum Training
         """
-        if os.path.exists(self.logFilePath):
-            with open(self.logFilePath, 'r') as f:
-                self.trainingInfoJson = json.loads(f.read())
-
-            iterationsDoneSoFar = self.trainingInfoJson["numFrames"]
-            startEpoch = self.trainingInfoJson["epochsDone"]
-            rewards = self.trainingInfoJson["rewards"]
-            curriculumChosenConsecutivelyTimes = self.trainingInfoJson["consecutive"]
-            lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
-            self.curricula = self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(startEpoch)]
-            self.startTime = self.trainingInfoJson["startTime"]
-
-            self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
-        else:
-            startEpoch = 1
-            rewards = self.initializeRewards()  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
-            selectedModel = self.args.model + "\\epoch_" + str(0)
-            self.txtLogger.info("Pretraining. . .")
-            iterationsDoneSoFar = train.main(self.ITERATIONS_PER_ENV, selectedModel, ENV_NAMES.DOORKEY_5x5, self.args,
-                                             self.txtLogger)
-            self.initTrainingInfo(rewards, iterationsDoneSoFar)
-            utils.copyAgent(src=selectedModel, dest=self.args.model + "\\epoch_" + str(
-                startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
-            self.curricula = self.initializeCurricula(self.args.numberOfCurricula, self.args.envsPerCurriculum)
-            curriculumChosenConsecutivelyTimes = 0
-            lastChosenCurriculum = None
+        iterationsDoneSoFar, startEpoch, rewards, curriculumChosenConsecutivelyTimes, lastChosenCurriculum = \
+            self.initializeTrainingVariables(os.path.exists(self.logFilePath))
 
         for epoch in range(startEpoch, 11):
             selectedModel = self.args.model + "\\epoch_" + str(epoch)
@@ -220,6 +196,39 @@ class EvolutionaryCurriculum:
             self.curricula[i].append(ENV_NAMES.ALL_ENVS[val])
         # TODO maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
         assert len(self.curricula) == numberOfCurricula
+
+    def initializeTrainingVariables(self, isFirstUse) -> tuple:
+        """
+        Initializes and returns all the necessary training variables
+        :param isFirstUse: whether the path to the model already exists or not
+        """
+        if isFirstUse:
+            with open(self.logFilePath, 'r') as f:
+                self.trainingInfoJson = json.loads(f.read())
+
+            iterationsDoneSoFar = self.trainingInfoJson["numFrames"]
+            startEpoch = self.trainingInfoJson["epochsDone"]
+            rewards = self.trainingInfoJson["rewards"]
+            curriculumChosenConsecutivelyTimes = self.trainingInfoJson["consecutive"]
+            lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
+            self.curricula = self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(startEpoch)]
+            self.startTime = self.trainingInfoJson["startTime"]
+            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO is this useful?
+
+            self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
+        else:
+            startEpoch = 1
+            rewards = self.initializeRewards()  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
+            selectedModel = self.args.model + "\\epoch_" + str(0)
+            self.txtLogger.info("Creating model. . .")
+            iterationsDoneSoFar = train.main(0, selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)
+            self.initTrainingInfo(rewards, iterationsDoneSoFar)
+            utils.copyAgent(src=selectedModel, dest=self.args.model + "\\epoch_" + str(
+                startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
+            self.curricula = self.initializeCurricula(self.args.numberOfCurricula, self.args.envsPerCurriculum)
+            curriculumChosenConsecutivelyTimes = 0
+            lastChosenCurriculum = None
+        return iterationsDoneSoFar, startEpoch, rewards, curriculumChosenConsecutivelyTimes, lastChosenCurriculum
 
 
 def evaluateCurriculumResults(evaluationDictionary):
