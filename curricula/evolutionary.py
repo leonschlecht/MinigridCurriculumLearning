@@ -28,23 +28,23 @@ class EvolutionaryCurriculum:
 
         self.startCurriculumTraining()
 
-    def trainEachCurriculum(self, i, iterationsDone, selectedModel, startingIndex) -> int:
+    def trainEachCurriculum(self, i, iterationsDone, selectedModel) -> int:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         nameOfCurriculumI = utils.getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
         rewards = 0
         utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
-        for j in range(startingIndex, len(self.curricula[i])):
+        for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
                                         self.curricula[i][j], self.args, self.txtLogger)
             self.txtLogger.info(f"Iterations Done {iterationsDone}")
-            if j == startingIndex:
+            if j == 0:
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
                 # TODO save reward separately here?
-            self.txtLogger.info(f"Trained iteration j={j} (offset {startingIndex}) of curriculum {nameOfCurriculumI} ")
-            rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
+            self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
+            # rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards
 
@@ -53,6 +53,7 @@ class EvolutionaryCurriculum:
         Loads the rewards given the state from previous training, or empty initializes them if first time run
         This assumes that the curricula are numbered from 1 to N (as opposed to using their names or something similar)
         """
+        assert len(self.curricula) > 0
         rewards = {}
         for i in range(len(self.curricula)):
             rewards[str(i)] = []
@@ -125,11 +126,6 @@ class EvolutionaryCurriculum:
             f"CurriculaEnvDetails {self.trainingInfoJson['curriculaEnvDetails']}; selectedEnv: {selectedEnv}")
         self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
 
-    def calculateStartingIndex(self, curriculumChosenConsecutivelyTimes, isLastChosenCurriculum) -> int:
-        if isLastChosenCurriculum:
-            return curriculumChosenConsecutivelyTimes
-        return 0
-
     def startCurriculumTraining(self) -> None:
         """
         Starts The RH Curriculum Training
@@ -140,9 +136,7 @@ class EvolutionaryCurriculum:
         for epoch in range(startEpoch, 11):
             selectedModel = self.args.model + "\\epoch_" + str(epoch)
             for i in range(len(self.curricula)):
-                startingIndex = self.calculateStartingIndex(curriculumChosenConsecutivelyTimes,
-                                                            i == lastChosenCurriculum)
-                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel, startingIndex)
+                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel)
                 rewards[str(i)].append(reward)
             iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
             currentBestCurriculum = int(
@@ -176,7 +170,7 @@ class EvolutionaryCurriculum:
             newCurriculum = []
             for j in range(envsPerCurriculum):
                 val = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
-                curricula[i].append(ENV_NAMES.ALL_ENVS[val])
+                newCurriculum.append(ENV_NAMES.ALL_ENVS[val])
             if newCurriculum not in curricula:  # TODO find better duplicate checking method
                 curricula.append(newCurriculum)
                 i += 1
@@ -203,7 +197,7 @@ class EvolutionaryCurriculum:
         Initializes and returns all the necessary training variables
         :param modelExists: whether the path to the model already exists or not
         """
-        if not modelExists:
+        if modelExists:
             with open(self.logFilePath, 'r') as f:
                 self.trainingInfoJson = json.loads(f.read())
 
@@ -215,8 +209,9 @@ class EvolutionaryCurriculum:
             self.curricula = self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(startEpoch)]
             self.startTime = self.trainingInfoJson["startTime"]
             # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO is this useful?
-            # delete existing folders, that were created
+            # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.args.numberOfCurricula):
+                # TODO test this
                 path = self.logFilePath + "\\epoch" + str(k)
                 if os.path.exists(path):
                     utils.deleteModel(path)
@@ -226,15 +221,15 @@ class EvolutionaryCurriculum:
 
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
+            self.txtLogger.info("Creating model. . .")
             startEpoch = 1
+            self.curricula = self.initializeCurricula(self.args.numberOfCurricula, self.args.envsPerCurriculum)
             rewards = self.initializeRewards()  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
             selectedModel = self.args.model + "\\epoch_" + str(0)
-            self.txtLogger.info("Creating model. . .")
             iterationsDoneSoFar = train.main(0, selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)
             self.initTrainingInfo(rewards, iterationsDoneSoFar)
             utils.copyAgent(src=selectedModel, dest=self.args.model + "\\epoch_" + str(
                 startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
-            self.curricula = self.initializeCurricula(self.args.numberOfCurricula, self.args.envsPerCurriculum)
             curriculumChosenConsecutivelyTimes = 0
             lastChosenCurriculum = None
         return iterationsDoneSoFar, startEpoch, rewards, curriculumChosenConsecutivelyTimes, lastChosenCurriculum

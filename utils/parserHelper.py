@@ -12,11 +12,11 @@ def initializeArgParser():
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainLinear", default=False, action="store_true",
                         help="Decides what training method will be used. If set, linear curriculum will be used")
-    parser.add_argument("--iterationsPerEnv", default=150000,
+    parser.add_argument("--iterationsPerEnv", default=150000, type=int,
                         help="Determines the amount of iterations per environment during training")
-    parser.add_argument("--envsPerCurriculum", default=4,
+    parser.add_argument("--envsPerCurriculum", default=4, type=int,
                         help="Determines the amount of env per curriculum during training")
-    parser.add_argument("--numberOfCurricula", default=4,
+    parser.add_argument("--numberOfCurricula", default=4, type=int,
                         help="Determines the amount of curricula that are used for training")
 
     parser.add_argument("--algo", default="ppo", help="algorithm to use: a2c | ppo ")
