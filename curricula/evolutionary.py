@@ -117,9 +117,7 @@ class EvolutionaryCurriculum:
         self.trainingInfoJson["actualPerformance"].append([currentScore, selectedEnv])
         self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = self.getCurriculaEnvDetails()
         self.trainingInfoJson["consecutive"] = curriculumConsecutivelyChosen
-
-        with open(self.logFilePath, 'w') as f:
-            f.write(json.dumps(self.trainingInfoJson, indent=4))
+        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch + 1)] = self.curricula
 
         self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
         self.txtLogger.info(
@@ -150,10 +148,11 @@ class EvolutionaryCurriculum:
                                                   lastChosenCurriculum)
             lastChosenCurriculum = currentBestCurriculum
 
-            self.updateTrainingInfo(epoch, iterationsDoneSoFar,
-                                    currentBestCurriculum, rewards,
+            self.updateTrainingInfo(epoch, iterationsDoneSoFar, currentBestCurriculum, rewards,
                                     curriculumChosenConsecutivelyTimes)
             self.updateCurriculaAfterHorizon(self.curricula[currentBestCurriculum], self.args.numberOfCurricula)
+            self.trainingInfoJson["currentCurriculumList"] = self.curricula # TODO refactor this
+            self.saveTrainingInfoToFile()
 
         self.printFinalLogs()
 
@@ -189,6 +188,8 @@ class EvolutionaryCurriculum:
             self.curricula.append(bestCurriculum[1:])
             val = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
             self.curricula[i].append(ENV_NAMES.ALL_ENVS[val])
+        # TODO remove duplicates
+        # TODO dealing with the case where duplicates are forced due to parameters
         # TODO maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
         assert len(self.curricula) == numberOfCurricula
 
@@ -206,9 +207,8 @@ class EvolutionaryCurriculum:
             rewards = self.trainingInfoJson["rewards"]
             curriculumChosenConsecutivelyTimes = self.trainingInfoJson["consecutive"]
             lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
-            self.curricula = self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(startEpoch)]
+            self.curricula = self.trainingInfoJson["currentCurriculumList"]
             self.startTime = self.trainingInfoJson["startTime"]
-            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO is this useful?
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.args.numberOfCurricula):
                 # TODO test this
@@ -218,7 +218,7 @@ class EvolutionaryCurriculum:
                     utils.deleteModel(path + "\\_CANDIDATE")
                 else:
                     break
-
+            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
@@ -233,6 +233,10 @@ class EvolutionaryCurriculum:
             curriculumChosenConsecutivelyTimes = 0
             lastChosenCurriculum = None
         return iterationsDoneSoFar, startEpoch, rewards, curriculumChosenConsecutivelyTimes, lastChosenCurriculum
+
+    def saveTrainingInfoToFile(self):
+        with open(self.logFilePath, 'w') as f:
+            f.write(json.dumps(self.trainingInfoJson, indent=4))
 
 
 def evaluateCurriculumResults(evaluationDictionary):

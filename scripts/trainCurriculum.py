@@ -1,6 +1,6 @@
 import utils
 from curricula import linear, adaptive, EvolutionaryCurriculum
-import time
+from datetime import datetime
 from gymnasium.envs.registration import register
 
 
@@ -13,8 +13,7 @@ def main():
 
     # TODO limit max frames per env in evaluation
     # TODO fix iterations (so it doesnt overshoot the amount; maybe calculate with exact frame nrs or use updates)
-    ITERATIONS_PER_ENV = args.iterationsPerEnv
-    startTime = time.time()
+    startTime = datetime.now()
 
     if args.trainEvolutionary:
         e = EvolutionaryCurriculum(txtLogger, startTime, args)

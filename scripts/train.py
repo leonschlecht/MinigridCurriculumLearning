@@ -11,6 +11,7 @@ from model import ACModel
 def main(frames: int, model: str, env: str, args, txt_logger) -> int:
     """
 
+    :param txt_logger: reference to the .txt log file
     :param frames: the number of iterations
     :param model: name of the model - where the training will be saved
     :param env: the name of the environment
@@ -113,7 +114,7 @@ def main(frames: int, model: str, env: str, args, txt_logger) -> int:
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
 
             txt_logger.info(
-                "\t{} | {} | curF {} | U {} | AllF {:06} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
+                "\t{} | {} | curF {} | U {} | AllF {:07} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
                 .format(env, model, framesWithThisEnv, *data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
