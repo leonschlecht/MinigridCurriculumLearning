@@ -20,7 +20,9 @@ class EvolutionaryCurriculum:
         self.trainingInfoJson = {}
         assert len(curricula) > 0
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
-        self.startCurriculumTraining()
+        self.gamma = gamma
+
+        # self.startCurriculumTraining()
 
     def trainEachCurriculum(self, i, iterationsDone, selectedModel, jOffset) -> int:
         """
@@ -119,7 +121,74 @@ class EvolutionaryCurriculum:
         :param allCurricula: the curriculums for which the training will be done
         """
 
-        if os.path.exists(self.logFilePath):
+        for epoch in range(startEpoch, 11):
+            selectedModel = self.args.model + "\\epoch_" + str(epoch)
+            for i in range(len(self.curricula)):
+                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel)
+                rewards[str(i)].append(reward)
+            iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
+            currentBestCurriculum = int(
+                np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
+
+            utils.copyAgent(src=getModelWithCandidatePrefix(utils.getModelName(selectedModel, currentBestCurriculum)),
+                            dest=self.args.model + "\\epoch_" + str(epoch + 1))  # the model for the next epoch
+
+            curriculumChosenConsecutivelyTimes = \
+                self.calculateConsecutivelyChosen(curriculumChosenConsecutivelyTimes, currentBestCurriculum,
+                                                  lastChosenCurriculum)
+            lastChosenCurriculum = currentBestCurriculum
+
+            self.updateTrainingInfo(epoch, iterationsDoneSoFar, currentBestCurriculum, rewards,
+                                    curriculumChosenConsecutivelyTimes)
+            self.updateCurriculaAfterHorizon(self.curricula[currentBestCurriculum], self.args.numberOfCurricula)
+            self.trainingInfoJson["currentCurriculumList"] = self.curricula # TODO refactor this
+            self.saveTrainingInfoToFile()
+        return 10.4
+        # self.printFinalLogs()
+
+    @staticmethod
+    def initializeCurricula(numberOfCurricula: int, envsPerCurriculum: int) -> list:
+        """
+        Initializes the list of Curricula randomly
+        :param numberOfCurricula: how many curricula will be generated
+        :param envsPerCurriculum: how many environment each curriculum has
+        """
+        curricula = []
+        i = 0
+        while i < numberOfCurricula:
+            newCurriculum = []
+            for j in range(envsPerCurriculum):
+                val = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
+                newCurriculum.append(ENV_NAMES.ALL_ENVS[val])
+            if newCurriculum not in curricula:  # TODO find better duplicate checking method
+                curricula.append(newCurriculum)
+                i += 1
+        assert len(curricula) == numberOfCurricula
+        return curricula
+
+    def updateCurriculaAfterHorizon(self, bestCurriculum: list, numberOfCurricula: int) -> None:
+        """
+        Updates the List of curricula by using the last N-1 Envs, and randomly selecting a last new one
+        :param numberOfCurricula:
+        :param bestCurriculum: full env list of the curriculum that performed best during last epoch
+                (i.e. needs to be cut by 1 element!)
+        """
+        self.curricula = []
+        for i in range(numberOfCurricula):
+            self.curricula.append(bestCurriculum[1:])
+            val = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
+            self.curricula[i].append(ENV_NAMES.ALL_ENVS[val])
+        # TODO remove duplicates
+        # TODO dealing with the case where duplicates are forced due to parameters
+        # TODO maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
+        assert len(self.curricula) == numberOfCurricula
+
+    def initializeTrainingVariables(self, modelExists) -> tuple:
+        """
+        Initializes and returns all the necessary training variables
+        :param modelExists: whether the path to the model already exists or not
+        """
+        if modelExists:
             with open(self.logFilePath, 'r') as f:
                 self.trainingInfoJson = json.loads(f.read())
 
