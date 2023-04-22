@@ -8,7 +8,7 @@ import utils
 from utils import device, ENV_NAMES
 
 
-def evaluateAgentInAllEnvs(args, model, evalEnv) -> dict:
+def startEvaluationInOneEnv(args, model, evalEnv) -> dict:
     # Load environments
     envs = []
     for i in range(args.procs):
@@ -81,10 +81,9 @@ def evaluateAll(model, args) -> dict:
     utils.seed(args.seed)
     results = {"model": model}
     for evaluationEnv in ENV_NAMES.ALL_ENVS:
-        results[evaluationEnv] = evaluateAgentInAllEnvs(args, model, evaluationEnv)
-    evaluationResults: str = json.dumps(results, indent=4)
+        results[evaluationEnv] = startEvaluationInOneEnv(args, model, evaluationEnv)
     with open('storage/' + model + '/' + 'evaluation.json', 'w') as f:
-        f.write(evaluationResults)
+        f.write(json.dumps(results, indent=4))
     print(f"Evaluation of {model} succeeded")
     return results
 
@@ -93,10 +92,11 @@ def evaluateAgent(model, args) -> int:
     """
     Evaluates and calculates the average performance in ALL environments
     :param model: the name of the model
+    :param args: the command line arugments
     :return: the average reward
     """
     reward = 0
-    evaluationResult = evaluateAll(model, args)  # TODO decide if argmax or not
+    evaluationResult = evaluateAll(model, args)  # TODO decide if using args.argmax or not
     for evalEnv in ENV_NAMES.ALL_ENVS:
         reward += float(evaluationResult[evalEnv]["meanRet"])
     return reward

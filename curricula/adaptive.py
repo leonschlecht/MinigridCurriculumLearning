@@ -4,11 +4,11 @@ from utils import ENV_NAMES
 from scripts import train, evaluate
 
 
-def adaptiveCurriculum(args, ITERATIONS_PER_ENV, txtLogger, startTime):
+def adaptiveCurriculum(txtLogger, startTime, args):
     """
     Trains on an adaptive curriculum, i.e. depending on the performance of the agent, the next envs will be determined
     """
-
+    ITERATIONS_PER_ENV = args.iterationsPerEnv
     modelPath = os.getcwd() + "\\storage\\" + args.model
     logFilePath = modelPath + "\\status.json"
 
