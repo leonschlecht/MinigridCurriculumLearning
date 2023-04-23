@@ -7,6 +7,10 @@ import numpy as np
 import utils
 from scripts import train, evaluate
 from utils import ENV_NAMES, getModelWithCandidatePrefix
+from pymoo.algorithms.moo.nsga2 import NSGA2
+from pymoo.core.evaluator import Evaluator
+from pymoo.core.population import Population
+from pymoo.core.problem import Problem
 
 
 class EvolutionaryCurriculum:
@@ -25,15 +29,16 @@ class EvolutionaryCurriculum:
         self.curricula = []
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
         self.gamma = gamma
+        print("init done")
 
         # self.startCurriculumTraining()
 
-    def trainEachCurriculum(self, i, iterationsDone, selectedModel) -> int:
+    def trainEachCurriculum(self, i: int, iterationsDone: int, selectedModel: str) -> int:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         nameOfCurriculumI = utils.getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
-        rewards = 0
+        reward = 0
         utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
@@ -45,8 +50,8 @@ class EvolutionaryCurriculum:
                 # TODO save reward separately here?
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
             # rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
-        self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
-        return rewards
+        self.txtLogger.info(f"Reward for curriculum {nameOfCurriculumI} = {reward}")
+        return reward
 
     def initializeRewards(self):
         """
@@ -151,7 +156,7 @@ class EvolutionaryCurriculum:
             self.updateTrainingInfo(epoch, iterationsDoneSoFar, currentBestCurriculum, rewards,
                                     curriculumChosenConsecutivelyTimes)
             self.updateCurriculaAfterHorizon(self.curricula[currentBestCurriculum], self.args.numberOfCurricula)
-            self.trainingInfoJson["currentCurriculumList"] = self.curricula # TODO refactor this
+            self.trainingInfoJson["currentCurriculumList"] = self.curricula  # TODO refactor this
             self.saveTrainingInfoToFile()
 
         self.printFinalLogs()
@@ -238,6 +243,14 @@ class EvolutionaryCurriculum:
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4))
 
+    def trainEveryCurriculum(self, curricula, selectedModel):
+        iterationsDone = 0
+        rewards = []  # TODO CHECK IF THIS IS THE CORRECT D-TYPE FOR PYMOO
+        for i in range(len(curricula)):
+            rewardI = self.trainEachCurriculum(i, iterationsDone, selectedModel)
+            rewards.append(rewardI)
+        return rewards
+
 
 def evaluateCurriculumResults(evaluationDictionary):
     # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
@@ -251,3 +264,120 @@ def evaluateCurriculumResults(evaluationDictionary):
 
     # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
     # # Aber warum? Und wie will man das nach 20+ durchläufen plotten
+
+
+def tryEvolStuff(txtLogger, startTime, args):
+    objectives = 1
+    curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_6x6, ENV_NAMES.DOORKEY_6x6]
+    curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
+    xupper = len(ENV_NAMES.ALL_ENVS)
+    curriculaList = [curric2, curric1]
+    inequalityConstr = 0
+    rhEvol = EvolutionaryCurriculum(txtLogger, startTime, args)
+    curricProblem = CurriculumProblem(curriculaList, objectives, inequalityConstr, xupper, rhEvol)
+
+    algorithm = NSGA2(pop_size=len(curriculaList),
+                      # sampling=BinaryRandomSampling(),
+                      # crossover=TwoPointCrossover(),
+                      # mutation=BitflipMutation(),
+                      eliminate_duplicates=True,
+                      )
+
+    # prepare the algorithm to solve the specific problem (same arguments as for the minimize function)
+    algorithm.setup(curricProblem, termination=('n_gen', 10), seed=1, verbose=False) # TODO args. ...
+    X = createFirstGeneration(curriculaList) # todo only do on first load
+    initialPop = Population.new("X", X)
+    iterationsDoneSoFar, startEpoch, rewards, curriculumChosenConsecutivelyTimes, lastChosenCurriculum = \
+        rhEvol.initializeTrainingVariables(os.path.exists(rhEvol.logFilePath))
+
+    while algorithm.has_next():
+        if initialPop is not None:
+            # ask the algorithm for the next solution to be evaluated
+            pop = algorithm.ask()
+        else:
+            pop = initialPop
+            initialPop = None
+        # evaluate the individuals using the algorithm's evaluator (necessary to count evaluations for termination)
+        algorithm.evaluator.eval(curricProblem, pop)
+        # returned the evaluated individuals which have been evaluated or even modified
+
+        algorithm.tell(infills=pop)
+        # do same more things, printing, logging, storing or even modifying the algorithm object
+        # print("n_gen, n_eval:", algorithm.n_gen, algorithm.evaluator.n_eval)
+        print("----", "pop X:", np.round(pop.get("X")), pop.get("F"), "-----", sep="\n")
+        currentBestCurriculum = int(
+            np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
+
+        utils.copyAgent(src=getModelWithCandidatePrefix(utils.getModelName(selectedModel, currentBestCurriculum)),
+                        dest=self.args.model + "\\epoch_" + str(self.N + 1))  # the model for the next epoch
+
+        lastChosenCurriculum = currentBestCurriculum
+
+        rhEvol.updateTrainingInfo(epoch, iterationsDoneSoFar, currentBestCurriculum, rewards,
+                                  curriculumChosenConsecutivelyTimes)
+        rhEvol.trainingInfoJson["currentCurriculumList"] = self.curricula  # use evolution.X or sth
+        rhEvol.saveTrainingInfoToFile()
+
+    rhEvol.printFinalLogs()
+        # TODO update the model with best individual
+        iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
+        #         curriculumChosenConsecutivelyTimes = \
+        #             self.calculateConsecutivelyChosen(curriculumChosenConsecutivelyTimes, currentBestCurriculum,
+        #                                               lastChosenCurriculum) # TODO can probably remove it now
+    res = algorithm.result()
+    print("hash", res.F.sum())
+    print(np.round(res.X))
+
+    return 0
+
+
+def createFirstGeneration(curriculaList):
+    indices = []
+    for i in range(len(curriculaList)):
+        indices.append([])
+        for env in curriculaList[i]:
+            indices[i].append(ENV_NAMES.ALL_ENVS.index(env))
+    return indices
+
+
+class CurriculumProblem(Problem):
+    def __init__(self, curricula: list, n_obj, n_ieq_constr, xu, evolCurric: EvolutionaryCurriculum):
+        assert len(curricula) > 0
+        assert evolCurric is not None
+        self.evolCurric = evolCurric
+        n_var = len(curricula[0])
+        # maybe try to avoid homogenous curricula with ieq constraints (?)
+        xl = np.full(n_var, -0.49)
+        xu = np.full(n_var, xu - 0.51, dtype=float)
+        super().__init__(n_var=n_var,  # the amount of curricula to use
+                         n_obj=n_obj,  # maximizing the overall reward = 1 objective
+                         n_ieq_constr=n_ieq_constr,  # 0 ?
+                         xl=xl,
+                         xu=xu)
+        self.curricula = curricula
+        self.N = 0
+
+        # F: what we want to maximize: ---> pymoo minimizes, so it should be -reward
+        # G:# Inequality constraint;
+        # H is EQ constraint: maybe we can experiment with the length of each curriculum;
+        #   and maybe with iterations_per_env (so that each horizon has same length still)
+
+    def _evaluate(self, x, out, *args, **kwargs):
+        curricula = self.evolXToCurriculum(x)
+        selectedModel = self.args.model + "\\epoch_" + str(self.N)
+        rewards = self.evolCurric.trainEveryCurriculum(curricula, selectedModel)
+        reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel)
+        rewards[str(i)].append(reward)
+        out["F"] = -1 * rewards
+        self.N += 1
+
+    @staticmethod
+    def evolXToCurriculum(x):
+        result = []
+        for i in range(x.shape[0]):
+            result.append([])
+            curric = x[i]
+            for j in range(curric.shape[0]):
+                rounded = round(x[i][j])
+                result[i].append(ENV_NAMES.ALL_ENVS[rounded])
+        return result
