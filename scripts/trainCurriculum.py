@@ -2,7 +2,7 @@ from datetime import datetime
 from gymnasium.envs.registration import register
 
 import utils
-from curricula import linear, adaptive, EvolutionaryCurriculum, tryEvolStuff
+from curricula import linear, adaptive, EvolutionaryCurriculum
 
 
 def main():
@@ -18,7 +18,7 @@ def main():
     ############
 
     if args.trainEvolutionary:
-        e = tryEvolStuff(txtLogger, startTime, args)
+        e = EvolutionaryCurriculum(txtLogger, startTime, args)
     elif args.trainAdaptive:
         adaptive.adaptiveCurriculum(txtLogger, startTime, args)
 
