@@ -12,6 +12,10 @@ def initializeArgParser():
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainLinear", default=False, action="store_true",
                         help="Decides what training method will be used. If set, linear curriculum will be used")
+    parser.add_argument("--trainBiasedRandomRH", default=False, action="store_true",
+                        help="Decides what training method will be used. If set, Biased Random RH will be used")
+    parser.add_argument("--trainRandomRH", default=False, action="store_true",
+                        help="Decides what training method will be used. If set, Full Random RH will be used")
     parser.add_argument("--iterationsPerEnv", default=150000, type=int,
                         help="Determines the amount of iterations per environment during training")
     parser.add_argument("--envsPerCurriculum", default=4, type=int,
@@ -57,6 +61,7 @@ def initializeArgParser():
 
     args = parser.parse_args()
     args.mem = args.recurrence > 1
-    args.trainEvolutionary = not (args.trainLinear or args.trainAdaptive)
+    args.trainEvolutionary = not (
+                args.trainLinear or args.trainAdaptive or args.trainRandomRH or args.trainBiasedRandomRH)
 
     return args

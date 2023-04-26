@@ -1,5 +1,5 @@
 import utils
-from curricula import linear, adaptive, EvolutionaryCurriculum
+from curricula import linear, adaptive, RandomRollingHorizon
 from datetime import datetime
 from gymnasium.envs.registration import register
 
@@ -16,14 +16,17 @@ def main():
     startTime = datetime.now()
 
     if args.trainEvolutionary:
-        e = EvolutionaryCurriculum(txtLogger, startTime, args)
-
-    if args.trainAdaptive:
+        e = RandomRollingHorizon(txtLogger, startTime, args)
+    elif args.trainBiasedRandomRH:
+        pass
+    elif args.trainRandomRH:
+        pass
+    elif args.trainAdaptive:
         adaptive.adaptiveCurriculum(txtLogger, startTime, args)
-
-    if args.trainLinear:
+    elif args.trainLinear:
         linear.startLinearCurriculum(txtLogger, startTime, args)
-
+    else:
+        print("Not training method selected!")
 
 def registerEnvs():
     register(

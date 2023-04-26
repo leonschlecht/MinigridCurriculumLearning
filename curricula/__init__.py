@@ -1,3 +1,3 @@
 from .adaptive import *
 from .linear import *
-from .evolutionary import *
+from .biasedRandomRollingHorizon import *

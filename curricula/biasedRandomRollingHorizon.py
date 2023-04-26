@@ -9,7 +9,7 @@ from scripts import train, evaluate
 from utils import ENV_NAMES, getModelWithCandidatePrefix
 
 
-class EvolutionaryCurriculum:
+class RandomRollingHorizon:
 
     def __init__(self, txtLogger, startTime, args, gamma=.9):
         assert args.envsPerCurriculum > 0
