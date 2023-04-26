@@ -12,7 +12,6 @@ class CurriculumProblem(Problem):
         assert evolCurric is not None
         self.evolCurric = evolCurric
         n_var = len(curricula[0])
-        # TODO maybe try to avoid homogenous curricula with ieq constraints (?)
         xl = np.zeros(n_var, dtype=int)
         xu = np.full(n_var, xu, dtype=int)
         super().__init__(n_var=n_var,
@@ -21,7 +20,7 @@ class CurriculumProblem(Problem):
                          xl=xl,
                          xu=xu)
         self.curricula = curricula
-        self.N = 0
+        # TODO maybe try to avoid homogenous curricula with ieq constraints (?)
 
         # F: what we want to maximize: ---> pymoo minimizes, so it should be -reward
         # G:# Inequality constraint;
@@ -29,10 +28,13 @@ class CurriculumProblem(Problem):
         #   and maybe with iterations_per_env (so that each horizon has same length still)
 
     def _evaluate(self, x, out, *args, **kwargs):
-        print("Curric X =", x)
         curricula = self.evolCurric.evolXToCurriculum(x)
-        print(curricula)
         # rewards = self.evolCurric.trainEveryCurriculum(curricula)
+        rewards = self.dummyRewards(curricula)
+        out["F"] = -1 * np.array(rewards)
+        print("EVALUATE PYMOO DONE")
+
+    def dummyRewards(self, curricula):
         rewards = []
         for i in range(len(curricula)):
             reward = 0
@@ -40,5 +42,4 @@ class CurriculumProblem(Problem):
                 if env == ENV_NAMES.DOORKEY_16x16:
                     reward += 10
             rewards.append(reward)
-        out["F"] = -1 * np.array(rewards)
-        print("EVALUATE PYMOO DONE")
+        return rewards

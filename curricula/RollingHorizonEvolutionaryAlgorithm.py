@@ -2,6 +2,8 @@ import json
 import os
 from datetime import datetime
 import numpy as np
+from pymoo.algorithms.soo.nonconvex.ga import GA
+
 import utils
 from curricula.CurriculumProblem import CurriculumProblem
 from scripts import train, evaluate
@@ -26,7 +28,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         objectives = 1
         curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
         curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
-        xupper = len(ENV_NAMES.ALL_ENVS)
+        xupper = len(ENV_NAMES.ALL_ENVS) - 1
         self.curricula = [curric1, curric2]
         inequalityConstr = 0
 
@@ -95,13 +97,11 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.txtLogger.info(f"Best Curricula {self.trainingInfoJson['bestCurriculaIds']}")
         self.txtLogger.info(f"Trained in Envs {self.trainingInfoJson['selectedEnvs']}")
         self.txtLogger.info(f"Rewards: {self.trainingInfoJson['rewards']}")
-        print(self.startTime)
-        # startTime = datetime.strptime(self.startTime, '%Y-%m-%d %H:%M:%S') # TODO fix
 
         now = datetime.now()
-        timeDiff = self.startTime - now
-        # print(timeDiff)
-        # self.txtLogger.info(f"Time ended at {now} , total training time: {timeDiff}")
+        timeDiff = (now - self.startTime).total_seconds()
+        print(timeDiff)
+        self.txtLogger.info(f"Time ended at {now} , total training time: {timeDiff}")
         self.txtLogger.info("-------------------\n\n")
 
     def initTrainingInfo(self, rewards, pretrainingIterations):
@@ -111,11 +111,9 @@ class RollingHorizonEvolutionaryAlgorithm:
                                  "rewards": rewards,
                                  "actualPerformance": [],
                                  "epochsDone": 1,
-                                 "startTime": self.startTime,  # TODO convert datetime object to actual Date
+                                 "startTime": self.startTime,
                                  "numFrames": pretrainingIterations}
-        print(self.trainingInfoJson)
         self.saveJsonFile(self.logFilePath, self.trainingInfoJson)
-        # TODO how expensive is it to always overwrite everything?
 
     @staticmethod
     def saveJsonFile(path, jsonBody):
@@ -139,6 +137,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.trainingInfoJson["curriculumListAsX"] = popX
 
         self.saveTrainingInfoToFile()
+        # TODO how expensive is it to always overwrite everything?
 
     def logRelevantInfo(self, epoch, currentBestCurriculum):
         """
@@ -147,8 +146,9 @@ class RollingHorizonEvolutionaryAlgorithm:
         :param currentBestCurriculum:
         :return:
         """
+
         selectedEnv = self.trainingInfoJson["selectedEnvs"][-1]
-        envDetailsOfCurrentEpoch = self.getCurriculaEnvDetails() # TODO check if this is from the right iteration
+        envDetailsOfCurrentEpoch = self.getCurriculaEnvDetails()  # TODO check if this is from the right iteration
 
         self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
         self.txtLogger.info(
@@ -156,25 +156,43 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
 
     def startTrainingLoop(self, objectives: int, inequalityConstr, xupper):
+        """
+        Starts the training loop
+        :param objectives: the no of objectives for pymoo
+        :param inequalityConstr: ?
+        :param xupper: the uppper bound for the evolutionary x variable
+        :return: 
+        """
         curricProblem = CurriculumProblem(self.curricula, objectives, inequalityConstr, xupper, self)
 
-        algorithm = NSGA2(pop_size=len(self.curricula),
-                          sampling=IntegerRandomSampling(),
-                          crossover=SBX(),
-                          mutation=PM(),
-                          eliminate_duplicates=True,
-                          )
+        nsga = NSGA2(pop_size=len(self.curricula),
+                     sampling=IntegerRandomSampling(),
+                     crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                     mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                     eliminate_duplicates=True,
+                     )
+        # TODO nsga result.X has potentially multiple entries ?
+
         # NSGA Default:
         # sampling: FloatRandomSampling = FloatRandomSampling(),
         # selection: TournamentSelection = TournamentSelection(func_comp=binary_tournament),
         # crossover: SBX = SBX(eta=15, prob=0.9),
         # mutation: PM = PM(eta=20),
 
+        ga = GA(pop_size=len(self.curricula),
+                sampling=IntegerRandomSampling(),
+                crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                eliminate_duplicates=True,
+                )
+        algorithm = ga
+
         # prepare the algorithm to solve the specific problem (same arguments as for the minimize function)
         algorithm.setup(curricProblem, termination=('n_gen', self.nGen), seed=1, verbose=False)  # TODO args. for n_gen
         X = createFirstGeneration(self.curricula)  # todo only do on first load
         initialPop = Population.new("X", X)
-        print("initialPop =", initialPop)
+        print("initialPop =", initialPop.get("X"))
+
         startEpoch, rewards = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
         epoch = startEpoch
         while algorithm.has_next():
@@ -183,8 +201,8 @@ class RollingHorizonEvolutionaryAlgorithm:
             pop = algorithm.ask()
             # pop = initialPop
             # initialPop = None
+            print(pop.get("X"), pop.get("X").shape)
             self.curricula = self.evolXToCurriculum(pop.get("X"))
-            print(self.curricula)
             algorithm.evaluator.eval(curricProblem, pop)
             algorithm.tell(infills=pop)
             self.iterationsDone += self.ITERATIONS_PER_ENV  # TODO use exact value
@@ -200,15 +218,15 @@ class RollingHorizonEvolutionaryAlgorithm:
             currentScore = -10
             # currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
 
-            # self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore)
-            self.logRelevantInfo(epoch, currentBestCurriculum)
-            # TODO split update & log into 2 methods
+            self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, pop.get("X"))
+            # self.logRelevantInfo(epoch, currentBestCurriculum)
             epoch += 1
 
-        # self.printFinalLogs()
+        self.printFinalLogs()
         res = algorithm.result()
         print("final fitness:", res.F.sum())
         print("Final X = ", res.X)
+        print("#curricula:", len(self.curricula))
 
     @staticmethod
     def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int) -> list:
@@ -242,7 +260,10 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.iterationsDone = self.trainingInfoJson["numFrames"]
             startEpoch = self.trainingInfoJson["epochsDone"]
             rewards = self.trainingInfoJson["rewards"]
-            # self.startTime = self.trainingInfoJson["startTime"] # TODO convert
+            startTimeString = self.trainingInfoJson["startTime"] # TODO convert
+            self.startTime = datetime.strptime(self.startTime, '%Y-%m-%d %H:%M:%S') # TODO fix
+            print(self.startTime)
+            exit()
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.args.numberOfCurricula):
                 # TODO test this
