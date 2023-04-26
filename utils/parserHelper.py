@@ -18,6 +18,8 @@ def initializeArgParser():
                         help="Determines the amount of env per curriculum during training")
     parser.add_argument("--numberOfCurricula", default=4, type=int,
                         help="Determines the amount of curricula that are used for training")
+    parser.add_argument("--curriculumEpochs", default=10, type=int,
+                        help="Tells the algorithm how long to train for. Parameter is overwritten, if model was already created")
 
     parser.add_argument("--algo", default="ppo", help="algorithm to use: a2c | ppo ")
     parser.add_argument("--model", default=None, required=True, help="name of the model (REQUIRED)")

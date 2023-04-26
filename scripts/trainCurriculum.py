@@ -2,7 +2,7 @@ from datetime import datetime
 from gymnasium.envs.registration import register
 
 import utils
-from curricula import linear, adaptive, EvolutionaryCurriculum
+from curricula import linear, adaptive, RollingHorizonEvolutionaryAlgorithm
 
 
 def main():
@@ -13,12 +13,12 @@ def main():
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
 
     # TODO fix iterations (so it doesnt overshoot the amount; maybe calculate with exact frame nrs or use updates)
-    startTime = datetime.now()
+    startTime: datetime = datetime.now()
 
     ############
 
     if args.trainEvolutionary:
-        e = EvolutionaryCurriculum(txtLogger, startTime, args)
+        e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, args)
     elif args.trainAdaptive:
         adaptive.adaptiveCurriculum(txtLogger, startTime, args)
 

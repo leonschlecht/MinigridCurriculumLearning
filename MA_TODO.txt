@@ -1,20 +1,21 @@
-pymoo --> usually used for multiobjective;
-define problem: minigrid with curriclum; return reward; eg use non dominatesd sorting algoirthm, NSGA-III
+Evaluate ausprobieren, bzw gegeben eine json etwas rumprobieren / stubs erstellen, wie ich damit abeiten kann
+
+
+- wie mit reward experimentieren dass man ihn ermutigt 16x16 auszuprobieren
+- wie dynamisch mit dem switchen umgehen (zb nach jedem update mal probieren?)
+
+
 ----------------------------------------------------------------------------
 TODO prov Env: die Rewardsscores für jedes Curriculum speichern (statt nur aufsummieren)
 TODO Rewardscore des Mainmodels daraus ableiten
 TODO ggf alte Models löschen
 
 - Ist Speicherplatz eigentlich irgendwann ein Problem? die alten Models aus den Files könnte man ggf löschen, müsste dann aber noch mal sicherere gehen mit dem abspeichern
-- welche performance metriken sollen überhaupt verwendet werden? Welche möchte man plotten später? (training reward, eval rewards, ...)
+- welche performance metriken sollen überhaupt verwendet werden? Welche möchte man plotten später? (training vs eval reward, ...)
 
 - Was für Env-Iterationen, Curriculum-Länge & -Anzahl werden überhaupt angestrebt?
-- wie kann man denn "etwas besser lernen" feststellen in minigrid? Entweder kann der agent es oder nicht
 - Kann man vllt so die Minigrid anpassen, dass ich nicht manuell auf register(...) in meinen inits zurückgreifen muss?
 - Das Unlearning Problem: wie genau funktionieren die updates überhaupt (2560 update schritte, oder 1x pro level)
-
-
--------------------
 - Wie damit umgehen, dass man evtl nicht alles 1:1 gleich lang machen muss? zB Man kann 200k trainieren 16x16, und 100k 8x8 reicht zum stabilisieren
 - RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist & die Iterationen pro Env noch niedriger sind
 ------------------------------------------

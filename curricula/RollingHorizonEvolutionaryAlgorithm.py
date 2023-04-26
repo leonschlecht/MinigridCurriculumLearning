@@ -1,30 +1,33 @@
 import json
 import os
-import time
-
+from datetime import datetime
 import numpy as np
-
 import utils
+from curricula.CurriculumProblem import CurriculumProblem
 from scripts import train, evaluate
 from utils import ENV_NAMES, getModelWithCandidatePrefix
 from pymoo.algorithms.moo.nsga2 import NSGA2
-from pymoo.core.evaluator import Evaluator
 from pymoo.core.population import Population
-from pymoo.core.problem import Problem
+from pymoo.operators.crossover.sbx import SBX  # simulated binary crossover
+from pymoo.operators.mutation.pm import PM  # polynomial mutation
+from pymoo.operators.repair.rounding import \
+    RoundingRepair  # falls ein Operator kommazahlen ausgibt, werden diese gerundet
+from pymoo.operators.sampling.rnd import IntegerRandomSampling  # Sampling neuer Individuuen als integers
 
 
-class EvolutionaryCurriculum:
+class RollingHorizonEvolutionaryAlgorithm:
 
-    def __init__(self, txtLogger, startTime, args, gamma=.9):
+    def __init__(self, txtLogger, startTime: datetime, args, gamma=.9):
         assert args.envsPerCurriculum > 0
         assert args.numberOfCurricula > 0
         assert args.iterationsPerEnv > 0
+        assert args.curriculumEpochs > 1
 
         objectives = 1
-        curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5]
+        curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
         curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
         xupper = len(ENV_NAMES.ALL_ENVS)
-        self.curricula = [curric1]
+        self.curricula = [curric1, curric2]
         inequalityConstr = 0
 
         self.ITERATIONS_PER_ENV = args.iterationsPerEnv
@@ -32,16 +35,16 @@ class EvolutionaryCurriculum:
         self.txtLogger = txtLogger
         self.args = args
         self.startTime = startTime
-        self.selectedModel = self.args.model + "\\epoch_0"
+        self.selectedModel = args.model + "\\epoch_0"
+        self.nGen = args.curriculumEpochs
 
-        # trainingInfoJson & curricula will be initialized in the @startTraining method
+        # trainingInfoJson & curricula will be initialized in the @startTrainingLoop method
         self.trainingInfoJson = {}
-        self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
+        self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"
         self.gamma = gamma
         self.currentRewards = []
 
         self.startTrainingLoop(objectives, inequalityConstr, xupper)
-        # self.startCurriculumTraining()
 
     def trainEachCurriculum(self, i: int, iterationsDone: int) -> int:
         """
@@ -82,7 +85,6 @@ class EvolutionaryCurriculum:
         fullEnvList = {}
         for i in range(len(self.curricula)):
             fullEnvList[i] = self.curricula[i]
-        print("full env list", fullEnvList)
         return fullEnvList
 
     def printFinalLogs(self) -> None:
@@ -93,7 +95,13 @@ class EvolutionaryCurriculum:
         self.txtLogger.info(f"Best Curricula {self.trainingInfoJson['bestCurriculaIds']}")
         self.txtLogger.info(f"Trained in Envs {self.trainingInfoJson['selectedEnvs']}")
         self.txtLogger.info(f"Rewards: {self.trainingInfoJson['rewards']}")
-        self.txtLogger.info(f"Time ended at {time.time()} , total training time: {time.time() - self.startTime}")
+        print(self.startTime)
+        # startTime = datetime.strptime(self.startTime, '%Y-%m-%d %H:%M:%S') # TODO fix
+
+        now = datetime.now()
+        timeDiff = self.startTime - now
+        # print(timeDiff)
+        # self.txtLogger.info(f"Time ended at {now} , total training time: {timeDiff}")
         self.txtLogger.info("-------------------\n\n")
 
     def initTrainingInfo(self, rewards, pretrainingIterations):
@@ -114,7 +122,7 @@ class EvolutionaryCurriculum:
         with open(path, 'w') as f:
             f.write(json.dumps(jsonBody, indent=4, default=str))
 
-    def updateTrainingInfo(self, epoch, currentBestCurriculum, rewards) -> None:
+    def updateTrainingInfo(self, epoch, currentBestCurriculum, rewards, currentScore, popX) -> None:
         self.trainingInfoJson["epochsDone"] = epoch + 1
         self.trainingInfoJson["numFrames"] = self.iterationsDone
 
@@ -122,11 +130,25 @@ class EvolutionaryCurriculum:
         self.trainingInfoJson["selectedEnvs"].append(selectedEnv)
         self.trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
         self.trainingInfoJson["rewards"] = rewards
-        currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
         self.trainingInfoJson["actualPerformance"].append([currentScore, selectedEnv])
         envDetailsOfCurrentEpoch = self.getCurriculaEnvDetails()
         self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = envDetailsOfCurrentEpoch
         self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch + 1)] = self.curricula  # save as backup
+
+        self.trainingInfoJson["currentCurriculumList"] = self.evolXToCurriculum(popX)
+        self.trainingInfoJson["curriculumListAsX"] = popX
+
+        self.saveTrainingInfoToFile()
+
+    def logRelevantInfo(self, epoch, currentBestCurriculum):
+        """
+        Logs relevant training info after a training epoch is done and the trainingInfo was already updated
+        :param epoch:
+        :param currentBestCurriculum:
+        :return:
+        """
+        selectedEnv = self.trainingInfoJson["selectedEnvs"][-1]
+        envDetailsOfCurrentEpoch = self.getCurriculaEnvDetails() # TODO check if this is from the right iteration
 
         self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
         self.txtLogger.info(
@@ -137,47 +159,56 @@ class EvolutionaryCurriculum:
         curricProblem = CurriculumProblem(self.curricula, objectives, inequalityConstr, xupper, self)
 
         algorithm = NSGA2(pop_size=len(self.curricula),
-                          # sampling=BinaryRandomSampling(),
-                          # crossover=TwoPointCrossover(),
-                          # mutation=BitflipMutation(),
+                          sampling=IntegerRandomSampling(),
+                          crossover=SBX(),
+                          mutation=PM(),
                           eliminate_duplicates=True,
-                          )  # TODO use Integer crossover? etc
+                          )
+        # NSGA Default:
+        # sampling: FloatRandomSampling = FloatRandomSampling(),
+        # selection: TournamentSelection = TournamentSelection(func_comp=binary_tournament),
+        # crossover: SBX = SBX(eta=15, prob=0.9),
+        # mutation: PM = PM(eta=20),
 
         # prepare the algorithm to solve the specific problem (same arguments as for the minimize function)
-        algorithm.setup(curricProblem, termination=('n_gen', 10), seed=1, verbose=False)  # TODO args. for n_gen
+        algorithm.setup(curricProblem, termination=('n_gen', self.nGen), seed=1, verbose=False)  # TODO args. for n_gen
         X = createFirstGeneration(self.curricula)  # todo only do on first load
         initialPop = Population.new("X", X)
-        startEpoch, rewards, lastChosenCurriculum = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
+        print("initialPop =", initialPop)
+        startEpoch, rewards = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
         epoch = startEpoch
         while algorithm.has_next():
             self.txtLogger.info(f"------------------------\nSTART EPOCH {epoch}\n----------------------")
             self.selectedModel = self.args.model + "\\epoch_" + str(epoch)
             pop = algorithm.ask()
-                # pop = initialPop
-                # initialPop = None
+            # pop = initialPop
+            # initialPop = None
             self.curricula = self.evolXToCurriculum(pop.get("X"))
             print(self.curricula)
             algorithm.evaluator.eval(curricProblem, pop)
             algorithm.tell(infills=pop)
             self.iterationsDone += self.ITERATIONS_PER_ENV  # TODO use exact value
             nextModel = self.args.model + "\\epoch_" + str(epoch + 1)
+            self.currentRewards = [1]
             currentBestCurriculum = np.argmax(self.currentRewards)
             rewards[str(epoch)] = [self.currentRewards]
 
-            utils.copyAgent(
-                src=getModelWithCandidatePrefix(utils.getModelName(self.selectedModel, currentBestCurriculum)),
-                dest=nextModel)
+            # utils.copyAgent( TODO uncomment
+            #    src=getModelWithCandidatePrefix(utils.getModelName(self.selectedModel, currentBestCurriculum)),
+            #   dest=nextModel)
 
-            self.updateTrainingInfo(epoch, currentBestCurriculum, rewards)
-            self.trainingInfoJson["currentCurriculumList"] = self.evolXToCurriculum(pop.get("X"))
-            self.trainingInfoJson["curriculumListAsX"] = pop.get("X")
-            self.saveTrainingInfoToFile()
+            currentScore = -10
+            # currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
+
+            # self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore)
+            self.logRelevantInfo(epoch, currentBestCurriculum)
+            # TODO split update & log into 2 methods
             epoch += 1
 
-        self.printFinalLogs()
+        # self.printFinalLogs()
         res = algorithm.result()
-        print("hash", res.F.sum())
-        print(np.round(res.X))
+        print("final fitness:", res.F.sum())
+        print("Final X = ", res.X)
 
     @staticmethod
     def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int) -> list:
@@ -211,8 +242,7 @@ class EvolutionaryCurriculum:
             self.iterationsDone = self.trainingInfoJson["numFrames"]
             startEpoch = self.trainingInfoJson["epochsDone"]
             rewards = self.trainingInfoJson["rewards"]
-            lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
-            self.startTime = self.trainingInfoJson["startTime"]
+            # self.startTime = self.trainingInfoJson["startTime"] # TODO convert
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.args.numberOfCurricula):
                 # TODO test this
@@ -222,7 +252,7 @@ class EvolutionaryCurriculum:
                     utils.deleteModel(path + "\\_CANDIDATE")
                 else:
                     break
-            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
+            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
@@ -232,16 +262,20 @@ class EvolutionaryCurriculum:
             self.initTrainingInfo(rewards, self.iterationsDone)
             utils.copyAgent(src=self.selectedModel, dest=self.args.model + "\\epoch_" + str(
                 startEpoch))  # e0 -> e1; subsequent iterations do this the end of each epoch
-            lastChosenCurriculum = None
         # TODO initialize self.curricula here
-        return startEpoch, rewards, lastChosenCurriculum
+        return startEpoch, rewards
 
     def saveTrainingInfoToFile(self):
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4, default=str))
 
     def trainEveryCurriculum(self, curricula):
-        rewards = []  # TODO CHECK IF THIS IS THE CORRECT D-TYPE FOR PYMOO
+        """
+        This method is called from the curriculumProblem_eval method
+        :param curricula: the list of the curricula for the current generaation
+        :return: the rewards after the rolling horizon
+        """
+        rewards = []
         for i in range(len(curricula)):
             rewardI = self.trainEachCurriculum(i, self.iterationsDone)
             rewards.append(rewardI)
@@ -283,8 +317,7 @@ def createFirstGeneration(curriculaList):
     """
     Helper method that creates the biased first population of the RHEA
     Transform from environment language string -> numbers
-    :param curriculaList:
-    :return:
+    :return the transformed list containing integers representing the environment Nr
     """
     indices = []
     for i in range(len(curriculaList)):
@@ -294,30 +327,25 @@ def createFirstGeneration(curriculaList):
     return indices
 
 
-class CurriculumProblem(Problem):
-    def __init__(self, curricula: list, n_obj, n_ieq_constr, xu, evolCurric: EvolutionaryCurriculum):
-        assert len(curricula) > 0
-        assert evolCurric is not None
-        self.evolCurric = evolCurric
-        n_var = len(curricula[0])
-        # TODO maybe try to avoid homogenous curricula with ieq constraints (?)
-        xl = np.full(n_var, -0.49)
-        xu = np.full(n_var, xu - 0.51, dtype=float)
-        super().__init__(n_var=n_var,
-                         n_obj=n_obj,  # maximizing the overall reward = 1 objective
-                         n_ieq_constr=n_ieq_constr,  # 0 ?
-                         xl=xl,
-                         xu=xu)
-        self.curricula = curricula
-        self.N = 0
+"""
+foreach Iteration:
 
-        # F: what we want to maximize: ---> pymoo minimizes, so it should be -reward
-        # G:# Inequality constraint;
-        # H is EQ constraint: maybe we can experiment with the length of each curriculum;
-        #   and maybe with iterations_per_env (so that each horizon has same length still)
+    Get current copy of the best RL Agent
 
-    def _evaluate(self, x, out, *args, **kwargs):
-        curricula = self.evolCurric.evolXToCurriculum(x)
-        rewards = self.evolCurric.trainEveryCurriculum(curricula)
-        out["F"] = -1 * rewards
-        print("EVALUATE PYMOO DONE")
+    Intialize a Problem with Pymoo which will use copies of the best RL agent to evaluate solutions
+
+        The evaluate function receives an integer vector that represents a curriculum. Preferrably, we can use an integer encoding or
+        evaluate will return the performance of the RL agent after performing the training with a given curriculum
+
+        the population consists of multiple curricula, which will all be tested
+
+    we initialize an optimization algorithm
+    We use the minimize function to run the optimization (minimize will call evaluate and update the population in between)
+
+    we query the result of the minimize function to give us the best curriculum and use the timestep after the first phase of this curriculum as new best RL agent
+
+"""
+
+"""
+
+"""
