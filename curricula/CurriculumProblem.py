@@ -29,8 +29,8 @@ class CurriculumProblem(Problem):
 
     def _evaluate(self, x, out, *args, **kwargs):
         curricula = self.evolCurric.evolXToCurriculum(x)
-        rewards = self.evolCurric.trainEveryCurriculum(curricula)
-        # rewards = self.dummyRewards(curricula)
+        # rewards = self.evolCurric.trainEveryCurriculum(curricula)
+        rewards = self.dummyRewards(curricula)
         out["F"] = -1 * np.array(rewards)
         print("EVALUATE PYMOO DONE")
 

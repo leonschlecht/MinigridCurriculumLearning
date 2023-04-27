@@ -2,6 +2,7 @@ import json
 import os
 from datetime import datetime
 import numpy as np
+import random
 from pymoo.algorithms.soo.nonconvex.ga import GA
 
 import utils
@@ -64,11 +65,9 @@ class RollingHorizonEvolutionaryAlgorithm:
             if j == 0:
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
-                self.trainingInfoJson["lastReward"][i] = reward
-                # TODO save reward separately here?
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
         self.txtLogger.info(f"Reward for curriculum {nameOfCurriculumI} = {reward}")
-        return i  # reward TODO
+        return i  # reward TODO REMOVE
 
     def initializeRewards(self):
         """
@@ -143,18 +142,16 @@ class RollingHorizonEvolutionaryAlgorithm:
 
     def logRelevantInfo(self, epoch, currentBestCurriculum):
         """
-        Logs relevant training info after a training epoch is done and the trainingInfo was already updated
+        Logs relevant training info after a training epoch is done and the trainingInfo was updated
         :param epoch:
-        :param currentBestCurriculum:
+        :param currentBestCurriculum: the id of the current best curriculum
         :return:
         """
-
         selectedEnv = self.trainingInfoJson["selectedEnvs"][-1]
-        envDetailsOfCurrentEpoch = self.getCurriculaEnvDetails()  # TODO check if this is from the right iteration
 
         self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
         self.txtLogger.info(
-            f"CurriculaEnvDetails {envDetailsOfCurrentEpoch}; selectedEnv: {selectedEnv}")
+            f"CurriculaEnvDetails {self.getCurriculaEnvDetails()}; selectedEnv: {selectedEnv}")
         self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
 
     def startTrainingLoop(self, objectives: int, inequalityConstr, xupper):
@@ -191,9 +188,6 @@ class RollingHorizonEvolutionaryAlgorithm:
 
         # prepare the algorithm to solve the specific problem (same arguments as for the minimize function)
         algorithm.setup(curricProblem, termination=('n_gen', self.nGen), seed=1, verbose=False)
-        X = createFirstGeneration(self.curricula)  # todo only do on first load
-        initialPop = Population.new("X", X)
-        print("initialPop =", initialPop.get("X"))
 
         startEpoch, rewards = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
         epoch = startEpoch
@@ -201,9 +195,10 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.txtLogger.info(f"------------------------\nSTART EPOCH {epoch}\n----------------------")
             self.selectedModel = self.args.model + "\\epoch_" + str(epoch)
             pop = algorithm.ask()
-            # pop = initialPop
-            # initialPop = None
-            print(pop.get("X"), pop.get("X").shape)
+            # set biased population for first generation
+            if epoch == 1:
+                X = self.createFirstGeneration(self.curricula)
+                pop = Population.new("X", X)
             self.curricula = self.evolXToCurriculum(pop.get("X"))
             algorithm.evaluator.eval(curricProblem, pop)
             algorithm.tell(infills=pop)
@@ -230,20 +225,15 @@ class RollingHorizonEvolutionaryAlgorithm:
     @staticmethod
     def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int) -> list:
         """
-        Initializes the list of Curricula randomly
+        Initializes list of curricula randomly
         :param numberOfCurricula: how many curricula will be generated
         :param envsPerCurriculum: how many environment each curriculum has
         """
         curricula = []
-        i = 0
-        while i < numberOfCurricula:
-            newCurriculum = []
-            for j in range(envsPerCurriculum):
-                val = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
-                newCurriculum.append(ENV_NAMES.ALL_ENVS[val])
-            if newCurriculum not in curricula:  # TODO find better duplicate checking method
-                curricula.append(newCurriculum)
-                i += 1
+        for i in range(numberOfCurricula):
+            indices = random.sample(range(len(ENV_NAMES.ALL_ENVS)), envsPerCurriculum)
+            newCurriculum = [ENV_NAMES.ALL_ENVS[idx] for idx in indices]
+            curricula.append(newCurriculum)
         assert len(curricula) == numberOfCurricula
         return curricula
 
@@ -270,8 +260,9 @@ class RollingHorizonEvolutionaryAlgorithm:
                 else:
                     print("Nothing to delete", k)
                     break
-            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO ?
-            self.curricula = self.trainingInfoJson["currentCurriculumList"]
+            # TODO load evol progress
+            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO REMOVE
+            # self.curricula = self.trainingInfoJson["currentCurriculumList"] # TODO REMOVE
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
@@ -300,7 +291,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         for i in range(len(curricula)):
             rewardI = self.trainEachCurriculum(i, self.iterationsDone)
             rewards.append(rewardI)
-        self.currentRewards = rewards # TODO here ??
+        self.currentRewards = rewards
         return np.array(rewards)
 
     @staticmethod
@@ -319,6 +310,20 @@ class RollingHorizonEvolutionaryAlgorithm:
                 result[i].append(ENV_NAMES.ALL_ENVS[rounded])
         return result
 
+    @staticmethod
+    def createFirstGeneration(curriculaList):
+        """
+        Helper method that creates the biased first population of the RHEA
+        Transform from environment language string -> numbers
+        :return the transformed list containing integers representing the environment Nr
+        """
+        indices = []
+        for i in range(len(curriculaList)):
+            indices.append([])
+            for env in curriculaList[i]:
+                indices[i].append(ENV_NAMES.ALL_ENVS.index(env))
+        return indices
+
 
 def evaluateCurriculumResults(evaluationDictionary):
     # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
@@ -332,20 +337,6 @@ def evaluateCurriculumResults(evaluationDictionary):
 
     # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
     # # Aber warum? Und wie will man das nach 20+ durchläufen plotten
-
-
-def createFirstGeneration(curriculaList):
-    """
-    Helper method that creates the biased first population of the RHEA
-    Transform from environment language string -> numbers
-    :return the transformed list containing integers representing the environment Nr
-    """
-    indices = []
-    for i in range(len(curriculaList)):
-        indices.append([])
-        for env in curriculaList[i]:
-            indices[i].append(ENV_NAMES.ALL_ENVS.index(env))
-    return indices
 
 
 """
