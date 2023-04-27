@@ -30,7 +30,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
         curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
         xupper = len(ENV_NAMES.ALL_ENVS) - 1
-        self.curricula = [curric1, curric2] # TODO initialize htrough args parameters
+        self.curricula = [curric1, curric2]  # TODO initialize htrough args parameters
         inequalityConstr = 0
 
         self.ITERATIONS_PER_ENV = args.iterationsPerEnv
@@ -264,15 +264,17 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.startTime = datetime.fromisoformat(self.trainingInfoJson["startTime"])
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.args.numberOfCurricula):
-                # TODO test this
-                path = self.logFilePath + "\\epoch" + str(k)
-                if os.path.exists(path):
-                    utils.deleteModel(path)
-                    utils.deleteModel(path + "\\_CANDIDATE")
+                path = self.args.model + "\\epoch_" + str(startEpoch) + "_curric" + str(k)
+                if utils.deleteModelIfExists(path):
+                    print("deleted", k)
+                    snapshotPath = path + "\\_CANDIDATE"
+                    utils.deleteModelIfExists(snapshotPath)
                 else:
+                    print("Nothing to delete", k)
                     break
             # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
+            exit()
         else:
             self.txtLogger.info("Creating model. . .")
             startEpoch = 1

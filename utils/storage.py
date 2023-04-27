@@ -93,8 +93,13 @@ def copyAgent(src, dest) -> None:
         print(f'Copied Agent! {src} ---> {dest}')
 
 
-def deleteModel(directory) -> None:
+def deleteModelIfExists(directory) -> bool:
     """
+    Deletes a path that exists. Returns true on success, false otherwise
     :param directory: name of the model to be deleted, which is stored in /storage
     """
-    shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
+    fullPath = os.getcwd() + "\\storage\\" + directory
+    if os.path.exists(fullPath):
+        shutil.rmtree(fullPath)
+        return True
+    return False
