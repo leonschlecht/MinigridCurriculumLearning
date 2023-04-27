@@ -30,7 +30,8 @@ class RollingHorizonEvolutionaryAlgorithm:
         curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
         curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
         xupper = len(ENV_NAMES.ALL_ENVS) - 1
-        self.curricula = [curric1, curric2]  # TODO initialize htrough args parameters
+        self.curricula = self.randomlyInitializeCurricula(args.numberOfCurricula, args.envsPerCurriculum)
+        self.curricula = [curric1, curric2]  # TODO REMOVE
         inequalityConstr = 0
 
         self.ITERATIONS_PER_ENV = args.iterationsPerEnv
@@ -58,13 +59,14 @@ class RollingHorizonEvolutionaryAlgorithm:
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
                                         self.curricula[i][j], self.args, self.txtLogger)
-            self.txtLogger.info(f"Iterations Done {iterationsDone}")
+            # rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
+            self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+                self.trainingInfoJson["lastReward"][i] = reward
                 # TODO save reward separately here?
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
-            # rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
         self.txtLogger.info(f"Reward for curriculum {nameOfCurriculumI} = {reward}")
         return i  # reward TODO
 
@@ -207,17 +209,13 @@ class RollingHorizonEvolutionaryAlgorithm:
             algorithm.tell(infills=pop)
             self.iterationsDone += self.ITERATIONS_PER_ENV  # TODO use exact value
             nextModel = self.args.model + "\\epoch_" + str(epoch + 1)
-            self.currentRewards = [1]
             currentBestCurriculum = np.argmax(self.currentRewards)
-            rewards[str(epoch)] = [self.currentRewards]
+            rewards[str(epoch)] = self.currentRewards
+            currentScore = self.currentRewards[currentBestCurriculum]
 
             utils.copyAgent(
                 src=getModelWithCandidatePrefix(utils.getModelName(self.selectedModel, currentBestCurriculum)),
                 dest=nextModel)
-
-            currentScore = -10
-            # currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
-            # TODO this has already been processed
 
             self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, pop.get("X"))
             # self.logRelevantInfo(epoch, currentBestCurriculum)
@@ -272,9 +270,9 @@ class RollingHorizonEvolutionaryAlgorithm:
                 else:
                     print("Nothing to delete", k)
                     break
-            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
+            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO ?
+            self.curricula = self.trainingInfoJson["currentCurriculumList"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
-            exit()
         else:
             self.txtLogger.info("Creating model. . .")
             startEpoch = 1
@@ -283,11 +281,12 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.initTrainingInfo(rewards, self.iterationsDone)
             utils.copyAgent(src=self.selectedModel, dest=self.args.model + "\\epoch_" + str(
                 startEpoch))  # e0 -> e1; subsequent iterations do this the end of each epoch
-            print("Exit")
-            exit()
         return startEpoch, rewards
 
     def saveTrainingInfoToFile(self):
+        """
+        Saves the training info into a local file called status.json in the main folder of the model's storage
+        """
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4, default=str))
 
@@ -301,7 +300,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         for i in range(len(curricula)):
             rewardI = self.trainEachCurriculum(i, self.iterationsDone)
             rewards.append(rewardI)
-        self.currentRewards = rewards
+        self.currentRewards = rewards # TODO here ??
         return np.array(rewards)
 
     @staticmethod
