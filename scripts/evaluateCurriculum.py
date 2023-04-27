@@ -2,7 +2,7 @@ import utils
 from utils import initializeArgParser
 import os
 import json
-from curricula import adaptive, RollingHorizonEvolutionaryAlgorithm, linear
+from curricula import adaptive, RandomRollingHorizon, RollingHorizonEvolutionaryAlgorithm, linear
 
 
 def evaluateEvolutionaryCurriculum():
