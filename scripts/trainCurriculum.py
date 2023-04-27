@@ -2,7 +2,8 @@ from datetime import datetime
 from gymnasium.envs.registration import register
 
 import utils
-from curricula import linear, adaptive, RollingHorizonEvolutionaryAlgorithm, RandomRollingHorizon
+from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
+    BiasedRandomRollingHorizon, adaptiveCurriculum
 
 
 def main():
@@ -19,18 +20,17 @@ def main():
 
     if args.trainEvolutionary:
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, args)
-    elif args.trainAdaptive:
-        adaptive.adaptiveCurriculum(txtLogger, startTime, args)
     elif args.trainBiasedRandomRH:
-        e = BiasedRandomRH(txtLogger, startTime, args)
+        e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
     elif args.trainRandomRH:
-        e = RandomRollingHorizon(txtLogger, startTime, args)
-    elif args.trainAdaptive:
-        adaptive.adaptiveCurriculum(txtLogger, startTime, args)
+        e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
     elif args.trainLinear:
-        linear.startLinearCurriculum(txtLogger, startTime, args)
+        linearCurriculum.startLinearCurriculum(txtLogger, startTime, args)
+    elif args.trainAdaptive:
+        adaptiveCurriculum.startAdaptiveCurriculum(txtLogger, startTime, args)
     else:
         print("Not training method selected!")
+
 
 def registerEnvs():
     # TODO find better way so that the max_steps decrease over time

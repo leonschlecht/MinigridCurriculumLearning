@@ -6,7 +6,7 @@ import random
 from pymoo.algorithms.soo.nonconvex.ga import GA
 
 import utils
-from curricula.CurriculumProblem import CurriculumProblem
+from curricula.curriculumProblem import CurriculumProblem
 from scripts import train, evaluate
 from utils import ENV_NAMES, getModelWithCandidatePrefix
 from pymoo.algorithms.moo.nsga2 import NSGA2

@@ -1,4 +1,4 @@
-from .adaptive import *
-from .linear import *
-from .RollingHorizonEvolutionaryAlgorithm import *
+from .adaptiveCurriculum import *
+from .linearCurriculum import *
+from .rollingHorizonEvolutionaryAlgorithm import *
 from .biasedRandomRollingHorizon import *
