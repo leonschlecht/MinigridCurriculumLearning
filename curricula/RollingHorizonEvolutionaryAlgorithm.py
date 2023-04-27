@@ -25,11 +25,12 @@ class RollingHorizonEvolutionaryAlgorithm:
         assert args.iterationsPerEnv > 0
         assert args.curriculumEpochs > 1
 
+        # Pymoo parameters
         objectives = 1
         curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
         curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
         xupper = len(ENV_NAMES.ALL_ENVS) - 1
-        self.curricula = [curric1, curric2]
+        self.curricula = [curric1, curric2] # TODO initialize htrough args parameters
         inequalityConstr = 0
 
         self.ITERATIONS_PER_ENV = args.iterationsPerEnv
@@ -40,7 +41,6 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.selectedModel = args.model + "\\epoch_0"
         self.nGen = args.curriculumEpochs
 
-        # trainingInfoJson & curricula will be initialized in the @startTrainingLoop method
         self.trainingInfoJson = {}
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"
         self.gamma = gamma
@@ -188,7 +188,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         algorithm = ga
 
         # prepare the algorithm to solve the specific problem (same arguments as for the minimize function)
-        algorithm.setup(curricProblem, termination=('n_gen', self.nGen), seed=1, verbose=False)  # TODO args. for n_gen
+        algorithm.setup(curricProblem, termination=('n_gen', self.nGen), seed=1, verbose=False)
         X = createFirstGeneration(self.curricula)  # todo only do on first load
         initialPop = Population.new("X", X)
         print("initialPop =", initialPop.get("X"))
@@ -211,12 +211,13 @@ class RollingHorizonEvolutionaryAlgorithm:
             currentBestCurriculum = np.argmax(self.currentRewards)
             rewards[str(epoch)] = [self.currentRewards]
 
-            # utils.copyAgent( TODO uncomment
-            #    src=getModelWithCandidatePrefix(utils.getModelName(self.selectedModel, currentBestCurriculum)),
-            #   dest=nextModel)
+            utils.copyAgent(
+                src=getModelWithCandidatePrefix(utils.getModelName(self.selectedModel, currentBestCurriculum)),
+                dest=nextModel)
 
             currentScore = -10
             # currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
+            # TODO this has already been processed
 
             self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, pop.get("X"))
             # self.logRelevantInfo(epoch, currentBestCurriculum)
@@ -260,8 +261,8 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.iterationsDone = self.trainingInfoJson["numFrames"]
             startEpoch = self.trainingInfoJson["epochsDone"]
             rewards = self.trainingInfoJson["rewards"]
-            startTimeString = self.trainingInfoJson["startTime"] # TODO convert
-            self.startTime = datetime.strptime(self.startTime, '%Y-%m-%d %H:%M:%S') # TODO fix
+            startTimeString = self.trainingInfoJson["startTime"]  # TODO convert
+            self.startTime = datetime.strptime(self.startTime, '%Y-%m-%d %H:%M:%S')  # TODO fix
             print(self.startTime)
             exit()
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
@@ -283,7 +284,6 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.initTrainingInfo(rewards, self.iterationsDone)
             utils.copyAgent(src=self.selectedModel, dest=self.args.model + "\\epoch_" + str(
                 startEpoch))  # e0 -> e1; subsequent iterations do this the end of each epoch
-        # TODO initialize self.curricula here
         return startEpoch, rewards
 
     def saveTrainingInfoToFile(self):
