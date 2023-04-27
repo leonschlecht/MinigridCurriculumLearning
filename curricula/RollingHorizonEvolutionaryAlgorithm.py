@@ -261,10 +261,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.iterationsDone = self.trainingInfoJson["numFrames"]
             startEpoch = self.trainingInfoJson["epochsDone"]
             rewards = self.trainingInfoJson["rewards"]
-            startTimeString = self.trainingInfoJson["startTime"]  # TODO convert
-            self.startTime = datetime.strptime(self.startTime, '%Y-%m-%d %H:%M:%S')  # TODO fix
-            print(self.startTime)
-            exit()
+            self.startTime = datetime.fromisoformat(self.trainingInfoJson["startTime"])
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.args.numberOfCurricula):
                 # TODO test this
@@ -284,6 +281,8 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.initTrainingInfo(rewards, self.iterationsDone)
             utils.copyAgent(src=self.selectedModel, dest=self.args.model + "\\epoch_" + str(
                 startEpoch))  # e0 -> e1; subsequent iterations do this the end of each epoch
+            print("Exit")
+            exit()
         return startEpoch, rewards
 
     def saveTrainingInfoToFile(self):
