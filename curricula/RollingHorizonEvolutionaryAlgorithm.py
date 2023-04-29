@@ -28,11 +28,10 @@ class RollingHorizonEvolutionaryAlgorithm:
 
         # Pymoo parameters
         objectives = 1
-        curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
-        curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
+        # curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
+        # curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
         xupper = len(ENV_NAMES.ALL_ENVS) - 1
         self.curricula = self.randomlyInitializeCurricula(args.numberOfCurricula, args.envsPerCurriculum)
-        self.curricula = [curric1, curric2]  # TODO REMOVE
         inequalityConstr = 0
 
         self.ITERATIONS_PER_ENV = args.iterationsPerEnv
@@ -60,14 +59,14 @@ class RollingHorizonEvolutionaryAlgorithm:
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
                                         self.curricula[i][j], self.args, self.txtLogger)
-            # rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
+            reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
         self.txtLogger.info(f"Reward for curriculum {nameOfCurriculumI} = {reward}")
-        return i  # reward TODO REMOVE
+        return reward
 
     def initializeRewards(self):
         """
@@ -190,7 +189,19 @@ class RollingHorizonEvolutionaryAlgorithm:
         algorithm.setup(curricProblem, termination=('n_gen', self.nGen), seed=1, verbose=False)
 
         startEpoch, rewards = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
-        epoch = startEpoch
+        epoch = startEpoch # 3 x 4
+
+        """
+        5x5 aufteilen , 6x6 rausnehmen
+        4x4 mit 2x2 obs
+        register abhängig von performance machen (ggf x2)
+        
+        - env schneller machen / laden
+        - screen
+        - register von performance
+        - observation space reduzieren (komplexität des levels wird schwerer; und man kommt durch zufall leichter an) ; nutzlose iterationen sparen
+            4, 6, 8, 10 (obs space macht es seeehr schwer)     
+        """
         while algorithm.has_next():
             self.txtLogger.info(f"------------------------\nSTART EPOCH {epoch}\n----------------------")
             self.selectedModel = self.args.model + "\\epoch_" + str(epoch)
@@ -213,7 +224,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                 dest=nextModel)
 
             self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, pop.get("X"))
-            # self.logRelevantInfo(epoch, currentBestCurriculum)
+            self.logRelevantInfo(epoch, currentBestCurriculum)
             epoch += 1
 
         self.printFinalLogs()
@@ -261,8 +272,8 @@ class RollingHorizonEvolutionaryAlgorithm:
                     print("Nothing to delete", k)
                     break
             # TODO load evol progress
-            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO REMOVE
-            # self.curricula = self.trainingInfoJson["currentCurriculumList"] # TODO REMOVE
+            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
+            self.curricula = self.trainingInfoJson["currentCurriculumList"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
