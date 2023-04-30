@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 import random
 from pymoo.algorithms.soo.nonconvex.ga import GA
+from pymoo.optimize import minimize
 
 import utils
 from curricula.curriculumProblem import CurriculumProblem
@@ -40,21 +41,23 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.args = args
         self.startTime = startTime
         self.selectedModel = args.model + "\\epoch_0"
-        self.nGen = args.curriculumEpochs
+        self.trainingEpochs = args.curriculumEpochs
+        self.nGen = 3
 
         self.trainingInfoJson = {}
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"
         self.gamma = gamma
-        self.currentRewards = []
+        self.currentRewards = {}
 
         self.startTrainingLoop(objectives, inequalityConstr, xupper)
 
-    def trainEachCurriculum(self, i: int, iterationsDone: int) -> int:
+    def trainEachCurriculum(self, i: int, iterationsDone: int, genNr: int) -> int:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         reward = 0
-        nameOfCurriculumI = utils.getModelName(self.selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
+        # Save epochX -> epochX_curricI_genJ
+        nameOfCurriculumI = utils.getModelName(self.selectedModel, i, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
@@ -161,7 +164,6 @@ class RollingHorizonEvolutionaryAlgorithm:
         :param xupper: the uppper bound for the evolutionary x variable
         :return: 
         """
-        curricProblem = CurriculumProblem(self.curricula, objectives, inequalityConstr, xupper, self)
 
         nsga = NSGA2(pop_size=len(self.curricula),
                      sampling=IntegerRandomSampling(),
@@ -177,55 +179,46 @@ class RollingHorizonEvolutionaryAlgorithm:
         # crossover: SBX = SBX(eta=15, prob=0.9),
         # mutation: PM = PM(eta=20),
 
-        ga = GA(pop_size=len(self.curricula),
-                sampling=IntegerRandomSampling(),
-                crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                eliminate_duplicates=True,
-                )
-        algorithm = ga
-
-        # prepare the algorithm to solve the specific problem (same arguments as for the minimize function)
-        algorithm.setup(curricProblem, termination=('n_gen', self.nGen), seed=1, verbose=False)
-
         startEpoch, rewards = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
-        epoch = startEpoch # 3 x 4
 
-        """
-        5x5 aufteilen , 6x6 rausnehmen
-        4x4 mit 2x2 obs
-        register abhängig von performance machen (ggf x2)
-        
-        - env schneller machen / laden
-        - screen
-        - register von performance
-        - observation space reduzieren (komplexität des levels wird schwerer; und man kommt durch zufall leichter an) ; nutzlose iterationen sparen
-            4, 6, 8, 10 (obs space macht es seeehr schwer)     
-        """
-        while algorithm.has_next():
+        for epoch in range(startEpoch, self.trainingEpochs):
             self.txtLogger.info(f"------------------------\nSTART EPOCH {epoch}\n----------------------")
             self.selectedModel = self.args.model + "\\epoch_" + str(epoch)
-            pop = algorithm.ask()
-            # set biased population for first generation
+            curricProblem = CurriculumProblem(self.curricula, objectives, inequalityConstr, xupper, self)
+            algorithm = GA(pop_size=len(self.curricula),
+                           sampling=IntegerRandomSampling(),
+                           crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                           mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                           eliminate_duplicaets=True,
+                           )
+            # TODO maybe set biased pop for 1st epoch 1st generation
             if epoch == 1:
                 X = self.createFirstGeneration(self.curricula)
                 pop = Population.new("X", X)
-            self.curricula = self.evolXToCurriculum(pop.get("X"))
-            algorithm.evaluator.eval(curricProblem, pop)
-            algorithm.tell(infills=pop)
+            res = minimize(curricProblem,
+                           algorithm,
+                           termination=('n_gen', self.args.curriculumEpochs),
+                           seed=1,
+                           save_history=True,
+                           verbose=False)
+            self.txtLogger.info("Res = ...", res.X, res.F)
             self.iterationsDone += self.ITERATIONS_PER_ENV  # TODO use exact value
-            nextModel = self.args.model + "\\epoch_" + str(epoch + 1)
+            nextModel = self.args.model + "\\epoch_" + str(epoch + 1)  # TODO move all these dir building to helper
             currentBestCurriculum = np.argmax(self.currentRewards)
             rewards[str(epoch)] = self.currentRewards
-            currentScore = self.currentRewards[currentBestCurriculum]
+            # TODO move this to different method
+            currentRewardList = np.array(list(self.currentRewards.values()))  # transform dict to list / matrix
+            currentScore = np.max(currentRewardList)
+            currentMaxRewardIdx = np.argmax(currentRewardList)  # highest idx in 1d list
+            keyIndexPairOfMaxReward = np.unravel_index(currentMaxRewardIdx, currentRewardList.shape)
+            genNrOfBestIndividual = list(self.currentRewards.keys())[keyIndexPairOfMaxReward[0]]
+            curricIdxOfBestIndividual = keyIndexPairOfMaxReward[1]
 
-            utils.copyAgent(
-                src=getModelWithCandidatePrefix(utils.getModelName(self.selectedModel, currentBestCurriculum)),
-                dest=nextModel)
+            currentBestModel = utils.getModelName(self.selectedModel, curricIdxOfBestIndividual, genNrOfBestIndividual)
+            utils.copyAgent(src=currentBestModel, dest=nextModel)
 
-            self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, pop.get("X"))
+            self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, res.X)
             self.logRelevantInfo(epoch, currentBestCurriculum)
-            epoch += 1
 
         self.printFinalLogs()
         res = algorithm.result()
@@ -271,9 +264,8 @@ class RollingHorizonEvolutionaryAlgorithm:
                 else:
                     print("Nothing to delete", k)
                     break
-            # TODO load evol progress
-            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
-            self.curricula = self.trainingInfoJson["currentCurriculumList"]
+            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO fix
+            # self.curricula = self.trainingInfoJson["currentCurriculumList"] # TODO fix
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
@@ -292,17 +284,23 @@ class RollingHorizonEvolutionaryAlgorithm:
         with open(self.logFilePath, 'w') as f:
             f.write(json.dumps(self.trainingInfoJson, indent=4, default=str))
 
-    def trainEveryCurriculum(self, curricula):
+    def trainEveryCurriculum(self, evolX, genNr):
         """
         This method is called from the curriculumProblem_eval method
-        :param curricula: the list of the curricula for the current generaation
+        :param evolX: the X parameter of the current RHEA population
+        :param genNr: the number of the current generation
         :return: the rewards after the rolling horizon
         """
-        rewards = []
+        if genNr == 1:
+            self.currentRewards = {"1": [], "2": [], "3": []}
+        curricula = self.evolXToCurriculum(evolX)
+        rewards = []  # TODO replcae list with np array directly
         for i in range(len(curricula)):
-            rewardI = self.trainEachCurriculum(i, self.iterationsDone)
+            rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr)
             rewards.append(rewardI)
-        self.currentRewards = rewards
+        print(self.currentRewards)
+        self.currentRewards[str(genNr)] = rewards
+        self.curricula = curricula
         return np.array(rewards)
 
     @staticmethod

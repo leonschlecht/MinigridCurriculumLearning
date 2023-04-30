@@ -7,10 +7,10 @@ from utils import ENV_NAMES
 
 
 class CurriculumProblem(Problem):
-    def __init__(self, curricula: list, n_obj, n_ieq_constr, xu, evolCurric: RollingHorizonEvolutionaryAlgorithm):
+    def __init__(self, curricula: list, n_obj, n_ieq_constr, xu, rheaObj: RollingHorizonEvolutionaryAlgorithm):
         assert len(curricula) > 0
-        assert evolCurric is not None
-        self.evolCurric = evolCurric
+        assert rheaObj is not None
+        self.rheaObj = rheaObj
         n_var = len(curricula[0])
         xl = np.zeros(n_var, dtype=int)
         xu = np.full(n_var, xu, dtype=int)
@@ -20,6 +20,7 @@ class CurriculumProblem(Problem):
                          xl=xl,
                          xu=xu)
         self.curricula = curricula
+        self.gen = 0
         # TODO maybe try to avoid homogenous curricula with ieq constraints (?)
 
         # F: what we want to maximize: ---> pymoo minimizes, so it should be -reward
@@ -28,14 +29,13 @@ class CurriculumProblem(Problem):
         #   and maybe with iterations_per_env (so that each horizon has same length still)
 
     def _evaluate(self, x, out, *args, **kwargs):
-        curricula = self.evolCurric.evolXToCurriculum(x)
-        rewards = self.evolCurric.trainEveryCurriculum(curricula)
+        self.gen += 1
+        rewards = self.rheaObj.trainEveryCurriculum(x, self.gen)
         # rewards = self.dummyRewards(curricula)
         out["F"] = -1 * np.array(rewards)
-        print("EVALUATE PYMOO DONE")
+        print("EVALUATE PYMOO DONE. Generation", self.gen)
 
-    @staticmethod
-    def dummyRewards(curricula):
+    def dummyRewards(self, curricula):
         rewards = []
         for i in range(len(curricula)):
             reward = 0
@@ -43,4 +43,5 @@ class CurriculumProblem(Problem):
                 if env == ENV_NAMES.DOORKEY_16x16:
                     reward += 10
             rewards.append(reward)
+        self.rheaObj.currentRewards = rewards
         return rewards
