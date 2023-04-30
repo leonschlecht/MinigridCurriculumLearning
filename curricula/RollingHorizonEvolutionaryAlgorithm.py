@@ -9,7 +9,7 @@ from pymoo.optimize import minimize
 import utils
 from curricula.curriculumProblem import CurriculumProblem
 from scripts import train, evaluate
-from utils import ENV_NAMES, getModelWithCandidatePrefix
+from utils import ENV_NAMES, getModelWithCandidatePrefix # TODO remove comments
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.core.population import Population
 from pymoo.operators.crossover.sbx import SBX  # simulated binary crossover
@@ -48,7 +48,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"
         self.gamma = gamma
         self.currentRewards = {}
-
+        self.txtLogger.info(f"curricula list start {self.curricula}")
         self.startTrainingLoop(objectives, inequalityConstr, xupper)
 
     def trainEachCurriculum(self, i: int, iterationsDone: int, genNr: int) -> int:
@@ -201,7 +201,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                            seed=1,
                            save_history=True,
                            verbose=False)
-            self.txtLogger.info("Res = ...", res.X, res.F)
+            self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
             self.iterationsDone += self.ITERATIONS_PER_ENV  # TODO use exact value
             nextModel = self.args.model + "\\epoch_" + str(epoch + 1)  # TODO move all these dir building to helper
             currentBestCurriculum = np.argmax(self.currentRewards)
