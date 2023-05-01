@@ -99,6 +99,14 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.txtLogger.info(f"Time ended at {now} , total training time: {timeDiff}")
         self.txtLogger.info("-------------------\n\n")
 
+    @staticmethod
+    def getGenAndIdxOfBestIndividual(currentRewards):
+        currentRewardList = np.array(list(currentRewards.values()))  # transform dict to list / matrix
+        currentMaxRewardIdx = np.argmax(currentRewardList)  # highest idx in 1d list
+        keyIndexPairOfMaxReward = np.unravel_index(currentMaxRewardIdx, currentRewardList.shape)
+        return list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][3:], \
+            int(keyIndexPairOfMaxReward[1]) # TODO len('gen') vs 3
+
     def initTrainingInfo(self):
         self.trainingInfoJson = {"selectedEnvs": [],
                                  "bestCurriculaIds": [],
@@ -123,22 +131,18 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.trainingInfoJson["selectedEnvs"].append(bestCurriculum[0])
         self.trainingInfoJson["bestCurriculaIds"].append(idOfBestCurriculum)
         self.trainingInfoJson["rewards"] = rewards
-        self.trainingInfoJson["actualPerformance"].append(
-            [currentScore, bestCurriculum])
+        self.trainingInfoJson["actualPerformance"].append([currentScore, bestCurriculum])
         envDetailsOfCurrentEpoch = self.getCurriculaEnvDetails()
         self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = envDetailsOfCurrentEpoch
         self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch + 1)] = self.curricula  # save as backup
 
-        # TODO refactor ; this should depend on the popX. If it is 1d list then this is ok, otherwise call the method
-        result = [ENV_NAMES.ALL_ENVS[i] for i in popX]
-        self.trainingInfoJson[
-            "currentCurriculumList"] = result  # TODO fix; this is weird atm, should mb just be self.curric, because it just transforms the popX to 1 Curriculum+
+        self.trainingInfoJson["currentListOfCurricula"] = self.curricula
         self.trainingInfoJson["curriculumListAsX"] = popX
 
         self.saveTrainingInfoToFile()
         # TODO how expensive is it to always overwrite everything?
 
-    def logRelevantInfo(self, epoch, currentBestCurriculum):
+    def logInfoAfterEpoch(self, epoch, currentBestCurriculum):
         """
         Logs relevant training info after a training epoch is done and the trainingInfo was updated
         :param epoch:
@@ -147,7 +151,8 @@ class RollingHorizonEvolutionaryAlgorithm:
         """
         selectedEnv = self.trainingInfoJson["selectedEnvs"][-1]
 
-        self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
+        self.txtLogger.info(
+            f"Best results in epoch {epoch} came from curriculum {self.curricula[currentBestCurriculum]}")
         self.txtLogger.info(
             f"CurriculaEnvDetails {self.getCurriculaEnvDetails()}; selectedEnv: {selectedEnv}")
         self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
@@ -204,21 +209,15 @@ class RollingHorizonEvolutionaryAlgorithm:
             currentBestCurriculum = np.argmax(self.currentRewards)
             rewards["epoch" + str(epoch)] = self.currentRewards
 
-            # TODO move this to different method
-            currentRewardList = np.array(list(self.currentRewards.values()))  # transform dict to list / matrix
-            currentScore = np.max(currentRewardList)
-            currentMaxRewardIdx = np.argmax(currentRewardList)  # highest idx in 1d list
-            keyIndexPairOfMaxReward = np.unravel_index(currentMaxRewardIdx, currentRewardList.shape)
-            genOfBestIndividual: int = list(self.currentRewards.keys())[
-                                           keyIndexPairOfMaxReward[0]][3:]
-            curricIdxOfBestIndividual: int = keyIndexPairOfMaxReward[1]  # TODO fix warning
+            currentScore = max(list(self.currentRewards.values()))
+            genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewards)
             currentBestModel = utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual,
                                                                  genOfBestIndividual)
             utils.copyAgent(src=currentBestModel, dest=nextModel)
 
+            # TODO assert that res.X == curric[bestScore] ; but evolXToCurric needs to handle 1d then ; or what if res.X has multiple?
             self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, res.X)
-            self.logRelevantInfo(epoch, currentBestCurriculum)
-            # TODO save cmd line string
+            self.logInfoAfterEpoch(epoch, currentBestCurriculum)
 
         self.printFinalLogs()
         print("final fitness:", res.F.sum())
@@ -265,7 +264,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                     print("Nothing to delete", k)
                     break
             # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO fix
-            # self.curricula = self.trainingInfoJson["currentCurriculumList"] # TODO fix
+            # self.curricula = self.trainingInfoJson["currentListOfCurricula"] # TODO fix
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
