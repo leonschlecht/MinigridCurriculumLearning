@@ -11,7 +11,8 @@ def main():
     # TODO load time or set initially in linear / adaptive
     # TODO refactor to some utils method (for all methods)
 
-    txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
+    txtLogger = utils.get_txt_logger(
+        utils.get_model_dir(args.model))  # TODO this is not clear if it creates a folder or not
 
     # TODO fix iterations (so it doesnt overshoot the amount; maybe calculate with exact frame nrs or use updates)
     startTime: datetime = datetime.now()

@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 from datetime import datetime
@@ -9,45 +10,47 @@ from pymoo.optimize import minimize
 import utils
 from curricula.curriculumProblem import CurriculumProblem
 from scripts import train, evaluate
-from utils import ENV_NAMES, getModelWithCandidatePrefix # TODO remove comments
+from utils import ENV_NAMES, getModelWithCandidatePrefix
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.core.population import Population
 from pymoo.operators.crossover.sbx import SBX  # simulated binary crossover
 from pymoo.operators.mutation.pm import PM  # polynomial mutation
-from pymoo.operators.repair.rounding import \
-    RoundingRepair  # falls ein Operator kommazahlen ausgibt, werden diese gerundet
-from pymoo.operators.sampling.rnd import IntegerRandomSampling  # Sampling neuer Individuuen als integers
+from pymoo.operators.repair.rounding import RoundingRepair
+from pymoo.operators.sampling.rnd import IntegerRandomSampling
 
 
 class RollingHorizonEvolutionaryAlgorithm:
 
-    def __init__(self, txtLogger, startTime: datetime, args, gamma=.9):
-        assert args.envsPerCurriculum > 0
-        assert args.numberOfCurricula > 0
-        assert args.iterationsPerEnv > 0
-        assert args.curriculumEpochs > 1
+    def __init__(self, txtLogger, startTime: datetime, args: argparse.Namespace, gamma=.9):
+        assert args.envsPerCurric > 0
+        assert args.numCurric > 0
+        assert args.iterPerEnv > 0
+        assert args.trainEpochs > 1
+        self.args = args
+        self.numCurric = args.numCurric
+        self.envsPerCurric = args.envsPerCurric
 
         # Pymoo parameters
         objectives = 1
-        # curric1 = [ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_5x5, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_6x6]
-        # curric2 = [ENV_NAMES.DOORKEY_8x8, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16, ENV_NAMES.DOORKEY_16x16]
         xupper = len(ENV_NAMES.ALL_ENVS) - 1
-        self.curricula = self.randomlyInitializeCurricula(args.numberOfCurricula, args.envsPerCurriculum)
         inequalityConstr = 0
+        self.curricula = self.randomlyInitializeCurricula(args.numCurric, args.envsPerCurric)
 
-        self.ITERATIONS_PER_ENV = args.iterationsPerEnv
+        self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.iterationsDone = 0
         self.txtLogger = txtLogger
-        self.args = args
         self.startTime = startTime
-        self.selectedModel = args.model + "\\epoch_0"
-        self.trainingEpochs = args.curriculumEpochs
-        self.nGen = 3
+        self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful ?
+        self.trainingEpochs = args.trainEpochs
+        self.nGen = args.nGen
+        self.trainEpochs = args.trainEpochs
 
         self.trainingInfoJson = {}
-        self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"
+        self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"  # TODO maybe outsource
         self.gamma = gamma
         self.currentRewards = {}
+        self.model = args.model
+
         self.txtLogger.info(f"curricula list start {self.curricula}")
         self.startTrainingLoop(objectives, inequalityConstr, xupper)
 
@@ -57,7 +60,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         """
         reward = 0
         # Save epochX -> epochX_curricI_genJ
-        nameOfCurriculumI = utils.getModelName(self.selectedModel, i, genNr)
+        nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
@@ -70,17 +73,6 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
         self.txtLogger.info(f"Reward for curriculum {nameOfCurriculumI} = {reward}")
         return reward
-
-    def initializeRewards(self):
-        """
-        Loads the rewards given the state from previous training, or empty initializes them if first time run
-        This assumes that the curricula are numbered from 1 to N (as opposed to using their names or something similar)
-        """
-        assert len(self.curricula) > 0
-        rewards = {}
-        for i in range(len(self.curricula)):
-            rewards[str(i)] = []
-        return rewards
 
     def getCurriculaEnvDetails(self) -> dict:
         """
@@ -107,15 +99,15 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.txtLogger.info(f"Time ended at {now} , total training time: {timeDiff}")
         self.txtLogger.info("-------------------\n\n")
 
-    def initTrainingInfo(self, rewards, pretrainingIterations):
+    def initTrainingInfo(self):
         self.trainingInfoJson = {"selectedEnvs": [],
                                  "bestCurriculaIds": [],
                                  "curriculaEnvDetails": {},
-                                 "rewards": rewards,
+                                 "rewards": {},
                                  "actualPerformance": [],
                                  "epochsDone": 1,
                                  "startTime": self.startTime,
-                                 "numFrames": pretrainingIterations}
+                                 "numFrames": 0}
         self.saveJsonFile(self.logFilePath, self.trainingInfoJson)
 
     @staticmethod
@@ -123,20 +115,24 @@ class RollingHorizonEvolutionaryAlgorithm:
         with open(path, 'w') as f:
             f.write(json.dumps(jsonBody, indent=4, default=str))
 
-    def updateTrainingInfo(self, epoch, currentBestCurriculum, rewards, currentScore, popX) -> None:
+    def updateTrainingInfo(self, epoch, idOfBestCurriculum, rewards, currentScore, popX) -> None:
         self.trainingInfoJson["epochsDone"] = epoch + 1
         self.trainingInfoJson["numFrames"] = self.iterationsDone
 
-        selectedEnv = self.curricula[currentBestCurriculum][0]
-        self.trainingInfoJson["selectedEnvs"].append(selectedEnv)
-        self.trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
+        bestCurriculum = self.curricula[idOfBestCurriculum]
+        self.trainingInfoJson["selectedEnvs"].append(bestCurriculum[0])
+        self.trainingInfoJson["bestCurriculaIds"].append(idOfBestCurriculum)
         self.trainingInfoJson["rewards"] = rewards
-        self.trainingInfoJson["actualPerformance"].append([currentScore, selectedEnv])
+        self.trainingInfoJson["actualPerformance"].append(
+            [currentScore, bestCurriculum])
         envDetailsOfCurrentEpoch = self.getCurriculaEnvDetails()
         self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = envDetailsOfCurrentEpoch
         self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch + 1)] = self.curricula  # save as backup
 
-        self.trainingInfoJson["currentCurriculumList"] = self.evolXToCurriculum(popX)
+        # TODO refactor ; this should depend on the popX. If it is 1d list then this is ok, otherwise call the method
+        result = [ENV_NAMES.ALL_ENVS[i] for i in popX]
+        self.trainingInfoJson[
+            "currentCurriculumList"] = result  # TODO fix; this is weird atm, should mb just be self.curric, because it just transforms the popX to 1 Curriculum+
         self.trainingInfoJson["curriculumListAsX"] = popX
 
         self.saveTrainingInfoToFile()
@@ -179,11 +175,12 @@ class RollingHorizonEvolutionaryAlgorithm:
         # crossover: SBX = SBX(eta=15, prob=0.9),
         # mutation: PM = PM(eta=20),
 
+        # TODO fix curriculaEnvDetails
         startEpoch, rewards = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
 
         for epoch in range(startEpoch, self.trainingEpochs):
             self.txtLogger.info(f"------------------------\nSTART EPOCH {epoch}\n----------------------")
-            self.selectedModel = self.args.model + "\\epoch_" + str(epoch)
+            self.selectedModel = utils.getEpochModelName(self.model, epoch)
             curricProblem = CurriculumProblem(self.curricula, objectives, inequalityConstr, xupper, self)
             algorithm = GA(pop_size=len(self.curricula),
                            sampling=IntegerRandomSampling(),
@@ -197,31 +194,33 @@ class RollingHorizonEvolutionaryAlgorithm:
                 pop = Population.new("X", X)
             res = minimize(curricProblem,
                            algorithm,
-                           termination=('n_gen', self.args.curriculumEpochs),
+                           termination=('n_gen', self.nGen),
                            seed=1,
                            save_history=True,
                            verbose=False)
             self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
             self.iterationsDone += self.ITERATIONS_PER_ENV  # TODO use exact value
-            nextModel = self.args.model + "\\epoch_" + str(epoch + 1)  # TODO move all these dir building to helper
+            nextModel = utils.getEpochModelName(self.model, epoch + 1)
             currentBestCurriculum = np.argmax(self.currentRewards)
-            rewards[str(epoch)] = self.currentRewards
+            rewards["epoch" + str(epoch)] = self.currentRewards
+
             # TODO move this to different method
             currentRewardList = np.array(list(self.currentRewards.values()))  # transform dict to list / matrix
             currentScore = np.max(currentRewardList)
             currentMaxRewardIdx = np.argmax(currentRewardList)  # highest idx in 1d list
             keyIndexPairOfMaxReward = np.unravel_index(currentMaxRewardIdx, currentRewardList.shape)
-            genNrOfBestIndividual = list(self.currentRewards.keys())[keyIndexPairOfMaxReward[0]]
-            curricIdxOfBestIndividual = keyIndexPairOfMaxReward[1]
-
-            currentBestModel = utils.getModelName(self.selectedModel, curricIdxOfBestIndividual, genNrOfBestIndividual)
+            genOfBestIndividual: int = list(self.currentRewards.keys())[
+                                           keyIndexPairOfMaxReward[0]][3:]
+            curricIdxOfBestIndividual: int = keyIndexPairOfMaxReward[1]  # TODO fix warning
+            currentBestModel = utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual,
+                                                                 genOfBestIndividual)
             utils.copyAgent(src=currentBestModel, dest=nextModel)
 
             self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, res.X)
             self.logRelevantInfo(epoch, currentBestCurriculum)
+            # TODO save cmd line string
 
         self.printFinalLogs()
-        res = algorithm.result()
         print("final fitness:", res.F.sum())
         print("Final X = ", res.X)
         print("#curricula:", len(self.curricula))
@@ -253,13 +252,14 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.iterationsDone = self.trainingInfoJson["numFrames"]
             startEpoch = self.trainingInfoJson["epochsDone"]
             rewards = self.trainingInfoJson["rewards"]
-            self.startTime = datetime.fromisoformat(self.trainingInfoJson["startTime"])
+            self.startTime = datetime.fromisoformat(self.trainingInfoJson["startTime"])  # TODO this is useless
+            # self.trainEpochs = # TODO load to prevent accidental overwrite ?
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
-            for k in range(self.args.numberOfCurricula):
-                path = self.args.model + "\\epoch_" + str(startEpoch) + "_curric" + str(k)
+            for k in range(self.numCurric):
+                path = utils.getModelWithCurricSuffix(self.model, startEpoch, k)
                 if utils.deleteModelIfExists(path):
                     print("deleted", k)
-                    snapshotPath = path + "\\_CANDIDATE"
+                    snapshotPath = utils.getModelWithCandidatePrefix(path)
                     utils.deleteModelIfExists(snapshotPath)
                 else:
                     print("Nothing to delete", k)
@@ -269,12 +269,11 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
-            startEpoch = 1
-            rewards = self.initializeRewards()  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
             self.iterationsDone = train.main(0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)
-            self.initTrainingInfo(rewards, self.iterationsDone)
-            utils.copyAgent(src=self.selectedModel, dest=self.args.model + "\\epoch_" + str(
-                startEpoch))  # e0 -> e1; subsequent iterations do this the end of each epoch
+            self.initTrainingInfo()
+            utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, 1))  # copy e0 -> e1
+            startEpoch = 1
+            rewards = {}
         return startEpoch, rewards
 
     def saveTrainingInfoToFile(self):
@@ -291,16 +290,14 @@ class RollingHorizonEvolutionaryAlgorithm:
         :param genNr: the number of the current generation
         :return: the rewards after the rolling horizon
         """
-        if genNr == 1:
-            self.currentRewards = {"1": [], "2": [], "3": []}
         curricula = self.evolXToCurriculum(evolX)
         rewards = []  # TODO replcae list with np array directly
         for i in range(len(curricula)):
             rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr)
             rewards.append(rewardI)
-        print(self.currentRewards)
-        self.currentRewards[str(genNr)] = rewards
+        self.currentRewards["gen" + str(genNr)] = rewards
         self.curricula = curricula
+        self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewards}")
         return np.array(rewards)
 
     @staticmethod
@@ -314,8 +311,8 @@ class RollingHorizonEvolutionaryAlgorithm:
         for i in range(x.shape[0]):
             result.append([])
             curric = x[i]
-            for j in range(curric.shape[0]):
-                rounded = round(x[i][j])
+            for j in range(curric.shape[0]):  # TODO bug if X is 1d ?
+                rounded = round(x[i][j])  # TODO round is not necessary; it should only assert it is INT7
                 result[i].append(ENV_NAMES.ALL_ENVS[rounded])
         return result
 
@@ -350,23 +347,12 @@ def evaluateCurriculumResults(evaluationDictionary):
 
 """
 foreach Iteration:
-
     Get current copy of the best RL Agent
-
     Intialize a Problem with Pymoo which will use copies of the best RL agent to evaluate solutions
-
-        The evaluate function receives an integer vector that represents a curriculum. Preferrably, we can use an integer encoding or
+        - The evaluate function receives an integer vector that represents a curriculum. Preferrably, we can use an integer encoding or
         evaluate will return the performance of the RL agent after performing the training with a given curriculum
-
-        the population consists of multiple curricula, which will all be tested
-
+        - the population consists of multiple curricula, which will all be tested
     we initialize an optimization algorithm
     We use the minimize function to run the optimization (minimize will call evaluate and update the population in between)
-
     we query the result of the minimize function to give us the best curriculum and use the timestep after the first phase of this curriculum as new best RL agent
-
-"""
-
-"""
-
 """

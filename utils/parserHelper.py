@@ -16,14 +16,16 @@ def initializeArgParser():
                         help="Decides what training method will be used. If set, Biased Random RH will be used")
     parser.add_argument("--trainRandomRH", default=False, action="store_true",
                         help="Decides what training method will be used. If set, Full Random RH will be used")
-    parser.add_argument("--iterationsPerEnv", default=150000, type=int,
+
+    parser.add_argument("--iterPerEnv", default=150000, type=int,
                         help="Determines the amount of iterations per environment during training")
-    parser.add_argument("--envsPerCurriculum", default=4, type=int,
+    parser.add_argument("--envsPerCurric", default=4, type=int,
                         help="Determines the amount of env per curriculum during training")
-    parser.add_argument("--numberOfCurricula", default=4, type=int,
+    parser.add_argument("--numCurric", default=4, type=int,
                         help="Determines the amount of curricula that are used for training")
-    parser.add_argument("--curriculumEpochs", default=3, type=int,
-                        help="Tells the algorithm how long to train for. Parameter is overwritten, if model was already created")
+    parser.add_argument("--trainEpochs", default=10, type=int, help="Tells the algorithm how long to train for.")
+    parser.add_argument("--nGen", default=3, type=int,
+                        help="The amount of generations per RHEA iteration")
 
     parser.add_argument("--algo", default="ppo", help="algorithm to use: a2c | ppo ")
     parser.add_argument("--model", default=None, required=True, help="name of the model (REQUIRED)")
@@ -64,6 +66,6 @@ def initializeArgParser():
     args = parser.parse_args()
     args.mem = args.recurrence > 1
     args.trainEvolutionary = not (
-                args.trainLinear or args.trainAdaptive or args.trainRandomRH or args.trainBiasedRandomRH)
-
+            args.trainLinear or args.trainAdaptive or args.trainRandomRH or args.trainBiasedRandomRH)
+    # TODO create object
     return args

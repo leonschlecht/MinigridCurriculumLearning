@@ -74,7 +74,7 @@ def get_csv_logger(model_dir):
 
 ###
 
-def getModelName(model, curriculumNr, genNr) -> str:
+def getModelWithCurricGenSuffix(model, curriculumNr: int, genNr: int) -> str:
     """
 
     :param model:
@@ -83,6 +83,14 @@ def getModelName(model, curriculumNr, genNr) -> str:
     :return:
     """
     return model + "_curric" + str(curriculumNr) + '_gen' + str(genNr)
+
+
+def getModelWithCurricSuffix(model, epoch, curricNr) -> str:
+    return getEpochModelName(model, epoch) + "_curric" + str(curricNr)
+
+
+def getEpochModelName(model, epoch) -> str:
+    return model + "\\epoch_" + str(epoch)
 
 
 def getModelWithCandidatePrefix(model) -> str:
@@ -116,8 +124,8 @@ def deleteModelIfExists(directory) -> bool:
     Deletes a path if it exists. Returns true on success, false otherwise
     :param directory: name of the model to be deleted, which is stored in /storage
     """
-    fullPath = os.getcwd() + "\\storage\\" + directory # TODO use os.join
-    if os.path.exists(fullPath): # TODO split this into 2 methods
+    fullPath = os.getcwd() + "\\storage\\" + directory  # TODO use os.join
+    if os.path.exists(fullPath):  # TODO split this into 2 methods
         shutil.rmtree(fullPath)
         return True
     return False
