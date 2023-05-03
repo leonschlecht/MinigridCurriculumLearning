@@ -65,7 +65,7 @@ def startEvaluationInOneEnv(args, model, evalEnv) -> dict:
         "EVAL: {} with {} : F {} | FPS {:.0f} | D {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}"
         .format(evalEnv, model, num_frames, fps, duration,
                 *return_per_episode.values(),
-                *num_frames_per_episode.values()))
+                *num_frames_per_episode.values())) # TODO use txt logger
 
     evaluationResult = {
         "meanRet": return_per_episode["mean"],

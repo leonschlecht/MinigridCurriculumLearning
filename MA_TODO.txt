@@ -1,7 +1,13 @@
-why does actual performance @currentScore append a list of rewards instead of the max ???
-BUG testen, ob trained 0 auch noch vorkommt, außer bei ep1gen1 (immer j =0)
+TEMPORARAY FIXED: BUG testen, ob trained 0 auch noch vorkommt, außer bei ep1gen1 (immer j =0)
 Eval Zeit besser loggen als F: 9600 und sowas
 Log: Used curriculum
+
+Kann man evtl partielle inforamtionen aus der letzten iteration mitnehmen ???
+
+            # TODO maybe set biased pop for 1st epoch 1st generation
+            # pop = Population.new("X", self.createFirstGeneration(self.curricula))
+
+print startEpoch / allepoch
 
         """
         5x5 aufteilen , 6x6 rausnehmen
@@ -27,7 +33,7 @@ Experimente-Evaluate ausprobieren, bzw gegeben eine json etwas rumprobieren / st
 
 ---------
 Random Questions
-
+- Nehme ich das res.X, um dann einen RH zu simulieren oder nehme ich das beste Ergebnis der Simulationen?
 - wie mit reward experimentieren dass man ihn ermutigt 16x16 auszuprobieren
 - wie dynamisch mit dem switchen umgehen (zb nach jedem update mal probieren?)
 

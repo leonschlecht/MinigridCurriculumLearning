@@ -5,7 +5,7 @@ import time
 import numpy as np
 
 import utils
-from scripts import train, evaluate
+from curricula import train, evaluate
 from utils import ENV_NAMES, getModelWithCandidatePrefix
 
 

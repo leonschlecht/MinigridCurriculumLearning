@@ -1,7 +1,7 @@
 import json
 import os
 from utils import ENV_NAMES
-from scripts import train, evaluate
+from curricula import train, evaluate
 
 
 def startAdaptiveCurriculum(txtLogger, startTime, args):

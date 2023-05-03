@@ -11,6 +11,7 @@ from model import ACModel
 def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_logger) -> int:
     """
 
+    :param currentFramesDone:
     :param txt_logger: reference to the .txt log file
     :param framesToTrain: the number of iterations
     :param model: name of the model - where the training will be saved

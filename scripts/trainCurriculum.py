@@ -14,7 +14,6 @@ def main():
     txtLogger = utils.get_txt_logger(
         utils.get_model_dir(args.model))  # TODO this is not clear if it creates a folder or not
 
-    # TODO fix iterations (so it doesnt overshoot the amount; maybe calculate with exact frame nrs or use updates)
     # TODO save cmd line string
     # TODO refactor scripts folder (so it there are actually only scripts in it)
     startTime: datetime = datetime.now()
@@ -32,7 +31,7 @@ def main():
     elif args.trainAdaptive:
         adaptiveCurriculum.startAdaptiveCurriculum(txtLogger, startTime, args)
     else:
-        print("Not training method selected!")
+        print("No training method selected!")
 
 
 def registerEnvs():

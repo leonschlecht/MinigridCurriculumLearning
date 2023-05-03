@@ -1,6 +1,5 @@
-import utils
-from scripts import train, evaluate
-from utils import initializeArgParser, ENV_NAMES
+from curricula import train, evaluate
+from utils import ENV_NAMES
 import time
 import os
 import json

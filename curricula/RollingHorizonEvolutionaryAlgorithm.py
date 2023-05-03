@@ -9,10 +9,9 @@ from pymoo.optimize import minimize
 
 import utils
 from curricula.curriculumProblem import CurriculumProblem
-from scripts import train, evaluate
+from curricula import train, evaluate
 from utils import ENV_NAMES
 from pymoo.algorithms.moo.nsga2 import NSGA2
-from pymoo.core.population import Population
 from pymoo.operators.crossover.sbx import SBX  # simulated binary crossover
 from pymoo.operators.mutation.pm import PM  # polynomial mutation
 from pymoo.operators.repair.rounding import RoundingRepair
@@ -62,6 +61,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         reward = 0
         # Save epochX -> epochX_curricI_genJ
         nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)
+        # TODO this should not have the incorrect
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
@@ -69,31 +69,21 @@ class RollingHorizonEvolutionaryAlgorithm:
             reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
+                self.ITERATIONS_PER_ENV = iterationsDone + 1 # TODO test this ;
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
         self.txtLogger.info(f"Reward for curriculum {nameOfCurriculumI} = {reward}")
         return reward
 
-    def getCurriculaEnvDetails(self) -> dict:
-        """
-        Returns a dictionary with the environments of each curriculum
-        { 0: [env1, env2, ], 1: [env1, env2, ], ... }
-        """
-        # TODO REMOVE METHOD
-        fullEnvList = {}
-        for i in range(len(self.curricula)):
-            fullEnvList[i] = self.curricula[i]
-        return fullEnvList
-
     def printFinalLogs(self) -> None:
         """
         Prints the last logs, after the training is done
         """
         self.txtLogger.info("----TRAINING END-----")
-        self.txtLogger.info(f"Best Curricula {self.trainingInfoJson['bestCurriculaIds']}")
-        self.txtLogger.info(f"Trained in Envs {self.trainingInfoJson['selectedEnvs']}")
-        self.txtLogger.info(f"Rewards: {self.trainingInfoJson['rewards']}")
+        self.txtLogger.info(f"Best Curricula {self.trainingInfoJson[bestCurriculas]}")
+        self.txtLogger.info(f"Trained in Envs {self.trainingInfoJson[selectedEnvs]}")
+        self.txtLogger.info(f"Rewards: {self.trainingInfoJson[rewardsKey]}")
 
         now = datetime.now()
         timeDiff = (now - self.startTime).total_seconds()
@@ -103,21 +93,31 @@ class RollingHorizonEvolutionaryAlgorithm:
 
     @staticmethod
     def getGenAndIdxOfBestIndividual(currentRewards):
+        """
+        Given the dict of currentRewards of the form {"gen1": [reward1, reward2, ...], "gen2": [reward1, reward2, ...], ... }
+        return the generation Number (without the "gen" part) and the index in that list
+        :param currentRewards:
+        :return:
+        """
         currentRewardList = np.array(list(currentRewards.values()))  # transform dict to list / matrix
         currentMaxRewardIdx = np.argmax(currentRewardList)  # highest idx in 1d list
         keyIndexPairOfMaxReward = np.unravel_index(currentMaxRewardIdx, currentRewardList.shape)
         return list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][len(GEN_PREFIX):], \
             int(keyIndexPairOfMaxReward[1])
 
-    def initTrainingInfo(self):
-        self.trainingInfoJson = {"selectedEnvs": [],
-                                 "bestCurriculas": [],
-                                 "curriculaEnvDetails": {},
-                                 "rewards": {},
-                                 "actualPerformance": [],
-                                 "epochsDone": 1,
-                                 "startTime": self.startTime,
-                                 "numFrames": 0}
+    def initTrainingInfo(self) -> None:
+        """
+        Initializes the trainingInfo dictionary
+        :return:
+        """  # TODO maybe return sth
+        self.trainingInfoJson = {selectedEnvs: [],
+                                 bestCurriculas: [],
+                                 curriculaEnvDetails: {},
+                                 rewardsKey: {},
+                                 actualPerformance: [],
+                                 epochsDone: 1,
+                                 startTime: self.startTime,
+                                 numFrames: 0}
         self.saveJsonFile(self.logFilePath, self.trainingInfoJson)
 
     @staticmethod
@@ -125,17 +125,17 @@ class RollingHorizonEvolutionaryAlgorithm:
         with open(path, 'w') as f:
             f.write(json.dumps(jsonBody, indent=4, default=str))
 
-    def updateTrainingInfo(self, epoch: int, bestCurriculum: list, rewards, currentScore: float, popX) -> None:
-        self.trainingInfoJson["epochsDone"] = epoch + 1
-        self.trainingInfoJson["numFrames"] = self.iterationsDone
+    def updateTrainingInfo(self, epoch: int, bestCurriculum: list, currentRewards, currentScore: float, popX) -> None:
+        self.trainingInfoJson[epochsDone] = epoch + 1
+        self.trainingInfoJson[numFrames] = self.iterationsDone
 
-        self.trainingInfoJson["selectedEnvs"].append(bestCurriculum[0])
-        self.trainingInfoJson["bestCurriculas"].append(bestCurriculum)
-        self.trainingInfoJson["rewards"] = rewards
-        self.trainingInfoJson["actualPerformance"].append([currentScore, bestCurriculum])
-        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = self.curriculaEnvDetails
+        self.trainingInfoJson[selectedEnvs].append(bestCurriculum[0])
+        self.trainingInfoJson[bestCurriculas].append(bestCurriculum)
+        self.trainingInfoJson[rewardsKey] = currentRewards  # TODO test this ? or does this not overwrite everything
+        self.trainingInfoJson[actualPerformance].append([currentScore, bestCurriculum])
+        self.trainingInfoJson[curriculaEnvDetails]["epoch" + str(epoch)] = self.curriculaEnvDetails
 
-        self.trainingInfoJson["currentListOfCurricula"] = self.curricula
+        self.trainingInfoJson["currentListOfCurricula"] = self.curricula  # TODO is this useful?
         self.trainingInfoJson["curriculumListAsX"] = popX
 
         self.saveTrainingInfoToFile()
@@ -148,7 +148,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         :param currentBestCurriculum: the id of the current best curriculum
         :return:
         """
-        selectedEnv = self.trainingInfoJson["selectedEnvs"][-1]
+        selectedEnv = self.trainingInfoJson[selectedEnvs][-1]
 
         self.txtLogger.info(
             f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
@@ -179,7 +179,6 @@ class RollingHorizonEvolutionaryAlgorithm:
         # crossover: SBX = SBX(eta=15, prob=0.9),
         # mutation: PM = PM(eta=20),
 
-        # TODO fix curriculaEnvDetails
         startEpoch, rewards = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
 
         for epoch in range(startEpoch, self.trainingEpochs):
@@ -192,10 +191,6 @@ class RollingHorizonEvolutionaryAlgorithm:
                            mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
                            eliminate_duplicaets=True,
                            )
-            # TODO maybe set biased pop for 1st epoch 1st generation
-            if epoch == 1:
-                X = self.createFirstGeneration(self.curricula)
-                pop = Population.new("X", X)
             res = minimize(curricProblem,
                            algorithm,
                            termination=('n_gen', self.nGen),
@@ -207,8 +202,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             nextModel = utils.getEpochModelName(self.model, epoch + 1)
             rewards["epoch" + str(epoch)] = self.currentRewards
 
-            # TODO maybe create curric list for each gen instead of renweing it always
-            currentScore: float = np.max(list(self.currentRewards.values()))  # TODO test this it should not be a list
+            currentScore: float = np.max(list(self.currentRewards.values()))
             genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewards)
             currentBestModel = utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual,
                                                                  GEN_PREFIX, genOfBestIndividual)
@@ -216,7 +210,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             currentBestCurriculum = self.curriculaEnvDetails[GEN_PREFIX + genOfBestIndividual][
                 curricIdxOfBestIndividual]
 
-            # TODO what is res.X in this case? is it useless for next epoch ?
+            # TODO-- what is res.X in this case? is it useless for next epoch ?
             self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, res.X)
             self.logInfoAfterEpoch(epoch, currentBestCurriculum)
 
@@ -251,12 +245,11 @@ class RollingHorizonEvolutionaryAlgorithm:
             with open(self.logFilePath, 'r') as f:
                 self.trainingInfoJson = json.loads(f.read())
 
-            self.iterationsDone = self.trainingInfoJson["numFrames"]
-            startEpoch = self.trainingInfoJson["epochsDone"]
-            rewards = self.trainingInfoJson["rewards"]
-            self.startTime = datetime.fromisoformat(self.trainingInfoJson["startTime"])  # TODO this is useless
+            self.iterationsDone = self.trainingInfoJson[numFrames]
+            startEpoch = self.trainingInfoJson[epochsDone]
+            rewardsDict = self.trainingInfoJson[rewardsKey]
+            self.startTime = datetime.fromisoformat(self.trainingInfoJson[startTime])
             # TODO calculate endTime during each save, and then claculate total training time
-            # TODO refactor dict keys to constants
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.numCurric):
                 path = utils.getModelWithCurricSuffix(self.model, startEpoch, k)
@@ -264,22 +257,20 @@ class RollingHorizonEvolutionaryAlgorithm:
                     print("deleted", k)
                     snapshotPath = utils.getModelWithCandidatePrefix(path)
                     utils.deleteModelIfExists(snapshotPath)
-                    # TODO test if delete _gen folders
+                    # TODO test if delete _gen folders; OR probably get prefix -> look for them in list, delete all of these folders that contain it
                 else:
-                    print("Nothing to delete", k)
+                    self.txtLogger.info(f"Nothing to delete {k}")
                     break
-            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch1"]  # TODO test
-            self.curricula = self.trainingInfoJson["currentListOfCurricula"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
-            train.main(0, 0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)  # TODO fix
+            train.main(0, 0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)
             self.initTrainingInfo()
             startEpoch = 1
             utils.copyAgent(src=self.selectedModel,
                             dest=utils.getEpochModelName(self.model, startEpoch))  # copy epoch0 -> epoch1
-            rewards = {}
-        return startEpoch, rewards
+            rewardsDict = {}
+        return startEpoch, rewardsDict
 
     def saveTrainingInfoToFile(self):
         """
@@ -296,13 +287,13 @@ class RollingHorizonEvolutionaryAlgorithm:
         :return: the rewards after the rolling horizon
         """
         curricula = self.evolXToCurriculum(evolX)
+        self.curricula = curricula # TODO this is probably useless; maybe give it as param or store it otherwise. Im not sure how much other methods rely on this though
         rewards = np.zeros(len(curricula))
         for i in range(len(curricula)):
-            rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr)
+            rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr) # TODO. test if this actually uses correct curricula !!
             rewards[i] = rewardI
         self.currentRewards[GEN_PREFIX + str(genNr)] = rewards
         self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula
-        self.curricula = curricula
         self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewards}")
         self.txtLogger.info(f"currentEnvDetails for {genNr}: {self.curriculaEnvDetails}")
         return np.array(rewards)
@@ -327,7 +318,7 @@ class RollingHorizonEvolutionaryAlgorithm:
     def createFirstGeneration(curriculaList):
         """
         Helper method that creates the biased first population of the RHEA
-        Transform from environment language string -> numbers
+        Transform from environment language strings -> integers
         :return the transformed list containing integers representing the environment Nr
         """
         indices = []
@@ -364,4 +355,15 @@ foreach Iteration:
     we query the result of the minimize function to give us the best curriculum and use the timestep after the first phase of this curriculum as new best RL agent
 """
 
+###### DEFINE CONSTANTS AND DICTIONARY KEYS #####
+
 GEN_PREFIX = 'gen'
+
+selectedEnvs = "selectedEnvs"
+bestCurriculas = "bestCurriculas"
+curriculaEnvDetails = "curriculaEnvDetails"
+rewardsKey = "rewards"
+actualPerformance = "actualPerformance"
+epochsDone = "epochsDone"
+startTime = "startTime"
+numFrames = "numFrames"
