@@ -1,38 +1,30 @@
 TEMPORARAY FIXED: BUG testen, ob trained 0 auch noch vorkommt, außer bei ep1gen1 (immer j =0)
-Eval Zeit besser loggen als F: 9600 und sowas
-Log: Used curriculum
-
-Kann man evtl partielle inforamtionen aus der letzten iteration mitnehmen ???
-
-            # TODO maybe set biased pop for 1st epoch 1st generation
-            # pop = Population.new("X", self.createFirstGeneration(self.curricula))
-
-print startEpoch / allepoch
-
-        """
-        5x5 aufteilen , 6x6 rausnehmen
-        4x4 mit 2x2 obs
-        register abhängig von performance machen (ggf x2)
-
-        - (x) env schneller machen / laden
-        - x screen
-        - x register von performance
-        - observation space reduzieren (komplexität des levels wird schwerer; und man kommt durch zufall leichter an) ; nutzlose iterationen sparen
-            4, 6, 8, 10 (obs space macht es seeehr schwer)
-        """
+done? Eval Zeit besser loggen als F: 9600 und sowas
+already implemented @actualPeformacne Log: Used curriculum
+done: print startEpoch / allepoch
+done: starttime fix
 
 
-starttime fix
-überall datetime einsetzen statt time
 Docstrings schreiben
-
-
-
 Experimente-Evaluate ausprobieren, bzw gegeben eine json etwas rumprobieren / stubs erstellen, wie ich damit abeiten kann
+
+
+
+
+"""
+5x5 aufteilen , 6x6 rausnehmen ; 4x4 mit 2x2 obs
+
+-  env schneller machen / laden
+done: screen
+- x register von performance abh.
+- observation space reduzieren (komplexität des levels wird schwerer; und man kommt durch zufall leichter an) ; nutzlose iterationen sparen
+    4, 6, 8, 10 (obs space macht es seeehr schwer)
+"""
 
 
 ---------
 Random Questions
+- Kann man evtl partielle inforamtionen aus der letzten iteration mitnehmen ???
 - Nehme ich das res.X, um dann einen RH zu simulieren oder nehme ich das beste Ergebnis der Simulationen?
 - wie mit reward experimentieren dass man ihn ermutigt 16x16 auszuprobieren
 - wie dynamisch mit dem switchen umgehen (zb nach jedem update mal probieren?)
@@ -54,9 +46,11 @@ TODO ggf alte Models löschen, wenn man X epochs weiter ist. Solange man die rel
 
 Paar Ideen
 - Evaluation: use weights, maybe depending on progress ;  maybe use something else like Value / Policy Loss / Frames
+# TODO maybe set biased pop for 1st epoch 1st generation like so: pop = Population.new("X", self.createFirstGeneration(self.curricula))
+
 
 Small Refactorings
 - use os . join for these things os.getcwd() + "\\storage\\" + directory)
-    # TODO load time or set initially in linear / adaptive
-
+- load time or set initially in linear / adaptive
+- überall datetime einsetzen statt time
 

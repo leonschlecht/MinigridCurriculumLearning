@@ -29,6 +29,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.numCurric = args.numCurric
         self.envsPerCurric = args.envsPerCurric
         self.cmdLineString = args.cmdLineString
+        self.lastEpochStartTime = startTime
 
         # Pymoo parameters
         objectives = 1
@@ -39,11 +40,11 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.iterationsDone = 0
         self.txtLogger = txtLogger
-        self.startTime = startTime
         self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
         self.trainingEpochs = args.trainEpochs
         self.nGen = args.nGen
         self.trainEpochs = args.trainEpochs
+        self.trainingTime = 0
 
         self.trainingInfoJson = {}
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"  # TODO maybe outsource
@@ -68,9 +69,10 @@ class RollingHorizonEvolutionaryAlgorithm:
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
                                         self.curricula[i][j], self.args, self.txtLogger)
             reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
+            # 0 <= reward <= len(curricula[i]) --> TODO find good values
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
-                self.ITERATIONS_PER_ENV = iterationsDone + 1 # TODO test this ;
+                self.ITERATIONS_PER_ENV = iterationsDone + 1  # TODO test this ;
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
@@ -87,7 +89,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.txtLogger.info(f"Rewards: {self.trainingInfoJson[rewardsKey]}")
 
         now = datetime.now()
-        timeDiff = (now - self.startTime).total_seconds()
+        timeDiff = 0
         print(timeDiff)
         self.txtLogger.info(f"Time ended at {now} , total training time: {timeDiff}")
         self.txtLogger.info("-------------------\n\n")
@@ -117,7 +119,9 @@ class RollingHorizonEvolutionaryAlgorithm:
                                  rewardsKey: {},
                                  actualPerformance: [],
                                  epochsDone: 1,
-                                 startTime: self.startTime,
+                                 startTime: self.lastEpochStartTime,
+                                 epochTrainingTime: [],
+                                 sumTrainingTime: 0,
                                  cmdLineString: self.cmdLineString,
                                  numFrames: 0}
         self.saveJsonFile(self.logFilePath, self.trainingInfoJson)
@@ -128,6 +132,14 @@ class RollingHorizonEvolutionaryAlgorithm:
             f.write(json.dumps(jsonBody, indent=4, default=str))
 
     def updateTrainingInfo(self, epoch: int, bestCurriculum: list, currentRewards, currentScore: float, popX) -> None:
+        """
+        Updates the training info dictionary
+        :param epoch: current epoch
+        :param bestCurriculum: the curriculum that had the highest reward in the latest epoch
+        :param currentRewards: the dict of rewards for each generation and each curriculum
+        :param currentScore: the current best score
+        :param popX: the pymoo X parameter for debugging purposes
+        """
         self.trainingInfoJson[epochsDone] = epoch + 1
         self.trainingInfoJson[numFrames] = self.iterationsDone
 
@@ -137,6 +149,13 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.trainingInfoJson[actualPerformance].append([currentScore, bestCurriculum])
         self.trainingInfoJson[curriculaEnvDetails]["epoch" + str(epoch)] = self.curriculaEnvDetails
 
+        now = datetime.now()
+        timeSinceLastEpoch = (now - self.lastEpochStartTime).total_seconds()
+        self.trainingInfoJson[epochTrainingTime].append(timeSinceLastEpoch)
+        self.trainingInfoJson[sumTrainingTime] += timeSinceLastEpoch
+        self.lastEpochStartTime = now
+
+        # Debug Logs
         self.trainingInfoJson["currentListOfCurricula"] = self.curricula  # TODO is this useful?
         self.trainingInfoJson["curriculumListAsX"] = popX
 
@@ -250,8 +269,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.iterationsDone = self.trainingInfoJson[numFrames]
             startEpoch = self.trainingInfoJson[epochsDone]
             rewardsDict = self.trainingInfoJson[rewardsKey]
-            self.startTime = datetime.fromisoformat(self.trainingInfoJson[startTime])
-            # TODO calculate endTime during each save, and then claculate total training time
+
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.numCurric):
                 path = utils.getModelWithCurricSuffix(self.model, startEpoch, k)
@@ -290,10 +308,11 @@ class RollingHorizonEvolutionaryAlgorithm:
         :return: the rewards after the rolling horizon
         """
         curricula = self.evolXToCurriculum(evolX)
-        self.curricula = curricula # TODO this is probably useless; maybe give it as param or store it otherwise. Im not sure how much other methods rely on this though
+        self.curricula = curricula  # TODO this is probably useless; maybe give it as param or store it otherwise. Im not sure how much other methods rely on this though
         rewards = np.zeros(len(curricula))
         for i in range(len(curricula)):
-            rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr) # TODO. test if this actually uses correct curricula !!
+            rewardI = self.trainEachCurriculum(i, self.iterationsDone,
+                                               genNr)  # TODO. test if this actually uses correct curricula !!
             rewards[i] = rewardI
         self.currentRewards[GEN_PREFIX + str(genNr)] = rewards
         self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula
@@ -371,3 +390,5 @@ epochsDone = "epochsDone"
 startTime = "startTime"
 numFrames = "numFrames"
 cmdLineString = "cmdLineString"
+epochTrainingTime = "epochTrainingTime"
+sumTrainingTime = "sumTrainingTime"
