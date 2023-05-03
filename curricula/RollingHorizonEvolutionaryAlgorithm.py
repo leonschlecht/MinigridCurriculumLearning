@@ -10,7 +10,7 @@ from pymoo.optimize import minimize
 import utils
 from curricula.curriculumProblem import CurriculumProblem
 from scripts import train, evaluate
-from utils import ENV_NAMES, getModelWithCandidatePrefix
+from utils import ENV_NAMES
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.core.population import Population
 from pymoo.operators.crossover.sbx import SBX  # simulated binary crossover
@@ -40,7 +40,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.iterationsDone = 0
         self.txtLogger = txtLogger
         self.startTime = startTime
-        self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful ?
+        self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
         self.trainingEpochs = args.trainEpochs
         self.nGen = args.nGen
         self.trainEpochs = args.trainEpochs
@@ -60,7 +60,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         """
         reward = 0
         # Save epochX -> epochX_curricI_genJ
-        nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, genNr)
+        nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
@@ -104,8 +104,8 @@ class RollingHorizonEvolutionaryAlgorithm:
         currentRewardList = np.array(list(currentRewards.values()))  # transform dict to list / matrix
         currentMaxRewardIdx = np.argmax(currentRewardList)  # highest idx in 1d list
         keyIndexPairOfMaxReward = np.unravel_index(currentMaxRewardIdx, currentRewardList.shape)
-        return list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][3:], \
-            int(keyIndexPairOfMaxReward[1]) # TODO len('gen') vs 3
+        return list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][len(GEN_PREFIX):], \
+            int(keyIndexPairOfMaxReward[1])
 
     def initTrainingInfo(self):
         self.trainingInfoJson = {"selectedEnvs": [],
@@ -206,23 +206,24 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
             self.iterationsDone += self.ITERATIONS_PER_ENV  # TODO use exact value
             nextModel = utils.getEpochModelName(self.model, epoch + 1)
-            currentBestCurriculum = np.argmax(self.currentRewards)
             rewards["epoch" + str(epoch)] = self.currentRewards
 
-            currentScore = max(list(self.currentRewards.values()))
+            currentScore = np.max(list(self.currentRewards.values()))
             genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewards)
             currentBestModel = utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual,
-                                                                 genOfBestIndividual)
+                                                                 GEN_PREFIX, genOfBestIndividual)
             utils.copyAgent(src=currentBestModel, dest=nextModel)
+            currentBestCurriculum = (genOfBestIndividual, currentBestModel)
+            print(currentBestCurriculum)
 
-            # TODO assert that res.X == curric[bestScore] ; but evolXToCurric needs to handle 1d then ; or what if res.X has multiple?
+            # TODO what is res.X in this case? is it useless for next epoch ?
             self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, res.X)
             self.logInfoAfterEpoch(epoch, currentBestCurriculum)
+            exit()
 
         self.printFinalLogs()
         print("final fitness:", res.F.sum())
         print("Final X = ", res.X)
-        print("#curricula:", len(self.curricula))
 
     @staticmethod
     def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int) -> list:
@@ -252,7 +253,8 @@ class RollingHorizonEvolutionaryAlgorithm:
             startEpoch = self.trainingInfoJson["epochsDone"]
             rewards = self.trainingInfoJson["rewards"]
             self.startTime = datetime.fromisoformat(self.trainingInfoJson["startTime"])  # TODO this is useless
-            # self.trainEpochs = # TODO load to prevent accidental overwrite ?
+            # TODO calculate endTime during each save, and then claculate total training time
+            # TODO refactor dict keys to constants
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.numCurric):
                 path = utils.getModelWithCurricSuffix(self.model, startEpoch, k)
@@ -260,18 +262,21 @@ class RollingHorizonEvolutionaryAlgorithm:
                     print("deleted", k)
                     snapshotPath = utils.getModelWithCandidatePrefix(path)
                     utils.deleteModelIfExists(snapshotPath)
+                    # TODO test if delete _gen folders
                 else:
                     print("Nothing to delete", k)
                     break
-            # assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO fix
-            # self.curricula = self.trainingInfoJson["currentListOfCurricula"] # TODO fix
+            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch1"]
+            self.curricula = self.trainingInfoJson["currentListOfCurricula"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
-            self.iterationsDone = train.main(0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)
+            train.main(0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger) # TODO fix
+            self.iterationsDone = self.ITERATIONS_PER_ENV
             self.initTrainingInfo()
-            utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, 1))  # copy e0 -> e1
             startEpoch = 1
+            utils.copyAgent(src=self.selectedModel,
+                            dest=utils.getEpochModelName(self.model, startEpoch))  # copy epoch0 -> epoch1
             rewards = {}
         return startEpoch, rewards
 
@@ -290,11 +295,11 @@ class RollingHorizonEvolutionaryAlgorithm:
         :return: the rewards after the rolling horizon
         """
         curricula = self.evolXToCurriculum(evolX)
-        rewards = []  # TODO replcae list with np array directly
+        rewards = np.zeros(len(curricula))
         for i in range(len(curricula)):
             rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr)
-            rewards.append(rewardI)
-        self.currentRewards["gen" + str(genNr)] = rewards
+            rewards[i] = rewardI
+        self.currentRewards[GEN_PREFIX + str(genNr)] = rewards
         self.curricula = curricula
         self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewards}")
         return np.array(rewards)
@@ -307,12 +312,12 @@ class RollingHorizonEvolutionaryAlgorithm:
         :return:
         """
         result = []
+
         for i in range(x.shape[0]):
             result.append([])
             curric = x[i]
-            for j in range(curric.shape[0]):  # TODO bug if X is 1d ?
-                rounded = round(x[i][j])  # TODO round is not necessary; it should only assert it is INT7
-                result[i].append(ENV_NAMES.ALL_ENVS[rounded])
+            for j in range(curric.shape[0]):  # TODO bug if X is 1d ? / When is X 1d?
+                result[i].append(ENV_NAMES.ALL_ENVS[x[i][j]])
         return result
 
     @staticmethod
@@ -355,3 +360,5 @@ foreach Iteration:
     We use the minimize function to run the optimization (minimize will call evaluate and update the population in between)
     we query the result of the minimize function to give us the best curriculum and use the timestep after the first phase of this curriculum as new best RL agent
 """
+
+GEN_PREFIX = 'gen'

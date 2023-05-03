@@ -74,15 +74,16 @@ def get_csv_logger(model_dir):
 
 ###
 
-def getModelWithCurricGenSuffix(model, curriculumNr: int, genNr: int) -> str:
+def getModelWithCurricGenSuffix(model, curriculumNr: int, genPrefix: str, genNr: int) -> str:
     """
 
     :param model:
     :param curriculumNr:
+    :param genPrefix:
     :param genNr:
     :return:
     """
-    return model + "_curric" + str(curriculumNr) + '_gen' + str(genNr)
+    return model + "_curric" + str(curriculumNr) + '_' + genPrefix + str(genNr)
 
 
 def getModelWithCurricSuffix(model, epoch, curricNr) -> str:
