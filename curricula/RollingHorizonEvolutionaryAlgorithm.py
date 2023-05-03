@@ -49,6 +49,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"  # TODO maybe outsource
         self.gamma = gamma
         self.currentRewards = {}
+        self.curriculaEnvDetails = {}
         self.model = args.model
 
         self.txtLogger.info(f"curricula list start {self.curricula}")
@@ -63,7 +64,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
-            iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
+            iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
                                         self.curricula[i][j], self.args, self.txtLogger)
             reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
@@ -79,6 +80,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         Returns a dictionary with the environments of each curriculum
         { 0: [env1, env2, ], 1: [env1, env2, ], ... }
         """
+        # TODO REMOVE METHOD
         fullEnvList = {}
         for i in range(len(self.curricula)):
             fullEnvList[i] = self.curricula[i]
@@ -109,7 +111,7 @@ class RollingHorizonEvolutionaryAlgorithm:
 
     def initTrainingInfo(self):
         self.trainingInfoJson = {"selectedEnvs": [],
-                                 "bestCurriculaIds": [],
+                                 "bestCurriculas": [],
                                  "curriculaEnvDetails": {},
                                  "rewards": {},
                                  "actualPerformance": [],
@@ -123,18 +125,15 @@ class RollingHorizonEvolutionaryAlgorithm:
         with open(path, 'w') as f:
             f.write(json.dumps(jsonBody, indent=4, default=str))
 
-    def updateTrainingInfo(self, epoch, idOfBestCurriculum, rewards, currentScore, popX) -> None:
+    def updateTrainingInfo(self, epoch: int, bestCurriculum: list, rewards, currentScore: float, popX) -> None:
         self.trainingInfoJson["epochsDone"] = epoch + 1
         self.trainingInfoJson["numFrames"] = self.iterationsDone
 
-        bestCurriculum = self.curricula[idOfBestCurriculum]
         self.trainingInfoJson["selectedEnvs"].append(bestCurriculum[0])
-        self.trainingInfoJson["bestCurriculaIds"].append(idOfBestCurriculum)
+        self.trainingInfoJson["bestCurriculas"].append(bestCurriculum)
         self.trainingInfoJson["rewards"] = rewards
         self.trainingInfoJson["actualPerformance"].append([currentScore, bestCurriculum])
-        envDetailsOfCurrentEpoch = self.getCurriculaEnvDetails()
-        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = envDetailsOfCurrentEpoch
-        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch + 1)] = self.curricula  # save as backup
+        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = self.curriculaEnvDetails
 
         self.trainingInfoJson["currentListOfCurricula"] = self.curricula
         self.trainingInfoJson["curriculumListAsX"] = popX
@@ -152,9 +151,9 @@ class RollingHorizonEvolutionaryAlgorithm:
         selectedEnv = self.trainingInfoJson["selectedEnvs"][-1]
 
         self.txtLogger.info(
-            f"Best results in epoch {epoch} came from curriculum {self.curricula[currentBestCurriculum]}")
+            f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
         self.txtLogger.info(
-            f"CurriculaEnvDetails {self.getCurriculaEnvDetails()}; selectedEnv: {selectedEnv}")
+            f"CurriculaEnvDetails {self.curriculaEnvDetails}; selectedEnv: {selectedEnv}")
         self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
 
     def startTrainingLoop(self, objectives: int, inequalityConstr, xupper):
@@ -208,18 +207,21 @@ class RollingHorizonEvolutionaryAlgorithm:
             nextModel = utils.getEpochModelName(self.model, epoch + 1)
             rewards["epoch" + str(epoch)] = self.currentRewards
 
-            currentScore = np.max(list(self.currentRewards.values()))
+            # TODO maybe create curric list for each gen instead of renweing it always
+            currentScore: float = np.max(list(self.currentRewards.values()))  # TODO test this it should not be a list
             genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewards)
             currentBestModel = utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual,
                                                                  GEN_PREFIX, genOfBestIndividual)
             utils.copyAgent(src=currentBestModel, dest=nextModel)
-            currentBestCurriculum = (genOfBestIndividual, currentBestModel)
-            print(currentBestCurriculum)
+            currentBestCurriculum = self.curriculaEnvDetails[GEN_PREFIX + genOfBestIndividual][
+                curricIdxOfBestIndividual]
 
             # TODO what is res.X in this case? is it useless for next epoch ?
             self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, res.X)
             self.logInfoAfterEpoch(epoch, currentBestCurriculum)
-            exit()
+
+            self.currentRewards = {}
+            self.curriculaEnvDetails = {}
 
         self.printFinalLogs()
         print("final fitness:", res.F.sum())
@@ -266,13 +268,12 @@ class RollingHorizonEvolutionaryAlgorithm:
                 else:
                     print("Nothing to delete", k)
                     break
-            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch1"]
+            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch1"]  # TODO test
             self.curricula = self.trainingInfoJson["currentListOfCurricula"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
             self.txtLogger.info("Creating model. . .")
-            train.main(0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger) # TODO fix
-            self.iterationsDone = self.ITERATIONS_PER_ENV
+            train.main(0, 0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)  # TODO fix
             self.initTrainingInfo()
             startEpoch = 1
             utils.copyAgent(src=self.selectedModel,
@@ -300,8 +301,10 @@ class RollingHorizonEvolutionaryAlgorithm:
             rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr)
             rewards[i] = rewardI
         self.currentRewards[GEN_PREFIX + str(genNr)] = rewards
+        self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula
         self.curricula = curricula
         self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewards}")
+        self.txtLogger.info(f"currentEnvDetails for {genNr}: {self.curriculaEnvDetails}")
         return np.array(rewards)
 
     @staticmethod

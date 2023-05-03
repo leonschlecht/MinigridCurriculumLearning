@@ -8,7 +8,7 @@ from utils import device
 from model import ACModel
 
 
-def main(framesToTrain: int, model: str, env: str, args, txt_logger) -> int:
+def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_logger) -> int:
     """
 
     :param txt_logger: reference to the .txt log file
@@ -57,7 +57,7 @@ def main(framesToTrain: int, model: str, env: str, args, txt_logger) -> int:
         acmodel.load_state_dict(status["model_state"])
     acmodel.to(device)
 
-    currentFramesDone = status["num_frames"]
+    # currentFramesDone = status["num_frames"]
     update = status["update"]
     start_time = time.time()
     framesWithThisEnv = 0
@@ -74,6 +74,7 @@ def main(framesToTrain: int, model: str, env: str, args, txt_logger) -> int:
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
 
+    print("done=", currentFramesDone, "toTrain=",framesToTrain)
     while currentFramesDone < framesToTrain:
         update_start_time = time.time()
 
@@ -128,7 +129,7 @@ def main(framesToTrain: int, model: str, env: str, args, txt_logger) -> int:
             utils.save_status(status, model_dir)
             # txt_logger.info("\t\tStatus saved")
 
-    txt_logger.info('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' framesToTrain') # TODO f
+    txt_logger.info('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames') # TODO f
     algo.env.close()
     tb_writer.close()
     return status["num_frames"]
