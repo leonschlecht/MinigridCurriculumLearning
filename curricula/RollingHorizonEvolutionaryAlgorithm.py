@@ -20,7 +20,7 @@ from pymoo.operators.sampling.rnd import IntegerRandomSampling
 
 class RollingHorizonEvolutionaryAlgorithm:
 
-    def __init__(self, txtLogger, startTime: datetime, args: argparse.Namespace, gamma=.9):
+    def __init__(self, txtLogger, startTime: datetime, cmdLineString: str, args: argparse.Namespace, gamma=.9):
         assert args.envsPerCurric > 0
         assert args.numCurric > 0
         assert args.iterPerEnv > 0
@@ -28,6 +28,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.args = args
         self.numCurric = args.numCurric
         self.envsPerCurric = args.envsPerCurric
+        self.cmdLineString = args.cmdLineString
 
         # Pymoo parameters
         objectives = 1
@@ -117,6 +118,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                                  actualPerformance: [],
                                  epochsDone: 1,
                                  startTime: self.startTime,
+                                 cmdLineString: self.cmdLineString,
                                  numFrames: 0}
         self.saveJsonFile(self.logFilePath, self.trainingInfoJson)
 
@@ -154,7 +156,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
         self.txtLogger.info(
             f"CurriculaEnvDetails {self.curriculaEnvDetails}; selectedEnv: {selectedEnv}")
-        self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
+        self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n (total: {self.trainingEpochs}")
 
     def startTrainingLoop(self, objectives: int, inequalityConstr, xupper):
         """
@@ -261,7 +263,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                 else:
                     self.txtLogger.info(f"Nothing to delete {k}")
                     break
-            self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
+            self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.trainEpochs}]")
         else:
             self.txtLogger.info("Creating model. . .")
             train.main(0, 0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)
@@ -269,6 +271,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             startEpoch = 1
             utils.copyAgent(src=self.selectedModel,
                             dest=utils.getEpochModelName(self.model, startEpoch))  # copy epoch0 -> epoch1
+            self.txtLogger.info(f"Will train {self.trainEpochs} epochs")
             rewardsDict = {}
         return startEpoch, rewardsDict
 
@@ -367,3 +370,4 @@ actualPerformance = "actualPerformance"
 epochsDone = "epochsDone"
 startTime = "startTime"
 numFrames = "numFrames"
+cmdLineString = "cmdLineString"

@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from gymnasium.envs.registration import register
 
@@ -7,21 +8,20 @@ from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
 
 
 def main():
+    cmdLineString = ' '.join(sys.argv)
     args = utils.initializeArgParser()
-    # TODO load time or set initially in linear / adaptive
     # TODO refactor to some utils method (for all methods)
 
     txtLogger = utils.get_txt_logger(
         utils.get_model_dir(args.model))  # TODO this is not clear if it creates a folder or not
 
-    # TODO save cmd line string
     # TODO refactor scripts folder (so it there are actually only scripts in it)
     startTime: datetime = datetime.now()
 
     ############
 
     if args.trainEvolutionary:
-        e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, args)
+        e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)
     elif args.trainBiasedRandomRH:
         e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
     elif args.trainRandomRH:
