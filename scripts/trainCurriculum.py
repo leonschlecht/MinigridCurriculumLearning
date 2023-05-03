@@ -54,30 +54,30 @@ def registerEnvs():
     maxSteps5x5 = 5 ** 2 * 10
     maxSteps = np.array([maxSteps16x16, maxSteps8x8, maxSteps6x6,maxSteps5x5])
     difficulty = np.array([1, 0.33, 0.11])
-    result = np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1))
+    result = np.round(np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1))).astype(int)
     print(result)
 
     for i in range(len(difficulty)):
         register(
-            id=ENV_NAMES.DOORKEY_16x16 + "-custom" + str(i),
+            id=ENV_NAMES.DOORKEY_16x16 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
             kwargs={"size": 16, "max_steps": result[3][i]},
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_8x8 + "-custom" + str(i),
+            id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
             kwargs={"size": 8, "max_steps": result[2][i]},
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_6x6 + "-custom" + str(i),
+            id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
             kwargs={"size": 6, "max_steps": result[1][i]},
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_5x5 + "-custom" + str(i),
+            id=ENV_NAMES.DOORKEY_5x5 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
             kwargs={"size": 5, "max_steps": result[0][i]},
         )

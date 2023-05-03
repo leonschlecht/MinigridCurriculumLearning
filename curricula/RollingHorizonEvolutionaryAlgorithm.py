@@ -28,8 +28,9 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.args = args
         self.numCurric = args.numCurric
         self.envsPerCurric = args.envsPerCurric
-        self.cmdLineString = args.cmdLineString
+        self.cmdLineString = cmdLineString
         self.lastEpochStartTime = startTime
+        self.envDifficulty = 0
 
         # Pymoo parameters
         objectives = 1
@@ -52,7 +53,6 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.currentRewards = {}
         self.curriculaEnvDetails = {}
         self.model = args.model
-
         self.txtLogger.info(f"curricula list start {self.curricula}")
         self.startTrainingLoop(objectives, inequalityConstr, xupper)
 
@@ -148,13 +148,11 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.trainingInfoJson[rewardsKey] = currentRewards  # TODO test this ? or does this not overwrite everything
         self.trainingInfoJson[actualPerformance].append([currentScore, bestCurriculum])
         self.trainingInfoJson[curriculaEnvDetails]["epoch" + str(epoch)] = self.curriculaEnvDetails
-
         now = datetime.now()
         timeSinceLastEpoch = (now - self.lastEpochStartTime).total_seconds()
         self.trainingInfoJson[epochTrainingTime].append(timeSinceLastEpoch)
         self.trainingInfoJson[sumTrainingTime] += timeSinceLastEpoch
         self.lastEpochStartTime = now
-
         # Debug Logs
         self.trainingInfoJson["currentListOfCurricula"] = self.curricula  # TODO is this useful?
         self.trainingInfoJson["curriculumListAsX"] = popX
@@ -185,28 +183,24 @@ class RollingHorizonEvolutionaryAlgorithm:
         :param xupper: the uppper bound for the evolutionary x variable
         :return: 
         """
-
-        nsga = NSGA2(pop_size=len(self.curricula),
+        nsga = NSGA2(pop_size=self.numCurric,
                      sampling=IntegerRandomSampling(),
                      crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
                      mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
                      eliminate_duplicates=True,
                      )
         # TODO nsga result.X has potentially multiple entries ?
-
         # NSGA Default:
         # sampling: FloatRandomSampling = FloatRandomSampling(),
         # selection: TournamentSelection = TournamentSelection(func_comp=binary_tournament),
         # crossover: SBX = SBX(eta=15, prob=0.9),
         # mutation: PM = PM(eta=20),
-
         startEpoch, rewards = self.initializeTrainingVariables(os.path.exists(self.logFilePath))
-
         for epoch in range(startEpoch, self.trainingEpochs):
             self.txtLogger.info(f"------------------------\nSTART EPOCH {epoch}\n----------------------")
             self.selectedModel = utils.getEpochModelName(self.model, epoch)
             curricProblem = CurriculumProblem(self.curricula, objectives, inequalityConstr, xupper, self)
-            algorithm = GA(pop_size=len(self.curricula),
+            algorithm = GA(pop_size=self.numCurric,
                            sampling=IntegerRandomSampling(),
                            crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
                            mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
@@ -242,8 +236,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         print("final fitness:", res.F.sum())
         print("Final X = ", res.X)
 
-    @staticmethod
-    def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int) -> list:
+    def randomlyInitializeCurricula(self, numberOfCurricula: int, envsPerCurriculum: int) -> list:
         """
         Initializes list of curricula randomly
         :param numberOfCurricula: how many curricula will be generated
@@ -252,10 +245,13 @@ class RollingHorizonEvolutionaryAlgorithm:
         curricula = []
         for i in range(numberOfCurricula):
             indices = random.sample(range(len(ENV_NAMES.ALL_ENVS)), envsPerCurriculum)
-            newCurriculum = [ENV_NAMES.ALL_ENVS[idx] for idx in indices]
+            newCurriculum = [self.getEnvWithDifficulty(idx) for idx in indices]
             curricula.append(newCurriculum)
         assert len(curricula) == numberOfCurricula
         return curricula
+
+    def getEnvWithDifficulty(self, index: int) -> str:
+        return ENV_NAMES.ALL_ENVS[index] + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty)
 
     def initializeTrainingVariables(self, modelExists) -> tuple:
         """
@@ -284,7 +280,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.trainEpochs}]")
         else:
             self.txtLogger.info("Creating model. . .")
-            train.main(0, 0, self.selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)
+            train.main(0, 0, self.selectedModel, self.getEnvWithDifficulty(0), self.args, self.txtLogger)
             self.initTrainingInfo()
             startEpoch = 1
             utils.copyAgent(src=self.selectedModel,
@@ -307,6 +303,8 @@ class RollingHorizonEvolutionaryAlgorithm:
         :param genNr: the number of the current generation
         :return: the rewards after the rolling horizon
         """
+        print("Train every")
+        exit()
         curricula = self.evolXToCurriculum(evolX)
         self.curricula = curricula  # TODO this is probably useless; maybe give it as param or store it otherwise. Im not sure how much other methods rely on this though
         rewards = np.zeros(len(curricula))
@@ -320,8 +318,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.txtLogger.info(f"currentEnvDetails for {genNr}: {self.curriculaEnvDetails}")
         return np.array(rewards)
 
-    @staticmethod
-    def evolXToCurriculum(x):
+    def evolXToCurriculum(self, x):
         """
         Transforms the population.X to environment name string
         :param x:
@@ -333,7 +330,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             result.append([])
             curric = x[i]
             for j in range(curric.shape[0]):  # TODO bug if X is 1d ? / When is X 1d?
-                result[i].append(ENV_NAMES.ALL_ENVS[x[i][j]])
+                result[i].append(self.getEnvWithDifficulty(x[i][j]))
         return result
 
     @staticmethod
@@ -344,6 +341,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         :return the transformed list containing integers representing the environment Nr
         """
         indices = []
+        print("curricList", curriculaList)
         for i in range(len(curriculaList)):
             indices.append([])
             for env in curriculaList[i]:
