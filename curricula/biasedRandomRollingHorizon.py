@@ -5,11 +5,11 @@ import time
 import numpy as np
 
 import utils
-from scripts import train, evaluate
+from curricula import train, evaluate
 from utils import ENV_NAMES, getModelWithCandidatePrefix
 
 
-class RandomRollingHorizon:
+class BiasedRandomRollingHorizon:
 
     def __init__(self, txtLogger, startTime, args, gamma=.9):
         assert args.envsPerCurriculum > 0
@@ -32,7 +32,7 @@ class RandomRollingHorizon:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
-        nameOfCurriculumI = utils.getModelName(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
+        nameOfCurriculumI = utils.getModelWithCurricGenSuffix(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
         rewards = 0
         utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
@@ -140,7 +140,7 @@ class RandomRollingHorizon:
             currentBestCurriculum = int(
                 np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
 
-            utils.copyAgent(src=getModelWithCandidatePrefix(utils.getModelName(selectedModel, currentBestCurriculum)),
+            utils.copyAgent(src=getModelWithCandidatePrefix(utils.getModelWithCurricGenSuffix(selectedModel, currentBestCurriculum)),
                             dest=self.args.model + "\\epoch_" + str(epoch + 1))  # the model for the next epoch
 
             curriculumChosenConsecutivelyTimes = \

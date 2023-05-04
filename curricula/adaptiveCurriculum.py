@@ -1,10 +1,10 @@
 import json
 import os
 from utils import ENV_NAMES
-from scripts import train, evaluate
+from curricula import train, evaluate
 
 
-def adaptiveCurriculum(txtLogger, startTime, args):
+def startAdaptiveCurriculum(txtLogger, startTime, args):
     """
     Trains on an adaptive curriculum, i.e. depending on the performance of the agent, the next envs will be determined
     """

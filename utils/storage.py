@@ -74,15 +74,42 @@ def get_csv_logger(model_dir):
 
 ###
 
-def getModelName(model, curriculumNr) -> str:
-    return model + "_curric" + str(curriculumNr)
+def getModelWithCurricGenSuffix(model, curriculumNr: int, genPrefix: str, genNr: int) -> str:
+    """
+
+    :param model:
+    :param curriculumNr:
+    :param genPrefix:
+    :param genNr:
+    :return:
+    """
+    return model + "_curric" + str(curriculumNr) + '_' + genPrefix + str(genNr)
+
+
+def getModelWithCurricSuffix(model, epoch, curricNr) -> str:
+    return getEpochModelName(model, epoch) + "_curric" + str(curricNr)
+
+
+def getEpochModelName(model, epoch) -> str:
+    return model + "\\epoch_" + str(epoch)
 
 
 def getModelWithCandidatePrefix(model) -> str:
+    """
+
+    :param model:
+    :return:
+    """
     return model + "_CANDIDATE"
 
 
 def copyAgent(src, dest) -> None:
+    """
+
+    :param src:
+    :param dest:
+    :return:
+    """
     pathPrefix = os.getcwd() + '\\storage\\'
     fullSrcPath = pathPrefix + src
     fullDestPath = pathPrefix + dest
@@ -93,8 +120,13 @@ def copyAgent(src, dest) -> None:
         print(f'Copied Agent! {src} ---> {dest}')
 
 
-def deleteModel(directory) -> None:
+def deleteModelIfExists(directory) -> bool:
     """
+    Deletes a path if it exists. Returns true on success, false otherwise
     :param directory: name of the model to be deleted, which is stored in /storage
     """
-    shutil.rmtree(os.getcwd() + "\\storage\\" + directory)
+    fullPath = os.getcwd() + "\\storage\\" + directory  # TODO use os.join
+    if os.path.exists(fullPath):  # TODO split this into 2 methods
+        shutil.rmtree(fullPath)
+        return True
+    return False

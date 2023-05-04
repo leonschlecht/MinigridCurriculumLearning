@@ -56,16 +56,16 @@ def startEvaluationInOneEnv(args, model, evalEnv) -> dict:
 
     # Print logs
     num_frames = sum(logs["num_frames_per_episode"])
-    fps = num_frames / (end_time - start_time)
-    duration = int(end_time - start_time)
+    evalTime = end_time - start_time
+    fps = num_frames / evalTime
     return_per_episode = utils.synthesize(logs["return_per_episode"])
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
 
     print(
-        "EVAL: {} with {} : F {} | FPS {:.0f} | D {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}"
-        .format(evalEnv, model, num_frames, fps, duration,
+        "EVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}"
+        .format(evalEnv, model, num_frames, fps, evalTime,
                 *return_per_episode.values(),
-                *num_frames_per_episode.values()))
+                *num_frames_per_episode.values())) # TODO use txt logger
 
     evaluationResult = {
         "meanRet": return_per_episode["mean"],
@@ -82,7 +82,7 @@ def evaluateAll(model, args) -> dict:
     results = {"model": model}
     for evaluationEnv in ENV_NAMES.ALL_ENVS:
         results[evaluationEnv] = startEvaluationInOneEnv(args, model, evaluationEnv)
-    with open('storage/' + model + '/' + 'evaluation.json', 'w') as f:
+    with open('storage/' + model + '/' + 'evaluation.json', 'w') as f: # TODO use storage file
         f.write(json.dumps(results, indent=4))
     print(f"Evaluation of {model} succeeded")
     return results
