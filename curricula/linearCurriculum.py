@@ -22,9 +22,8 @@ def startLinearCurriculum(txtLogger, startTime, args):
     # TODO load iterationsDone and decide where to continue training from
     print(len(curriculum))
     print(len(ENV_NAMES.ALL_ENVS))
-    #igrid python -m scripts.trainCurriculum --model Linear10 --trainLinear
 
-    for i in range(len(curriculum)):
+    for i in range(len(curriculum)): # TODO fix this / update parameters and ALL_ENV etc
         iterationsDone = train.main(iterationsDone + curriculum[i], args.model, ENV_NAMES.ALL_ENVS[i], args, txtLogger)
         evaluation.append(evaluate.evaluateAll(args.model, args))
         txtLogger.info(f"---Finished curriculum {ENV_NAMES.ALL_ENVS[i]} \n")
