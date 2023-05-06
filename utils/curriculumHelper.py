@@ -20,6 +20,7 @@ epochTrainingTime = "epochTrainingTime"
 sumTrainingTime = "sumTrainingTime"
 difficultyKey = "difficultyKey"
 seedKey = "seed"
+consecutivelyChosen = "consecutivelyChosen"
 
 
 def evaluateCurriculumResults(evaluationDictionary):
@@ -73,6 +74,7 @@ def initTrainingInfo(cmdLineString, logFilePath, seed) -> dict:
                         cmdLineStringKey: cmdLineString,
                         difficultyKey: [0],
                         seedKey: seed,
+                        consecutivelyChosen: 0,
                         numFrames: 0}
     saveTrainingInfoToFile(logFilePath, trainingInfoJson)
     return trainingInfoJson

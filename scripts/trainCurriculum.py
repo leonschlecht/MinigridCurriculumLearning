@@ -6,7 +6,7 @@ from gymnasium.envs.registration import register
 
 import utils
 from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
-    BiasedRandomRollingHorizon, adaptiveCurriculum, FullRandomRollingHorizon
+    adaptiveCurriculum, FullRandomRollingHorizon
 from utils import ENV_NAMES
 
 
@@ -22,13 +22,13 @@ def main():
     startTime: datetime = datetime.now()
 
     ############
-    # TODO use starting methods instaed of doing it in init because of calling eval later
+    # TODO make e.start() methods instaed of doing it in init because of calling eval later
     if args.trainEvolutionary:
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)
     elif args.trainBiasedRandomRH:
-        e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
+        e = FullRandomRollingHorizon(txtLogger, startTime, cmdLineString, args, False)
     elif args.trainRandomRH:
-        e = FullRandomRollingHorizon(txtLogger, startTime, cmdLineString, args)
+        e = FullRandomRollingHorizon(txtLogger, startTime, cmdLineString, args, True)
     elif args.trainLinear:
         linearCurriculum.startLinearCurriculum(txtLogger, startTime, args)
     elif args.trainAdaptive:

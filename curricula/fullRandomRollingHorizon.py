@@ -14,7 +14,7 @@ class FullRandomRollingHorizon:
     This aims to achieve that given the last best curriculum, based on this we want to continue most of our training.
     """
 
-    def __init__(self, txtLogger, startTime, cmdLineString: str, args, gamma=.9):
+    def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom, gamma=.9):
         assert args.envsPerCurric > 0
         assert args.numCurric > 0
         assert args.iterPerEnv > 0
@@ -37,18 +37,19 @@ class FullRandomRollingHorizon:
 
         self.envDifficulty = 0
 
+        self.fullRandom = fullRandom
+
         self.startCurriculumTraining()
 
     def startCurriculumTraining(self) -> None:
         """
         Starts The RH Curriculum Training
         """
-        iterationsDoneSoFar, startEpoch, lastChosenCurriculum = self.initializeTrainingVariables(
+        iterationsDoneSoFar, startEpoch, lastChosenCurriculum, curricConsecutivelyChosen = self.initializeTrainingVariables(
             os.path.exists(self.logFilePath))
         envDifficulty = self.envDifficulty
         fullRewardsDict = {}
-        curriculaEnvDetails = {}
-        for epoch in range(startEpoch, 11):
+        for epoch in range(startEpoch, self.totalEpochs):
             self.selectedModel = utils.getEpochModelName(self.model, epoch)
             currentRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
             for i in range(len(self.curricula)):
@@ -64,17 +65,26 @@ class FullRandomRollingHorizon:
 
             fullRewardsDict["epoch_" + str(epoch)] = currentRewards
             currentScore = 0
+            if not self.fullRandom:
+                curricConsecutivelyChosen = \
+                    self.calculateConsecutivelyChosen(curricConsecutivelyChosen, currentBestCurriculum,
+                                                      lastChosenCurriculum)
+
+            lastChosenCurriculum = currentBestCurriculum
             curriculaEnvDetails = self.curricula
             print("REWRADS=", fullRewardsDict)
             updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, fullRewardsDict, currentScore,
                                iterationsDoneSoFar, envDifficulty, self.lastEpochStartTime, self.curricula,
                                curriculaEnvDetails, self.logFilePath)
             self.lastEpochStartTime = datetime.now()
-            self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric,
-                                                         envDifficulty)
+            if self.fullRandom:
+                self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric,
+                                                             envDifficulty)
+            else:
+                self.curricula = self.updateCurriculaAfterHorizon(lastChosenCurriculum, self.numCurric, envDifficulty)
             saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
             envDifficulty = 0
-            print("---- EOCH END ---- \n")
+            print("---- EPOCH END ---- \n")
             # TODO update env difficulty
 
         printFinalLogs(self.trainingInfoJson, self.txtLogger)
@@ -113,7 +123,8 @@ class FullRandomRollingHorizon:
             rewards = self.trainingInfoJson["rewards"]
             lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
             self.curricula = self.trainingInfoJson["currentCurriculumList"]
-            self.lastEpochStartTime = self.trainingInfoJson["startTime"]
+            self.lastEpochStartTime = self.trainingInfoJson["startTime"]  # TODO use right keys
+            consec = self.trainingInfoJson[consecutivelyChosen]  # TODO load
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             for k in range(self.numCurric):
                 # TODO test this
@@ -137,4 +148,31 @@ class FullRandomRollingHorizon:
             self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed)
             utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, 1))
             lastChosenCurriculum = None
-        return iterationsDoneSoFar, startEpoch, lastChosenCurriculum
+            consec = 0
+        return iterationsDoneSoFar, startEpoch, lastChosenCurriculum, consec
+
+    def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum) -> int:
+        if consecutiveCount + 1 < len(self.curricula[0]) and \
+                (currentBestCurriculum == lastChosenCurriculum or lastChosenCurriculum is None):
+            return consecutiveCount + 1
+        return 0
+
+    def updateCurriculaAfterHorizon(self, bestCurriculum: list, numberOfCurricula: int, envDifficulty: int) -> list:
+        """
+        Updates the List of curricula by using the last N-1 Envs, and randomly selecting a last new one
+        :param envDifficulty:
+        :param numberOfCurricula:
+        :param bestCurriculum: full env list of the curriculum that performed best during last epoch
+                (i.e. needs to be cut by 1 element!)
+        """
+        curricula = []
+        # TODO remove duplicates
+        # TODO dealing with the case where duplicates are forced due to parameters
+        # TODO maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
+        # TODO test this
+        for i in range(numberOfCurricula):
+            curricula.append(bestCurriculum[1:])
+            envId = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
+            curricula[i].append(getEnvFromDifficulty(envId, envDifficulty))
+        assert len(curricula) == numberOfCurricula
+        return curricula
