@@ -120,3 +120,43 @@ def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int, 
         curricula.append(newCurriculum)
     assert len(curricula) == numberOfCurricula
     return curricula
+
+
+def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, currentRewards, currentScore: float,
+                       iterationsDone, envDifficulty: int, lastEpochStartTime, curricula, logFilePath, popX=None) -> None:
+    """
+    Updates the training info dictionary
+    :param logFilePath:
+    :param curricula:
+    :param lastEpochStartTime:
+    :param envDifficulty:
+    :param iterationsDone:
+    :param trainingInfoJson:
+    :param epoch: current epoch
+    :param bestCurriculum: the curriculum that had the highest reward in the latest epoch
+    :param currentRewards: the dict of rewards for each generation and each curriculum
+    :param currentScore: the current best score
+    :param popX: the pymoo X parameter for debugging purposes - only relevant for RHEA, not RRH
+    """
+    trainingInfoJson[epochsDone] = epoch + 1
+    trainingInfoJson[numFrames] = iterationsDone
+
+    trainingInfoJson[selectedEnvs].append(bestCurriculum[0])
+    trainingInfoJson[bestCurriculas].append(bestCurriculum)
+    trainingInfoJson[rewardsKey] = currentRewards  # TODO test this ? or does this not overwrite everything
+    trainingInfoJson[actualPerformance].append([currentScore, bestCurriculum])
+    trainingInfoJson[curriculaEnvDetails]["epoch" + str(epoch)] = curriculaEnvDetails
+    trainingInfoJson[difficultyKey].append(envDifficulty)
+
+    now = datetime.now()
+    timeSinceLastEpoch = (now - lastEpochStartTime).total_seconds()
+    trainingInfoJson[epochTrainingTime].append(timeSinceLastEpoch)
+    trainingInfoJson[sumTrainingTime] += timeSinceLastEpoch
+
+    # Debug Logs
+    trainingInfoJson["currentListOfCurricula"] = curricula  # TODO is this useful?
+    if popX is not None:
+        trainingInfoJson["curriculumListAsX"] = popX
+
+    saveTrainingInfoToFile(logFilePath, trainingInfoJson)
+    # TODO how expensive is it to always overwrite everything?

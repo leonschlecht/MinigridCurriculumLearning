@@ -83,7 +83,7 @@ def getModelWithCurricGenSuffix(model, curriculumNr: int, genPrefix: str, genNr:
     :param genNr:
     :return:
     """
-    return model + "_curric" + str(curriculumNr) + '_' + genPrefix + str(genNr)
+    return model + "_curric" + str(curriculumNr) + '_' + genPrefix + str(genNr) # TODO use method below ?
 
 
 def getModelWithCurricSuffix(model, epoch, curricNr) -> str:

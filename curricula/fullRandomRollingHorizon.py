@@ -1,15 +1,12 @@
-import json
 import os
-import time
-
 import numpy as np
-
 import utils
-from curricula import train, evaluate
-from utils import ENV_NAMES, getModelWithCandidatePrefix
+from curricula import train
+from utils import getModelWithCandidatePrefix
+from utils.curriculumHelper import *
 
 
-class BiasedRandomRollingHorizon:
+class FullRandomRollingHorizon:
     """
     This class represents a "biased" random rolling horizon. I.e not fully random (like the class
     FullRandomHorizon.
@@ -18,19 +15,26 @@ class BiasedRandomRollingHorizon:
     """
 
     def __init__(self, txtLogger, startTime, args, gamma=.9):
-        assert args.envsPerCurriculum > 0
-        assert args.numberOfCurricula > 0
-        assert args.iterationsPerEnv > 0
+        assert args.envsPerCurric > 0
+        assert args.numCurric > 0
+        assert args.iterPerEnv > 0
+        assert args.trainEpochs > 1  # TODO common file for the asserts here
 
-        self.ITERATIONS_PER_ENV = args.iterationsPerEnv
+        self.numCurric = args.numCurric
+        self.totalEpochs = args.trainEpochs
+        self.envsPerCurric = args.numCurric
+        self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.txtLogger = txtLogger
         self.args = args
-        self.startTime = startTime
-        # trainingInfoJson & curricula will be initialized in the @startTraining method
+        self.lastEpochStartTime = startTime
         self.trainingInfoJson = {}
         self.curricula = []
+        self.model = args.model
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
         self.gamma = gamma
+        self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
+
+        self.envDifficulty = 0
 
         self.startCurriculumTraining()
 
@@ -38,38 +42,48 @@ class BiasedRandomRollingHorizon:
         """
         Starts The RH Curriculum Training
         """
-        iterationsDoneSoFar, startEpoch, rewards, lastChosenCurriculum = \
-            self.initializeTrainingVariables(os.path.exists(self.logFilePath))
-
+        iterationsDoneSoFar, startEpoch, lastChosenCurriculum = self.initializeTrainingVariables(
+            os.path.exists(self.logFilePath))
+        envDifficulty = self.envDifficulty
         for epoch in range(startEpoch, 11):
-            selectedModel = self.args.model + "\\epoch_" + str(epoch)
+            self.selectedModel = utils.getEpochModelName(self.model, epoch)
+            rewards = {str(i): [] for i in range(len(self.curricula))}
             for i in range(len(self.curricula)):
-                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, selectedModel)
+                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, self.selectedModel, epoch)
                 rewards[str(i)].append(reward)
             iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
-            currentBestCurriculum = int(
+            currentBestCurriculumIdx = int(
                 np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
-
-            utils.copyAgent(
-                src=getModelWithCandidatePrefix(utils.getModelWithCurricGenSuffix(selectedModel, currentBestCurriculum)),
-                dest=self.args.model + "\\epoch_" + str(epoch + 1))  # the model for the next epoch
-
-            self.updateTrainingInfo(epoch, iterationsDoneSoFar, currentBestCurriculum, rewards)
-            self.curricula = self.initializeCurricula(self.args.numberOfCurricula, self.args.envsPerCurriculum)
+            currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
+            utils.copyAgent(src=getModelWithCandidatePrefix(
+                utils.getModelWithCurricSuffix(self.selectedModel, epoch, currentBestCurriculumIdx)),
+                            dest=utils.getEpochModelName(self.model, epoch + 1))  # the model for the next epoch
+            currentRewards = 0
+            currentScore = 0
+            print("REWRADS=", rewards)
+            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, currentRewards, currentScore,
+                               iterationsDoneSoFar, envDifficulty, self.lastEpochStartTime, self.curricula,
+                               self.logFilePath)
+            self.lastEpochStartTime = datetime.now()
+            self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric,
+                                                         envDifficulty)
             self.trainingInfoJson["currentCurriculumList"] = self.curricula  # TODO refactor this
-            self.saveTrainingInfoToFile()
+            saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
+            envDifficulty = 0
+            print("---- EOCH END ---- \n")
+            # TODO update env difficulty
 
-        self.printFinalLogs()
+        printFinalLogs(self.trainingInfoJson, self.txtLogger)
 
-    def trainEachCurriculum(self, i, iterationsDone, selectedModel) -> int:
+    def trainEachCurriculum(self, i: int, iterationsDone: int, selectedModel: str, epoch: int) -> int:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
-        nameOfCurriculumI = utils.getModelWithCurricGenSuffix(selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
+        nameOfCurriculumI = utils.getModelWithCurricSuffix(selectedModel, epoch, i)  # Save TEST_e1 --> TEST_e1_curric0
         rewards = 0
         utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
-            iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, nameOfCurriculumI,
+            iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
                                         self.curricula[i][j], self.args, self.txtLogger)
             self.txtLogger.info(f"Iterations Done {iterationsDone}")
             if j == 0:
@@ -80,90 +94,6 @@ class BiasedRandomRollingHorizon:
             # rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards
-
-    def initializeRewards(self):
-        """
-        Loads the rewards given the state from previous training, or empty initializes them if first time run
-        This assumes that the curricula are numbered from 1 to N (as opposed to using their names or something similar)
-        """
-        assert len(self.curricula) > 0
-        rewards = {}
-        for i in range(len(self.curricula)):
-            rewards[str(i)] = []
-        return rewards
-
-    def getCurriculaEnvDetails(self) -> dict:
-        """
-        Returns a dictionary with the environments of each curriculum
-        { 0: [env1, env2, ], 1: [env1, env2, ], ... }
-        """
-        fullEnvList = {}
-        for i in range(len(self.curricula)):
-            fullEnvList[i] = self.curricula[i]
-        return fullEnvList
-
-    def printFinalLogs(self) -> None:
-        """
-        Prints the last logs, after the training is done
-        """
-        self.txtLogger.info("----TRAINING END-----")
-        self.txtLogger.info(f"Best Curricula {self.trainingInfoJson['bestCurriculaIds']}")
-        self.txtLogger.info(f"Trained in Envs {self.trainingInfoJson['selectedEnvs']}")
-        self.txtLogger.info(f"Rewards: {self.trainingInfoJson['rewards']}")
-        self.txtLogger.info(f"Time ended at {time.time()} , total training time: {time.time() - self.startTime}")
-        self.txtLogger.info("-------------------\n\n")
-
-    def initTrainingInfo(self, rewards, pretrainingIterations):
-        self.trainingInfoJson = {"selectedEnvs": [],
-                                 "bestCurriculaIds": [],
-                                 "curriculaEnvDetails": {},
-                                 "rewards": rewards,
-                                 "actualPerformance": [],
-                                 "epochsDone": 1,
-                                 "startTime": self.startTime,
-                                 "numFrames": pretrainingIterations}
-        with open(self.logFilePath, 'w') as f:
-            f.write(json.dumps(self.trainingInfoJson, indent=4))
-        # TODO how expensive is it to always overwrite everything?
-
-    def updateTrainingInfo(self, epoch, iterationsDoneSoFar,
-                           currentBestCurriculum, rewards) -> None:
-        self.trainingInfoJson["epochsDone"] = epoch + 1
-        self.trainingInfoJson["numFrames"] = iterationsDoneSoFar
-
-        selectedEnv = self.curricula[currentBestCurriculum][0]
-        self.trainingInfoJson["selectedEnvs"].append(selectedEnv)
-        self.trainingInfoJson["bestCurriculaIds"].append(currentBestCurriculum)
-        self.trainingInfoJson["rewards"] = rewards
-        currentScore = evaluate.evaluateAgent(self.args.model + "\\epoch_" + str(epoch + 1), self.args)
-        self.trainingInfoJson["actualPerformance"].append([currentScore, selectedEnv])
-        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch)] = self.getCurriculaEnvDetails()
-        self.trainingInfoJson["curriculaEnvDetails"]["epoch" + str(epoch + 1)] = self.curricula
-
-        self.txtLogger.info(f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
-        self.txtLogger.info(
-            f"CurriculaEnvDetails {self.trainingInfoJson['curriculaEnvDetails']}; selectedEnv: {selectedEnv}")
-        self.txtLogger.info(f"\nEPOCH: {epoch} SUCCESS\n")
-
-    @staticmethod
-    def initializeCurricula(numberOfCurricula: int, envsPerCurriculum: int) -> list:
-        """
-        Initializes the list of Curricula randomly
-        :param numberOfCurricula: how many curricula will be generated
-        :param envsPerCurriculum: how many environment each curriculum has
-        """
-        curricula = []
-        i = 0
-        while i < numberOfCurricula:
-            newCurriculum = []
-            for j in range(envsPerCurriculum):
-                val = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
-                newCurriculum.append(ENV_NAMES.ALL_ENVS[val])
-            if newCurriculum not in curricula:  # TODO find better duplicate checking method
-                curricula.append(newCurriculum)
-                i += 1
-        assert len(curricula) == numberOfCurricula
-        return curricula
 
     def initializeTrainingVariables(self, modelExists) -> tuple:
         """
@@ -179,9 +109,9 @@ class BiasedRandomRollingHorizon:
             rewards = self.trainingInfoJson["rewards"]
             lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
             self.curricula = self.trainingInfoJson["currentCurriculumList"]
-            self.startTime = self.trainingInfoJson["startTime"]
+            self.lastEpochStartTime = self.trainingInfoJson["startTime"]
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
-            for k in range(self.args.numberOfCurricula):
+            for k in range(self.numCurric):
                 # TODO test this
                 path = self.logFilePath + "\\epoch" + str(k)
                 if os.path.exists(path):
@@ -195,30 +125,12 @@ class BiasedRandomRollingHorizon:
             # TODO find better way instead of calling train.main to create folder
             self.txtLogger.info("Creating model. . .")
             startEpoch = 1
-            self.curricula = self.initializeCurricula(self.args.numberOfCurricula, self.args.envsPerCurriculum)
-            rewards = self.initializeRewards()  # dict of {"env1": [list of rewards], "env2": [rewards], ...}
-            selectedModel = self.args.model + "\\epoch_" + str(0)
-            iterationsDoneSoFar = train.main(0, selectedModel, ENV_NAMES.DOORKEY_5x5, self.args, self.txtLogger)
-            self.initTrainingInfo(rewards, iterationsDoneSoFar)
-            utils.copyAgent(src=selectedModel, dest=self.args.model + "\\epoch_" + str(
-                startEpoch))  # e0 -> e1; subsequent iterations do at the end of each epoch iteration
+            self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric,
+                                                         self.envDifficulty)
+            iterationsDoneSoFar = train.main(0, 0, self.selectedModel, getEnvFromDifficulty(0, self.envDifficulty),
+                                             self.args, self.txtLogger)
+
+            self.trainingInfoJson = initTrainingInfo("TODO", self.logFilePath)  # TODO cmdLineSTring
+            utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, 1))
             lastChosenCurriculum = None
-        return iterationsDoneSoFar, startEpoch, rewards, lastChosenCurriculum
-
-    def saveTrainingInfoToFile(self):
-        with open(self.logFilePath, 'w') as f:
-            f.write(json.dumps(self.trainingInfoJson, indent=4))
-
-
-def evaluateCurriculumResults(evaluationDictionary):
-    # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
-    # evaluationDictionary["actualPerformance"][1] ---> zeigt die zuletzt benutzte Umgebung zu dem Zeitpunkt an
-    #
-    tmp = []
-    i = 0
-    for reward, env in tmp:
-        print(reward, env)
-        i += 1
-
-    # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
-    # # Aber warum? Und wie will man das nach 20+ durchläufen plotten
+        return iterationsDoneSoFar, startEpoch, lastChosenCurriculum

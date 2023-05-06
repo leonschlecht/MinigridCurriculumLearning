@@ -101,38 +101,6 @@ class RollingHorizonEvolutionaryAlgorithm:
         return list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][len(GEN_PREFIX):], \
             int(keyIndexPairOfMaxReward[1])
 
-    def updateTrainingInfo(self, epoch: int, bestCurriculum: list, currentRewards, currentScore: float, popX) -> None:
-        """
-        Updates the training info dictionary
-        :param epoch: current epoch
-        :param bestCurriculum: the curriculum that had the highest reward in the latest epoch
-        :param currentRewards: the dict of rewards for each generation and each curriculum
-        :param currentScore: the current best score
-        :param popX: the pymoo X parameter for debugging purposes
-        """
-        self.trainingInfoJson[epochsDone] = epoch + 1
-        self.trainingInfoJson[numFrames] = self.iterationsDone
-
-        self.trainingInfoJson[selectedEnvs].append(bestCurriculum[0])
-        self.trainingInfoJson[bestCurriculas].append(bestCurriculum)
-        self.trainingInfoJson[rewardsKey] = currentRewards  # TODO test this ? or does this not overwrite everything
-        self.trainingInfoJson[actualPerformance].append([currentScore, bestCurriculum])
-        self.trainingInfoJson[curriculaEnvDetails]["epoch" + str(epoch)] = self.curriculaEnvDetails
-        self.trainingInfoJson[difficultyKey].append(self.envDifficulty)
-
-        now = datetime.now()
-        timeSinceLastEpoch = (now - self.lastEpochStartTime).total_seconds()
-        self.trainingInfoJson[epochTrainingTime].append(timeSinceLastEpoch)
-        self.trainingInfoJson[sumTrainingTime] += timeSinceLastEpoch
-        self.lastEpochStartTime = now
-
-        # Debug Logs
-        self.trainingInfoJson["currentListOfCurricula"] = self.curricula  # TODO is this useful?
-        self.trainingInfoJson["curriculumListAsX"] = popX
-
-        saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
-        # TODO how expensive is it to always overwrite everything?
-
     def startTrainingLoop(self, objectives: int, inequalityConstr, xupper):
         """
         Starts the training loop
@@ -184,7 +152,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             currentBestCurriculum = self.curriculaEnvDetails[GEN_PREFIX + genOfBestIndividual][
                 curricIdxOfBestIndividual]
 
-            self.updateTrainingInfo(epoch, currentBestCurriculum, rewards, currentScore, res.X)
+            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, currentScore, res.X)
             logInfoAfterEpoch(epoch, currentBestCurriculum, currentScore, self.trainingInfoJson, self.txtLogger, self.maxReward, self.totalEpochs)
 
             self.currentRewards = {}

@@ -6,7 +6,7 @@ from gymnasium.envs.registration import register
 
 import utils
 from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
-    BiasedRandomRollingHorizon, adaptiveCurriculum
+    BiasedRandomRollingHorizon, adaptiveCurriculum, FullRandomRollingHorizon
 from utils import ENV_NAMES
 
 
@@ -22,13 +22,13 @@ def main():
     startTime: datetime = datetime.now()
 
     ############
-
+    # TODO use starting methods instaed of doing it in init because of calling eval later
     if args.trainEvolutionary:
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)
     elif args.trainBiasedRandomRH:
         e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
     elif args.trainRandomRH:
-        e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
+        e = FullRandomRollingHorizon(txtLogger, startTime, args)
     elif args.trainLinear:
         linearCurriculum.startLinearCurriculum(txtLogger, startTime, args)
     elif args.trainAdaptive:
@@ -55,7 +55,6 @@ def registerEnvs():
     maxSteps = np.array([maxSteps5x5, maxSteps6x6, maxSteps8x8, maxSteps16x16])
     difficulty = np.array([1, 0.33, 0.11])
     result = np.round(np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1)))
-    print(result, result[3])
 
     # TODO numpy.int32 vs int
     for i in range(len(difficulty)):
