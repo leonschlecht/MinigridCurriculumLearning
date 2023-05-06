@@ -28,7 +28,7 @@ def main():
     elif args.trainBiasedRandomRH:
         e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
     elif args.trainRandomRH:
-        e = FullRandomRollingHorizon(txtLogger, startTime, args)
+        e = FullRandomRollingHorizon(txtLogger, startTime, cmdLineString, args)
     elif args.trainLinear:
         linearCurriculum.startLinearCurriculum(txtLogger, startTime, args)
     elif args.trainAdaptive:

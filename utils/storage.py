@@ -86,8 +86,8 @@ def getModelWithCurricGenSuffix(model, curriculumNr: int, genPrefix: str, genNr:
     return model + "_curric" + str(curriculumNr) + '_' + genPrefix + str(genNr) # TODO use method below ?
 
 
-def getModelWithCurricSuffix(model, epoch, curricNr) -> str:
-    return getEpochModelName(model, epoch) + "_curric" + str(curricNr)
+def getModelWithCurricSuffix(model, curricNr) -> str:
+    return model + "_curric" + str(curricNr)
 
 
 def getEpochModelName(model, epoch) -> str:

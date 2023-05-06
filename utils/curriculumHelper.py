@@ -10,7 +10,7 @@ GEN_PREFIX = 'gen'
 
 selectedEnvs = "selectedEnvs"
 bestCurriculas = "bestCurriculas"
-curriculaEnvDetails = "curriculaEnvDetails"
+curriculaEnvDetailsKey = "curriculaEnvDetails"
 rewardsKey = "rewards"
 actualPerformance = "actualPerformance"
 epochsDone = "epochsDone"
@@ -19,6 +19,7 @@ cmdLineStringKey = "cmdLineString"
 epochTrainingTime = "epochTrainingTime"
 sumTrainingTime = "sumTrainingTime"
 difficultyKey = "difficultyKey"
+seedKey = "seed"
 
 
 def evaluateCurriculumResults(evaluationDictionary):
@@ -56,14 +57,14 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     txtLogger.info("-------------------\n\n")
 
 
-def initTrainingInfo(cmdLineString, logFilePath) -> dict:
+def initTrainingInfo(cmdLineString, logFilePath, seed) -> dict:
     """
     Initializes the trainingInfo dictionary
     :return:
     """
     trainingInfoJson = {selectedEnvs: [],
                         bestCurriculas: [],
-                        curriculaEnvDetails: {},
+                        curriculaEnvDetailsKey: {},
                         rewardsKey: {},
                         actualPerformance: [],
                         epochsDone: 1,
@@ -71,6 +72,7 @@ def initTrainingInfo(cmdLineString, logFilePath) -> dict:
                         sumTrainingTime: 0,
                         cmdLineStringKey: cmdLineString,
                         difficultyKey: [0],
+                        seedKey: seed,
                         numFrames: 0}
     saveTrainingInfoToFile(logFilePath, trainingInfoJson)
     return trainingInfoJson
@@ -91,7 +93,7 @@ def logInfoAfterEpoch(epoch, currentBestCurriculum, currentReward, trainingInfoJ
     txtLogger.info(
         f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
     txtLogger.info(
-        f"CurriculaEnvDetails {curriculaEnvDetails}; selectedEnv: {selectedEnv}")
+        f"CurriculaEnvDetails {curriculaEnvDetailsKey}; selectedEnv: {selectedEnv}")
     txtLogger.info(f"Current Reward: {currentReward}. That is {currentReward / maxReward} of maxReward")
 
     txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
@@ -122,8 +124,9 @@ def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int, 
     return curricula
 
 
-def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, currentRewards, currentScore: float,
-                       iterationsDone, envDifficulty: int, lastEpochStartTime, curricula, logFilePath, popX=None) -> None:
+def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullRewradsDict, currentScore: float,
+                       iterationsDone, envDifficulty: int, lastEpochStartTime, curricula, curriculaEnvDetails,
+                       logFilePath, popX=None) -> None:
     """
     Updates the training info dictionary
     :param logFilePath:
@@ -134,7 +137,7 @@ def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, curre
     :param trainingInfoJson:
     :param epoch: current epoch
     :param bestCurriculum: the curriculum that had the highest reward in the latest epoch
-    :param currentRewards: the dict of rewards for each generation and each curriculum
+    :param fullRewradsDict: the dict of rewards for each generation and each curriculum
     :param currentScore: the current best score
     :param popX: the pymoo X parameter for debugging purposes - only relevant for RHEA, not RRH
     """
@@ -143,9 +146,9 @@ def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, curre
 
     trainingInfoJson[selectedEnvs].append(bestCurriculum[0])
     trainingInfoJson[bestCurriculas].append(bestCurriculum)
-    trainingInfoJson[rewardsKey] = currentRewards  # TODO test this ? or does this not overwrite everything
+    trainingInfoJson[rewardsKey] = fullRewradsDict
     trainingInfoJson[actualPerformance].append([currentScore, bestCurriculum])
-    trainingInfoJson[curriculaEnvDetails]["epoch" + str(epoch)] = curriculaEnvDetails
+    trainingInfoJson[curriculaEnvDetailsKey]["epoch_" + str(epoch)] = curriculaEnvDetails
     trainingInfoJson[difficultyKey].append(envDifficulty)
 
     now = datetime.now()

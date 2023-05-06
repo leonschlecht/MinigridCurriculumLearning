@@ -14,12 +14,12 @@ class FullRandomRollingHorizon:
     This aims to achieve that given the last best curriculum, based on this we want to continue most of our training.
     """
 
-    def __init__(self, txtLogger, startTime, args, gamma=.9):
+    def __init__(self, txtLogger, startTime, cmdLineString: str, args, gamma=.9):
         assert args.envsPerCurric > 0
         assert args.numCurric > 0
         assert args.iterPerEnv > 0
         assert args.trainEpochs > 1  # TODO common file for the asserts here
-
+        self.seed = args.seed
         self.numCurric = args.numCurric
         self.totalEpochs = args.trainEpochs
         self.envsPerCurric = args.numCurric
@@ -30,6 +30,7 @@ class FullRandomRollingHorizon:
         self.trainingInfoJson = {}
         self.curricula = []
         self.model = args.model
+        self.cmdLineString = cmdLineString
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
         self.gamma = gamma
         self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
@@ -45,29 +46,32 @@ class FullRandomRollingHorizon:
         iterationsDoneSoFar, startEpoch, lastChosenCurriculum = self.initializeTrainingVariables(
             os.path.exists(self.logFilePath))
         envDifficulty = self.envDifficulty
+        fullRewardsDict = {}
+        curriculaEnvDetails = {}
         for epoch in range(startEpoch, 11):
             self.selectedModel = utils.getEpochModelName(self.model, epoch)
-            rewards = {str(i): [] for i in range(len(self.curricula))}
+            currentRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
             for i in range(len(self.curricula)):
-                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, self.selectedModel, epoch)
-                rewards[str(i)].append(reward)
+                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, epoch)
+                currentRewards["curric_" + str(i)] = reward
             iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
-            currentBestCurriculumIdx = int(
-                np.argmax([lst[-1] for lst in rewards.values()]))  # only access the latest reward
+            currentBestCurriculumIdx = np.argmax(currentRewards)
             currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
+            print("f here")
             utils.copyAgent(src=getModelWithCandidatePrefix(
-                utils.getModelWithCurricSuffix(self.selectedModel, epoch, currentBestCurriculumIdx)),
-                            dest=utils.getEpochModelName(self.model, epoch + 1))  # the model for the next epoch
-            currentRewards = 0
+                utils.getModelWithCurricSuffix(self.selectedModel, currentBestCurriculumIdx)),
+                dest=utils.getEpochModelName(self.model, epoch + 1))  # the model for the next epoch
+
+            fullRewardsDict["epoch_" + str(epoch)] = currentRewards
             currentScore = 0
-            print("REWRADS=", rewards)
-            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, currentRewards, currentScore,
+            curriculaEnvDetails = self.curricula
+            print("REWRADS=", fullRewardsDict)
+            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, fullRewardsDict, currentScore,
                                iterationsDoneSoFar, envDifficulty, self.lastEpochStartTime, self.curricula,
-                               self.logFilePath)
+                               curriculaEnvDetails, self.logFilePath)
             self.lastEpochStartTime = datetime.now()
             self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric,
                                                          envDifficulty)
-            self.trainingInfoJson["currentCurriculumList"] = self.curricula  # TODO refactor this
             saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
             envDifficulty = 0
             print("---- EOCH END ---- \n")
@@ -75,13 +79,13 @@ class FullRandomRollingHorizon:
 
         printFinalLogs(self.trainingInfoJson, self.txtLogger)
 
-    def trainEachCurriculum(self, i: int, iterationsDone: int, selectedModel: str, epoch: int) -> int:
+    def trainEachCurriculum(self, i: int, iterationsDone: int, epoch: int) -> int:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
-        nameOfCurriculumI = utils.getModelWithCurricSuffix(selectedModel, epoch, i)  # Save TEST_e1 --> TEST_e1_curric0
+        nameOfCurriculumI = utils.getModelWithCurricSuffix(self.selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
         rewards = 0
-        utils.copyAgent(src=selectedModel, dest=nameOfCurriculumI)
+        utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
                                         self.curricula[i][j], self.args, self.txtLogger)
@@ -130,7 +134,7 @@ class FullRandomRollingHorizon:
             iterationsDoneSoFar = train.main(0, 0, self.selectedModel, getEnvFromDifficulty(0, self.envDifficulty),
                                              self.args, self.txtLogger)
 
-            self.trainingInfoJson = initTrainingInfo("TODO", self.logFilePath)  # TODO cmdLineSTring
+            self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed)
             utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, 1))
             lastChosenCurriculum = None
         return iterationsDoneSoFar, startEpoch, lastChosenCurriculum

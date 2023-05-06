@@ -151,18 +151,22 @@ class RollingHorizonEvolutionaryAlgorithm:
             utils.copyAgent(src=currentBestModel, dest=nextModel)
             currentBestCurriculum = self.curriculaEnvDetails[GEN_PREFIX + genOfBestIndividual][
                 curricIdxOfBestIndividual]
+            iterationsDone = 0  # TODO ????
+            self.envDifficulty = calculateEnvDifficulty(currentScore, self.maxReward)
 
-            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, currentScore, res.X)
-            logInfoAfterEpoch(epoch, currentBestCurriculum, currentScore, self.trainingInfoJson, self.txtLogger, self.maxReward, self.totalEpochs)
+            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, currentScore,
+                               iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula,
+                               self.curriculaEnvDetails, self.logFilePath, res.X)
+            logInfoAfterEpoch(epoch, currentBestCurriculum, currentScore, self.trainingInfoJson, self.txtLogger,
+                              self.maxReward, self.totalEpochs)
 
             self.currentRewards = {}
             self.curriculaEnvDetails = {}
-            self.envDifficulty = calculateEnvDifficulty(currentScore, self.maxReward)
+            self.lastEpochStartTime = datetime.now()
 
-        printFinalLogs(self.trainingInfoJson, self.txtLogger)
-        print("final fitness:", res.F.sum())
-        print("Final X = ", res.X)
-
+            printFinalLogs(self.trainingInfoJson, self.txtLogger)
+            print("final fitness:", res.F.sum())
+            print("Final X = ", res.X)
 
     def initializeTrainingVariables(self, modelExists) -> tuple:
         """
