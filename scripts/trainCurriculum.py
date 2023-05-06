@@ -6,7 +6,7 @@ from gymnasium.envs.registration import register
 
 import utils
 from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
-    adaptiveCurriculum, FullRandomRollingHorizon
+    adaptiveCurriculum, RandomRollingHorizon
 from utils import ENV_NAMES
 
 
@@ -26,9 +26,9 @@ def main():
     if args.trainEvolutionary:
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)
     elif args.trainBiasedRandomRH:
-        e = FullRandomRollingHorizon(txtLogger, startTime, cmdLineString, args, False)
+        e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, False)
     elif args.trainRandomRH:
-        e = FullRandomRollingHorizon(txtLogger, startTime, cmdLineString, args, True)
+        e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, True)
     elif args.trainLinear:
         linearCurriculum.startLinearCurriculum(txtLogger, startTime, args)
     elif args.trainAdaptive:

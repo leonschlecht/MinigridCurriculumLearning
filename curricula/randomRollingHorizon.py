@@ -6,7 +6,7 @@ from utils import getModelWithCandidatePrefix
 from utils.curriculumHelper import *
 
 
-class FullRandomRollingHorizon:
+class RandomRollingHorizon:
     """
     This class represents a "biased" random rolling horizon. I.e not fully random (like the class
     FullRandomHorizon.
@@ -94,7 +94,7 @@ class FullRandomRollingHorizon:
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         nameOfCurriculumI = utils.getModelWithCurricSuffix(self.selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
-        rewards = 0
+        rewards = 0 # TODO epoch param in method here ???
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
