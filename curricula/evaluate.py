@@ -5,7 +5,7 @@ from torch_ac.utils.penv import ParallelEnv
 import json
 
 import utils
-from utils import device, ENV_NAMES
+from utils import device, ENV_NAMES, getEnvListThroughDifficulty
 
 
 def startEvaluationInOneEnv(args, model, evalEnv) -> dict:
@@ -77,26 +77,28 @@ def startEvaluationInOneEnv(args, model, evalEnv) -> dict:
     return evaluationResult
 
 
-def evaluateAll(model, args) -> dict:
+def evaluateAll(model, envs, args) -> dict:
     utils.seed(args.seed)
     results = {"model": model}
-    for evaluationEnv in ENV_NAMES.ALL_ENVS:
+    for evaluationEnv in envs:
         results[evaluationEnv] = startEvaluationInOneEnv(args, model, evaluationEnv)
-    with open('storage/' + model + '/' + 'evaluation.json', 'w') as f: # TODO use storage file
+    with open('storage/' + model + '/' + 'evaluation.json', 'w') as f: # TODO use utils/storage file
         f.write(json.dumps(results, indent=4))
-    print(f"Evaluation of {model} succeeded")
+    print(f"Evaluation of {model} succeeded") # TODO txtlogger
     return results
 
 
-def evaluateAgent(model, args) -> int:
+def evaluateAgent(model, difficulty, args) -> int:
     """
     Evaluates and calculates the average performance in ALL environments
     :param model: the name of the model
+    :param difficulty:
     :param args: the command line arugments
     :return: the average reward
     """
     reward = 0
-    evaluationResult = evaluateAll(model, args)  # TODO decide if using args.argmax or not
-    for evalEnv in ENV_NAMES.ALL_ENVS:
+    envs = getEnvListThroughDifficulty(difficulty)
+    evaluationResult = evaluateAll(model, envs, args)  # TODO decide if using args.argmax or not
+    for evalEnv in envs:
         reward += float(evaluationResult[evalEnv]["meanRet"])
     return reward

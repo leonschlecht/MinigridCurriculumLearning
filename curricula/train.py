@@ -36,12 +36,12 @@ def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_
     # Load environments
     envs = []
     for i in range(args.procs):
-        envs.append(utils.make_env(env, args.seed + 10000 * i)) # TODO what does 10k mean here ?
+        envs.append(utils.make_env(env, args.seed + 10000 * i))  # TODO what does 10k mean here ?
     # txt_logger.info("Environments loaded\n")
 
     # Load training status
     try:
-        status = utils.get_status(model_dir) # TODO find better way than try except
+        status = utils.get_status(model_dir)  # TODO find better way than try except
     except OSError:
         status = {"num_frames": 0, "update": 0}
 
@@ -75,7 +75,7 @@ def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
 
-    print("done=", currentFramesDone, "toTrain=",framesToTrain)
+    print("done=", currentFramesDone, "toTrain=", framesToTrain)
     while currentFramesDone < framesToTrain:
         update_start_time = time.time()
 
@@ -84,7 +84,7 @@ def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_
         logs = {**logs1, **logs2}
         update_end_time = time.time()
 
-        framesWithThisEnv += logs["num_frames"] # TODO can probably calculate this with end - startFrames
+        framesWithThisEnv += logs["num_frames"]  # TODO can probably calculate this with end - startFrames
 
         currentFramesDone += logs["num_frames"]
         update += 1
@@ -130,7 +130,8 @@ def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_
             utils.save_status(status, model_dir)
             # txt_logger.info("\t\tStatus saved")
 
-    txt_logger.info('Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames') # TODO f
+    txt_logger.info(
+        'Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')  # TODO f
     algo.env.close()
     tb_writer.close()
     return status["num_frames"]
