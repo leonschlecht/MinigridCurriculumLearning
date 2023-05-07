@@ -30,6 +30,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.lastEpochStartTime = startTime
         self.envDifficulty = 0
         self.exactIterationsSet = False
+        self.seed = args.seed
 
         # Pymoo parameters
         objectives = 1
@@ -45,11 +46,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.nGen = args.nGen
         self.trainingTime = 0
 
-        MAX_REWARD_PER_ENV = 1
-        maxReward = 0
-        for j in range(args.numCurric):
-            maxReward += ((gamma ** j) * MAX_REWARD_PER_ENV * args.numCurric)
-        self.maxReward = maxReward
+        self.maxReward = calculateMaxReward(args.numCurric, gamma)
         print("maxReward", self.maxReward)
 
         self.trainingInfoJson = {}
@@ -136,7 +133,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             res = minimize(curricProblem,
                            algorithm,
                            termination=('n_gen', self.nGen),
-                           seed=1,
+                           seed=self.seed,
                            save_history=True,
                            verbose=False)
             self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
@@ -196,7 +193,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         else:
             self.txtLogger.info("Creating model. . .")
             train.main(0, 0, self.selectedModel, getEnvFromDifficulty(0, self.envDifficulty), self.args, self.txtLogger)
-            self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath)
+            self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed, self.args)
             startEpoch = 1
             utils.copyAgent(src=self.selectedModel,
                             dest=utils.getEpochModelName(self.model, startEpoch))  # copy epoch0 -> epoch1

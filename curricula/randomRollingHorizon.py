@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import utils
-from curricula import train
+from curricula import train, evaluate
 from utils import getModelWithCandidatePrefix
 from utils.curriculumHelper import *
 
@@ -34,6 +34,7 @@ class RandomRollingHorizon:
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
         self.gamma = gamma
         self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
+        self.maxReward = calculateMaxReward(args.numCurric, gamma)
 
         self.envDifficulty = 0
 
@@ -47,7 +48,6 @@ class RandomRollingHorizon:
         """
         iterationsDoneSoFar, startEpoch, lastChosenCurriculum, curricConsecutivelyChosen = self.initializeTrainingVariables(
             os.path.exists(self.logFilePath))
-        envDifficulty = self.envDifficulty
         fullRewardsDict = {}
         for epoch in range(startEpoch, self.totalEpochs):
             self.selectedModel = utils.getEpochModelName(self.model, epoch)
@@ -58,7 +58,6 @@ class RandomRollingHorizon:
             iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
             currentBestCurriculumIdx = np.argmax(currentRewards)
             currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
-            print("f here")
             utils.copyAgent(src=getModelWithCandidatePrefix(
                 utils.getModelWithCurricSuffix(self.selectedModel, currentBestCurriculumIdx)),
                 dest=utils.getEpochModelName(self.model, epoch + 1))  # the model for the next epoch
@@ -74,18 +73,16 @@ class RandomRollingHorizon:
             curriculaEnvDetails = self.curricula
             print("REWRADS=", fullRewardsDict)
             updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, fullRewardsDict, currentScore,
-                               iterationsDoneSoFar, envDifficulty, self.lastEpochStartTime, self.curricula,
+                               iterationsDoneSoFar, self.envDifficulty, self.lastEpochStartTime, self.curricula,
                                curriculaEnvDetails, self.logFilePath)
             self.lastEpochStartTime = datetime.now()
             if self.fullRandom:
-                self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric,
-                                                             envDifficulty)
+                self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric, self.envDifficulty)
             else:
-                self.curricula = self.updateCurriculaAfterHorizon(lastChosenCurriculum, self.numCurric, envDifficulty)
+                self.curricula = self.updateCurriculaAfterHorizon(lastChosenCurriculum, self.numCurric,
+                                                                  self.envDifficulty)
             saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
-            envDifficulty = 0
-            print("---- EPOCH END ---- \n")
-            # TODO update env difficulty
+            self.envDifficulty = calculateEnvDifficulty(currentScore, self.maxReward)
 
         printFinalLogs(self.trainingInfoJson, self.txtLogger)
 
@@ -94,7 +91,7 @@ class RandomRollingHorizon:
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         nameOfCurriculumI = utils.getModelWithCurricSuffix(self.selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
-        rewards = 0 # TODO epoch param in method here ???
+        rewards = 0  # TODO epoch param in method here ???
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
@@ -105,7 +102,8 @@ class RandomRollingHorizon:
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
                 # TODO save reward separately here?
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
-            # rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.args))  # TODO or (j+1) ?
+            rewards += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args))
+
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards
 
@@ -145,7 +143,7 @@ class RandomRollingHorizon:
             iterationsDoneSoFar = train.main(0, 0, self.selectedModel, getEnvFromDifficulty(0, self.envDifficulty),
                                              self.args, self.txtLogger)
 
-            self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed)
+            self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed, self.args)
             utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, 1))
             lastChosenCurriculum = None
             consec = 0

@@ -20,6 +20,7 @@ epochTrainingTime = "epochTrainingTime"
 sumTrainingTime = "sumTrainingTime"
 difficultyKey = "difficultyKey"
 seedKey = "seed"
+fullArgs = "args"
 consecutivelyChosen = "consecutivelyChosen"
 
 
@@ -58,7 +59,15 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     txtLogger.info("-------------------\n\n")
 
 
-def initTrainingInfo(cmdLineString, logFilePath, seed) -> dict:
+def calculateMaxReward(numCurric, gamma) -> float:
+    MAX_REWARD_PER_ENV = 1
+    maxReward = 0
+    for j in range(numCurric):
+        maxReward += ((gamma ** j) * MAX_REWARD_PER_ENV * numCurric)
+    return maxReward
+
+
+def initTrainingInfo(cmdLineString, logFilePath, seed, args) -> dict:
     """
     Initializes the trainingInfo dictionary
     :return:
@@ -75,6 +84,7 @@ def initTrainingInfo(cmdLineString, logFilePath, seed) -> dict:
                         difficultyKey: [0],
                         seedKey: seed,
                         consecutivelyChosen: 0,
+                        fullArgs: args,
                         numFrames: 0}
     saveTrainingInfoToFile(logFilePath, trainingInfoJson)
     return trainingInfoJson
