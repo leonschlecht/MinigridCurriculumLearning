@@ -46,8 +46,8 @@ class RandomRollingHorizon:
         """
         Starts The RH Curriculum Training
         """
-        iterationsDoneSoFar, startEpoch, lastChosenCurriculum, curricConsecutivelyChosen = self.initializeTrainingVariables(
-            os.path.exists(self.logFilePath))
+        iterationsDoneSoFar, startEpoch, lastChosenCurriculum, curricConsecutivelyChosen = \
+            self.initializeTrainingVariables(os.path.exists(self.logFilePath))
         fullRewardsDict = {}
         for epoch in range(startEpoch, self.totalEpochs):
             self.selectedModel = utils.getEpochModelName(self.model, epoch)
@@ -75,14 +75,18 @@ class RandomRollingHorizon:
             updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, fullRewardsDict, currentScore,
                                iterationsDoneSoFar, self.envDifficulty, self.lastEpochStartTime, self.curricula,
                                curriculaEnvDetails, self.logFilePath)
+            saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
+            # TODO should updateTrainingInfo not call the save method ?
+            logInfoAfterEpoch(epoch, currentBestCurriculum, currentScore, self.trainingInfoJson, self.txtLogger,
+                              self.maxReward, self.totalEpochs)
+
             self.lastEpochStartTime = datetime.now()
+            self.envDifficulty = calculateEnvDifficulty(currentScore, self.maxReward)
             if self.fullRandom:
                 self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric, self.envDifficulty)
             else:
                 self.curricula = self.updateCurriculaAfterHorizon(lastChosenCurriculum, self.numCurric,
                                                                   self.envDifficulty)
-            saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
-            self.envDifficulty = calculateEnvDifficulty(currentScore, self.maxReward)
 
         printFinalLogs(self.trainingInfoJson, self.txtLogger)
 
