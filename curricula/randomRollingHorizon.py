@@ -63,7 +63,7 @@ class RandomRollingHorizon:
                 dest=utils.getEpochModelName(self.model, epoch + 1))  # the model for the next epoch
 
             fullRewardsDict["epoch_" + str(epoch)] = currentRewards
-            currentScore = 0
+            currentScore = max(currentRewards.values())
             if not self.fullRandom:
                 curricConsecutivelyChosen = \
                     self.calculateConsecutivelyChosen(curricConsecutivelyChosen, currentBestCurriculum,

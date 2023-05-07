@@ -13,7 +13,7 @@ from utils import ENV_NAMES
 def main():
     cmdLineString = ' '.join(sys.argv)
     args = utils.initializeArgParser()
-    # TODO refactor to some utils method (for all methods)
+    # TODO add --debug option with some preset parameters, and only use more params if != default ones
 
     txtLogger = utils.get_txt_logger(
         utils.get_model_dir(args.model))  # TODO this is not clear if it creates a folder or not
