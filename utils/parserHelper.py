@@ -23,7 +23,7 @@ def initializeArgParser():
                         help="Determines the amount of env per curriculum during training")
     parser.add_argument("--numCurric", default=3, type=int,
                         help="Determines the amount of curricula that are used for training")
-    parser.add_argument("--trainEpochs", default=10, type=int, help="Tells the algorithm how long to train for.")
+    parser.add_argument("--trainEpochs", default=25, type=int, help="Tells the algorithm how long to train for.")
     parser.add_argument("--nGen", default=3, type=int,
                         help="The amount of generations per RHEA iteration")
 
