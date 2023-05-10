@@ -72,15 +72,13 @@ class RollingHorizonEvolutionaryAlgorithm:
         for j in range(len(curricula[i])):
             print("curricula[i][j]", curricula[i][j])
             # assert isinstance(curricula[i][j], list)
-            print(curricula[i][j])
-            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
-                                                 curricula[i][j], self.args, self.txtLogger)
-            # reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty,
-            #                                                     self.args))  # TODO or (j+1) ?
-
+            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
+                                                 nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
+            reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty,
+                                                                  self.args))  # TODO or (j+1) ?
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
-                if not self.exactIterationsSet:
+                if not self.exactIterationsSet: # TODO refactor this to common method
                     self.exactIterationsSet = True
                     self.ITERATIONS_PER_ENV = iterationsDone - 1  # TODO test this ; maybe you can remove the -1 (or add it)
                     self.txtLogger.info("first iteration set; Iter_per_env ...!")  # TODO remove
