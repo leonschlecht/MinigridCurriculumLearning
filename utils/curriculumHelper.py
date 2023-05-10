@@ -64,6 +64,7 @@ def calculateMaxReward(numCurric, gamma) -> float:
     maxReward = 0
     for j in range(numCurric):
         maxReward += ((gamma ** j) * MAX_REWARD_PER_ENV * numCurric)
+    print("Max Reward =", maxReward, "; #curric =", numCurric)
     return maxReward
 
 

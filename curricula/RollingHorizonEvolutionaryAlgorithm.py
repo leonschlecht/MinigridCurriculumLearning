@@ -66,11 +66,12 @@ class RollingHorizonEvolutionaryAlgorithm:
         # Save epochX -> epochX_curricI_genJ
         nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
+        curricula[0][0] = [getEnvFromDifficulty(0, 2), getEnvFromDifficulty(2, 2)]
         for j in range(len(curricula[i])):
             iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
                                         curricula[i][j], self.args, self.txtLogger)
-            reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty,
-                                                                  self.args))  # TODO or (j+1) ?
+            #reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty,
+             #                                                     self.args))  # TODO or (j+1) ?
 
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
@@ -81,6 +82,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
             self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}\n")
+            break
         self.txtLogger.info(f"Reward for curriculum {nameOfCurriculumI} = {reward}\n\n")
         return reward
 
