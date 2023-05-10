@@ -1,16 +1,14 @@
 import time
 import torch_ac
 import tensorboardX
-import sys
 
 import utils
 from utils import device
 from model import ACModel
 
 
-def main(framesToTrain: int, currentFramesDone, model: str, envList: list, args, txt_logger) -> int:
+def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: list, args, txt_logger) -> int:
     """
-
     :param currentFramesDone:
     :param txt_logger: reference to the .txt log file
     :param framesToTrain: the number of iterations
@@ -29,9 +27,10 @@ def main(framesToTrain: int, currentFramesDone, model: str, envList: list, args,
 
     # Load environments
     envs = []
-
-    for i in range(args.procs):
-        envs.append(utils.make_env(envList, args.seed + 10000 * i))
+    for i in range(args.procs // len(envList)):
+        for j in range(len(envList)):
+            envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
+    assert len(envs) == args.procs
 
     # Load training status
     try:
@@ -124,8 +123,7 @@ def main(framesToTrain: int, currentFramesDone, model: str, envList: list, args,
             utils.save_status(status, model_dir)
             # txt_logger.info("\t\tStatus saved")
 
-    txt_logger.info(
-        'Trained on' + envList + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')  # TODO f
+    txt_logger.info(f'Trained on {envList} using model {model} for {framesWithThisEnv} frames')
     algo.env.close()
     tb_writer.close()
     return status["num_frames"]

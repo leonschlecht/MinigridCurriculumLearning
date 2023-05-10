@@ -98,8 +98,8 @@ class RandomRollingHorizon:
         rewards = 0  # TODO epoch param in method here ???
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         for j in range(len(self.curricula[i])):
-            iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
-                                        self.curricula[i][j], self.args, self.txtLogger)
+            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
+                                                 self.curricula[i][j], self.args, self.txtLogger)
             self.txtLogger.info(f"Iterations Done {iterationsDone}")
             if j == 0:
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
@@ -139,13 +139,13 @@ class RandomRollingHorizon:
             assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
         else:
-            # TODO find better way instead of calling train.main to create folder
+            # TODO find better way instead of calling train.startTraining to create folder
             self.txtLogger.info("Creating model. . .")
             startEpoch = 1
             self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric,
                                                          self.envDifficulty)
-            iterationsDoneSoFar = train.main(0, 0, self.selectedModel, getEnvFromDifficulty(0, self.envDifficulty),
-                                             self.args, self.txtLogger)
+            iterationsDoneSoFar = train.startTraining(0, 0, self.selectedModel, getEnvFromDifficulty(0, self.envDifficulty),
+                                                      self.args, self.txtLogger)
 
             self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed, self.args)
             utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, 1))

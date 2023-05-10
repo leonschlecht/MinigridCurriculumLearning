@@ -36,7 +36,7 @@ def startAdaptiveCurriculum(txtLogger, startTime, args):
     for epoch in range(startEpoch, 25):
         curriculum = [harderEnv, easierEnv, harderEnv, easierEnv]
         for env in curriculum:
-            iterationsDoneSoFar = train.main(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, env, args)
+            iterationsDoneSoFar = train.startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, env, args)
 
         evaluationScore = evaluate.evaluateAgent(args.model, args)
         easierEnv, harderEnv = calculateNextEnvs(evaluationScore)

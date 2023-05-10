@@ -23,6 +23,8 @@ class RollingHorizonEvolutionaryAlgorithm:
         assert args.numCurric > 0
         assert args.iterPerEnv > 0
         assert args.trainEpochs > 1
+        assert 0 < args.paraEnv <= len(ENV_NAMES.ALL_ENVS)
+
         self.args = args
         self.numCurric = args.numCurric
         self.envsPerCurric = args.envsPerCurric
@@ -31,6 +33,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.envDifficulty = 0
         self.exactIterationsSet = False
         self.seed = args.seed
+        self.paraEnvs = args.paraEnv  # the amount of envs that are trained in parallel
 
         # Pymoo parameters
         objectives = 1
@@ -66,12 +69,14 @@ class RollingHorizonEvolutionaryAlgorithm:
         # Save epochX -> epochX_curricI_genJ
         nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
-        curricula[0][0] = [getEnvFromDifficulty(0, 2), getEnvFromDifficulty(2, 2)]
         for j in range(len(curricula[i])):
-            iterationsDone = train.main(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
-                                        curricula[i][j], self.args, self.txtLogger)
-            #reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty,
-             #                                                     self.args))  # TODO or (j+1) ?
+            print("curricula[i][j]", curricula[i][j])
+            # assert isinstance(curricula[i][j], list)
+            print(curricula[i][j])
+            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI,
+                                                 curricula[i][j], self.args, self.txtLogger)
+            # reward += ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty,
+            #                                                     self.args))  # TODO or (j+1) ?
 
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
@@ -125,7 +130,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.txtLogger.info(
                 f"\n--------------------------------------------------------------\n                     START EPOCH {epoch}\n--------------------------------------------------------------\n")
             self.selectedModel = utils.getEpochModelName(self.model, epoch)
-            curricProblem = CurriculumProblem(self.curricula, objectives, inequalityConstr, xupper, self)
+            curricProblem = CurriculumProblem(self.curricula, objectives, inequalityConstr, xupper, self.paraEnvs, self)
             algorithm = GA(pop_size=self.numCurric,
                            sampling=IntegerRandomSampling(),
                            crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
@@ -194,7 +199,8 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}]")
         else:
             self.txtLogger.info("Creating model. . .")
-            train.main(0, 0, self.selectedModel, getEnvFromDifficulty(0, self.envDifficulty), self.args, self.txtLogger)
+            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
+                                self.txtLogger)
             self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed, self.args)
             startEpoch = 1
             utils.copyAgent(src=self.selectedModel,
@@ -228,14 +234,20 @@ class RollingHorizonEvolutionaryAlgorithm:
         :param x:
         :return:
         """
-        result = []
-
-        for i in range(x.shape[0]):
-            result.append([])
-            curric = x[i]
-            for j in range(curric.shape[0]):  # TODO bug if X is 1d ? / When is X 1d?
-                result[i].append(getEnvFromDifficulty(x[i][j], self.envDifficulty))
-        return result
+        curriculumList = []
+        for curriculumI in x:
+            sublist = []
+            for i in range(0, len(curriculumI), self.args.paraEnv):
+                tmp = curriculumI[i:i + self.args.paraEnv]
+                envNames = []
+                for envId in tmp:
+                    envNames.append(getEnvFromDifficulty(envId, self.envDifficulty))
+                sublist.append(envNames)
+            curriculumList.append(sublist)
+        assert curriculumList != []
+        assert len(curriculumList) == self.numCurric
+        assert len(curriculumList[0]) == self.envsPerCurric
+        return curriculumList
 
     @staticmethod
     def createFirstGeneration(curriculaList):

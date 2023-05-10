@@ -7,11 +7,12 @@ from utils import ENV_NAMES
 
 
 class CurriculumProblem(Problem):
-    def __init__(self, curricula: list, n_obj, n_ieq_constr, xu, rheaObj: RollingHorizonEvolutionaryAlgorithm):
+    def __init__(self, curricula: list, n_obj, n_ieq_constr, xu, paraEnvs: int,
+                 rheaObj: RollingHorizonEvolutionaryAlgorithm):
         assert len(curricula) > 0
         assert rheaObj is not None
         self.rheaObj = rheaObj
-        n_var = len(curricula[0])
+        n_var = len(curricula[0]) * paraEnvs
         xl = np.zeros(n_var, dtype=int)
         xu = np.full(n_var, xu, dtype=int)
         super().__init__(n_var=n_var,
