@@ -163,7 +163,7 @@ def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullR
     trainingInfoJson[bestCurriculas].append(bestCurriculum)
     trainingInfoJson[rewardsKey] = fullRewradsDict
     trainingInfoJson[actualPerformance].append(
-        {"curricScore": currentScore, "snapshotScore": snapshotScore, "bestCurriculum": bestCurriculum})
+        {"curricScore": currentScore, "snapshotScore": snapshotScore, "curriculum": bestCurriculum})
     trainingInfoJson[curriculaEnvDetailsKey]["epoch_" + str(epoch)] = curriculaEnvDetails
     trainingInfoJson[difficultyKey].append(envDifficulty)
 

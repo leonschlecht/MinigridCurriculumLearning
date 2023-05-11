@@ -50,7 +50,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.nGen = args.nGen
         self.trainingTime = 0
 
-        self.maxReward = calculateMaxReward(1, gamma) # TODO maybe remove this because it became useless
+        self.maxReward = calculateMaxReward(1, gamma)  # TODO maybe remove this because it became useless
         print("maxReward", self.maxReward)
 
         self.trainingInfoJson = {}
@@ -158,9 +158,9 @@ class RollingHorizonEvolutionaryAlgorithm:
                 curricIdxOfBestIndividual]
             self.envDifficulty = calculateEnvDifficulty(currentSnapshotScore, self.maxReward)
 
-            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurriculumScore, currentSnapshotScore,
-                               self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula,
-                               self.curriculaEnvDetails, self.logFilePath, res.X)
+            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurriculumScore,
+                               currentSnapshotScore, self.iterationsDone, self.envDifficulty, self.lastEpochStartTime,
+                               self.curricula, self.curriculaEnvDetails, self.logFilePath, res.X)
             logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, self.trainingInfoJson, self.txtLogger,
                               self.maxReward, self.totalEpochs)
 
@@ -169,9 +169,9 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.curriculaEnvDetails = {}
             self.lastEpochStartTime = datetime.now()
 
-            printFinalLogs(self.trainingInfoJson, self.txtLogger)
-            print("final fitness:", res.F.sum())
-            print("Final X = ", res.X)
+        printFinalLogs(self.trainingInfoJson, self.txtLogger)
+        print("final fitness:", res.F.sum())
+        print("Final X = ", res.X)
 
     def initializeTrainingVariables(self, modelExists) -> tuple:
         """
