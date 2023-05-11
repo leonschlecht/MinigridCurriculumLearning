@@ -138,10 +138,12 @@ def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int, 
 
 
 def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullRewradsDict, currentScore: float,
-                       iterationsDone, envDifficulty: int, lastEpochStartTime, curricula, curriculaEnvDetails,
-                       logFilePath, popX=None) -> None:
+                       snapshotScore: float, iterationsDone, envDifficulty: int, lastEpochStartTime, curricula,
+                       curriculaEnvDetails, logFilePath, popX=None) -> None:
     """
     Updates the training info dictionary
+    :param snapshotScore:
+    :param curriculaEnvDetails:
     :param logFilePath:
     :param curricula:
     :param lastEpochStartTime:
@@ -160,7 +162,8 @@ def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullR
     trainingInfoJson[selectedEnvs].append(bestCurriculum[0])
     trainingInfoJson[bestCurriculas].append(bestCurriculum)
     trainingInfoJson[rewardsKey] = fullRewradsDict
-    trainingInfoJson[actualPerformance].append([currentScore, bestCurriculum])
+    trainingInfoJson[actualPerformance].append(
+        {"curricScore": currentScore, "snapshotScore": snapshotScore, "bestCurriculum": bestCurriculum})
     trainingInfoJson[curriculaEnvDetailsKey]["epoch_" + str(epoch)] = curriculaEnvDetails
     trainingInfoJson[difficultyKey].append(envDifficulty)
 
@@ -170,7 +173,7 @@ def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullR
     trainingInfoJson[sumTrainingTime] += timeSinceLastEpoch
 
     # Debug Logs
-    trainingInfoJson["currentListOfCurricula"] = curricula  # TODO is this useful?
+    trainingInfoJson["currentListOfCurricula"] = curricula
     if popX is not None:
         trainingInfoJson["curriculumListAsX"] = popX
 
