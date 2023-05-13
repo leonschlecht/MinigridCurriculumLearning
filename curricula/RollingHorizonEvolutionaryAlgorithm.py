@@ -45,7 +45,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.iterationsDone = 0
         self.txtLogger = txtLogger
-        self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
+        self.selectedModel = utils.getEpochModelName(args.model, 0)
         self.totalEpochs = args.trainEpochs
         self.nGen = args.nGen
         self.trainingTime = 0
@@ -71,25 +71,26 @@ class RollingHorizonEvolutionaryAlgorithm:
         # Save epochX -> epochX_curricI_genJ
         nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
+        initialIterationsDone = iterationsDone
         for j in range(len(curricula[i])):
-            print("curricula[i][j]", curricula[i][j])
+            print("\t curricula[i][j] = ", curricula[i][j])
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
-            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty,
-                                                                    self.args))  # TODO or (j+1) ?
+            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args))
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
-                self.saveFirstStepOfModel(iterationsDone, nameOfCurriculumI)
-            self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}\n")
-            self.txtLogger.info(f"Reward for curriculum {nameOfCurriculumI} = {reward}\n\n")
+                self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)  # TODO testfor ep0
+            self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}")
+            self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {reward} (1 entry = 1 env)\n\n")
         return reward
 
-    def saveFirstStepOfModel(self, iterationsDone: int, nameOfCurriculumI: str):
+    def saveFirstStepOfModel(self, exactIterationsPerEnv: int, nameOfCurriculumI: str):
         if not self.exactIterationsSet:  # TODO refactor this to common method
             self.exactIterationsSet = True
-            self.ITERATIONS_PER_ENV = iterationsDone - 1  # TODO test this ; maybe you can remove the -1 (or add it)
+            self.ITERATIONS_PER_ENV = exactIterationsPerEnv - 1
         utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
             nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+        self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
 
     @staticmethod
     def getGenAndIdxOfBestIndividual(currentRewards):
@@ -119,9 +120,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                      mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
                      eliminate_duplicates=True,
                      )
-        # TODO nsga result.X has potentially multiple entries ?
-        # NSGA Default:
-        # sampling: FloatRandomSampling = FloatRandomSampling(),
+        # NSGA2 Default: # sampling: FloatRandomSampling = FloatRandomSampling(),
         # selection: TournamentSelection = TournamentSelection(func_comp=binary_tournament),
         # crossover: SBX = SBX(eta=15, prob=0.9),
         # mutation: PM = PM(eta=20),

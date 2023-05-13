@@ -7,6 +7,8 @@ DONE? - den 1st step reward speichern statt den gesamten reward benutzen ( = "ac
 
 ===========================================================================
 
+- self.iterationsPerEnv für reload setzen
+
 Ladezeit-Optimierungen
 - minimize ersetzen auf das .hasNext() und dann abbrechen bei konvergenz
 - penv weiterprobieren ( Prozess pausieren, damit nicht 4 * 32 aktiv sind sondern nur 1 * 32)
@@ -34,8 +36,7 @@ Results-Evaluation
 Other
 - Docstrings schreiben
 - consec chosen einbauen in update methode für RRH biased
-
-
+- gamma Parameter auswirkungen; summe von 0 oder 1 starten lassen
 
 
 
@@ -47,6 +48,7 @@ Erkenntnise:
 - diff1 & 2 haben kaum unterschiede auf laufzeit
 - maxSteps beeifnlusst performance (ggf berücksichtigen? Difficulty = 2 sollte ja nicht die performance schmälern, nur weil es schwerer ist)
 -> ggf 2* max_reward - actual_reward * difficulty
+- das dauert alles sehr lange und ist dann irgendwie nicht aussagefähig. --> ggf lieber 2-3 experimente für 16h laufen lassen statt 6x8h
 
 -----------------
 
@@ -66,6 +68,7 @@ Random Questions
 - wie mit reward experimentieren dass man ihn ermutigt 16x16 auszuprobieren
 - wie dynamisch mit dem switchen umgehen (zb nach jedem update mal probieren?)
 - funzt der 16x16 richtig (oder kann was wegen int-rounding schief gehen ; bzw. warum wird es nie gewählt?
+- Mehr
 
 
 """
