@@ -187,6 +187,8 @@ class RollingHorizonEvolutionaryAlgorithm:
             rewardsDict = self.trainingInfoJson[rewardsKey]
 
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
+            # TODO maybe do the deletion automatically, but it doesnt matter
+            """
             for k in range(self.numCurric):
                 path = utils.getModelWithCurricSuffix(self.model, startEpoch, k)
                 if utils.deleteModelIfExists(path):
@@ -197,6 +199,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                 else:
                     self.txtLogger.info(f"Nothing to delete {k}")
                     break
+            """
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}]")
         else:
             self.txtLogger.info("Creating model. . .")
