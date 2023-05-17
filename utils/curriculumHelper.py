@@ -89,14 +89,18 @@ def initTrainingInfo(cmdLineString, logFilePath, seed, args) -> dict:
     return trainingInfoJson
 
 
-def logInfoAfterEpoch(epoch, currentBestCurriculum, currentReward, trainingInfoJson, txtLogger, maxReward,
+def logInfoAfterEpoch(epoch, currentBestCurriculum, bestReward, snapshotReward, trainingInfoJson, txtLogger, maxReward,
                       totalEpochs):
     """
     Logs relevant training info after a training epoch is done and the trainingInfo was updated
+    :param snapshotReward:
+    :param maxReward:
+    :param txtLogger:
+    :param trainingInfoJson:
     :param totalEpochs:
     :param epoch:
     :param currentBestCurriculum: the id of the current best curriculum
-    :param currentReward:
+    :param bestReward:
     :return:
     """
     selectedEnv = trainingInfoJson[selectedEnvs][-1]
@@ -105,7 +109,8 @@ def logInfoAfterEpoch(epoch, currentBestCurriculum, currentReward, trainingInfoJ
         f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
     txtLogger.info(
         f"CurriculaEnvDetails {curriculaEnvDetailsKey}; selectedEnv: {selectedEnv}")
-    txtLogger.info(f"Current Reward: {currentReward}. That is {currentReward / maxReward} of maxReward")
+    txtLogger.info(f"Reward of best curriculum: {bestReward}. \
+        Snapshot Reward { snapshotReward }. That is {bestReward / maxReward} of maxReward")
 
     txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 

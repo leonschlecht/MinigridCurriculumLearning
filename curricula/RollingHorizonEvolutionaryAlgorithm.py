@@ -158,8 +158,8 @@ class RollingHorizonEvolutionaryAlgorithm:
             updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurriculumScore,
                                currentSnapshotScore, self.iterationsDone, self.envDifficulty, self.lastEpochStartTime,
                                self.curricula, self.curriculaEnvDetails, self.logFilePath, res.X)
-            logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, self.trainingInfoJson, self.txtLogger,
-                              self.maxReward, self.totalEpochs)
+            logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, currentSnapshotScore,
+                              self.trainingInfoJson, self.txtLogger, self.maxReward, self.totalEpochs)
 
             self.currentRewards = {}
             self.currentSnapshotRewards = {}

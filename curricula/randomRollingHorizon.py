@@ -57,7 +57,7 @@ class RandomRollingHorizon:
                 snapshotRewards["curric_" + str(i)] = reward[0]
             print(currentRewards)
             print(snapshotRewards)
-            exit()
+
             iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
             currentBestCurriculumIdx = np.argmax(currentRewards)
             currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
@@ -66,7 +66,8 @@ class RandomRollingHorizon:
                 dest=utils.getEpochModelName(self.model, epoch + 1))  # the model for the next epoch
 
             fullRewardsDict["epoch_" + str(epoch)] = currentRewards
-            currentScore = max(currentRewards.values())
+            bestCurriculumScore = max(currentRewards.values())
+            currentSnapshotScore = snapshotRewards["curric_" + str(currentBestCurriculumIdx)]
             if not self.fullRandom:
                 curricConsecutivelyChosen = \
                     self.calculateConsecutivelyChosen(curricConsecutivelyChosen, currentBestCurriculum,
@@ -74,19 +75,18 @@ class RandomRollingHorizon:
 
             lastChosenCurriculum = currentBestCurriculum
             curriculaEnvDetails = self.curricula
-            snapshotScore = currentScore  # TODO ?
-            print("REWRADS=", fullRewardsDict)
-
-            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, fullRewardsDict, currentScore,
+            snapshotScore = bestCurriculumScore  # TODO ?
+            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, fullRewardsDict,
+                               bestCurriculumScore,
                                snapshotScore, iterationsDoneSoFar, self.envDifficulty, self.lastEpochStartTime,
                                self.curricula, curriculaEnvDetails, self.logFilePath)
             saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
             # TODO should updateTrainingInfo not call the save method ?
-            logInfoAfterEpoch(epoch, currentBestCurriculum, currentScore, self.trainingInfoJson, self.txtLogger,
-                              self.maxReward, self.totalEpochs)
+            logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, snapshotScore, self.trainingInfoJson,
+                              self.txtLogger, self.maxReward, self.totalEpochs)
 
             self.lastEpochStartTime = datetime.now()
-            self.envDifficulty = calculateEnvDifficulty(currentScore, self.maxReward)
+            self.envDifficulty = calculateEnvDifficulty(bestCurriculumScore, self.maxReward)
             if self.fullRandom:
                 self.curricula = randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
                                                              self.paraEnv, self.seed)
@@ -106,7 +106,6 @@ class RandomRollingHorizon:
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
         print("curricula = ", self.curricula[i])
         for j in range(len(self.curricula[i])):
-            print(self.curricula[i][j])
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, self.curricula[i][j], self.args, self.txtLogger)
             self.txtLogger.info(f"Iterations Done {iterationsDone}")
