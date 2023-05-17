@@ -1,5 +1,7 @@
 import os
 import numpy as np
+from numpy import ndarray
+
 import utils
 from curricula import train, evaluate
 from utils import getModelWithCandidatePrefix
@@ -15,10 +17,6 @@ class RandomRollingHorizon:
     """
 
     def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom):
-        assert args.stepsPerCurric > 0
-        assert args.numCurric > 0
-        assert args.iterPerEnv > 0
-        assert args.trainEpochs > 1  # TODO common file for the asserts here
         self.seed = args.seed
         self.numCurric = args.numCurric
         self.totalEpochs = args.trainEpochs
@@ -98,7 +96,7 @@ class RandomRollingHorizon:
 
         printFinalLogs(self.trainingInfoJson, self.txtLogger)
 
-    def trainEachCurriculum(self, i: int, iterationsDone: int, epoch: int) -> list:
+    def trainEachCurriculum(self, i: int, iterationsDone: int, epoch: int) -> ndarray:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
@@ -116,7 +114,8 @@ class RandomRollingHorizon:
                 utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
                     nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
-            rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args))
+            rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
+                                                                     self.txtLogger))
 
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards

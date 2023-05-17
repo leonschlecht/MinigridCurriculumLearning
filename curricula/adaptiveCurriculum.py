@@ -38,7 +38,7 @@ def startAdaptiveCurriculum(txtLogger, startTime, args):
         for env in curriculum:
             iterationsDoneSoFar = train.startTraining(iterationsDoneSoFar + ITERATIONS_PER_ENV, args.model, env, args)
 
-        evaluationScore = evaluate.evaluateAgent(args.model, args)
+        evaluationScore = evaluate.evaluateAgent(args.model, args) # TODO
         easierEnv, harderEnv = calculateNextEnvs(evaluationScore)
         trainingInfoJson["curriculaEnvs"].append([curriculum])  # list of lists
         trainingInfoJson["rewards"].append(evaluationScore)

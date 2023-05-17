@@ -8,7 +8,8 @@ import utils
 from utils import device, ENV_NAMES, getEnvListThroughDifficulty
 
 
-def startEvaluationInOneEnv(args, model, evalEnv) -> dict:
+def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
+    # TODO decide if using args.argmax or not for evaluation
     # Load environments
     envs = []
     for i in range(args.procs):
@@ -60,12 +61,10 @@ def startEvaluationInOneEnv(args, model, evalEnv) -> dict:
     fps = num_frames / evalTime
     return_per_episode = utils.synthesize(logs["return_per_episode"])
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
-
-    print(
-        "EVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}"
-        .format(evalEnv, model, num_frames, fps, evalTime,
-                *return_per_episode.values(),
-                *num_frames_per_episode.values())) # TODO use txt logger
+    formatted = \
+        "EVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}".format(
+            evalEnv, model, num_frames, fps, evalTime, *return_per_episode.values(), *num_frames_per_episode.values())
+    txtLogger.info(formatted)
 
     evaluationResult = {
         "meanRet": return_per_episode["mean"],
@@ -77,28 +76,49 @@ def startEvaluationInOneEnv(args, model, evalEnv) -> dict:
     return evaluationResult
 
 
-def evaluateAll(model, envs, args) -> dict:
+def evaluateAll(model, envs, args, txtLogger) -> dict:
     utils.seed(args.seed)
     results = {"model": model}
     for evaluationEnv in envs:
-        results[evaluationEnv] = startEvaluationInOneEnv(args, model, evaluationEnv)
-    with open('storage/' + model + '/' + 'evaluation.json', 'w') as f: # TODO use utils/storage file
+        results[evaluationEnv] = startEvaluationInOneEnv(args, model, evaluationEnv, txtLogger)
+    with open('storage/' + model + '/' + 'evaluation.json', 'w') as f:  # TODO use utils/storage file
         f.write(json.dumps(results, indent=4))
-    print(f"Evaluation of {model} succeeded") # TODO txtlogger
+        # TODO check if this is even useful anymore and not already covered by other logfile
+    txtLogger.info(f"Evaluation of {model} succeeded")
     return results
 
 
-def evaluateAgent(model, difficulty, args) -> int:
+def getRewardMultiplier(evalEnv):
+    if "5x5" in evalEnv:
+        return 5
+    elif "6x6" in evalEnv:
+        return 6
+    elif "8x8" in evalEnv:
+        return 8
+    elif "16x16" in evalEnv:
+        return 16
+
+    raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)
+
+
+def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     """
     Evaluates and calculates the average performance in ALL environments
+    Called from other classes to start the evaluation
+    :param txtLogger:
     :param model: the name of the model
     :param difficulty:
     :param args: the command line arugments
     :return: the average reward
     """
-    reward = 0
+    rewardSum = 0
     envs = getEnvListThroughDifficulty(difficulty)
-    evaluationResult = evaluateAll(model, envs, args)  # TODO decide if using args.argmax or not
+    print(envs)
+    evaluationResult = evaluateAll(model, envs, args, txtLogger)
     for evalEnv in envs:
-        reward += float(evaluationResult[evalEnv]["meanRet"])
-    return reward
+        currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv)
+        rewardSum += currentReward
+        print(currentReward, evalEnv)
+    print("REWARD SUM", rewardSum)  # TODO remove
+    exit()
+    return rewardSum

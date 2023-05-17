@@ -20,12 +20,6 @@ from utils.curriculumHelper import *
 class RollingHorizonEvolutionaryAlgorithm:
 
     def __init__(self, txtLogger, startTime: datetime, cmdLineString: str, args: argparse.Namespace):
-        assert args.stepsPerCurric > 0
-        assert args.numCurric > 0
-        assert args.iterPerEnv > 0
-        assert args.trainEpochs > 1
-        assert 0 < args.paraEnv <= len(ENV_NAMES.ALL_ENVS)
-
         self.args = args
         self.numCurric = args.numCurric
         self.stepsPerCurric = args.stepsPerCurric
@@ -34,7 +28,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.envDifficulty = 0
         self.exactIterationsSet = False
         self.seed = args.seed
-        self.paraEnvs = args.paraEnv  # the amount of envs that are trained in parallel
+        self.paraEnvs = args.paraEnv
 
         # Pymoo parameters
         objectives = 1
@@ -53,7 +47,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.nGen = args.nGen
         self.trainingTime = 0
 
-        self.maxReward = calculateMaxReward(self.stepsPerCurric)  # TODO maybe remove this because it became useless
+        self.maxReward = calculateMaxReward(self.stepsPerCurric)
         print("maxReward", self.maxReward)
 
         self.trainingInfoJson = {}
@@ -79,7 +73,8 @@ class RollingHorizonEvolutionaryAlgorithm:
             print("\t curricula[i][j] = ", curricula[i][j])
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
-            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args))
+            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
+                                                                    self.txtLogger))
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)  # TODO testfor ep0
