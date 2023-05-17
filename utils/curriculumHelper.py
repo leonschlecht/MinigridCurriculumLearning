@@ -59,10 +59,10 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     txtLogger.info("-------------------\n\n")
 
 
-def calculateMaxReward(envsPerCurric) -> float:
+def calculateMaxReward(stepsPerCurric) -> float:
     MAX_REWARD_PER_ENV = 1
-    maxReward: float = envsPerCurric * MAX_REWARD_PER_ENV
-    print("Max Reward =", maxReward, "; #curric =", envsPerCurric)
+    maxReward: float = stepsPerCurric * MAX_REWARD_PER_ENV
+    print("Max Reward =", maxReward, "; #curric =", stepsPerCurric)
     return maxReward
 
 
@@ -119,27 +119,27 @@ def calculateEnvDifficulty(currentReward, maxReward) -> int:
     return 2
 
 
-def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int, envDifficulty: int, paraEnv) -> list:
+def randomlyInitializeCurricula(numberOfCurricula: int, stepsPerCurric: int, envDifficulty: int, paraEnv: int,
+                                seed: int) -> list:
     """
-    Initializes list of curricula randomly
+    Initializes list of curricula randomly. Allows duplicates, but they are extremely unlikely.
+    :param paraEnv: the amount of envs that will be trained in parallel per step of a curriculum
+    :param seed: the random seed
     :param envDifficulty:
     :param numberOfCurricula: how many curricula will be generated
-    :param envsPerCurriculum: how many environment each curriculum has
+    :param stepsPerCurric: how many steps a curriculum contains
     """
+    random.seed(seed)
     curricula = []
     for i in range(numberOfCurricula):
-        curricJIndices = []
-        for j in range(paraEnv):
-            curricJIndices.append(random.sample(range(len(ENV_NAMES.ALL_ENVS)), paraEnv))  # TODO seed
-        print(curricJIndices)
-        newCurriculum = []
-        for curricIdxList in curricJIndices:
-            newCurriculum.append([getEnvFromDifficulty(idx, envDifficulty) for idx in curricIdxList])
-        curricula.append(newCurriculum)
+        current = []
+        for j in range(stepsPerCurric):
+            indices = random.choices(range(len(ENV_NAMES.ALL_ENVS)), k=paraEnv)
+            newCurriculum = [getEnvFromDifficulty(idx, envDifficulty) for idx in indices]
+            current.append(newCurriculum)
+        curricula.append(current)
     assert len(curricula) == numberOfCurricula
-    assert len(curricula[0]) == envsPerCurriculum
-    print("curric", curricula)
-    exit()
+    assert len(curricula[0]) == stepsPerCurric
     return curricula
 
 

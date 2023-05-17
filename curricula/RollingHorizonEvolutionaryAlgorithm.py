@@ -20,7 +20,7 @@ from utils.curriculumHelper import *
 class RollingHorizonEvolutionaryAlgorithm:
 
     def __init__(self, txtLogger, startTime: datetime, cmdLineString: str, args: argparse.Namespace, gamma=.9):
-        assert args.envsPerCurric > 0
+        assert args.stepsPerCurric > 0
         assert args.numCurric > 0
         assert args.iterPerEnv > 0
         assert args.trainEpochs > 1
@@ -28,7 +28,7 @@ class RollingHorizonEvolutionaryAlgorithm:
 
         self.args = args
         self.numCurric = args.numCurric
-        self.envsPerCurric = args.envsPerCurric
+        self.stepsPerCurric = args.stepsPerCurric
         self.cmdLineString = cmdLineString
         self.lastEpochStartTime = startTime
         self.envDifficulty = 0
@@ -40,7 +40,10 @@ class RollingHorizonEvolutionaryAlgorithm:
         objectives = 1
         xupper = len(ENV_NAMES.ALL_ENVS) - 1
         inequalityConstr = 0
-        self.curricula = randomlyInitializeCurricula(args.numCurric, args.envsPerCurric, self.envDifficulty)
+
+        # TODO this is probably deprecated because the generated curricula is never used by the algorithm
+        self.curricula = randomlyInitializeCurricula(args.numCurric, args.stepsPerCurric, self.envDifficulty,
+                                                     self.paraEnvs, self.seed)
 
         self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.iterationsDone = 0
@@ -50,7 +53,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.nGen = args.nGen
         self.trainingTime = 0
 
-        self.maxReward = calculateMaxReward(self.envsPerCurric)  # TODO maybe remove this because it became useless
+        self.maxReward = calculateMaxReward(self.stepsPerCurric)  # TODO maybe remove this because it became useless
         print("maxReward", self.maxReward)
 
         self.trainingInfoJson = {}
@@ -253,7 +256,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             curriculumList.append(sublist)
         assert curriculumList != []
         assert len(curriculumList) == self.numCurric
-        assert len(curriculumList[0]) == self.envsPerCurric
+        assert len(curriculumList[0]) == self.stepsPerCurric
         return curriculumList
 
     @staticmethod

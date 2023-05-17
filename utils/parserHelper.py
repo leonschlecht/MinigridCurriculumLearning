@@ -21,8 +21,8 @@ def initializeArgParser():
                         help="Determines the amount of iterations per environment during training")
     parser.add_argument("--paraEnv", default=2, type=int,
                         help="The amount of envs to be trained on parallel at each timestep of the RH of a curriculum")
-    parser.add_argument("--envsPerCurric", default=3, type=int,
-                        help="Determines the amount of env per curriculum during training")
+    parser.add_argument("--stepsPerCurric", default=3, type=int,
+                        help="Determines the amount of steps used per curriculum during training. --paraEnv determines how many envs to be used")
     parser.add_argument("--numCurric", default=3, type=int,
                         help="Determines the amount of curricula that are used for training")
     parser.add_argument("--trainEpochs", default=25, type=int, help="Tells the algorithm how long to train for.")
@@ -69,5 +69,5 @@ def initializeArgParser():
     args.mem = args.recurrence > 1
     args.trainEvolutionary = not (
             args.trainLinear or args.trainAdaptive or args.trainRandomRH or args.trainBiasedRandomRH)
-    # TODO create object
+    # TODO create object for type safety
     return args

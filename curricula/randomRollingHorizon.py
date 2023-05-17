@@ -15,14 +15,14 @@ class RandomRollingHorizon:
     """
 
     def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom, gamma=.9):
-        assert args.envsPerCurric > 0
+        assert args.stepsPerCurric > 0
         assert args.numCurric > 0
         assert args.iterPerEnv > 0
         assert args.trainEpochs > 1  # TODO common file for the asserts here
         self.seed = args.seed
         self.numCurric = args.numCurric
         self.totalEpochs = args.trainEpochs
-        self.envsPerCurric = args.numCurric
+        self.stepsPerCurric = args.numCurric
         self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.txtLogger = txtLogger
         self.args = args
@@ -90,7 +90,8 @@ class RandomRollingHorizon:
             self.lastEpochStartTime = datetime.now()
             self.envDifficulty = calculateEnvDifficulty(currentScore, self.maxReward)
             if self.fullRandom:
-                self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric, self.envDifficulty, self.paraEnv)
+                self.curricula = randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
+                                                             self.paraEnv, self.seed)
             else:
                 self.curricula = self.updateCurriculaAfterHorizon(lastChosenCurriculum, self.numCurric,
                                                                   self.envDifficulty)
@@ -151,9 +152,8 @@ class RandomRollingHorizon:
             # TODO find better way instead of calling train.startTraining to create folder
             self.txtLogger.info("Creating model. . .")
             startEpoch = 1
-            self.curricula = randomlyInitializeCurricula(self.numCurric, self.envsPerCurric,
-                                                         self.envDifficulty, self.paraEnv)
-            print("randomly init", self.curricula)
+            self.curricula = randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
+                                                         self.paraEnv, self.seed)
             iterationsDoneSoFar = train.startTraining(0, 0, self.selectedModel,
                                                       [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
                                                       self.txtLogger)
