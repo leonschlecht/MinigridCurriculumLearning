@@ -59,12 +59,10 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     txtLogger.info("-------------------\n\n")
 
 
-def calculateMaxReward(numCurric, gamma) -> float:
+def calculateMaxReward(envsPerCurric) -> float:
     MAX_REWARD_PER_ENV = 1
-    maxReward = 0
-    for j in range(numCurric):
-        maxReward += ((gamma ** j) * MAX_REWARD_PER_ENV * numCurric)
-    print("Max Reward =", maxReward, "; #curric =", numCurric)
+    maxReward: float = envsPerCurric * MAX_REWARD_PER_ENV
+    print("Max Reward =", maxReward, "; #curric =", envsPerCurric)
     return maxReward
 
 

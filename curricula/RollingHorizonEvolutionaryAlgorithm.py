@@ -50,7 +50,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.nGen = args.nGen
         self.trainingTime = 0
 
-        self.maxReward = calculateMaxReward(1, gamma)  # TODO maybe remove this because it became useless
+        self.maxReward = calculateMaxReward(self.envsPerCurric)  # TODO maybe remove this because it became useless
         print("maxReward", self.maxReward)
 
         self.trainingInfoJson = {}
