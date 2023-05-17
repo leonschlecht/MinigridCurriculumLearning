@@ -119,7 +119,7 @@ def calculateEnvDifficulty(currentReward, maxReward) -> int:
     return 2
 
 
-def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int, envDifficulty: int) -> list:
+def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int, envDifficulty: int, paraEnv) -> list:
     """
     Initializes list of curricula randomly
     :param envDifficulty:
@@ -128,10 +128,18 @@ def randomlyInitializeCurricula(numberOfCurricula: int, envsPerCurriculum: int, 
     """
     curricula = []
     for i in range(numberOfCurricula):
-        indices = random.sample(range(len(ENV_NAMES.ALL_ENVS)), envsPerCurriculum)
-        newCurriculum = [getEnvFromDifficulty(idx, envDifficulty) for idx in indices]
+        curricJIndices = []
+        for j in range(paraEnv):
+            curricJIndices.append(random.sample(range(len(ENV_NAMES.ALL_ENVS)), paraEnv))  # TODO seed
+        print(curricJIndices)
+        newCurriculum = []
+        for curricIdxList in curricJIndices:
+            newCurriculum.append([getEnvFromDifficulty(idx, envDifficulty) for idx in curricIdxList])
         curricula.append(newCurriculum)
     assert len(curricula) == numberOfCurricula
+    assert len(curricula[0]) == envsPerCurriculum
+    print("curric", curricula)
+    exit()
     return curricula
 
 

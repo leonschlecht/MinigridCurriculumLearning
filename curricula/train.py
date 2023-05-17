@@ -30,6 +30,7 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     for i in range(args.procs // len(envList)):
         for j in range(len(envList)):
             envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
+    print(len(envs), args.procs)
     assert len(envs) == args.procs
 
     # Load training status
