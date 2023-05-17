@@ -32,7 +32,10 @@ class RandomRollingHorizon:
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
         self.gamma = args.gamma  # TODO is gamma used properly? Do RH -> Get Max thingy, and update difficulty based on the RH reward or snapshot reward?
         self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
-        self.maxReward = calculateMaxReward(args.numCurric)
+        self.exactIterationsSet = False
+        self.stepMaxReward = calculateCurricStepMaxReward(len(ENV_NAMES.ALL_ENVS))
+        self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
+
         self.paraEnv = args.paraEnv
         self.envDifficulty = 0
 
@@ -83,10 +86,10 @@ class RandomRollingHorizon:
             saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
             # TODO should updateTrainingInfo not call the save method ?
             logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, snapshotScore, self.trainingInfoJson,
-                              self.txtLogger, self.maxReward, self.totalEpochs)
+                              self.txtLogger, self.stepMaxReward, self.totalEpochs)
 
             self.lastEpochStartTime = datetime.now()
-            self.envDifficulty = calculateEnvDifficulty(bestCurriculumScore, self.maxReward)
+            self.envDifficulty = calculateEnvDifficulty(bestCurriculumScore, self.stepMaxReward)
             if self.fullRandom:
                 self.curricula = randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
                                                              self.paraEnv, self.seed)
@@ -104,20 +107,29 @@ class RandomRollingHorizon:
         rewards = np.zeros(len(self.curricula))
         # TODO remove epoch param in method here ???
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
+        initialIterationsDone = iterationsDone
         print("curricula = ", self.curricula[i])
         for j in range(len(self.curricula[i])):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, self.curricula[i][j], self.args, self.txtLogger)
             self.txtLogger.info(f"Iterations Done {iterationsDone}")
             if j == 0:
-                utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
-                    nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+                self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)  # TODO testfor ep0
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
             rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
                                                                      self.txtLogger))
 
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards
+
+    def saveFirstStepOfModel(self, exactIterationsPerEnv: int, nameOfCurriculumI: str):
+        if not self.exactIterationsSet:  # TODO refactor this to common method
+            self.exactIterationsSet = True
+            self.ITERATIONS_PER_ENV = exactIterationsPerEnv - 1
+        utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
+            nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+        self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
+        self.trainingInfoJson[iterationsPerEnvKey] = self.ITERATIONS_PER_ENV
 
     def initializeTrainingVariables(self, modelExists) -> tuple:
         """

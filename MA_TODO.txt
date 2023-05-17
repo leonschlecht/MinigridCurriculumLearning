@@ -7,8 +7,8 @@ Aufgaben:
 
 ===================================
 L:
-- Curriculum-Rewards normalisieren (sonst ist das in der json irreführend)
 - RHEA und RRH noch mehr zusammenführen
+- normalize Reward @RRH
 
 - self.iterationsPerEnv für reload setzen
 - self.iterationsPerEnv in RRH
@@ -18,11 +18,9 @@ Home:
 - testen, ob das toggle-env einen verbuggeten Reward-Log hat. ( zB --> 5x5 * 2 ausprobieren; dann ein malmit 5x5 / 16x16)
 - storage in git pushen
 - testen, ob RHEA auch richtig durchläuft mit den Generationen
-
-
-Wichtig:
-- viewsize wrapper hinbekommen / herausfinden was mit dem stride schiefgeht
-- Reload fixen
+- testen, ob pymoo in 1 Generation immer allse richtig weitergibt und nix ausversehen doppelt passiert
+- RHEA mit FESTEN envs testen (um zu sehen, ob er auch richtig weitermacht bei dem switch bzw sehen wo tensorboard scheitert)
+- epochsDone: 1 zu hoch in der stauts.json (--> TESTEN MIT RHEA) (steht 12 drin; womit würde es jetzt weitermachen?) also das "START EPOCH ...."
 
 
 Q's:
@@ -40,16 +38,7 @@ Ladezeit-Optimierungen
 .........
 
 Log-Improvements
-"notes": als default hinzufügen & "manualNotes":
 - ggf die envDetails Struktur flippen (epoch->gen->curric zu epoch->curric->gen)
-- wird numFrames in der json richtig gesetzt? --> ich glaube ja?
-- seed in der status.json abspeichern bzw auch laden wenn man weitermacht
-- add Start-date / maybe automatcially at end of modelname
-- ggf actual performance anpassen (weil also ein epoch_i zwischenschalten); ggf auch redundanz damit man es besser erkennen kann (also ein mal actualPerformacne wie es ist, und ein mal nur den ausgewählten Reward oder so
-epochsDone: 1 zu hoch in der stauts.json (--> TESTEN MIT RHEA)
-
-
-
 
 Results-Evaluation
 - eval: zählen welche env wie oft im training vorkam
@@ -133,6 +122,9 @@ Vektor -> Matrix benennen (bzw. ggf 3d für die Repräsentation damit es übersi
 
 
 Changelog / Erkenntnisse
-17.05 - 24.05:
+
 - 8x8, vor allem 16x16 wurde fast nie ausgewählt. Daher Reward anpassen, um ermutigen das zu tun
 - envDifficulty (aka maxSteps) lässt reward etwas verzerrt aussehen; daher multiplier
+- Difficulty Cutoffs: .25 / .75
+
+17.05 - 24.05:

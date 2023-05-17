@@ -22,6 +22,9 @@ difficultyKey = "difficultyKey"
 seedKey = "seed"
 fullArgs = "args"
 consecutivelyChosen = "consecutivelyChosen"
+additionalNotes = "additionalNotes"
+snapshotScoreKey = "snapshotScore"
+iterationsPerEnvKey = "iterationsPerEnv"
 
 
 def evaluateCurriculumResults(evaluationDictionary):
@@ -59,10 +62,16 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     txtLogger.info("-------------------\n\n")
 
 
-def calculateMaxReward(stepsPerCurric) -> float:
+def calculateCurricStepMaxReward(stepsPerCurric) -> float:
     MAX_REWARD_PER_ENV = 1
     maxReward: float = stepsPerCurric * MAX_REWARD_PER_ENV
-    print("Max Reward =", maxReward, "; #curric =", stepsPerCurric)
+    return maxReward
+
+
+def calculateCurricMaxReward(curricLength, stepMaxReward, gamma) -> float:
+    maxReward = 0
+    for j in range(curricLength):
+        maxReward += ((gamma ** j) * stepMaxReward)
     return maxReward
 
 
@@ -78,12 +87,15 @@ def initTrainingInfo(cmdLineString, logFilePath, seed, args) -> dict:
                         actualPerformance: [],
                         epochsDone: 1,
                         epochTrainingTime: [],
+                        snapshotScoreKey: [],
                         sumTrainingTime: 0,
                         cmdLineStringKey: cmdLineString,
                         difficultyKey: [0],
                         seedKey: seed,
+                        iterationsPerEnvKey: args.iterPerEnv,
                         consecutivelyChosen: 0,
                         fullArgs: args,
+                        additionalNotes: "",
                         numFrames: 0}
     saveTrainingInfoToFile(logFilePath, trainingInfoJson)
     return trainingInfoJson
@@ -110,7 +122,7 @@ def logInfoAfterEpoch(epoch, currentBestCurriculum, bestReward, snapshotReward, 
     txtLogger.info(
         f"CurriculaEnvDetails {curriculaEnvDetailsKey}; selectedEnv: {selectedEnv}")
     txtLogger.info(f"Reward of best curriculum: {bestReward}. \
-        Snapshot Reward { snapshotReward }. That is {bestReward / maxReward} of maxReward")
+        Snapshot Reward {snapshotReward}. That is {bestReward / maxReward} of maxReward")
 
     txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
@@ -149,7 +161,7 @@ def randomlyInitializeCurricula(numberOfCurricula: int, stepsPerCurric: int, env
 
 
 def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullRewradsDict, currentScore: float,
-                       snapshotScore: float, iterationsDone, envDifficulty: int, lastEpochStartTime, curricula,
+                       snapshotScore: float, framesDone, envDifficulty: int, lastEpochStartTime, curricula,
                        curriculaEnvDetails, logFilePath, popX=None) -> None:
     """
     Updates the training info dictionary
@@ -159,7 +171,7 @@ def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullR
     :param curricula:
     :param lastEpochStartTime:
     :param envDifficulty:
-    :param iterationsDone:
+    :param framesDone:
     :param trainingInfoJson:
     :param epoch: current epoch
     :param bestCurriculum: the curriculum that had the highest reward in the latest epoch
@@ -168,13 +180,14 @@ def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullR
     :param popX: the pymoo X parameter for debugging purposes - only relevant for RHEA, not RRH
     """
     trainingInfoJson[epochsDone] = epoch + 1
-    trainingInfoJson[numFrames] = iterationsDone
+    trainingInfoJson[numFrames] = framesDone
+    trainingInfoJson[snapshotScoreKey].append(snapshotScore)
 
     trainingInfoJson[selectedEnvs].append(bestCurriculum[0])
     trainingInfoJson[bestCurriculas].append(bestCurriculum)
     trainingInfoJson[rewardsKey] = fullRewradsDict
-    trainingInfoJson[actualPerformance].append(
-        {"curricScore": currentScore, "snapshotScore": snapshotScore, "curriculum": bestCurriculum})
+    trainingInfoJson[actualPerformance]["epoch_" + str(epoch)] = \
+        {"curricScore": currentScore, "snapshotScore": snapshotScore, "curriculum": bestCurriculum}
     trainingInfoJson[curriculaEnvDetailsKey]["epoch_" + str(epoch)] = curriculaEnvDetails
     trainingInfoJson[difficultyKey].append(envDifficulty)
 

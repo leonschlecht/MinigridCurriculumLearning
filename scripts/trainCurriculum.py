@@ -17,8 +17,31 @@ def main():
 
     # TODO this is not clear if it creates a folder or not
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
-
     startTime: datetime = datetime.now()
+    s = 0
+    gamma = .9
+    rewardDummy = 3.7
+    maxReward = 0
+    for j in range(3):
+        s += ((gamma ** j) * rewardDummy)
+        maxReward += ((gamma ** j) * 4)
+
+    print(s, maxReward)
+    s = 0
+    maxReward = 0
+    gamma = .9
+    for j in range(4):
+        s += ((gamma ** j) * rewardDummy)
+        maxReward += ((gamma ** j) * 4)
+    print(s,maxReward)
+    s = 0
+    maxReward = 0
+    gamma = .9
+    for j in range(5):
+        s += ((gamma ** j) * rewardDummy)
+        maxReward += ((gamma ** j) * 4)
+
+    print(s , maxReward)
 
     ############
     # TODO make e.start() methods instaed of doing it in init because of calling eval later

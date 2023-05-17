@@ -44,5 +44,5 @@ class CurriculumProblem(Problem):
                 if env == ENV_NAMES.DOORKEY_16x16:
                     reward += 10
             rewards.append(reward)
-        self.rheaObj.currentRewards = rewards
+        self.rheaObj.currentRewardsDict = rewards
         return rewards

@@ -47,13 +47,13 @@ class RollingHorizonEvolutionaryAlgorithm:
         self.nGen = args.nGen
         self.trainingTime = 0
 
-        self.maxReward = calculateMaxReward(self.stepsPerCurric)
-        print("maxReward", self.maxReward)
+        self.stepMaxReward = calculateCurricStepMaxReward(len(ENV_NAMES.ALL_ENVS))
+        self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
 
         self.trainingInfoJson = {}
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"  # TODO maybe outsource
         self.gamma = args.gamma
-        self.currentRewards = {}
+        self.currentRewardsDict = {}
         self.currentSnapshotRewards = {}
         self.curriculaEnvDetails = {}
         self.model = args.model
@@ -89,6 +89,7 @@ class RollingHorizonEvolutionaryAlgorithm:
         utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
             nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
         self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
+        self.trainingInfoJson[iterationsPerEnvKey] = self.ITERATIONS_PER_ENV
 
     @staticmethod
     def getGenAndIdxOfBestIndividual(currentRewards):
@@ -143,25 +144,27 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
             self.iterationsDone += self.ITERATIONS_PER_ENV
             nextModel = utils.getEpochModelName(self.model, epoch + 1)
-            rewards["epoch" + str(epoch)] = self.currentRewards  # TODO also for snapshot rewards?
+            rewards["epoch" + str(epoch)] = self.currentRewardsDict  # TODO also for snapshot rewards?
 
-            bestCurriculumScore: float = np.max(list(self.currentRewards.values()))
+            # normalize currentRewards
+            currentRewardsList = [x / self.curricMaxReward for x in self.currentRewardsDict]
+            bestCurriculumScore: float = np.max(currentRewardsList)
             currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values()))
-            genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewards)
+            genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewardsDict)
             currentBestModel = utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual,
                                                                  GEN_PREFIX, genOfBestIndividual)
             utils.copyAgent(src=currentBestModel, dest=nextModel)
             currentBestCurriculum = self.curriculaEnvDetails[GEN_PREFIX + genOfBestIndividual][
                 curricIdxOfBestIndividual]
-            self.envDifficulty = calculateEnvDifficulty(currentSnapshotScore, self.maxReward)
+            self.envDifficulty = calculateEnvDifficulty(currentSnapshotScore, self.stepMaxReward)
 
             updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurriculumScore,
                                currentSnapshotScore, self.iterationsDone, self.envDifficulty, self.lastEpochStartTime,
                                self.curricula, self.curriculaEnvDetails, self.logFilePath, res.X)
             logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, currentSnapshotScore,
-                              self.trainingInfoJson, self.txtLogger, self.maxReward, self.totalEpochs)
+                              self.trainingInfoJson, self.txtLogger, self.stepMaxReward, self.totalEpochs)
 
-            self.currentRewards = {}
+            self.currentRewardsDict = {}
             self.currentSnapshotRewards = {}
             self.curriculaEnvDetails = {}
             self.lastEpochStartTime = datetime.now()
@@ -180,8 +183,10 @@ class RollingHorizonEvolutionaryAlgorithm:
                 self.trainingInfoJson = json.loads(f.read())
 
             self.iterationsDone = self.trainingInfoJson[numFrames]
-            startEpoch = self.trainingInfoJson[epochsDone]
+            startEpoch = self.trainingInfoJson[epochsDone] # TODO is this correct ?
+            self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             rewardsDict = self.trainingInfoJson[rewardsKey]
+            seed = self.trainingInfoJson[seedKey]
 
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             # TODO maybe do the deletion automatically, but it doesnt matter
@@ -225,10 +230,10 @@ class RollingHorizonEvolutionaryAlgorithm:
             rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr, curricula)
             snapshotReward[i] = rewardI[0]
             rewards[i] = np.sum(rewardI)
-        self.currentRewards[GEN_PREFIX + str(genNr)] = rewards
+        self.currentRewardsDict[GEN_PREFIX + str(genNr)] = rewards
         self.currentSnapshotRewards[GEN_PREFIX + str(genNr)] = snapshotReward
         self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula
-        self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewards}")
+        self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewardsDict}")
         self.txtLogger.info(f"snapshot Rewards for {genNr}: {self.currentSnapshotRewards}")
         self.txtLogger.info(f"currentEnvDetails for {genNr}: {self.curriculaEnvDetails}")
         return rewards
