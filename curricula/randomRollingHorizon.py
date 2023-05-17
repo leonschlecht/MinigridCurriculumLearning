@@ -14,7 +14,7 @@ class RandomRollingHorizon:
     This aims to achieve that given the last best curriculum, based on this we want to continue most of our training.
     """
 
-    def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom, gamma=.9):
+    def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom):
         assert args.stepsPerCurric > 0
         assert args.numCurric > 0
         assert args.iterPerEnv > 0
@@ -32,7 +32,7 @@ class RandomRollingHorizon:
         self.model = args.model
         self.cmdLineString = cmdLineString
         self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
-        self.gamma = gamma  # TODO is gamma used properly? Do RH -> Get Max thingy, and update difficulty based on the RH reward or snapshot reward?
+        self.gamma = args.gamma  # TODO is gamma used properly? Do RH -> Get Max thingy, and update difficulty based on the RH reward or snapshot reward?
         self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
         self.maxReward = calculateMaxReward(args.numCurric)
         self.paraEnv = args.paraEnv

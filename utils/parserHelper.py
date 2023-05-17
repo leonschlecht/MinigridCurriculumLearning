@@ -28,6 +28,8 @@ def initializeArgParser():
     parser.add_argument("--trainEpochs", default=25, type=int, help="Tells the algorithm how long to train for.")
     parser.add_argument("--nGen", default=3, type=int,
                         help="The amount of generations per RHEA iteration")
+    parser.add_argument("--gamma", default=0.9, type=float,
+                        help="The dampening factor for the curricula RH. Later steps will be weighed less if gamma is high")
 
     parser.add_argument("--algo", default="ppo", help="algorithm to use: a2c | ppo ")
     parser.add_argument("--model", default=None, required=True, help="name of the model (REQUIRED)")

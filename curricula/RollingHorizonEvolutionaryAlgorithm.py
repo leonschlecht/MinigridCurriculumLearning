@@ -19,7 +19,7 @@ from utils.curriculumHelper import *
 
 class RollingHorizonEvolutionaryAlgorithm:
 
-    def __init__(self, txtLogger, startTime: datetime, cmdLineString: str, args: argparse.Namespace, gamma=.9):
+    def __init__(self, txtLogger, startTime: datetime, cmdLineString: str, args: argparse.Namespace):
         assert args.stepsPerCurric > 0
         assert args.numCurric > 0
         assert args.iterPerEnv > 0
@@ -58,7 +58,7 @@ class RollingHorizonEvolutionaryAlgorithm:
 
         self.trainingInfoJson = {}
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"  # TODO maybe outsource
-        self.gamma = gamma
+        self.gamma = args.gamma
         self.currentRewards = {}
         self.currentSnapshotRewards = {}
         self.curriculaEnvDetails = {}
