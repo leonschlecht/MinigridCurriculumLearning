@@ -6,12 +6,17 @@ Aufgaben:
 
 
 ===================================
-
-
-- eval: TxtLogger statt print
-- difficulty in den reward eingehen lassen
+L:
 "that is .. of maxReward" bug log ?
-- testen, ob das toggle-env einen verbuggeten Reward-Log hat.
+- Curriculum-Rewards normalisieren (sonst ist das in der json irreführend)
+- RHEA und RRH noch mehr zusammenführen
+
+- self.iterationsPerEnv für reload setzen
+- self.iterationsPerEnv in RRH
+
+
+Home:
+- testen, ob das toggle-env einen verbuggeten Reward-Log hat. ( zB --> 5x5 * 2 ausprobieren; dann ein malmit 5x5 / 16x16)
 - storage in git pushen
 
 
@@ -19,12 +24,13 @@ Wichtig:
 - viewsize wrapper hinbekommen / herausfinden was mit dem stride schiefgeht
 - Reload fixen
 
-DONE? - den 1st step reward speichern statt den gesamten reward benutzen ( = "actualPerformance" --> maxReward beurteilen daran; aber trotzdem das andere loggen)
-- Curriculum-Rewards normalisieren (sonst ist das in der json irreführend)
+
+Q's:
+den 1st step reward speichern statt den gesamten reward benutzen ( = "actualPerformance" --> maxReward beurteilen daran; aber trotzdem das andere loggen)
+- Curriculum-Rewards normalisieren wichtig? (sonst ist das in der json irreführend)
 
 ===========================================================================
 
-- self.iterationsPerEnv für reload setzen
 
 Ladezeit-Optimierungen
 - minimize ersetzen auf das .hasNext() und dann abbrechen bei konvergenz
@@ -123,3 +129,10 @@ Small Refactorings
 
 MA Notizen
 Vektor -> Matrix benennen (bzw. ggf 3d für die Repräsentation damit es übersichtlicher ist)
+
+
+
+Changelog / Erkenntnisse
+17.05 - 24.05:
+- 8x8, vor allem 16x16 wurde fast nie ausgewählt. Daher Reward anpassen, um ermutigen das zu tun
+- envDifficulty (aka maxSteps) lässt reward etwas verzerrt aussehen; daher multiplier

@@ -101,6 +101,15 @@ def getRewardMultiplier(evalEnv):
     raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)
 
 
+def getDifficultyMultiplier(difficulty):
+    if difficulty == 0:
+        return 1
+    elif difficulty == 1:
+        return 1.1
+    elif difficulty == 2:
+        return 1.2
+
+
 def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     """
     Evaluates and calculates the average performance in ALL environments
@@ -119,6 +128,7 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> int:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv)
         rewardSum += currentReward
         print(currentReward, evalEnv)
-    print("REWARD SUM", rewardSum)  # TODO remove
+    print("REWARD SUM", rewardSum, "multiplied", rewardSum * getDifficultyMultiplier(difficulty))  # TODO remove
+
     exit()
-    return rewardSum
+    return rewardSum * getDifficultyMultiplier(difficulty)
