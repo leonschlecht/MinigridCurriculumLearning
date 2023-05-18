@@ -64,7 +64,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     formatted = \
         "EVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}".format(
             evalEnv, model, num_frames, fps, evalTime, *return_per_episode.values(), *num_frames_per_episode.values())
-    txtLogger.info(formatted)
+    txtLogger.info(f'{formatted}')
 
     evaluationResult = {
         "meanRet": return_per_episode["mean"],
@@ -122,13 +122,10 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     """
     rewardSum = 0
     envs = getEnvListThroughDifficulty(difficulty)
-    print(envs)
     evaluationResult = evaluateAll(model, envs, args, txtLogger)
     for evalEnv in envs:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv)
         rewardSum += currentReward
         print(currentReward, evalEnv)
     print("REWARD SUM", rewardSum, "multiplied", rewardSum * getDifficultyMultiplier(difficulty))  # TODO remove
-
-    exit()
     return rewardSum * getDifficultyMultiplier(difficulty)
