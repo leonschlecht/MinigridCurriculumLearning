@@ -66,7 +66,7 @@ class RandomRollingHorizon:
             currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
             utils.copyAgent(src=getModelWithCandidatePrefix(
                 utils.getModelWithCurricSuffix(self.selectedModel, currentBestCurriculumIdx)),
-                dest=utils.getEpochModelName(self.model, epoch + 1))  # the model for the next epoch
+                dest=utils.getEpochModelName(self.model, epoch + 1), txtLogger=self.txtLogger)  # the model for the next epoch
 
             fullRewardsDict["epoch_" + str(epoch)] = currentRewards
             bestCurriculumScore = max(currentRewards.values())

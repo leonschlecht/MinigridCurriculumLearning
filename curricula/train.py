@@ -30,7 +30,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     for i in range(args.procs // len(envList)):
         for j in range(len(envList)):
             envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
-    print(len(envs), args.procs)
     assert len(envs) == args.procs
 
     # Load training status
@@ -124,7 +123,7 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             utils.save_status(status, model_dir)
             # txt_logger.info("\t\tStatus saved")
 
-    txt_logger.info(f'Trained on {envList} using model {model} for {framesWithThisEnv} frames')
+    txt_logger.info(f'\n\tTrained on {envList} using model {model} for {framesWithThisEnv} frames')
     algo.env.close()
     tb_writer.close()
     return status["num_frames"]

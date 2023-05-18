@@ -84,7 +84,7 @@ def initTrainingInfo(cmdLineString, logFilePath, seed, args) -> dict:
                         bestCurriculas: [],
                         curriculaEnvDetailsKey: {},
                         rewardsKey: {},
-                        actualPerformance: [],
+                        actualPerformance: {},
                         epochsDone: 1,
                         epochTrainingTime: [],
                         snapshotScoreKey: [],

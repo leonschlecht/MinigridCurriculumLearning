@@ -14,6 +14,7 @@ from pymoo.operators.mutation.pm import PM  # polynomial mutation
 from pymoo.operators.repair.rounding import RoundingRepair
 from pymoo.operators.sampling.rnd import IntegerRandomSampling
 
+from utils import getModelWithCandidatePrefix
 from utils.curriculumHelper import *
 
 
@@ -65,12 +66,11 @@ class RollingHorizonEvolutionaryAlgorithm:
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         reward = np.zeros(len(curricula[i]))
-        # Save epochX -> epochX_curricI_genJ
+        # Save epoch_X -> epoch_X_curricI_genJ
         nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)
-        utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
+        utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
         for j in range(len(curricula[i])):
-            print("\t curricula[i][j] = ", curricula[i][j])
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
             reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
@@ -80,6 +80,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)  # TODO testfor ep0
             self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}")
             self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {reward} (1 entry = 1 env)\n\n")
+            self.txtLogger.info("-------------------------------")
         return reward
 
     def saveFirstStepOfModel(self, exactIterationsPerEnv: int, nameOfCurriculumI: str):
@@ -87,7 +88,7 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.exactIterationsSet = True
             self.ITERATIONS_PER_ENV = exactIterationsPerEnv - 1
         utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
-            nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+            nameOfCurriculumI), txtLogger=self.txtLogger)  # save TEST_e1_curric0 -> + _CANDIDATE
         self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
         self.trainingInfoJson[iterationsPerEnvKey] = self.ITERATIONS_PER_ENV
 
@@ -147,13 +148,15 @@ class RollingHorizonEvolutionaryAlgorithm:
             rewards["epoch" + str(epoch)] = self.currentRewardsDict  # TODO also for snapshot rewards?
 
             # normalize currentRewards
-            currentRewardsList = [x / self.curricMaxReward for x in self.currentRewardsDict]
+            currentRewardsList = [self.currentRewardsDict[key] / self.curricMaxReward for key in
+                                  self.currentRewardsDict]
             bestCurriculumScore: float = np.max(currentRewardsList)
             currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values()))
             genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewardsDict)
             currentBestModel = utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual,
                                                                  GEN_PREFIX, genOfBestIndividual)
-            utils.copyAgent(src=currentBestModel, dest=nextModel)
+            utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
+            self.txtLogger.info("save next", getModelWithCandidatePrefix(currentBestModel), nextModel)
             currentBestCurriculum = self.curriculaEnvDetails[GEN_PREFIX + genOfBestIndividual][
                 curricIdxOfBestIndividual]
             self.envDifficulty = calculateEnvDifficulty(currentSnapshotScore, self.stepMaxReward)
@@ -170,8 +173,6 @@ class RollingHorizonEvolutionaryAlgorithm:
             self.lastEpochStartTime = datetime.now()
 
         printFinalLogs(self.trainingInfoJson, self.txtLogger)
-        print("final fitness:", res.F.sum())
-        print("Final X = ", res.X)
 
     def initializeTrainingVariables(self, modelExists) -> tuple:
         """
@@ -183,7 +184,7 @@ class RollingHorizonEvolutionaryAlgorithm:
                 self.trainingInfoJson = json.loads(f.read())
 
             self.iterationsDone = self.trainingInfoJson[numFrames]
-            startEpoch = self.trainingInfoJson[epochsDone] # TODO is this correct ?
+            startEpoch = self.trainingInfoJson[epochsDone]  # TODO is this correct ?
             self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             rewardsDict = self.trainingInfoJson[rewardsKey]
             seed = self.trainingInfoJson[seedKey]
@@ -209,8 +210,8 @@ class RollingHorizonEvolutionaryAlgorithm:
                                 self.txtLogger)
             self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed, self.args)
             startEpoch = 1
-            utils.copyAgent(src=self.selectedModel,
-                            dest=utils.getEpochModelName(self.model, startEpoch))  # copy epoch0 -> epoch1
+            utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, startEpoch),
+                            txtLogger=self.txtLogger)  # copy epoch0 -> epoch1
             self.txtLogger.info(f"\nThe training will go on for {self.totalEpochs} epochs\n")
             rewardsDict = {}
         return startEpoch, rewardsDict
