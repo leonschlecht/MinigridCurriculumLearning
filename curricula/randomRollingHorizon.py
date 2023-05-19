@@ -66,11 +66,14 @@ class RandomRollingHorizon:
             currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
             utils.copyAgent(src=getModelWithCandidatePrefix(
                 utils.getModelWithCurricSuffix(self.selectedModel, currentBestCurriculumIdx)),
-                dest=utils.getEpochModelName(self.model, epoch + 1), txtLogger=self.txtLogger)  # the model for the next epoch
-
+                dest=utils.getEpochModelName(self.model, epoch + 1),
+                txtLogger=self.txtLogger)  # the model for the next epoch
+            currentRewardsList = [currentRewards[key] / self.curricMaxReward for key in currentRewards]
             fullRewardsDict["epoch_" + str(epoch)] = currentRewards
-            bestCurriculumScore = max(currentRewards.values())
-            currentSnapshotScore = snapshotRewards["curric_" + str(currentBestCurriculumIdx)]
+            print("RRH currentrewardslist", currentRewardsList)
+            exit()
+            bestCurriculumScore = max(currentRewardsList)
+            snapshotScore = snapshotRewards["curric_" + str(currentBestCurriculumIdx)]
             if not self.fullRandom:
                 curricConsecutivelyChosen = \
                     self.calculateConsecutivelyChosen(curricConsecutivelyChosen, currentBestCurriculum,
@@ -78,13 +81,11 @@ class RandomRollingHorizon:
 
             lastChosenCurriculum = currentBestCurriculum
             curriculaEnvDetails = self.curricula
-            snapshotScore = bestCurriculumScore  # TODO ?
             updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, fullRewardsDict,
                                bestCurriculumScore,
                                snapshotScore, iterationsDoneSoFar, self.envDifficulty, self.lastEpochStartTime,
                                self.curricula, curriculaEnvDetails, self.logFilePath)
             saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
-            # TODO should updateTrainingInfo not call the save method ?
             logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, snapshotScore, self.trainingInfoJson,
                               self.txtLogger, self.stepMaxReward, self.totalEpochs)
 
@@ -114,7 +115,7 @@ class RandomRollingHorizon:
                                                  nameOfCurriculumI, self.curricula[i][j], self.args, self.txtLogger)
             self.txtLogger.info(f"Iterations Done {iterationsDone}")
             if j == 0:
-                self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)  # TODO testfor ep0
+                self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
             rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
                                                                      self.txtLogger))
@@ -126,8 +127,8 @@ class RandomRollingHorizon:
         if not self.exactIterationsSet:  # TODO refactor this to common method
             self.exactIterationsSet = True
             self.ITERATIONS_PER_ENV = exactIterationsPerEnv - 1
-        utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
-            nameOfCurriculumI))  # save TEST_e1_curric0 -> + _CANDIDATE
+        utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(nameOfCurriculumI),
+                        txtLogger=self.txtLogger)  # save TEST_e1_curric0 -> + _CANDIDATE
         self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
         self.trainingInfoJson[iterationsPerEnvKey] = self.ITERATIONS_PER_ENV
 
@@ -140,10 +141,10 @@ class RandomRollingHorizon:
             with open(self.logFilePath, 'r') as f:
                 self.trainingInfoJson = json.loads(f.read())
 
-            iterationsDoneSoFar = self.trainingInfoJson["numFrames"]
-            startEpoch = self.trainingInfoJson["epochsDone"]
-            rewards = self.trainingInfoJson["rewards"]
-            lastChosenCurriculum = self.trainingInfoJson["bestCurriculaIds"][-1]
+            iterationsDoneSoFar = self.trainingInfoJson[numFrames]
+            startEpoch = self.trainingInfoJson[epochsDone]
+            rewards = self.trainingInfoJson[rewardsKey] # TODO remove this ?
+            lastChosenCurriculum = self.trainingInfoJson[bestCurriculas][-1]
             self.curricula = self.trainingInfoJson["currentCurriculumList"]
             self.lastEpochStartTime = self.trainingInfoJson["startTime"]  # TODO use right keys
             consec = self.trainingInfoJson[consecutivelyChosen]  # TODO load
