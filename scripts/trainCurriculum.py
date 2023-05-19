@@ -13,7 +13,7 @@ from utils import ENV_NAMES
 def main():
     cmdLineString = ' '.join(sys.argv)
     args = utils.initializeArgParser()
-    # TODO add --debug option with some preset parameters, and only use more params if != default ones
+    # TODO add --debug option with some preset parameters, and only use more params if != default ones (+ rnd model name)
 
     # TODO this is not clear if it creates a folder or not
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
@@ -21,10 +21,10 @@ def main():
 
     ############
     # TODO make e.start() methods instaed of doing it in init because of calling eval later
-    assert args.stepsPerCurric > 0
-    assert args.numCurric > 0
-    assert args.iterPerEnv > 0
-    assert args.trainEpochs > 1
+    assert args.stepsPerCurric > 0, "Steps per curriculum must be >= 1"
+    assert args.numCurric > 0, "There must be at least 1 curriculum"
+    assert args.iterPerEnv > 0, "The iterations per curricululm step must be >= 1"
+    assert args.trainEpochs > 1, "There must be at least 2 training epochs for the algorithm"
     assert 0 < args.paraEnv <= len(ENV_NAMES.ALL_ENVS)
 
     if args.trainEvolutionary:
@@ -43,7 +43,8 @@ def main():
 
 def registerEnvs():
     """
-    Registers the envs before the training. Each env has 3 difficulty settings, whereby they decrease their maxsteps
+    Registers the envs before the training. Each env has 3 difficulty settings, with which they decrease their maxsteps
+    to save computation time and make the environment harder
     """
     """
     register(
@@ -51,38 +52,39 @@ def registerEnvs():
         entry_point="minigrid.envs:EmptyEnv",
         kwargs={"size": 8, "agent_start_pos": None},
     ) """
-
-    maxSteps16x16 = 16 ** 2 * 10
-    maxSteps8x8 = 8 ** 2 * 10
-    maxSteps6x6 = 6 ** 2 * 10
-    maxSteps5x5 = 5 ** 2 * 10
-    maxSteps = np.array([maxSteps5x5, maxSteps6x6, maxSteps8x8, maxSteps16x16])
+    ENV_SIZE_POWER = 2
+    SIZE_MUTIPLICATOR = 10
+    maxStepsEnv4 = 12 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+    maxStepsEnv3 = 9 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+    maxStepsEnv2 = 7 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+    maxStepsEnv1 = 4 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+    maxSteps = np.array([maxStepsEnv1, maxStepsEnv2, maxStepsEnv3, maxStepsEnv4])
     difficulty = np.array([1, 0.33, 0.11])
     result = np.round(np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1)))
 
     for i in range(len(difficulty)):
         register(
-            id=ENV_NAMES.DOORKEY_16x16 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
+            id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 16, "max_steps": int(result[3][i])},
+            kwargs={"size": 12, "max_steps": int(result[3][i])},
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
+            id=ENV_NAMES.DOORKEY_9x9 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 8, "max_steps": int(result[2][i])},
+            kwargs={"size": 9, "max_steps": int(result[2][i])},
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
+            id=ENV_NAMES.DOORKEY_7x7 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 6, "max_steps": int(result[1][i])},
+            kwargs={"size": 7, "max_steps": int(result[1][i])},
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_5x5 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
+            id=ENV_NAMES.DOORKEY_4x4 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 5, "max_steps": int(result[0][i])},
+            kwargs={"size": 4, "max_steps": int(result[0][i])},
         )
 
 
