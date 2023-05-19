@@ -83,11 +83,11 @@ def getModelWithCurricGenSuffix(model, curriculumNr: int, genPrefix: str, genNr:
     :param genNr:
     :return:
     """
-    return model + "_curric" + str(curriculumNr) + '_' + genPrefix + str(genNr)
+    return model + "_curric" + str(curriculumNr) + '_' + genPrefix + str(genNr) # TODO use method below ?
 
 
-def getModelWithCurricSuffix(model, epoch, curricNr) -> str:
-    return getEpochModelName(model, epoch) + "_curric" + str(curricNr)
+def getModelWithCurricSuffix(model, curricNr) -> str:
+    return model + "_curric" + str(curricNr)
 
 
 def getEpochModelName(model, epoch) -> str:
@@ -103,7 +103,7 @@ def getModelWithCandidatePrefix(model) -> str:
     return model + "_CANDIDATE"
 
 
-def copyAgent(src, dest) -> None:
+def copyAgent(src, dest, txtLogger) -> None:
     """
 
     :param src:
@@ -117,7 +117,7 @@ def copyAgent(src, dest) -> None:
         raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
     else:
         shutil.copytree(fullSrcPath, fullDestPath)
-        print(f'Copied Agent! {src} ---> {dest}')
+        txtLogger.info(f'Copied Agent! {src} ---> {dest}')
 
 
 def deleteModelIfExists(directory) -> bool:

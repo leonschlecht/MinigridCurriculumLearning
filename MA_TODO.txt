@@ -1,3 +1,75 @@
+Do:
+
+nimmt ganzes modell statt snapshot (zB speichert ep1_curric0_gen3 ---> ep2 statt ep1_curric0_gen3_canddate --> ep2)
+- herausfinden, waru mdie logs vorher korrekt waren ???????
+- schauen, warum das eval(...) einen Fehler wirft beim loggen
+- check differences cmd line args in reloading
+
+Aufgaben:
+- Funktioniert Cuda richtig? https://www.run.ai/guides/gpu-deep-learning/pytorch-gpu
+- 6 8 10 12 für 5x5 viwesize (3x3 macht wenig Sinn)
+- baseline mit paraEnv trainieren
+- Experimente-History aufschreiben + Gedanken / Resultate was wozu geführt hatte etc
+
+
+===================================
+L:
+- RHEA und RRH noch mehr zusammenführen
+- normalize Reward @RRH
+
+- self.iterationsPerEnv für reload setzen
+- self.iterationsPerEnv in RRH
+
+
+Home:
+- testen, ob das toggle-env einen verbuggeten Reward-Log hat. ( zB --> 5x5 * 2 ausprobieren; dann ein malmit 5x5 / 16x16)
+------- storage in git pushen
+------------ testen, ob RHEA auch richtig durchläuft mit den Generationen
+- testen, ob pymoo in 1 Generation immer allse richtig weitergibt und nix ausversehen doppelt passiert
+--------- RHEA mit FESTEN envs testen (um zu sehen, ob er auch richtig weitermacht bei dem switch bzw sehen wo tensorboard scheitert)
+- epochsDone: 1 zu hoch in der stauts.json (--> TESTEN MIT RHEA) (steht 12 drin; womit würde es jetzt weitermachen?) also das "START EPOCH ...."
+
+
+Q's:
+den 1st step reward speichern statt den gesamten reward benutzen ( = "actualPerformance" --> maxReward beurteilen daran; aber trotzdem das andere loggen)
+- Curriculum-Rewards normalisieren wichtig? (sonst ist das in der json irreführend)
+
+===========================================================================
+
+
+Ladezeit-Optimierungen
+- minimize ersetzen auf das .hasNext() und dann abbrechen bei konvergenz
+- penv weiterprobieren ( Prozess pausieren, damit nicht 4 * 32 aktiv sind sondern nur 1 * 32)
+- eval penv verbessern ; vllt kann man da ja was wiederverwenden (zumindest das letzte)
+
+.........
+
+Log-Improvements
+- ggf die envDetails Struktur flippen (epoch->gen->curric zu epoch->curric->gen)
+
+Results-Evaluation
+- eval: zählen welche env wie oft im training vorkam
+- Experimente-Evaluate ausprobieren, bzw gegeben eine json etwas rumprobieren / stubs erstellen, wie ich damit abeiten kann
+
+
+Other
+- Docstrings schreiben
+- consec chosen einbauen in update methode für RRH biased
+- gamma Parameter auswirkungen; summe von 0 oder 1 starten lassen
+ wird maxReward richtig geestzt / ist er noch relevant?
+printen von dem acModel am anfang ...
+
+
+Erkenntnise:
+- Versucht 8x8 zu selten,16x16 sowieso
+- schlechte Rewardstruktur --> - anpassen, wenn gewisse performance erreicht wird (-> ermutigen von 16x16)
+- diff1 & 2 haben kaum unterschiede auf laufzeit
+- maxSteps beeifnlusst performance (ggf berücksichtigen? Difficulty = 2 sollte ja nicht die performance schmälern, nur weil es schwerer ist)
+-> ggf 2* max_reward - actual_reward * difficulty
+- das dauert alles sehr lange und ist dann irgendwie nicht aussagefähig. --> ggf lieber 2-3 experimente für 16h laufen lassen statt 6x8h
+
+-----------------
+
 experimente machen: RRH vs RHEA; anderes als GA ausprobieren
 viewsizewrapper
 2. Env raussuchen
@@ -8,46 +80,23 @@ algo fix mit dem laden bzw besser testen
 eval vllt beschleunigen und 0 zurückgeben, wenn er zu oft verkackt hat bzw immer maxSteps braucht; evtl spätere envs skippen
 Rewards-list in json ist ein string ?
 
-
-
-----
-
-
-
-TEMPORARAY FIXED: BUG testen, ob trained 0 auch noch vorkommt, außer bei ep1gen1 (immer j =0)
-done? Eval Zeit besser loggen als F: 9600 und sowas
-already implemented @actualPeformacne Log: Used curriculum
-done: print startEpoch / allepoch
-done: starttime fix
-
-
-Docstrings schreiben
-Experimente-Evaluate ausprobieren, bzw gegeben eine json etwas rumprobieren / stubs erstellen, wie ich damit abeiten kann
-
-
-
+Random Questions
+- Kann man evtl partielle inforamtionen aus der letzten iteration mitnehmen ??? zB für den evol Alg.
+- Nehme ich das res.X, um dann einen RH zu simulieren oder nehme ich das beste Ergebnis der Simulationen?
+- wie mit reward experimentieren dass man ihn ermutigt 16x16 auszuprobieren
+- wie dynamisch mit dem switchen umgehen (zb nach jedem update mal probieren?)
+- funzt der 16x16 richtig (oder kann was wegen int-rounding schief gehen ; bzw. warum wird es nie gewählt?
+- Mehr
 
 
 """
 5x5 aufteilen , 6x6 rausnehmen ; 4x4 mit 2x2 obs
-
--  env schneller machen / laden
-done: screen
-- x register von performance abh.
 - observation space reduzieren (komplexität des levels wird schwerer; und man kommt durch zufall leichter an) ; nutzlose iterationen sparen
     4, 6, 8, 10 (obs space macht es seeehr schwer)
 """
 
 
----------
-Random Questions
-- Kann man evtl partielle inforamtionen aus der letzten iteration mitnehmen ???
-- Nehme ich das res.X, um dann einen RH zu simulieren oder nehme ich das beste Ergebnis der Simulationen?
-- wie mit reward experimentieren dass man ihn ermutigt 16x16 auszuprobieren
-- wie dynamisch mit dem switchen umgehen (zb nach jedem update mal probieren?)
-
-
-----------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 TODO prov Env: die Rewardsscores für jedes Curriculum speichern (statt nur aufsummieren) -> Rewardscore des Mainmodels daraus ableiten (Jetzt hat es nur die Summe des RHs)
 TODO ggf alte Models löschen, wenn man X epochs weiter ist. Solange man die relevanten logs noch hat
 
@@ -71,3 +120,18 @@ Small Refactorings
 - load time or set initially in linear / adaptive
 - überall datetime einsetzen statt time
 
+
+
+
+MA Notizen
+Vektor -> Matrix benennen (bzw. ggf 3d für die Repräsentation damit es übersichtlicher ist)
+
+
+
+Changelog / Erkenntnisse
+
+- 8x8, vor allem 16x16 wurde fast nie ausgewählt. Daher Reward anpassen, um ermutigen das zu tun
+- envDifficulty (aka maxSteps) lässt reward etwas verzerrt aussehen; daher multiplier
+- Difficulty Cutoffs: .25 / .75
+
+17.05 - 24.05:
