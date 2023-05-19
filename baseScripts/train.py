@@ -16,10 +16,8 @@ from model import ACModel
 parser = argparse.ArgumentParser()
 
 # General parameters
-parser.add_argument("--algo", required=True,
-                    help="algorithm to use: a2c | ppo (REQUIRED)")
-parser.add_argument("--env",
-                    help="name of the environment to train on. Defaults to 5x5")
+parser.add_argument("--algo", default="ppo", help="algorithm to use: a2c | ppo. Default ppo")
+parser.add_argument("--env", help="name of the environment to train on. Defaults to 5x5")
 parser.add_argument("--model", default=None,
                     help="name of the model (default: {ENV}_{ALGO}_{TIME})")
 parser.add_argument("--seed", type=int, default=1,
@@ -28,7 +26,7 @@ parser.add_argument("--log-interval", type=int, default=1,
                     help="number of updates between two logs (default: 1)")
 parser.add_argument("--save-interval", type=int, default=10,
                     help="number of updates between two saves (default: 10, 0 means no saving)")
-parser.add_argument("--procs", type=int, default=16,
+parser.add_argument("--procs", type=int, default=6,
                     help="number of processes (default: 16)")
 parser.add_argument("--frames", type=int, default=10 ** 7,
                     help="number of frames of training (default: 1e7)")

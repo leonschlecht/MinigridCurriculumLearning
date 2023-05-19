@@ -9,7 +9,6 @@ if __name__ == "__main__":
 
 
 def worker(conn, env):
-    print("Worker called")
     while True:
         try:
             cmd, data = conn.recv()
@@ -54,7 +53,6 @@ class MyParallelEnv(gym.Env):
         return results
 
     def step(self, actions):
-        print("mypenv step called")
         for local, action in zip(self.locals, actions[1:]):
             local.send(("step", action))
         obs, reward, terminated, truncated, info = self.envs[0].step(actions[0])

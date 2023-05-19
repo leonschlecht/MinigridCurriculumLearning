@@ -5,21 +5,19 @@ from torch_ac.utils.penv import ParallelEnv
 
 import utils
 from baseScripts.MyPEnv import MyParallelEnv
-from utils import device
+from utils import device, ENV_NAMES
 
 # Parse arguments
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--env", required=True,
-                    help="name of the environment (REQUIRED)")
+parser.add_argument("--env", help="name of the environment (REQUIRED)")
 parser.add_argument("--model", required=True,
                     help="name of the trained model (REQUIRED)")
-parser.add_argument("--episodes", type=int, default=100,
+parser.add_argument("--episodes", type=int, default=10,
                     help="number of episodes of evaluation (default: 100)")
 parser.add_argument("--seed", type=int, default=0,
                     help="random seed (default: 0)")
-parser.add_argument("--procs", type=int, default=16,
-                    help="number of processes (default: 16)")
+parser.add_argument("--procs", type=int, default=6, help="number of processes (default: 6)")
 parser.add_argument("--argmax", action="store_true", default=False,
                     help="action with highest probability is selected")
 parser.add_argument("--worst-episodes-to-show", type=int, default=10,
@@ -43,11 +41,11 @@ if __name__ == "__main__":
     # Load environments
 
     envs = []
+    args.env = args.env or ENV_NAMES.DOORKEY_5x5_v0
     for i in range(args.procs):
         env = utils.make_env(args.env, args.seed + 10000 * i)
-        envObj = env
         envs.append(env)
-    env = MyParallelEnv(envs, envObj)
+    env = MyParallelEnv(envs)
     print("Environments loaded\n")
 
     # Load agent
