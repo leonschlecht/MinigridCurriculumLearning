@@ -1,3 +1,4 @@
+import re
 import time
 import torch
 import json
@@ -88,15 +89,15 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
 
 
 def getRewardMultiplier(evalEnv):
-    if "5x5" in evalEnv:
-        return 5
-    elif "6x6" in evalEnv:
-        return 6
-    elif "8x8" in evalEnv:
-        return 8
-    elif "16x16" in evalEnv:
-        return 16
+    """
 
+    :param evalEnv:
+    :return:
+    """
+    pattern = r'\d+'
+    match = re.search(pattern, evalEnv)
+    if match:
+        return int(match.group())
     raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)
 
 
@@ -107,6 +108,7 @@ def getDifficultyMultiplier(difficulty):
         return 1.1
     elif difficulty == 2:
         return 1.2
+    raise Exception("Something went wrong with the difficulty multiplier! input difficulty:", difficulty)
 
 
 def evaluateAgent(model, difficulty, args, txtLogger) -> int:
@@ -125,6 +127,6 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     for evalEnv in envs:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv)
         rewardSum += currentReward
-        print(currentReward, evalEnv)
-    print("REWARD SUM", rewardSum, "multiplied", rewardSum * getDifficultyMultiplier(difficulty))  # TODO remove
+    print("Evaluate agent TEST", rewardSum * getDifficultyMultiplier(difficulty))
+    exit()
     return rewardSum * getDifficultyMultiplier(difficulty)

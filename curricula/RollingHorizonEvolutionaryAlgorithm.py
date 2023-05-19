@@ -71,8 +71,8 @@ class RollingHorizonEvolutionaryAlgorithm:
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
         for j in range(len(curricula[i])):
-            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
-                                                 nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
+            #iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
+             #                                    nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
             reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
                                                                     self.txtLogger))
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
@@ -185,7 +185,8 @@ class RollingHorizonEvolutionaryAlgorithm:
 
             self.iterationsDone = self.trainingInfoJson[numFrames]
             startEpoch = self.trainingInfoJson[epochsDone]  # TODO is this correct ?
-            self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
+            if iterationsPerEnvKey in self.trainingInfoJson:
+                self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             rewardsDict = self.trainingInfoJson[rewardsKey]
             seed = self.trainingInfoJson[seedKey]
 
