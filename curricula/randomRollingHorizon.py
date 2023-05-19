@@ -38,10 +38,7 @@ class RandomRollingHorizon:
 
         self.paraEnv = args.paraEnv
         self.envDifficulty = 0
-
         self.fullRandom = fullRandom
-
-        self.startCurriculumTraining()
 
     def startCurriculumTraining(self) -> None:
         """
@@ -71,7 +68,6 @@ class RandomRollingHorizon:
             currentRewardsList = [currentRewards[key] / self.curricMaxReward for key in currentRewards]
             fullRewardsDict["epoch_" + str(epoch)] = currentRewards
             print("RRH currentrewardslist", currentRewardsList)
-            exit()
             bestCurriculumScore = max(currentRewardsList)
             snapshotScore = snapshotRewards["curric_" + str(currentBestCurriculumIdx)]
             if not self.fullRandom:
@@ -123,15 +119,6 @@ class RandomRollingHorizon:
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards
 
-    def saveFirstStepOfModel(self, exactIterationsPerEnv: int, nameOfCurriculumI: str):
-        if not self.exactIterationsSet:  # TODO refactor this to common method
-            self.exactIterationsSet = True
-            self.ITERATIONS_PER_ENV = exactIterationsPerEnv - 1
-        utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(nameOfCurriculumI),
-                        txtLogger=self.txtLogger)  # save TEST_e1_curric0 -> + _CANDIDATE
-        self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
-        self.trainingInfoJson[iterationsPerEnvKey] = self.ITERATIONS_PER_ENV
-
     def initializeTrainingVariables(self, modelExists) -> tuple:
         """
         Initializes and returns all the necessary training variables
@@ -143,7 +130,7 @@ class RandomRollingHorizon:
 
             iterationsDoneSoFar = self.trainingInfoJson[numFrames]
             startEpoch = self.trainingInfoJson[epochsDone]
-            rewards = self.trainingInfoJson[rewardsKey] # TODO remove this ?
+            rewards = self.trainingInfoJson[rewardsKey]  # TODO remove this ?
             lastChosenCurriculum = self.trainingInfoJson[bestCurriculas][-1]
             self.curricula = self.trainingInfoJson["currentCurriculumList"]
             self.lastEpochStartTime = self.trainingInfoJson["startTime"]  # TODO use right keys
