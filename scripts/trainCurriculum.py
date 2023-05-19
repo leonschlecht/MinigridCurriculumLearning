@@ -6,29 +6,33 @@ from gymnasium.envs.registration import register
 
 import utils
 from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
-    BiasedRandomRollingHorizon, adaptiveCurriculum
+    adaptiveCurriculum, RandomRollingHorizon
 from utils import ENV_NAMES
 
 
 def main():
     cmdLineString = ' '.join(sys.argv)
     args = utils.initializeArgParser()
-    # TODO refactor to some utils method (for all methods)
+    # TODO add --debug option with some preset parameters, and only use more params if != default ones
 
-    txtLogger = utils.get_txt_logger(
-        utils.get_model_dir(args.model))  # TODO this is not clear if it creates a folder or not
-
-    # TODO refactor scripts folder (so it there are actually only scripts in it)
+    # TODO this is not clear if it creates a folder or not
+    txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
     startTime: datetime = datetime.now()
 
     ############
+    # TODO make e.start() methods instaed of doing it in init because of calling eval later
+    assert args.stepsPerCurric > 0
+    assert args.numCurric > 0
+    assert args.iterPerEnv > 0
+    assert args.trainEpochs > 1
+    assert 0 < args.paraEnv <= len(ENV_NAMES.ALL_ENVS)
 
     if args.trainEvolutionary:
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)
     elif args.trainBiasedRandomRH:
-        e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
+        e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, False)
     elif args.trainRandomRH:
-        e = BiasedRandomRollingHorizon(txtLogger, startTime, args)
+        e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, True)
     elif args.trainLinear:
         linearCurriculum.startLinearCurriculum(txtLogger, startTime, args)
     elif args.trainAdaptive:
@@ -55,9 +59,7 @@ def registerEnvs():
     maxSteps = np.array([maxSteps5x5, maxSteps6x6, maxSteps8x8, maxSteps16x16])
     difficulty = np.array([1, 0.33, 0.11])
     result = np.round(np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1)))
-    print(result, result[3])
 
-    # TODO numpy.int32 vs int
     for i in range(len(difficulty)):
         register(
             id=ENV_NAMES.DOORKEY_16x16 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
@@ -82,9 +84,6 @@ def registerEnvs():
             entry_point="minigrid.envs:DoorKeyEnv",
             kwargs={"size": 5, "max_steps": int(result[0][i])},
         )
-
-    # TODO vllt ist register gar nicht so teuer/umständlich, so dass man das einfach exakt je nach performance berechnen kann
-
 
 
 if __name__ == "__main__":

@@ -1,47 +1,40 @@
 import time
 import torch_ac
 import tensorboardX
-import sys
 
 import utils
 from utils import device
 from model import ACModel
 
 
-def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_logger) -> int:
+def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: list, args, txt_logger) -> int:
     """
-
     :param currentFramesDone:
     :param txt_logger: reference to the .txt log file
     :param framesToTrain: the number of iterations
     :param model: name of the model - where the training will be saved
-    :param env: the name of the environment
+    :param envList: list of the name of the environments to be trained on
     :param args: the command lines arguments that get parsed and passed through
     :return: the exact number of iterations done
     """
     # TODo split this into multiple methods maybe
-    # Set run dir
     model_name = model
     model_dir = utils.get_model_dir(model_name)
     csv_file, csv_logger = utils.get_csv_logger(model_dir)
     tb_writer = tensorboardX.SummaryWriter(model_dir)
 
-    # Log command and all script arguments
-    # txt_logger.info("{}\n".format(" ".join(sys.argv))) # TODO use this
-    # txt_logger.info("{}\n".format(args))
-
-    # Set seed for all randomness sources
     utils.seed(args.seed)
 
     # Load environments
     envs = []
-    for i in range(args.procs):
-        envs.append(utils.make_env(env, args.seed + 10000 * i))  # TODO what does 10k mean here ?
-    # txt_logger.info("Environments loaded\n")
+    for i in range(args.procs // len(envList)):
+        for j in range(len(envList)):
+            envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
+    assert len(envs) == args.procs
 
     # Load training status
     try:
-        status = utils.get_status(model_dir)  # TODO find better way than try except
+        status = utils.get_status(model_dir)  # TODO fix try except
     except OSError:
         status = {"num_frames": 0, "update": 0}
 
@@ -108,7 +101,7 @@ def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_
 
             txt_logger.info(
                 "\t{} | {} | curF {} | U {} | AllF {:07} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
-                .format(env, model, framesWithThisEnv, *data))
+                .format(envList, model, framesWithThisEnv, *data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
             data += return_per_episode.values()
@@ -130,8 +123,7 @@ def main(framesToTrain: int, currentFramesDone, model: str, env: str, args, txt_
             utils.save_status(status, model_dir)
             # txt_logger.info("\t\tStatus saved")
 
-    txt_logger.info(
-        'Trained on' + env + ' using model ' + model + ' for ' + str(framesWithThisEnv) + ' frames')  # TODO f
+    txt_logger.info(f'\n\tTrained on {envList} using model {model} for {framesWithThisEnv} frames')
     algo.env.close()
     tb_writer.close()
     return status["num_frames"]
