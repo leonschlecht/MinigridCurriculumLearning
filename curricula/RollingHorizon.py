@@ -25,6 +25,7 @@ class RollingHorizon(ABC):
         self.exactIterationsSet = False
         self.seed = args.seed
         self.paraEnvs = args.paraEnv
+        # TODO does RHEA even need a curric list becasue it gets generated always anyway
 
         # TODO this is probably deprecated because the generated curricula is never used by the algorithm
         self.curricula = self.randomlyInitializeCurricula(args.numCurric, args.stepsPerCurric, self.envDifficulty,
@@ -43,7 +44,7 @@ class RollingHorizon(ABC):
 
         self.trainingInfoJson = {}
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"  # TODO maybe outsource
-        self.gamma = args.gamma
+        self.gamma = args.gamma  # TODO is gamma used properly? Do RH -> Get Max thingy, and update difficulty based on the RH reward or snapshot reward?
         self.currentRewardsDict = {}
         self.currentSnapshotRewards = {}
         self.curriculaEnvDetails = {}
@@ -84,7 +85,7 @@ class RollingHorizon(ABC):
                                   self.currentRewardsDict]
             bestCurriculumScore: float = np.max(currentRewardsList)
             currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values()))
-
+            # RRH had fullRewardsDict locally
             currentBestModel = self.getCurrentBestModel()
             currentBestCurriculum = self.getCurrentBestCurriculum()
             # TODO test why currentBestCurriculum was after the copy call. couldnt it have just been above it all along?
@@ -108,9 +109,10 @@ class RollingHorizon(ABC):
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
+        # TODO can probably remove genNr from methodparam
         reward = np.zeros(len(curricula[i]))
         # Save epoch_X -> epoch_X_curricI_genJ
-        nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr) # TODO+++
+        nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)  # TODO+++
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
         for j in range(len(curricula[i])):
@@ -163,6 +165,10 @@ class RollingHorizon(ABC):
                 self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             rewardsDict = self.trainingInfoJson[rewardsKey]
             self.seed = self.trainingInfoJson[seedKey]
+            consec = self.trainingInfoJson[consecutivelyChosen]  # TODO ??
+            self.lastEpochStartTime = self.trainingInfoJson["startTime"]  # TODO use right keys
+            # TODO test rewardsDictb ecasue RRH has "rewards" with gets reutrned
+
 
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             # TODO maybe do the deletion automatically, but it doesnt matter
@@ -173,11 +179,13 @@ class RollingHorizon(ABC):
                     print("deleted", k)
                     snapshotPath = utils.getModelWithCandidatePrefix(path)
                     utils.deleteModelIfExists(snapshotPath)
+                    delete Gen thingy if need be
                     # TODO test if delete _gen folders; OR probably get prefix -> look for them in list, delete all of these folders that contain it
                 else:
                     self.txtLogger.info(f"Nothing to delete {k}")
                     break
             """
+            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO ?
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}]")
         else:
             self.txtLogger.info("Creating model. . .")
@@ -189,6 +197,16 @@ class RollingHorizon(ABC):
                             txtLogger=self.txtLogger)  # copy epoch0 -> epoch1
             self.txtLogger.info(f"\nThe training will go on for {self.totalEpochs} epochs\n")
             rewardsDict = {}
+            lastChoesnCurriculum = None
+            consec = 0
+
+            self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
+                                                              self.paraEnvs, self.seed)
+            iterationsDoneSoFar = train.startTraining(0, 0, self.selectedModel,
+                                                      [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
+                                                      self.txtLogger)
+
+        # TODO should this return lastChosen & consec ? or how to deal with the reload RRH
         return startEpoch, rewardsDict
 
     def evaluateCurriculumResults(self, evaluationDictionary):
@@ -316,7 +334,7 @@ class RollingHorizon(ABC):
         assert len(curricula[0]) == stepsPerCurric
         return curricula
 
-    def updateTrainingInfo(self, trainingInfoJson, epoch: int, bestCurriculum: list, fullRewradsDict,
+    def updateTrainingInfo(self, trainingInfoJson, epoch: int, bestCurriculum: list, fullRewardsDict,
                            currentScore: float,
                            snapshotScore: float, framesDone, envDifficulty: int, lastEpochStartTime, curricula,
                            curriculaEnvDetails, logFilePath, popX=None) -> None:
@@ -332,7 +350,7 @@ class RollingHorizon(ABC):
         :param trainingInfoJson:
         :param epoch: current epoch
         :param bestCurriculum: the curriculum that had the highest reward in the latest epoch
-        :param fullRewradsDict: the dict of rewards for each generation and each curriculum
+        :param fullRewardsDict: the dict of rewards for each generation and each curriculum
         :param currentScore: the current best score
         :param popX: the pymoo X parameter for debugging purposes - only relevant for RHEA, not RRH
         """
@@ -342,7 +360,7 @@ class RollingHorizon(ABC):
 
         trainingInfoJson[selectedEnvs].append(bestCurriculum[0])
         trainingInfoJson[bestCurriculas].append(bestCurriculum)
-        trainingInfoJson[rewardsKey] = fullRewradsDict
+        trainingInfoJson[rewardsKey] = fullRewardsDict
         trainingInfoJson[actualPerformance]["epoch_" + str(epoch)] = \
             {"curricScore": currentScore, "snapshotScore": snapshotScore, "curriculum": bestCurriculum}
         trainingInfoJson[curriculaEnvDetailsKey]["epoch_" + str(epoch)] = curriculaEnvDetails

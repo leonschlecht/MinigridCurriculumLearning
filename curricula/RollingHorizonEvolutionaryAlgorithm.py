@@ -72,7 +72,8 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
 
     def updateSpecificInfo(self):
-        print(self.resX)
+        print("res x" , self.resX)
+        exit()
 
     def getCurrentBestModel(self):
         genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewardsDict)

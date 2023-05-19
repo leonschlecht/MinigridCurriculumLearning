@@ -3,12 +3,12 @@ import numpy as np
 from numpy import ndarray
 
 import utils
-from curricula import train, evaluate
-from utils import getModelWithCandidatePrefix
+from curricula import train, evaluate, RollingHorizon
+from utils import getModelWithCandidatePrefix, ENV_NAMES, getEnvFromDifficulty
 from utils.curriculumHelper import *
 
 
-class RandomRollingHorizon:
+class RandomRollingHorizon(RollingHorizon):
     """
     This class represents a "biased" random rolling horizon. I.e not fully random (like the class
     FullRandomHorizon.
@@ -17,93 +17,54 @@ class RandomRollingHorizon:
     """
 
     def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom):
-        self.seed = args.seed
-        self.numCurric = args.numCurric
-        self.totalEpochs = args.trainEpochs
-        self.stepsPerCurric = args.numCurric
-        self.ITERATIONS_PER_ENV = args.iterPerEnv
-        self.txtLogger = txtLogger
-        self.args = args
-        self.lastEpochStartTime = startTime
-        self.trainingInfoJson = {}
-        self.curricula = []
-        self.model = args.model
-        self.cmdLineString = cmdLineString
-        self.logFilePath = os.getcwd() + "\\storage\\" + self.args.model + "\\status.json"
-        self.gamma = args.gamma  # TODO is gamma used properly? Do RH -> Get Max thingy, and update difficulty based on the RH reward or snapshot reward?
-        self.selectedModel = utils.getEpochModelName(args.model, 0)  # TODO is this useful for 0?
-        self.exactIterationsSet = False
-        self.stepMaxReward = calculateCurricStepMaxReward(len(ENV_NAMES.ALL_ENVS))
-        self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
-
-        self.paraEnv = args.paraEnv
-        self.envDifficulty = 0
+        super().__init__(txtLogger, startTime, cmdLineString, args)
         self.fullRandom = fullRandom
 
-    def startCurriculumTraining(self) -> None:
-        """
-        Starts The RH Curriculum Training
-        """
-        iterationsDoneSoFar, startEpoch, lastChosenCurriculum, curricConsecutivelyChosen = \
-            self.initializeTrainingVariables(os.path.exists(self.logFilePath))
-        fullRewardsDict = {}
-        for epoch in range(startEpoch, self.totalEpochs):
-            self.selectedModel = utils.getEpochModelName(self.model, epoch)
-            currentRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
-            snapshotRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
-            for i in range(len(self.curricula)):
-                reward = self.trainEachCurriculum(i, iterationsDoneSoFar, epoch)
-                currentRewards["curric_" + str(i)] = np.sum(reward)
-                snapshotRewards["curric_" + str(i)] = reward[0]
-            print(currentRewards)
-            print(snapshotRewards)
+    def getCurrentBestCurriculum(self):
+        currentBestCurriculumIdx = np.argmax(self.currentRewardsDict)
+        currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
+        return currentBestCurriculum
 
-            iterationsDoneSoFar += self.ITERATIONS_PER_ENV  # TODO use exact value; maybe return something during training
-            currentBestCurriculumIdx = np.argmax(currentRewards)
-            currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
-            utils.copyAgent(src=getModelWithCandidatePrefix(
-                utils.getModelWithCurricSuffix(self.selectedModel, currentBestCurriculumIdx)),
-                dest=utils.getEpochModelName(self.model, epoch + 1),
-                txtLogger=self.txtLogger)  # the model for the next epoch
-            currentRewardsList = [currentRewards[key] / self.curricMaxReward for key in currentRewards]
-            fullRewardsDict["epoch_" + str(epoch)] = currentRewards
-            print("RRH currentrewardslist", currentRewardsList)
-            bestCurriculumScore = max(currentRewardsList)
-            snapshotScore = snapshotRewards["curric_" + str(currentBestCurriculumIdx)]
-            if not self.fullRandom:
-                curricConsecutivelyChosen = \
-                    self.calculateConsecutivelyChosen(curricConsecutivelyChosen, currentBestCurriculum,
-                                                      lastChosenCurriculum)
+    def getCurrentBestModel(self):
+        currentBestCurriculumIdx = np.argmax(self.currentRewardsDict)
+        currentBestModel = self.curriculaEnvDetails[currentBestCurriculumIdx]
+        return currentBestModel
 
-            lastChosenCurriculum = currentBestCurriculum
-            curriculaEnvDetails = self.curricula
-            updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, fullRewardsDict,
-                               bestCurriculumScore,
-                               snapshotScore, iterationsDoneSoFar, self.envDifficulty, self.lastEpochStartTime,
-                               self.curricula, curriculaEnvDetails, self.logFilePath)
-            saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
-            logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, snapshotScore, self.trainingInfoJson,
-                              self.txtLogger, self.stepMaxReward, self.totalEpochs)
+    def executeOneEpoch(self) -> None:
+        self.selectedModel = utils.getEpochModelName(self.model, epoch)
+        currentRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
+        snapshotRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
+        for i in range(len(self.curricula)):
+            reward = self.trainEachCurriculum(i, iterationsDoneSoFar, epoch)
+            currentRewards["curric_" + str(i)] = np.sum(reward)
+            snapshotRewards["curric_" + str(i)] = reward[0]
 
-            self.lastEpochStartTime = datetime.now()
-            self.envDifficulty = calculateEnvDifficulty(bestCurriculumScore, self.stepMaxReward)
-            if self.fullRandom:
-                self.curricula = randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
-                                                             self.paraEnv, self.seed)
-            else:
-                self.curricula = self.updateCurriculaAfterHorizon(lastChosenCurriculum, self.numCurric,
-                                                                  self.envDifficulty)
+        currentRewardsList = [currentRewards[key] / self.curricMaxReward for key in currentRewards]
+        fullRewardsDict["epoch_" + str(epoch)] = currentRewards
+        print("RRH currentrewardslist", currentRewardsList)
+        bestCurriculumScore = max(currentRewardsList)
+        snapshotScore = snapshotRewards["curric_" + str(currentBestCurriculumIdx)]
+        if not self.fullRandom:
+            curricConsecutivelyChosen = \
+                self.calculateConsecutivelyChosen(curricConsecutivelyChosen, currentBestCurriculum,
+                                                  lastChosenCurriculum)
 
-        printFinalLogs(self.trainingInfoJson, self.txtLogger)
+        if self.fullRandom:
+            self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
+                                                              self.paraEnvs, self.seed)
+        else:
+            self.curricula = self.updateCurriculaAfterHorizon(lastChosenCurriculum, self.numCurric,
+                                                              self.envDifficulty)
+        # TODO check if this has to be called AFTER the epoch is done / updated etc and not during
 
-    def trainEachCurriculum(self, i: int, iterationsDone: int, epoch: int) -> ndarray:
+    def trainEachCurriculum(self, i: int, iterationsDone: int, genNr: int, curricula) -> ndarray:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         nameOfCurriculumI = utils.getModelWithCurricSuffix(self.selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
         rewards = np.zeros(len(self.curricula))
         # TODO remove epoch param in method here ???
-        utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI)
+        utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
         print("curricula = ", self.curricula[i])
         for j in range(len(self.curricula[i])):
@@ -118,49 +79,6 @@ class RandomRollingHorizon:
 
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards
-
-    def initializeTrainingVariables(self, modelExists) -> tuple:
-        """
-        Initializes and returns all the necessary training variables
-        :param modelExists: whether the path to the model already exists or not
-        """
-        if modelExists:
-            with open(self.logFilePath, 'r') as f:
-                self.trainingInfoJson = json.loads(f.read())
-
-            iterationsDoneSoFar = self.trainingInfoJson[numFrames]
-            startEpoch = self.trainingInfoJson[epochsDone]
-            rewards = self.trainingInfoJson[rewardsKey]  # TODO remove this ?
-            lastChosenCurriculum = self.trainingInfoJson[bestCurriculas][-1]
-            self.curricula = self.trainingInfoJson["currentCurriculumList"]
-            self.lastEpochStartTime = self.trainingInfoJson["startTime"]  # TODO use right keys
-            consec = self.trainingInfoJson[consecutivelyChosen]  # TODO load
-            # delete existing folders, that were created ---> maybe just last one because others should be finished ...
-            for k in range(self.numCurric):
-                # TODO test this
-                path = self.logFilePath + "\\epoch" + str(k)
-                if os.path.exists(path):
-                    utils.deleteModel(path)
-                    utils.deleteModel(path + "\\_CANDIDATE")
-                else:
-                    break
-            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]
-            self.txtLogger.info(f"Continung training from epoch {startEpoch}... ")
-        else:
-            # TODO find better way instead of calling train.startTraining to create folder
-            self.txtLogger.info("Creating model. . .")
-            startEpoch = 1
-            self.curricula = randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
-                                                         self.paraEnv, self.seed)
-            iterationsDoneSoFar = train.startTraining(0, 0, self.selectedModel,
-                                                      [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
-                                                      self.txtLogger)
-
-            self.trainingInfoJson = initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed, self.args)
-            utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, 1))
-            lastChosenCurriculum = None
-            consec = 0
-        return iterationsDoneSoFar, startEpoch, lastChosenCurriculum, consec
 
     def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum) -> int:
         if consecutiveCount + 1 < len(self.curricula[0]) and \
