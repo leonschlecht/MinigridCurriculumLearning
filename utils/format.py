@@ -1,16 +1,11 @@
-import os
-import json
 import numpy
 import re
 import torch
 import torch_ac
 import gymnasium as gym
 
-import utils
-from Minigrid.minigrid.wrappers import ViewSizeWrapper
 
-
-def get_obss_preprocessor(obs_space, wrappedSize=None):
+def get_obss_preprocessor(obs_space):
     # Check if obs_space is an image space
     if isinstance(obs_space, gym.spaces.Box):
         obs_space = {"image": obs_space.shape}
@@ -22,9 +17,7 @@ def get_obss_preprocessor(obs_space, wrappedSize=None):
 
     # Check if it is a MiniGrid observation space
     elif isinstance(obs_space, gym.spaces.Dict) and "image" in obs_space.spaces.keys():
-        # env_obs = ViewSizeWrapper(env, agent_view_size=5)
-        # obs_space = {"image": env_obs["image"].shape, "text": 100}
-        obs_space = {"image": wrappedSize, "text": 100}
+        obs_space = {"image": obs_space["image"].shape, "text": 100}
         print("obs space after ?", obs_space)
         vocab = Vocabulary(obs_space["text"])
 

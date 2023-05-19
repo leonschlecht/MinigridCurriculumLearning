@@ -3,6 +3,7 @@ import torch_ac
 import tensorboardX
 
 import utils
+from baseScripts.MyPPO import MyPPOAlgo
 from utils import device
 from model import ACModel
 
@@ -59,16 +60,16 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     if framesToTrain == 0:
         txt_logger.info(f'Created model {model}')
         return 0
-    algo = torch_ac.PPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
-                            args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
-                            args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
+    algo = MyPPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
+                     args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
+                     args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
 
     txt_logger.info(f"\tAlgorithm loaded in {round(-start_time + time.time(), 2)} sec")
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
 
-    print("done=", currentFramesDone, "toTrain=", framesToTrain)
+    print("done=", currentFramesDone, "toTrain=", framesToTrain) # TODO remove
     while currentFramesDone < framesToTrain:
         update_start_time = time.time()
 

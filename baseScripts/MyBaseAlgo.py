@@ -45,10 +45,9 @@ class MyBaseAlgo(ABC):
             a function that shapes the reward, takes an
             (observation, action, reward, done) tuple as an input
         """
-
         # Store parameters
 
-        self.env = MyParallelEnv(envs, envs[0])
+        self.env = MyParallelEnv(envs)
         self.acmodel = acmodel
         self.device = device
         self.num_frames_per_proc = num_frames_per_proc

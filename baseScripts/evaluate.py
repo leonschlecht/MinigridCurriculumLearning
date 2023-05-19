@@ -53,14 +53,10 @@ if __name__ == "__main__":
     # Load agent
 
     model_dir = utils.get_model_dir(args.model)
-    agent = utils.Agent(env.observation_space, env.action_space, model_dir, envObj,
+    agent = utils.Agent(env.observation_space, env.action_space, model_dir,
                         argmax=args.argmax, num_envs=args.procs,
                         use_memory=args.memory, use_text=args.text)
     print("Agent loaded\n")
-
-    # evaluate / Train calls Agent with env.observation_space; but we need a reference to env to make use of viewsize wrapper
-    # and there is something wrong with the type
-    # und auf dem viesize obj mussm an erst obs, _ = ... reset() aufrufen, damit man auf die ["image"].shape zugreifen kann
 
     # Initialize logs
 

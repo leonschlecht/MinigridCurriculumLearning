@@ -13,15 +13,10 @@ class Agent:
     - to choose an action given an observation,
     - to analyze the feedback (i.e. reward and done state) of its action."""
 
-    def __init__(self, obs_space, action_space, model_dir, envObj,
+    def __init__(self, obs_space, action_space, model_dir,
                  argmax=False, num_envs=1, use_memory=False, use_text=False):
-        lessViewsize = ViewSizeWrapper(envObj, agent_view_size=5)
-        print("WrapperObj",lessViewsize)
-        obs, _ = lessViewsize.reset()
-        newSize = obs["image"].shape
-        print("obs =", obs, "\n", newSize, "----\n")
-        obs_space, self.preprocess_obss = utils.get_obss_preprocessor(obs_space, newSize)
-        # obs_space = ViewSizeWrapper(env, agent_view_size=5) # das kann wahrsch auch nicht funktionieren, weil preprocess obs nicht geupdated wird
+        print("obs =", obs_space, "----\n")
+        obs_space, self.preprocess_obss = utils.get_obss_preprocessor(obs_space)
         self.acmodel = ACModel(obs_space, action_space, use_memory=use_memory, use_text=use_text)
         self.argmax = argmax
         self.num_envs = num_envs

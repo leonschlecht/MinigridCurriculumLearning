@@ -7,9 +7,9 @@ import sys
 
 import utils
 from Minigrid.minigrid.wrappers import ViewSizeWrapper
-from utils import device
+from baseScripts.MyPPO import MyPPOAlgo
+from utils import device, ENV_NAMES
 from model import ACModel
-
 
 # Parse arguments
 
@@ -18,8 +18,8 @@ parser = argparse.ArgumentParser()
 # General parameters
 parser.add_argument("--algo", required=True,
                     help="algorithm to use: a2c | ppo (REQUIRED)")
-parser.add_argument("--env", required=True,
-                    help="name of the environment to train on (REQUIRED)")
+parser.add_argument("--env",
+                    help="name of the environment to train on. Defaults to 5x5")
 parser.add_argument("--model", default=None,
                     help="name of the model (default: {ENV}_{ALGO}_{TIME})")
 parser.add_argument("--seed", type=int, default=1,
@@ -30,7 +30,7 @@ parser.add_argument("--save-interval", type=int, default=10,
                     help="number of updates between two saves (default: 10, 0 means no saving)")
 parser.add_argument("--procs", type=int, default=16,
                     help="number of processes (default: 16)")
-parser.add_argument("--frames", type=int, default=10**7,
+parser.add_argument("--frames", type=int, default=10 ** 7,
                     help="number of frames of training (default: 1e7)")
 
 # Parameters for startTraining algorithm
@@ -67,7 +67,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     args.mem = args.recurrence > 1
-
+    args.env = args.env or ENV_NAMES.DOORKEY_5x5
     # Set run dir
 
     date = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
@@ -111,10 +111,7 @@ if __name__ == "__main__":
     txt_logger.info("Training status loaded\n")
 
     # Load observations preprocessor
-    lessViewsize = ViewSizeWrapper(envs[0], agent_view_size=5)
-    obs, _ = lessViewsize.reset()
-    newSize = obs["image"].shape
-    obs_space, preprocess_obss = utils.get_obss_preprocessor(envs[0].observation_space, newSize)
+    obs_space, preprocess_obss = utils.get_obss_preprocessor(envs[0].observation_space)
     if "vocab" in status:
         preprocess_obss.vocab.load_vocab(status["vocab"])
     txt_logger.info("Observations preprocessor loaded")
@@ -135,9 +132,9 @@ if __name__ == "__main__":
                                 args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                                 args.optim_alpha, args.optim_eps, preprocess_obss)
     elif args.algo == "ppo":
-        algo = torch_ac.PPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
-                                args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
-                                args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
+        algo = MyPPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
+                         args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
+                         args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
     else:
         raise ValueError("Incorrect algorithm name: {}".format(args.algo))
 
@@ -204,6 +201,7 @@ if __name__ == "__main__":
             if len(values) > 10:
                 startCountingValue = False
                 import numpy as np
+
                 if np.mean(values) > 0.75:
                     print("NEXT")
                     # break

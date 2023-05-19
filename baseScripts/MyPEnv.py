@@ -30,15 +30,13 @@ def worker(conn, env):
 class MyParallelEnv(gym.Env):
     """A concurrent execution of environments in multiple processes."""
 
-    def __init__(self, envs, envObj, viewSize=7):
+    def __init__(self, envs):
         assert len(envs) >= 1, "No environment given."
-        print("Penv constructor")
+        print("MyPenv constructor")
         self.envs = envs
-        self.observation_space = self.envs[0].observation_space  # TODO should viewsizeWrapper be here already ??
-        # self.observation_space = ViewSizeWrapper(envs[0], agent_view_size=99)
+        self.observation_space = self.envs[0].observation_space
         self.action_space = self.envs[0].action_space
-        self.name = envObj
-
+        self.name = envs[0]
         self.locals = []
         for env in self.envs[1:]:
             local, remote = multiprocessing.Pipe()

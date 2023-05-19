@@ -7,7 +7,7 @@ from torch_ac.algos.base import BaseAlgo
 from baseScripts.MyBaseAlgo import MyBaseAlgo
 
 
-class PPOAlgo(MyBaseAlgo):
+class MyPPOAlgo(MyBaseAlgo):
     """The Proximal Policy Optimization algorithm
     ([Schulman et al., 2015](https://arxiv.org/abs/1707.06347))."""
 

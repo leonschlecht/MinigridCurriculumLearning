@@ -1,11 +1,10 @@
-import argparse
 import time
 import torch
-from torch_ac.utils.penv import ParallelEnv
 import json
 
 import utils
-from utils import device, ENV_NAMES, getEnvListThroughDifficulty
+from baseScripts.MyPEnv import MyParallelEnv
+from utils import device, getEnvListThroughDifficulty
 
 
 def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
@@ -15,7 +14,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     for i in range(args.procs):
         env = utils.make_env(evalEnv, args.seed + 10000 * i)
         envs.append(env)
-    env = ParallelEnv(envs)
+    env = MyParallelEnv(envs)
 
     # Load agent
     model_dir = utils.get_model_dir(model)

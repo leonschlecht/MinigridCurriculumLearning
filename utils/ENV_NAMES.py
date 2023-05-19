@@ -11,3 +11,5 @@ class ENV_NAMES:
                 DOORKEY_8x8,
                 DOORKEY_16x16
                 ]
+
+    DOORKEY_5x5_v0 = DOORKEY_5x5 + "-v0"
