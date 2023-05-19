@@ -6,6 +6,7 @@ import tensorboardX
 import sys
 
 import utils
+from Minigrid.minigrid.wrappers import ViewSizeWrapper
 from utils import device
 from model import ACModel
 
@@ -110,8 +111,10 @@ if __name__ == "__main__":
     txt_logger.info("Training status loaded\n")
 
     # Load observations preprocessor
-
-    obs_space, preprocess_obss = utils.get_obss_preprocessor(envs[0].observation_space)
+    lessViewsize = ViewSizeWrapper(envs[0], agent_view_size=5)
+    obs, _ = lessViewsize.reset()
+    newSize = obs["image"].shape
+    obs_space, preprocess_obss = utils.get_obss_preprocessor(envs[0].observation_space, newSize)
     if "vocab" in status:
         preprocess_obss.vocab.load_vocab(status["vocab"])
     txt_logger.info("Observations preprocessor loaded")

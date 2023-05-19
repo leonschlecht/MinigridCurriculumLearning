@@ -4,8 +4,8 @@ import torch
 from torch_ac.utils.penv import ParallelEnv
 
 import utils
+from baseScripts.MyPEnv import MyParallelEnv
 from utils import device
-
 
 # Parse arguments
 
@@ -45,17 +45,22 @@ if __name__ == "__main__":
     envs = []
     for i in range(args.procs):
         env = utils.make_env(args.env, args.seed + 10000 * i)
+        envObj = env
         envs.append(env)
-    env = ParallelEnv(envs)
+    env = MyParallelEnv(envs, envObj)
     print("Environments loaded\n")
 
     # Load agent
 
     model_dir = utils.get_model_dir(args.model)
-    agent = utils.Agent(env.observation_space, env.action_space, model_dir,
+    agent = utils.Agent(env.observation_space, env.action_space, model_dir, envObj,
                         argmax=args.argmax, num_envs=args.procs,
                         use_memory=args.memory, use_text=args.text)
     print("Agent loaded\n")
+
+    # evaluate / Train calls Agent with env.observation_space; but we need a reference to env to make use of viewsize wrapper
+    # and there is something wrong with the type
+    # und auf dem viesize obj mussm an erst obs, _ = ... reset() aufrufen, damit man auf die ["image"].shape zugreifen kann
 
     # Initialize logs
 
@@ -113,4 +118,5 @@ if __name__ == "__main__":
 
         indexes = sorted(range(len(logs["return_per_episode"])), key=lambda k: logs["return_per_episode"][k])
         for i in indexes[:n]:
-            print("- episode {}: R={}, F={}".format(i, logs["return_per_episode"][i], logs["num_frames_per_episode"][i]))
+            print(
+                "- episode {}: R={}, F={}".format(i, logs["return_per_episode"][i], logs["num_frames_per_episode"][i]))
