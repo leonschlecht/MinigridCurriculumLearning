@@ -90,7 +90,7 @@ class RollingHorizon(ABC):
                                     currentSnapshotScore, self.iterationsDone, self.envDifficulty,
                                     self.lastEpochStartTime, self.curricula, self.curriculaEnvDetails, self.logFilePath)
             # TODO the self.curricula call will fail for RRH becuase its been updated arleady
-            self.updateSpecificInfo()
+            self.updateSpecificInfo(epoch)
             self.logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, currentSnapshotScore,
                                    self.trainingInfoJson, self.txtLogger, self.stepMaxReward, self.totalEpochs)
 
@@ -123,18 +123,26 @@ class RollingHorizon(ABC):
 
     @abstractmethod
     def executeOneEpoch(self, epoch: int) -> None:
-        pass
+        pass # TODO is epoch used ?
 
     @abstractmethod
-    def updateSpecificInfo(self) -> None:
+    def updateSpecificInfo(self, epoch) -> None:
         pass
 
     @abstractmethod
     def getCurrentBestModel(self):
+        """
+        Gets the name of the currently best performing curriculum after the horizons were rolled out
+        :return:
+        """
         pass
 
     @abstractmethod
     def getCurrentBestCurriculum(self):
+        """
+        Gets the env list of the currently best performing curriculum after the horizons were rolled out
+        :return:
+        """
         pass
 
     def resetEpochVariables(self) -> None:

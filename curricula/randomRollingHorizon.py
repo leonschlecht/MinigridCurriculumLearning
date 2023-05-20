@@ -37,9 +37,14 @@ class RandomRollingHorizon(RollingHorizon):
         currentBestModel = utils.getModelWithCurricSuffix(self.selectedModel, currentBestCurriculumIdx)
         return currentBestModel
 
-    def updateSpecificInfo(self) -> None:
+    def updateSpecificInfo(self, epoch) -> None:
         # TODO this should be renamed (this was intended for trainingInfoJson updates)
-        if not self.fullRandom:
+        if self.fullRandom:
+            self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
+                                                              self.paraEnvs, self.seed + epoch)
+        else:
+            self.curricula = self.updateCurriculaAfterHorizon(self.lastChosenCurriculum, self.numCurric,
+                                                              self.envDifficulty)
             self.curricConsecutivelyChosen = \
                 self.calculateConsecutivelyChosen(self.curricConsecutivelyChosen, self.currentBestCurriculum,
                                                   self.lastChosenCurriculum)
@@ -58,14 +63,6 @@ class RandomRollingHorizon(RollingHorizon):
         self.txtLogger.info(f"currentRewards for : {self.currentRewardsDict}")
         self.txtLogger.info(f"snapshot Rewards for : {self.currentSnapshotRewards}")
         self.txtLogger.info(f"currentEnvDetails for : {self.curriculaEnvDetails}")
-        if self.fullRandom:
-            self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
-                                                              self.paraEnvs, self.seed + epoch)
-        else:
-            self.curricula = self.updateCurriculaAfterHorizon(self.lastChosenCurriculum, self.numCurric,
-                                                              self.envDifficulty)
-
-            # TODO the order of updateCurriculaAfterHorizon and updateConsec is not clear
 
     def trainEachCurriculum(self, i: int, iterationsDone: int, genNr: int, curricula) -> ndarray:
         """
@@ -83,8 +80,8 @@ class RandomRollingHorizon(RollingHorizon):
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
-            #rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
-             #                                                        self.txtLogger))
+            rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
+                                                                     self.txtLogger))
 
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards

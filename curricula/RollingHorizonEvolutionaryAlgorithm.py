@@ -71,7 +71,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.resX = res.X
         self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
 
-    def updateSpecificInfo(self):
+    def updateSpecificInfo(self, epoch):
         self.trainingInfoJson["resX"] = self.resX
 
     def getCurrentBestModel(self):
