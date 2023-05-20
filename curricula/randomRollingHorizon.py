@@ -19,43 +19,53 @@ class RandomRollingHorizon(RollingHorizon):
     def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom):
         super().__init__(txtLogger, startTime, cmdLineString, args)
         self.fullRandom = fullRandom
+        if not self.fullRandom:
+            self.curricConsecutivelyChosen = 0
+            self.currentBestCurriculum = None
+            self.lastChosenCurriculum = None
+            # TODO probably needs to be updated upon reload
 
     def getCurrentBestCurriculum(self):
         currentBestCurriculumIdx = np.argmax(self.currentRewardsDict)
         currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
+        if not self.fullRandom:  # TODO this is probably very unclean
+            self.currentBestCurriculum = currentBestCurriculum
         return currentBestCurriculum
 
     def getCurrentBestModel(self):
         currentBestCurriculumIdx = np.argmax(self.currentRewardsDict)
-        currentBestModel = self.curriculaEnvDetails[currentBestCurriculumIdx]
+        currentBestModel = utils.getModelWithCurricSuffix(self.selectedModel, currentBestCurriculumIdx)
         return currentBestModel
 
-    def executeOneEpoch(self) -> None:
-        self.selectedModel = utils.getEpochModelName(self.model, epoch)
+    def updateSpecificInfo(self) -> None:
+        # TODO this should be renamed (this was intended for trainingInfoJson updates)
+        if not self.fullRandom:
+            self.curricConsecutivelyChosen = \
+                self.calculateConsecutivelyChosen(self.curricConsecutivelyChosen, self.currentBestCurriculum,
+                                                  self.lastChosenCurriculum)
+
+    def executeOneEpoch(self, epoch: int) -> None:
         currentRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
         snapshotRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
         for i in range(len(self.curricula)):
-            reward = self.trainEachCurriculum(i, iterationsDoneSoFar, epoch)
+            reward = self.trainEachCurriculum(i, self.iterationsDone, 0, self.curricula)
             currentRewards["curric_" + str(i)] = np.sum(reward)
             snapshotRewards["curric_" + str(i)] = reward[0]
 
-        currentRewardsList = [currentRewards[key] / self.curricMaxReward for key in currentRewards]
-        fullRewardsDict["epoch_" + str(epoch)] = currentRewards
-        print("RRH currentrewardslist", currentRewardsList)
-        bestCurriculumScore = max(currentRewardsList)
-        snapshotScore = snapshotRewards["curric_" + str(currentBestCurriculumIdx)]
-        if not self.fullRandom:
-            curricConsecutivelyChosen = \
-                self.calculateConsecutivelyChosen(curricConsecutivelyChosen, currentBestCurriculum,
-                                                  lastChosenCurriculum)
-
+        self.currentRewardsDict = currentRewards
+        self.currentSnapshotRewards = snapshotRewards
+        self.curriculaEnvDetails = self.curricula
+        self.txtLogger.info(f"currentRewards for : {self.currentRewardsDict}")
+        self.txtLogger.info(f"snapshot Rewards for : {self.currentSnapshotRewards}")
+        self.txtLogger.info(f"currentEnvDetails for : {self.curriculaEnvDetails}")
         if self.fullRandom:
             self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
-                                                              self.paraEnvs, self.seed)
+                                                              self.paraEnvs, self.seed + epoch)
         else:
-            self.curricula = self.updateCurriculaAfterHorizon(lastChosenCurriculum, self.numCurric,
+            self.curricula = self.updateCurriculaAfterHorizon(self.lastChosenCurriculum, self.numCurric,
                                                               self.envDifficulty)
-        # TODO check if this has to be called AFTER the epoch is done / updated etc and not during
+
+            # TODO the order of updateCurriculaAfterHorizon and updateConsec is not clear
 
     def trainEachCurriculum(self, i: int, iterationsDone: int, genNr: int, curricula) -> ndarray:
         """
@@ -63,7 +73,6 @@ class RandomRollingHorizon(RollingHorizon):
         """
         nameOfCurriculumI = utils.getModelWithCurricSuffix(self.selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
         rewards = np.zeros(len(self.curricula))
-        # TODO remove epoch param in method here ???
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
         print("curricula = ", self.curricula[i])
@@ -74,13 +83,14 @@ class RandomRollingHorizon(RollingHorizon):
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
             self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
-            rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
-                                                                     self.txtLogger))
+            #rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
+             #                                                        self.txtLogger))
 
         self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
         return rewards
 
     def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum) -> int:
+        self.lastChosenCurriculum = currentBestCurriculum
         if consecutiveCount + 1 < len(self.curricula[0]) and \
                 (currentBestCurriculum == lastChosenCurriculum or lastChosenCurriculum is None):
             return consecutiveCount + 1

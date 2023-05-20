@@ -43,7 +43,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         return list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][len(GEN_PREFIX):], \
             int(keyIndexPairOfMaxReward[1])
 
-    def executeOneEpoch(self):
+    def executeOneEpoch(self, epoch: int):
         nsga = NSGA2(pop_size=self.numCurric,
                      sampling=IntegerRandomSampling(),
                      crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
@@ -72,7 +72,6 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
 
     def updateSpecificInfo(self):
-        print("res x" , self.resX)
         self.trainingInfoJson["resX"] = self.resX
 
     def getCurrentBestModel(self):
@@ -104,7 +103,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
             rewards[i] = np.sum(rewardI)
         self.currentRewardsDict[GEN_PREFIX + str(genNr)] = rewards
         self.currentSnapshotRewards[GEN_PREFIX + str(genNr)] = snapshotReward
-        self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula
+        self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula # TODO this should be renamed because it is only using the current epoch one (also for RRH) --> the update does [epoch] ...
         self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewardsDict}")
         self.txtLogger.info(f"snapshot Rewards for {genNr}: {self.currentSnapshotRewards}")
         self.txtLogger.info(f"currentEnvDetails for {genNr}: {self.curriculaEnvDetails}")

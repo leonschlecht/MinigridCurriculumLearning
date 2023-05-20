@@ -8,21 +8,40 @@ nimmt ganzes modell statt snapshot (zB speichert ep1_curric0_gen3 ---> ep2 statt
 - schauen, warum das eval(...) einen Fehler wirft beim loggen
 - check differences cmd line args in reloading
 
+
+Fr:
+fixes und testen / refactoring
+
+Sa:
+?
+
+
+
+So:
+baseline mit paraEnv trainieren (20 Mio Iterationen, oder paar h); so dass man regelmäßig evaluiert
+ggf. penv speedup weiter probieren
+RHEA & RRH getestet und sicher funktionsfähig
+
+
+Mo:
+Cuda testen / lesen
+
 Aufgaben:
 - Funktioniert Cuda richtig? https://www.run.ai/guides/gpu-deep-learning/pytorch-gpu
 ------ 6 8 10 12 für 5x5 viwesize (3x3 macht wenig Sinn)
 - baseline mit paraEnv trainieren
 - Experimente-History aufschreiben + Gedanken / Resultate was wozu geführt hatte etc
-- currentBestModel umbenenen so dassm an auch weiß das es am ende des rHs ist
+
 
 ===================================
 L:
-- RHEA und RRH noch mehr zusammenführen
 - procs % paraEnv == 0
 - myBaseAlgo umbenenne und in anderen folder
 - baseScripts eliminieren bzw. zusammenfügen mit dem curricula/... varianten
 - eine Checkliste an tests erstellen, wenn ich was ändere (zB tensorboard anschauen, logs durchschauen (esp. frames; geht V/ reward richtig; 1 dummy durchlauf für RRH / RHEA
 - assertion check für ob die gleichen envs verwendet werden bei Reload
+- currentBestModel umbenenen so dassm an auch weiß das es am ende des rHs ist
+- ggf "rewards" ---> CurriculumRewards nennen damit es klarer ist
 
 Home:
 - testen, ob das toggle-env einen verbuggeten Reward-Log hat. ( zB --> 5x5 * 2 ausprobieren; dann ein malmit 5x5 / 16x16)
@@ -133,6 +152,10 @@ Vektor -> Matrix benennen (bzw. ggf 3d für die Repräsentation damit es übersi
 
 
 Changelog / Erkenntnisse
+Reward nur am Ende ist super garbage
+
+
+
 
 - 8x8, vor allem 16x16 wurde fast nie ausgewählt. Daher Reward anpassen, um ermutigen das zu tun
 - envDifficulty (aka maxSteps) lässt reward etwas verzerrt aussehen; daher multiplier

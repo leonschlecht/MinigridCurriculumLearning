@@ -1,8 +1,6 @@
-import json
 import os
 import random
 from abc import ABC, abstractmethod
-from datetime import datetime
 
 import numpy as np
 from numpy import ndarray
@@ -16,6 +14,7 @@ from utils.curriculumHelper import *
 
 class RollingHorizon(ABC):
     def __init__(self, txtLogger, startTime, cmdLineString: str, args):
+        random.seed(args.seed)
         self.args = args
         self.numCurric = args.numCurric
         self.stepsPerCurric = args.stepsPerCurric
@@ -26,11 +25,8 @@ class RollingHorizon(ABC):
         self.seed = args.seed
         self.paraEnvs = args.paraEnv
         # TODO does RHEA even need a curric list becasue it gets generated always anyway
-
-        # TODO this is probably deprecated because the generated curricula is never used by the algorithm
         self.curricula = self.randomlyInitializeCurricula(args.numCurric, args.stepsPerCurric, self.envDifficulty,
-                                                          self.paraEnvs,
-                                                          self.seed)  # TODO should this be different for RHEA
+                                                          self.paraEnvs, self.seed)
 
         self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.iterationsDone = 0
@@ -39,8 +35,8 @@ class RollingHorizon(ABC):
         self.totalEpochs = args.trainEpochs
         self.trainingTime = 0
 
-        self.stepMaxReward = self.calculateCurricStepMaxReward(len(ENV_NAMES.ALL_ENVS))
-        self.curricMaxReward = self.calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
+        self.stepMaxReward = calculateCurricStepMaxReward(len(ENV_NAMES.ALL_ENVS))
+        self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
 
         self.trainingInfoJson = {}
         self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"  # TODO maybe outsource
@@ -51,7 +47,6 @@ class RollingHorizon(ABC):
         self.model = args.model
         self.modelExists = os.path.exists(self.logFilePath)
         self.txtLogger.info(f"curricula list start {self.curricula}")
-        print("hello")
 
     def saveFirstStepOfModel(self, exactIterationsPerEnv: int, nameOfCurriculumI: str):
         if not self.exactIterationsSet:  # TODO refactor this to common method
@@ -74,7 +69,7 @@ class RollingHorizon(ABC):
                 f"\n--------------------------------------------------------------\n                     START EPOCH {epoch}\n--------------------------------------------------------------\n")
             self.selectedModel = utils.getEpochModelName(self.model, epoch)
 
-            self.executeOneEpoch()  # TODO rename to sth else
+            self.executeOneEpoch(epoch)
 
             self.iterationsDone += self.ITERATIONS_PER_ENV
             nextModel = utils.getEpochModelName(self.model, epoch + 1)
@@ -85,25 +80,23 @@ class RollingHorizon(ABC):
                                   self.currentRewardsDict]
             bestCurriculumScore: float = np.max(currentRewardsList)
             currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values()))
-            # RRH had fullRewardsDict locally
+
             currentBestModel = self.getCurrentBestModel()
             currentBestCurriculum = self.getCurrentBestCurriculum()
-            # TODO test why currentBestCurriculum was after the copy call. couldnt it have just been above it all along?
-
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
 
             self.envDifficulty = self.calculateEnvDifficulty(currentSnapshotScore, self.stepMaxReward)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurriculumScore,
                                     currentSnapshotScore, self.iterationsDone, self.envDifficulty,
-                                    self.lastEpochStartTime,
-                                    self.curricula, self.curriculaEnvDetails, self.logFilePath)
+                                    self.lastEpochStartTime, self.curricula, self.curriculaEnvDetails, self.logFilePath)
+            # TODO the self.curricula call will fail for RRH becuase its been updated arleady
             self.updateSpecificInfo()
             self.logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurriculumScore, currentSnapshotScore,
                                    self.trainingInfoJson, self.txtLogger, self.stepMaxReward, self.totalEpochs)
 
             self.resetEpochVariables()
 
-        self.printFinalLogs(self.trainingInfoJson, self.txtLogger)
+        printFinalLogs(self.trainingInfoJson, self.txtLogger)
 
     def trainEachCurriculum(self, i: int, iterationsDone: int, genNr: int, curricula) -> ndarray:
         """
@@ -129,7 +122,7 @@ class RollingHorizon(ABC):
         return reward
 
     @abstractmethod
-    def executeOneEpoch(self) -> None:
+    def executeOneEpoch(self, epoch: int) -> None:
         pass
 
     @abstractmethod
@@ -160,15 +153,20 @@ class RollingHorizon(ABC):
                 self.trainingInfoJson = json.loads(f.read())
 
             self.iterationsDone = self.trainingInfoJson[numFrames]
-            startEpoch = self.trainingInfoJson[epochsDone]  # TODO is this correct ?
+            startEpoch = self.trainingInfoJson[epochsDone]
             if iterationsPerEnvKey in self.trainingInfoJson:
                 self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             rewardsDict = self.trainingInfoJson[rewardsKey]
             self.seed = self.trainingInfoJson[seedKey]
-            consec = self.trainingInfoJson[consecutivelyChosen]  # TODO ??
+            """
+            if isinstance(self, RandomRollingHorizon):
+                if not self.fullRandom:
+                    self.curricConsecutivelyChosen = self.trainingInfoJson[consecutivelyChosen]
+                    self.lastChosenCurriculum = self.trainingInfoJson[""] # TODO
+            """
             self.lastEpochStartTime = self.trainingInfoJson["startTime"]  # TODO use right keys
-            # TODO test rewardsDictb ecasue RRH has "rewards" with gets reutrned
 
+            # TODO test rewardsDictb ecasue RRH has "rewards" with gets reutrned
 
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             # TODO maybe do the deletion automatically, but it doesnt matter
@@ -185,7 +183,7 @@ class RollingHorizon(ABC):
                     self.txtLogger.info(f"Nothing to delete {k}")
                     break
             """
-            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"] # TODO ?
+            assert len(self.curricula) == self.trainingInfoJson["curriculaEnvDetails"]["epoch0"]  # TODO ?
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}]")
         else:
             self.txtLogger.info("Creating model. . .")
@@ -197,16 +195,12 @@ class RollingHorizon(ABC):
                             txtLogger=self.txtLogger)  # copy epoch0 -> epoch1
             self.txtLogger.info(f"\nThe training will go on for {self.totalEpochs} epochs\n")
             rewardsDict = {}
-            lastChoesnCurriculum = None
-            consec = 0
 
             self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
                                                               self.paraEnvs, self.seed)
-            iterationsDoneSoFar = train.startTraining(0, 0, self.selectedModel,
-                                                      [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
-                                                      self.txtLogger)
+            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
+                                self.txtLogger)
 
-        # TODO should this return lastChosen & consec ? or how to deal with the reload RRH
         return startEpoch, rewardsDict
 
     def evaluateCurriculumResults(self, evaluationDictionary):
@@ -221,36 +215,6 @@ class RollingHorizon(ABC):
 
         # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
         # # Aber warum? Und wie will man das nach 20+ durchläufen plotten
-
-    def saveTrainingInfoToFile(self, path, jsonBody):
-        with open(path, 'w') as f:
-            f.write(json.dumps(jsonBody, indent=4, default=str))
-
-    def printFinalLogs(self, trainingInfoJson, txtLogger) -> None:
-        """
-        Prints the last logs, after the training is done
-        """
-        txtLogger.info("----TRAINING END-----")
-        txtLogger.info(f"Best Curricula {trainingInfoJson[bestCurriculas]}")
-        txtLogger.info(f"Trained in Envs {trainingInfoJson[selectedEnvs]}")
-        txtLogger.info(f"Rewards: {trainingInfoJson[rewardsKey]}")
-
-        now = datetime.now()
-        timeDiff = 0
-        print(timeDiff)
-        txtLogger.info(f"Time ended at {now} , total training time: {timeDiff}")
-        txtLogger.info("-------------------\n\n")
-
-    def calculateCurricStepMaxReward(self, stepsPerCurric) -> float:
-        MAX_REWARD_PER_ENV = 1
-        maxReward: float = stepsPerCurric * MAX_REWARD_PER_ENV
-        return maxReward
-
-    def calculateCurricMaxReward(self, curricLength, stepMaxReward, gamma) -> float:
-        maxReward = 0
-        for j in range(curricLength):
-            maxReward += ((gamma ** j) * stepMaxReward)
-        return maxReward
 
     def initTrainingInfo(self, cmdLineString, logFilePath, seed, args) -> dict:
         """
@@ -274,12 +238,11 @@ class RollingHorizon(ABC):
                             fullArgs: args,
                             additionalNotes: "",
                             numFrames: 0}
-        self.saveTrainingInfoToFile(logFilePath, trainingInfoJson)
+        saveTrainingInfoToFile(logFilePath, trainingInfoJson)
         return trainingInfoJson
 
     def logInfoAfterEpoch(self, epoch, currentBestCurriculum, bestReward, snapshotReward, trainingInfoJson, txtLogger,
-                          maxReward,
-                          totalEpochs):
+                          maxReward, totalEpochs):
         """
         Logs relevant training info after a training epoch is done and the trainingInfo was updated
         :param snapshotReward:
@@ -335,9 +298,8 @@ class RollingHorizon(ABC):
         return curricula
 
     def updateTrainingInfo(self, trainingInfoJson, epoch: int, bestCurriculum: list, fullRewardsDict,
-                           currentScore: float,
-                           snapshotScore: float, framesDone, envDifficulty: int, lastEpochStartTime, curricula,
-                           curriculaEnvDetails, logFilePath, popX=None) -> None:
+                           currentScore: float, snapshotScore: float, framesDone, envDifficulty: int,
+                           lastEpochStartTime, curricula, curriculaEnvDetails, logFilePath) -> None:
         """
         Updates the training info dictionary
         :param snapshotScore:
@@ -352,7 +314,6 @@ class RollingHorizon(ABC):
         :param bestCurriculum: the curriculum that had the highest reward in the latest epoch
         :param fullRewardsDict: the dict of rewards for each generation and each curriculum
         :param currentScore: the current best score
-        :param popX: the pymoo X parameter for debugging purposes - only relevant for RHEA, not RRH
         """
         trainingInfoJson[epochsDone] = epoch + 1
         trainingInfoJson[numFrames] = framesDone
@@ -373,8 +334,6 @@ class RollingHorizon(ABC):
 
         # Debug Logs
         trainingInfoJson["currentListOfCurricula"] = curricula
-        if popX is not None:
-            trainingInfoJson["curriculumListAsX"] = popX
 
-        self.saveTrainingInfoToFile(logFilePath, trainingInfoJson)
+        saveTrainingInfoToFile(logFilePath, trainingInfoJson)
         # TODO how expensive is it to always overwrite everything?
