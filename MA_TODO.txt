@@ -15,12 +15,10 @@ fixes und testen / refactoring
 Sa:
 ?
 
-
-
 So:
 baseline mit paraEnv trainieren (20 Mio Iterationen, oder paar h); so dass man regelmäßig evaluiert
 ggf. penv speedup weiter probieren
-RHEA & RRH getestet und sicher funktionsfähig
+RHEA & RRH getestet und sicher funktionsfähig, baisedRRH wäre gut aber nicht nötig
 
 
 Mo:
@@ -39,19 +37,22 @@ should curricEvnDetails be renamed to acoomodate the fact that it is only append
 
 Home:
 - testen, ob das toggle-env einen verbuggeten Reward-Log hat. ( zB --> 5x5 * 2 ausprobieren; dann ein malmit 5x5 / 16x16)
+- testen, ob pymoo in 1 Generation immer allse richtig weitergibt und nix ausversehen doppelt passiert (zB schauen ob andere Curricula verwendet werden)
+
+
 ------- storage in git pushen
 ------------ testen, ob RHEA auch richtig durchläuft mit den Generationen
-- testen, ob pymoo in 1 Generation immer allse richtig weitergibt und nix ausversehen doppelt passiert
 --------- RHEA mit FESTEN envs testen (um zu sehen, ob er auch richtig weitermacht bei dem switch bzw sehen wo tensorboard scheitert)
 - epochsDone: 1 zu hoch in der stauts.json (--> TESTEN MIT RHEA) (steht 12 drin; womit würde es jetzt weitermachen?) also das "START EPOCH ...."
-- self.iterationsPerEnv reload testen ; in RRH auch
-
-- rrh normalize reward testen
+- self.iterationsPerEnv reload testen
 
 Q's:
 den 1st step reward speichern statt den gesamten reward benutzen ( = "actualPerformance" --> maxReward beurteilen daran; aber trotzdem das andere loggen)
 - Curriculum-Rewards normalisieren wichtig? (sonst ist das in der json irreführend)
 
+
+Next Steps
+- Wahrsch. jetzt evaluation gedanken machen
 ===========================================================================
 
 
@@ -60,10 +61,9 @@ Ladezeit-Optimierungen
 - penv weiterprobieren ( Prozess pausieren, damit nicht 4 * 32 aktiv sind sondern nur 1 * 32)
 - eval penv verbessern ; vllt kann man da ja was wiederverwenden (zumindest das letzte)
 
-.........
 
 Log-Improvements
-- ggf die envDetails Struktur flippen (epoch->gen->curric zu epoch->curric->gen)
+- ggf die envDetails Struktur flippen (epoch->gen->curric zu epoch->curric->gen) 1/3
 
 Results-Evaluation
 - eval: zählen welche env wie oft im training vorkam
@@ -72,10 +72,8 @@ Results-Evaluation
 
 Other
 - Docstrings schreiben
-- consec chosen einbauen in update methode für RRH biased
 - gamma Parameter auswirkungen; summe von 0 oder 1 starten lassen
  wird maxReward richtig geestzt / ist er noch relevant?
-printen von dem acModel am anfang ...
 
 
 Erkenntnise:

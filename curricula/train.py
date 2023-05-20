@@ -52,6 +52,7 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     if "model_state" in status:
         acmodel.load_state_dict(status["model_state"])
     acmodel.to(device)
+    txt_logger.info(f'{acmodel}') # TODO test
 
     # currentFramesDone = status["num_frames"]
     update = status["update"]
