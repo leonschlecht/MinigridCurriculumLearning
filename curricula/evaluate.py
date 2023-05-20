@@ -4,7 +4,7 @@ import torch
 import json
 
 import utils
-from baseScripts.MyPEnv import MyParallelEnv
+from training.ParallelEnvironment import MyParallelEnv
 from utils import device, getEnvListThroughDifficulty
 
 

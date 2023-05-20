@@ -1,10 +1,9 @@
 import argparse
 import time
 import torch
-from torch_ac.utils.penv import ParallelEnv
 
 import utils
-from baseScripts.MyPEnv import MyParallelEnv
+from training.ParallelEnvironment import MyParallelEnv
 from utils import device, ENV_NAMES
 
 # Parse arguments

@@ -1,10 +1,7 @@
 import numpy
 import torch
-import torch.nn.functional as F
 
-from torch_ac.algos.base import BaseAlgo
-
-from baseScripts.MyBaseAlgo import MyBaseAlgo
+from training.BaesAlgorithm import MyBaseAlgo
 
 
 class MyPPOAlgo(MyBaseAlgo):

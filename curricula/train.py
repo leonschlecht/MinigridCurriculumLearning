@@ -1,9 +1,8 @@
 import time
-import torch_ac
 import tensorboardX
 
 import utils
-from baseScripts.MyPPO import MyPPOAlgo
+from training.PPO import MyPPOAlgo
 from utils import device
 from model import ACModel
 

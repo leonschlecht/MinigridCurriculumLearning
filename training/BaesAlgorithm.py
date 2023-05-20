@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 import torch
 
 from torch_ac.format import default_preprocess_obss
-from torch_ac.utils import DictList, ParallelEnv
+from torch_ac.utils import DictList
 
-from baseScripts.MyPEnv import MyParallelEnv
+from training.ParallelEnvironment import MyParallelEnv
 
 
 class MyBaseAlgo(ABC):

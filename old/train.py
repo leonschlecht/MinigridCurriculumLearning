@@ -6,8 +6,7 @@ import tensorboardX
 import sys
 
 import utils
-from Minigrid.minigrid.wrappers import ViewSizeWrapper
-from baseScripts.MyPPO import MyPPOAlgo
+from training.PPO import MyPPOAlgo
 from utils import device, ENV_NAMES
 from model import ACModel
 
