@@ -144,3 +144,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
             for env in curriculaList[i]:
                 indices[i].append(ENV_NAMES.ALL_ENVS.index(env))
         return indices
+
+    def getCurriculumName(self, i, genNr):
+        assert genNr >= 0, "genNr must be a positive number in RHEA"
+        return utils.getModelWithCurricGenSuffix(self.selectedModel, i, genNr)

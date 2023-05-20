@@ -6,6 +6,7 @@ import sys
 import shutil
 
 import utils
+from .curriculumHelper import GEN_PREFIX
 from .other import device
 
 
@@ -74,7 +75,8 @@ def get_csv_logger(model_dir):
 
 ###
 
-def getModelWithCurricGenSuffix(model, curriculumNr: int, genPrefix: str, genNr: int) -> str:
+
+def getModelWithCurricGenSuffix(model, curriculumNr: int, genNr: int) -> str:
     """
 
     :param model:
@@ -83,7 +85,7 @@ def getModelWithCurricGenSuffix(model, curriculumNr: int, genPrefix: str, genNr:
     :param genNr:
     :return:
     """
-    return model + "_curric" + str(curriculumNr) + '_' + genPrefix + str(genNr)  # TODO use method below ?
+    return model + "_curric" + str(curriculumNr) + '_' + GEN_PREFIX + str(genNr)  # TODO use method below ?
 
 
 def getModelWithCurricSuffix(model, curricNr) -> str:

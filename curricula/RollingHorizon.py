@@ -103,16 +103,16 @@ class RollingHorizon(ABC):
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         # TODO can probably remove genNr from methodparam
-        reward = np.zeros(len(curricula[i]))
+        reward = np.zeros(len(curricula[i])) # todo [i] vs not
         # Save epoch_X -> epoch_X_curricI_genJ
-        nameOfCurriculumI = utils.getModelWithCurricGenSuffix(self.selectedModel, i, GEN_PREFIX, genNr)  # TODO+++
+        nameOfCurriculumI = self.getCurriculumName(i, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
         for j in range(len(curricula[i])):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
-            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
-                                                                    self.txtLogger))
+            #reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
+             #                                                       self.txtLogger))
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)  # TODO testfor ep0
@@ -218,7 +218,6 @@ class RollingHorizon(ABC):
         tmp = []
         i = 0
         for reward, env in tmp:
-            print(reward, env)
             i += 1
 
         # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
@@ -345,3 +344,7 @@ class RollingHorizon(ABC):
 
         saveTrainingInfoToFile(logFilePath, trainingInfoJson)
         # TODO how expensive is it to always overwrite everything?
+
+    @abstractmethod
+    def getCurriculumName(self, i, genNr):
+        pass

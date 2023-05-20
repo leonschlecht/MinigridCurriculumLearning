@@ -53,7 +53,7 @@ class RandomRollingHorizon(RollingHorizon):
         currentRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
         snapshotRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
         for i in range(len(self.curricula)):
-            reward = self.trainEachCurriculum(i, self.iterationsDone, 0, self.curricula)
+            reward = self.trainEachCurriculum(i, self.iterationsDone, -1, self.curricula)
             currentRewards["curric_" + str(i)] = np.sum(reward)
             snapshotRewards["curric_" + str(i)] = reward[0]
 
@@ -63,28 +63,6 @@ class RandomRollingHorizon(RollingHorizon):
         self.txtLogger.info(f"currentRewards for : {self.currentRewardsDict}")
         self.txtLogger.info(f"snapshot Rewards for : {self.currentSnapshotRewards}")
         self.txtLogger.info(f"currentEnvDetails for : {self.curriculaEnvDetails}")
-
-    def trainEachCurriculum(self, i: int, iterationsDone: int, genNr: int, curricula) -> ndarray:
-        """
-        Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
-        """
-        nameOfCurriculumI = utils.getModelWithCurricSuffix(self.selectedModel, i)  # Save TEST_e1 --> TEST_e1_curric0
-        rewards = np.zeros(len(self.curricula))
-        utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
-        initialIterationsDone = iterationsDone
-        print("curricula = ", self.curricula[i])
-        for j in range(len(self.curricula[i])):
-            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
-                                                 nameOfCurriculumI, self.curricula[i][j], self.args, self.txtLogger)
-            self.txtLogger.info(f"Iterations Done {iterationsDone}")
-            if j == 0:
-                self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
-            self.txtLogger.info(f"Trained iteration j={j} of curriculum {nameOfCurriculumI} ")
-            rewards[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
-                                                                     self.txtLogger))
-
-        self.txtLogger.info(f"Rewards for curriculum {nameOfCurriculumI} = {rewards}")
-        return rewards
 
     def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum) -> int:
         self.lastChosenCurriculum = currentBestCurriculum
@@ -112,3 +90,7 @@ class RandomRollingHorizon(RollingHorizon):
             curricula[i].append(getEnvFromDifficulty(envId, envDifficulty))
         assert len(curricula) == numberOfCurricula
         return curricula
+
+    def getCurriculumName(self, i, genNr):
+        assert genNr == -1, "this parameter shouldnt matter for RRH"
+        return utils.getModelWithCurricSuffix(self.selectedModel, i)
