@@ -31,7 +31,6 @@ class MyParallelEnv(gym.Env):
 
     def __init__(self, envs):
         assert len(envs) >= 1, "No environment given."
-        print("MyPenv constructor")
         self.envs = envs
         self.observation_space = self.envs[0].observation_space
         self.action_space = self.envs[0].action_space
@@ -46,7 +45,6 @@ class MyParallelEnv(gym.Env):
             remote.close()
 
     def reset(self, seed=None, options=None):
-        print("mypenv reset called")
         for local in self.locals:
             local.send(("reset", None))
         results = [self.envs[0].reset()[0]] + [local.recv() for local in self.locals]

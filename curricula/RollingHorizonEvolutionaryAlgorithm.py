@@ -73,7 +73,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
 
     def updateSpecificInfo(self):
         print("res x" , self.resX)
-        exit()
+        self.trainingInfoJson["resX"] = self.resX
 
     def getCurrentBestModel(self):
         genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewardsDict)
