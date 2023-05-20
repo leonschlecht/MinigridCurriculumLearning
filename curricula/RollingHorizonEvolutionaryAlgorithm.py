@@ -76,8 +76,8 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
 
     def getCurrentBestModel(self):
         genOfBestIndividual, curricIdxOfBestIndividual = self.getGenAndIdxOfBestIndividual(self.currentRewardsDict)
-        currentBestModel = utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual,
-                                                             GEN_PREFIX, genOfBestIndividual)
+        currentBestModel = \
+            utils.getModelWithCurricGenSuffix(self.selectedModel, curricIdxOfBestIndividual, genOfBestIndividual)
         return currentBestModel
 
     def getCurrentBestCurriculum(self) -> None:
@@ -103,7 +103,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
             rewards[i] = np.sum(rewardI)
         self.currentRewardsDict[GEN_PREFIX + str(genNr)] = rewards
         self.currentSnapshotRewards[GEN_PREFIX + str(genNr)] = snapshotReward
-        self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula # TODO this should be renamed because it is only using the current epoch one (also for RRH) --> the update does [epoch] ...
+        self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula
         self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewardsDict}")
         self.txtLogger.info(f"snapshot Rewards for {genNr}: {self.currentSnapshotRewards}")
         self.txtLogger.info(f"currentEnvDetails for {genNr}: {self.curriculaEnvDetails}")

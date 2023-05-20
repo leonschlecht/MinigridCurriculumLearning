@@ -23,12 +23,12 @@ class RandomRollingHorizon(RollingHorizon):
             self.curricConsecutivelyChosen = 0
             self.currentBestCurriculum = None
             self.lastChosenCurriculum = None
-            # TODO probably needs to be updated upon reload
+            # TODO 1/3 probably needs to be updated upon reload
 
     def getCurrentBestCurriculum(self):
         currentBestCurriculumIdx = np.argmax(self.currentRewardsDict)
         currentBestCurriculum = self.curricula[currentBestCurriculumIdx]
-        if not self.fullRandom:  # TODO this is probably very unclean
+        if not self.fullRandom:  # TODO 1/3 this is probably very unclean
             self.currentBestCurriculum = currentBestCurriculum
         return currentBestCurriculum
 
@@ -38,7 +38,7 @@ class RandomRollingHorizon(RollingHorizon):
         return currentBestModel
 
     def updateSpecificInfo(self, epoch) -> None:
-        # TODO this should be renamed (this was intended for trainingInfoJson updates)
+        # TODO 1/3 this should be renamed (this was intended for trainingInfoJson updates)
         if self.fullRandom:
             self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
                                                               self.paraEnvs, self.seed + epoch)
@@ -80,10 +80,8 @@ class RandomRollingHorizon(RollingHorizon):
                 (i.e. needs to be cut by 1 element!)
         """
         curricula = []
-        # TODO remove duplicates
-        # TODO dealing with the case where duplicates are forced due to parameters
-        # TODO maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
-        # TODO test this
+        # TODO 1/3 maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
+        # TODO 1/3 test this
         for i in range(numberOfCurricula):
             curricula.append(bestCurriculum[1:])
             envId = np.random.randint(0, len(ENV_NAMES.ALL_ENVS))
