@@ -21,6 +21,8 @@ consecutivelyChosen = "consecutivelyChosen"
 additionalNotes = "additionalNotes"
 snapshotScoreKey = "snapshotScore"
 iterationsPerEnvKey = "iterationsPerEnv"
+maxStepRewardKey = "maxStepReward"
+maxCurricRewardKey = "maxCurricReward"
 
 
 def saveTrainingInfoToFile(path, jsonBody):
