@@ -18,7 +18,6 @@ def get_obss_preprocessor(obs_space):
     # Check if it is a MiniGrid observation space
     elif isinstance(obs_space, gym.spaces.Dict) and "image" in obs_space.spaces.keys():
         obs_space = {"image": obs_space["image"].shape, "text": 100}
-        print("obs space after ?", obs_space)
         # TODO assert correct size
         vocab = Vocabulary(obs_space["text"])
 

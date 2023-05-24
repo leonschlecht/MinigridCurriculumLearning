@@ -52,7 +52,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     if "model_state" in status:
         acmodel.load_state_dict(status["model_state"])
     acmodel.to(device)
-    txt_logger.info(f'{acmodel}') # TODO test
 
     # currentFramesDone = status["num_frames"]
     update = status["update"]
@@ -60,6 +59,7 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     framesWithThisEnv = 0
 
     if framesToTrain == 0:
+        txt_logger.info(f'{acmodel}')
         txt_logger.info(f'Created model {model}')
         return 0
     algo = MyPPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,

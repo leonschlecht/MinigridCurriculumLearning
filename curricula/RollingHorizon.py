@@ -103,7 +103,7 @@ class RollingHorizon(ABC):
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         # TODO can probably remove genNr from methodparam
-        reward = np.zeros(len(curricula[i])) # todo [i] vs not
+        reward = np.zeros(len(curricula[i]))  # todo [i] vs not
         # Save epoch_X -> epoch_X_curricI_genJ
         nameOfCurriculumI = self.getCurriculumName(i, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
@@ -111,8 +111,8 @@ class RollingHorizon(ABC):
         for j in range(len(curricula[i])):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
-            #reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
-             #                                                       self.txtLogger))
+            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
+                                                                    self.txtLogger))
             self.txtLogger.info(f"\tIterations Done {iterationsDone}")
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)  # TODO testfor ep0
@@ -123,7 +123,7 @@ class RollingHorizon(ABC):
 
     @abstractmethod
     def executeOneEpoch(self, epoch: int) -> None:
-        pass # TODO is epoch used ?
+        pass  # TODO is epoch used ?
 
     @abstractmethod
     def updateSpecificInfo(self, epoch) -> None:
@@ -284,7 +284,7 @@ class RollingHorizon(ABC):
     def randomlyInitializeCurricula(self, numberOfCurricula: int, stepsPerCurric: int, envDifficulty: int, paraEnv: int,
                                     seed: int) -> list:
         """
-        Initializes list of curricula randomly. Allows duplicates, but they are extremely unlikely.
+        Initializes list of curricula randomly. Method allows duplicates, but they are extremely unlikely.
         :param paraEnv: the amount of envs that will be trained in parallel per step of a curriculum
         :param seed: the random seed
         :param envDifficulty:

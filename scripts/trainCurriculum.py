@@ -6,7 +6,7 @@ from gymnasium.envs.registration import register
 
 import utils
 from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
-    adaptiveCurriculum, RandomRollingHorizon
+    adaptiveCurriculum, RandomRollingHorizon, allParalell
 from utils import ENV_NAMES
 
 
@@ -38,6 +38,8 @@ def main():
         e.startCurriculumTraining()
     elif args.trainLinear:
         linearCurriculum.startLinearCurriculum(txtLogger, startTime, args)
+    elif args.trainAllParalell:
+        e = allParalell(txtLogger, startTime, cmdLineString, args)
     elif args.trainAdaptive:
         adaptiveCurriculum.startAdaptiveCurriculum(txtLogger, startTime, args)
     else:

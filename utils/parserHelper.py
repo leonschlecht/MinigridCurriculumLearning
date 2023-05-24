@@ -10,6 +10,8 @@ def initializeArgParser():
     # General parameters
     parser.add_argument("--trainAdaptive", default=False, action="store_true",
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
+    parser.add_argument("--trainAllParalell", default=False, action="store_true",
+                        help="traines all 4 environments in parallel")
     parser.add_argument("--trainLinear", default=False, action="store_true",
                         help="Decides what training method will be used. If set, linear curriculum will be used")
     parser.add_argument("--trainBiasedRandomRH", default=False, action="store_true",
@@ -70,6 +72,7 @@ def initializeArgParser():
     args = parser.parse_args()
     args.mem = args.recurrence > 1
     args.trainEvolutionary = not (
-            args.trainLinear or args.trainAdaptive or args.trainRandomRH or args.trainBiasedRandomRH)
+            args.trainLinear or args.trainAdaptive or args.trainRandomRH or args.trainBiasedRandomRH or args.trainAllParalell
+    )
     # TODO create object for type safety
     return args
