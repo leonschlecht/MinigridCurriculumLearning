@@ -98,7 +98,7 @@ class RollingHorizon(ABC):
 
         printFinalLogs(self.trainingInfoJson, self.txtLogger)
 
-    def trainEachCurriculum(self, i: int, iterationsDone: int, genNr: int, curricula) -> ndarray:
+    def trainACurriculum(self, i: int, iterationsDone: int, genNr: int, curricula) -> ndarray:
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
@@ -120,30 +120,6 @@ class RollingHorizon(ABC):
             self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {reward} (1 entry = 1 env)\n\n")
             self.txtLogger.info("-------------------------------")
         return reward
-
-    @abstractmethod
-    def executeOneEpoch(self, epoch: int) -> None:
-        pass  # TODO is epoch used ?
-
-    @abstractmethod
-    def updateSpecificInfo(self, epoch) -> None:
-        pass
-
-    @abstractmethod
-    def getCurrentBestModel(self):
-        """
-        Gets the name of the currently best performing curriculum after the horizons were rolled out
-        :return:
-        """
-        pass
-
-    @abstractmethod
-    def getCurrentBestCurriculum(self):
-        """
-        Gets the env list of the currently best performing curriculum after the horizons were rolled out
-        :return:
-        """
-        pass
 
     def resetEpochVariables(self) -> None:
         self.currentRewardsDict = {}
@@ -211,19 +187,8 @@ class RollingHorizon(ABC):
 
         return startEpoch, rewardsDict
 
-    def evaluateCurriculumResults(self, evaluationDictionary):
-        # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
-        # evaluationDictionary["actualPerformance"][1] ---> zeigt die zuletzt benutzte Umgebung zu dem Zeitpunkt an
-        #
-        tmp = []
-        i = 0
-        for reward, env in tmp:
-            i += 1
-
-        # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
-        # # Aber warum? Und wie will man das nach 20+ durchläufen plotten
-
-    def initTrainingInfo(self, cmdLineString, logFilePath, seed, args) -> dict:
+    @staticmethod
+    def initTrainingInfo(cmdLineString, logFilePath, seed, args) -> dict:
         """
         Initializes the trainingInfo dictionary
         :return:
@@ -248,7 +213,8 @@ class RollingHorizon(ABC):
         saveTrainingInfoToFile(logFilePath, trainingInfoJson)
         return trainingInfoJson
 
-    def logInfoAfterEpoch(self, epoch, currentBestCurriculum, bestReward, snapshotReward, trainingInfoJson, txtLogger,
+    @staticmethod
+    def logInfoAfterEpoch(epoch, currentBestCurriculum, bestReward, snapshotReward, trainingInfoJson, txtLogger,
                           maxReward, totalEpochs):
         """
         Logs relevant training info after a training epoch is done and the trainingInfo was updated
@@ -273,15 +239,17 @@ class RollingHorizon(ABC):
 
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
-    def calculateEnvDifficulty(self, currentReward, maxReward) -> int:
+    @staticmethod
+    def calculateEnvDifficulty(currentReward, maxReward) -> int:
         # TODO EXPERIMENT: that is why i probably should have saved the snapshot reward
         if currentReward < maxReward * .25:
             return 0
         elif currentReward < maxReward * .75:
             return 1
-        return 2
+        return 2 # TODO this ist not a RH method and should be somewhere else
 
-    def randomlyInitializeCurricula(self, numberOfCurricula: int, stepsPerCurric: int, envDifficulty: int, paraEnv: int,
+    @staticmethod
+    def randomlyInitializeCurricula(numberOfCurricula: int, stepsPerCurric: int, envDifficulty: int, paraEnv: int,
                                     seed: int) -> list:
         """
         Initializes list of curricula randomly. Method allows duplicates, but they are extremely unlikely.
@@ -304,7 +272,8 @@ class RollingHorizon(ABC):
         assert len(curricula[0]) == stepsPerCurric
         return curricula
 
-    def updateTrainingInfo(self, trainingInfoJson, epoch: int, bestCurriculum: list, fullRewardsDict,
+    @staticmethod
+    def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullRewardsDict,
                            currentScore: float, snapshotScore: float, framesDone, envDifficulty: int,
                            lastEpochStartTime, curricula, curriculaEnvDetails, logFilePath) -> None:
         """
@@ -348,3 +317,43 @@ class RollingHorizon(ABC):
     @abstractmethod
     def getCurriculumName(self, i, genNr):
         pass
+
+
+    @abstractmethod
+    def executeOneEpoch(self, epoch: int) -> None:
+        pass  # TODO is epoch used ?
+
+    @abstractmethod
+    def updateSpecificInfo(self, epoch) -> None:
+        pass
+
+    @abstractmethod
+    def getCurrentBestModel(self):
+        """
+        Gets the name of the currently best performing curriculum after the horizons were rolled out
+        :return:
+        """
+        pass
+
+    @abstractmethod
+    def getCurrentBestCurriculum(self):
+        """
+        Gets the env list of the currently best performing curriculum after the horizons were rolled out
+        :return:
+        """
+        pass
+
+
+    @staticmethod
+    def evaluateCurriculumResults(evaluationDictionary):
+        # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
+        # evaluationDictionary["actualPerformance"][1] ---> zeigt die zuletzt benutzte Umgebung zu dem Zeitpunkt an
+        #
+        tmp = []
+        i = 0
+        for reward, env in tmp:
+            i += 1
+
+        # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
+        # # Aber warum? Und wie will man das nach 20+ durchläufen plotten
+        # TODO this method is not unique for RH? Maybe there should be a parent class which has this

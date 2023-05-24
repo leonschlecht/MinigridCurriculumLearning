@@ -98,7 +98,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         rewards = np.zeros(len(curricula))
         snapshotReward = np.zeros(len(curricula))
         for i in range(len(curricula)):
-            rewardI = self.trainEachCurriculum(i, self.iterationsDone, genNr, curricula)
+            rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
             snapshotReward[i] = rewardI[0]
             rewards[i] = np.sum(rewardI)
         self.currentRewardsDict[GEN_PREFIX + str(genNr)] = rewards

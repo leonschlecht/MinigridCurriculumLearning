@@ -53,7 +53,7 @@ class RandomRollingHorizon(RollingHorizon):
         currentRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
         snapshotRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
         for i in range(len(self.curricula)):
-            reward = self.trainEachCurriculum(i, self.iterationsDone, -1, self.curricula)
+            reward = self.trainACurriculum(i, self.iterationsDone, -1, self.curricula)
             currentRewards["curric_" + str(i)] = np.sum(reward)
             snapshotRewards["curric_" + str(i)] = reward[0]
 
