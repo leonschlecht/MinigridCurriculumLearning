@@ -63,7 +63,7 @@ def initializeArgParser():
                         help="add a GRU to the model to handle text input")
 
     # Evaluation Arguments
-    parser.add_argument("--episodes", type=int, default=10, help="number of episodes of evaluation (default: 10)")
+    parser.add_argument("--episodes", type=int, default=15, help="number of episodes of evaluation (default: 15)")
     parser.add_argument("--argmax", action="store_true", default=False,
                         help="action with highest probability is selected")
     parser.add_argument("--worst-episodes-to-show", type=int, default=10, help="how many worst episodes to show")

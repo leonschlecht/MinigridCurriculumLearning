@@ -141,6 +141,8 @@ class RollingHorizon(ABC):
             rewardsDict = self.trainingInfoJson[rewardsKey]
             self.seed = self.trainingInfoJson[seedKey]
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
+            self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
+            self.exactIterationsSet = True
             """
             if isinstance(self, RandomRollingHorizon):
                 if not self.fullRandom:
