@@ -88,7 +88,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
 
     def trainEveryCurriculum(self, evolX, genNr):
         """
-        This method is called from the curriculumProblem_eval method
+        This method is called from the curriculumProblem_eval method. It simulates one generation and returns the reward to pymoo
         :param evolX: the X parameter of the current RHEA population
         :param genNr: the number of the current generation
         :return: the rewards after the rolling horizon
@@ -97,16 +97,19 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.curricula = curricula
         rewards = np.zeros(len(curricula))
         snapshotReward = np.zeros(len(curricula))
+        genKey = GEN_PREFIX + str(genNr)
         for i in range(len(curricula)):
             rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
             snapshotReward[i] = rewardI[0]
             rewards[i] = np.sum(rewardI)
-        self.currentRewardsDict[GEN_PREFIX + str(genNr)] = rewards
-        self.currentSnapshotRewards[GEN_PREFIX + str(genNr)] = snapshotReward
-        self.curriculaEnvDetails[GEN_PREFIX + str(genNr)] = curricula
-        self.txtLogger.info(f"currentRewards for {genNr}: {self.currentRewardsDict}")
-        self.txtLogger.info(f"snapshot Rewards for {genNr}: {self.currentSnapshotRewards}")
-        self.txtLogger.info(f"currentEnvDetails for {genNr}: {self.curriculaEnvDetails}")
+        self.currentRewardsDict[genKey] = rewards
+        self.currentSnapshotRewards[genKey] = snapshotReward
+        self.curriculaEnvDetails[genKey] = curricula
+        self.txtLogger.info("\n")
+        self.txtLogger.info(f"currentRewards after {genKey}: {self.currentRewardsDict}")
+        self.txtLogger.info(f"snapshot Rewards after {genKey}: {self.currentSnapshotRewards}")
+        self.txtLogger.info(f"currentEnvDetails for {genKey}: {self.curriculaEnvDetails[genKey]}")
+        self.txtLogger.info(f"\n\n===       Generation {genNr} done      ===\n")
         return rewards
 
     def evolXToCurriculum(self, x):
