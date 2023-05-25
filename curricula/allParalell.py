@@ -49,9 +49,9 @@ class allParalell:
         # TODO create logfiles etc
         # TODO selectedModel shouldnt be epoch0
 
-        envNames = self.updateEnvNames(2)
+        envNames = self.updateEnvNames(0)
 
-        iterationsDone = 13000000
+        iterationsDone = 0
         for epoch in range(totalEpochs):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
@@ -63,16 +63,16 @@ class allParalell:
         envNames = []
         maxReward = self.stepMaxReward
         print(maxReward)
-        if currentReward < maxReward * .25:
-            difficulty = 0
-        elif currentReward < maxReward * .75:
+        if currentReward > maxReward * .75:
+            difficulty = 2
+        elif currentReward > maxReward * .25:
             difficulty = 1
         else:
             difficulty = 2
         for j in range(len(ENV_NAMES.ALL_ENVS)):
             index = j
-            if j == 0:
-                index = 2
+            if j == 3:
+                index = 0
             envNames.append(getEnvFromDifficulty(index, difficulty))
         print(envNames) # TODO fix allFrames bug!!! This should be loaded and NOT be set manually
         return envNames
