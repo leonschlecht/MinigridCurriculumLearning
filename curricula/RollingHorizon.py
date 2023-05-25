@@ -117,7 +117,7 @@ class RollingHorizon(ABC):
         self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}. Iterations done {iterationsDone}")
         self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {rewardList} (1 entry = 1 curric step)")
         currentMax = (self.gamma ** j) * self.stepMaxReward
-        self.txtLogger.info(f"\tCurrent %-Performance {rewardList[j] / currentMax}\n\n")
+        self.txtLogger.info(f"\tReward-%-Performance {rewardList / currentMax}\n\n")
         self.txtLogger.info("-------------------------------")
 
     def resetEpochVariables(self) -> None:
