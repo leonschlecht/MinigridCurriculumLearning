@@ -193,8 +193,8 @@ class RollingHorizon(ABC):
         Initializes the trainingInfo dictionary
         :return:
         """
-        trainingInfoJson = {selectedEnvs: [],
-                            bestCurriculas: [],
+        trainingInfoJson = {selectedEnvs: {},
+                            bestCurriculas: {},
                             curriculaEnvDetailsKey: {},
                             rewardsKey: {},
                             actualPerformance: {},
@@ -295,18 +295,20 @@ class RollingHorizon(ABC):
         :param fullRewardsDict: the dict of rewards for each generation and each curriculum
         :param currentScoreRaw: the current best score
         """
+        currentEpoch = "epoch_" + str(epoch)
+
         trainingInfoJson[epochsDone] = epoch + 1
         trainingInfoJson[numFrames] = framesDone
         trainingInfoJson[snapshotScoreKey].append(snapshotScore)
 
-        trainingInfoJson[selectedEnvs].append(bestCurriculum[0])
-        trainingInfoJson[bestCurriculas].append(bestCurriculum)
+        trainingInfoJson[selectedEnvs][currentEpoch] = bestCurriculum[0]
+        trainingInfoJson[bestCurriculas][currentEpoch] = bestCurriculum
         trainingInfoJson[rewardsKey] = fullRewardsDict
-        trainingInfoJson[actualPerformance]["epoch_" + str(epoch)] = \
+        trainingInfoJson[actualPerformance][currentEpoch] = \
             {"curricScoreRaw": currentScoreRaw,
              "curricScoreNormalized": currentScoreRaw / curricMaxReward,
              "snapshotScoreRaw": snapshotScore, "curriculum": bestCurriculum}
-        trainingInfoJson[curriculaEnvDetailsKey]["epoch_" + str(epoch)] = curriculaEnvDetails
+        trainingInfoJson[curriculaEnvDetailsKey][currentEpoch] = curriculaEnvDetails
         trainingInfoJson[difficultyKey].append(envDifficulty)
 
         now = datetime.now()
