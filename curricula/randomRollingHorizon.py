@@ -61,9 +61,9 @@ class RandomRollingHorizon(RollingHorizon):
         self.currentRewardsDict = currentRewards
         self.currentSnapshotRewards = snapshotRewards
         self.curriculaEnvDetails = self.curricula
-        self.txtLogger.info(f"\tcurrentRewards for : {self.currentRewardsDict}")
+        self.txtLogger.info(f"\n\tcurrentRewards for : {self.currentRewardsDict}")
         self.txtLogger.info(f"\tsnapshot Rewards for : {self.currentSnapshotRewards}")
-        self.txtLogger.info(f"\tcurrentEnvDetails for : {self.curriculaEnvDetails}")
+        self.txtLogger.info(f"\tcurrentEnvDetails for : {self.curriculaEnvDetails}\n\n")
 
     def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum) -> int:
         self.lastChosenCurriculum = currentBestCurriculum
