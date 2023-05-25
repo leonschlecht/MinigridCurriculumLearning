@@ -99,24 +99,26 @@ class RollingHorizon(ABC):
         """
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
-        # TODO can probably remove genNr from methodparam
-        reward = np.zeros(len(curricula[i]))  # todo [i] vs not
+        # TODO can probably remove genNr from method param
+        reward = np.zeros(len(curricula[i]))
         nameOfCurriculumI = self.getCurriculumName(i, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
         for j in range(len(curricula[i])):
-            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
-                                                 nameOfCurriculumI, curricula[i][j], self.args, self.txtLogger)
-            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
-                                                                    self.txtLogger))
-            # reward[j] = 1.1 + j + i
-            self.txtLogger.info(f"\tIterations Done {iterationsDone}")
+            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone, nameOfCurriculumI, curricula[i][j],
+                                                 self.args, self.txtLogger)
+            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args, self.txtLogger))
             if j == 0:
-                self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)  # TODO testfor ep0
-            self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}")
-            self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {reward} (1 entry = 1 curric step)\n\n")
-            self.txtLogger.info("-------------------------------")
+                self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
+            self.logInfoAfterCurriculum(nameOfCurriculumI, iterationsDone, reward, j)
         return reward
+
+    def logInfoAfterCurriculum(self, nameOfCurriculumI, iterationsDone, rewardList, j):
+        self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}. Iterations done {iterationsDone}")
+        self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {rewardList} (1 entry = 1 curric step)")
+        currentMax = (self.gamma ** j) * self.stepMaxReward
+        self.txtLogger.info(f"\tCurrent %-Performance {rewardList[j] / currentMax}\n\n")
+        self.txtLogger.info("-------------------------------")
 
     def resetEpochVariables(self) -> None:
         self.currentRewardsDict = {}
