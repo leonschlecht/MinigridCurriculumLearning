@@ -56,13 +56,14 @@ class RandomRollingHorizon(RollingHorizon):
             reward = self.trainACurriculum(i, self.iterationsDone, -1, self.curricula)
             currentRewards["curric_" + str(i)] = np.sum(reward)
             snapshotRewards["curric_" + str(i)] = reward[0]
+            self.txtLogger.info(f"\tepoch {epoch }: RRH Curriculum {i} done")
 
         self.currentRewardsDict = currentRewards
         self.currentSnapshotRewards = snapshotRewards
         self.curriculaEnvDetails = self.curricula
-        self.txtLogger.info(f"currentRewards for : {self.currentRewardsDict}")
-        self.txtLogger.info(f"snapshot Rewards for : {self.currentSnapshotRewards}")
-        self.txtLogger.info(f"currentEnvDetails for : {self.curriculaEnvDetails}")
+        self.txtLogger.info(f"\tcurrentRewards for : {self.currentRewardsDict}")
+        self.txtLogger.info(f"\tsnapshot Rewards for : {self.currentSnapshotRewards}")
+        self.txtLogger.info(f"\tcurrentEnvDetails for : {self.curriculaEnvDetails}")
 
     def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum) -> int:
         self.lastChosenCurriculum = currentBestCurriculum
