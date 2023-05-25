@@ -351,20 +351,6 @@ class RollingHorizon(ABC):
         """
         pass
 
-    @staticmethod
-    def evaluateCurriculumResults(evaluationDictionary):
-        # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
-        # evaluationDictionary["actualPerformance"][1] ---> zeigt die zuletzt benutzte Umgebung zu dem Zeitpunkt an
-        #
-        tmp = []
-        i = 0
-        for reward, env in tmp:
-            i += 1
-
-        # Dann wollen wir sehen, wie das curriculum zu dem jeweiligen zeitpunkt ausgesehen hat.
-        # # Aber warum? Und wie will man das nach 20+ durchläufen plotten
-        # TODO this method is not unique for RH? Maybe there should be a parent class which has this
-
     def updateModelName(self, epoch: int) -> None:
         self.txtLogger.info(
             f"\n--------------------------------------------------------------\n                     START EPOCH {epoch}\n--------------------------------------------------------------\n")
