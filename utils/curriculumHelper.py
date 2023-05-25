@@ -1,9 +1,11 @@
 ###### DEFINE CONSTANTS AND DICTIONARY KEYS #####
 import json
+import re
 from datetime import datetime
 
 GEN_PREFIX = 'gen'
 
+# Dictionary keys
 selectedEnvs = "selectedEnvs"
 bestCurriculas = "bestCurriculas"
 curriculaEnvDetailsKey = "curriculaEnvDetails"
@@ -23,6 +25,8 @@ snapshotScoreKey = "snapshotScore"
 iterationsPerEnvKey = "iterationsPerEnv"
 maxStepRewardKey = "maxStepReward"
 maxCurricRewardKey = "maxCurricReward"
+
+MAX_REWARD_PER_ENV = 1
 
 
 def saveTrainingInfoToFile(path, jsonBody):
@@ -46,9 +50,11 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     txtLogger.info("-------------------\n\n")
 
 
-def calculateCurricStepMaxReward(stepsPerCurric) -> float:
-    MAX_REWARD_PER_ENV = 1
-    maxReward: float = stepsPerCurric * MAX_REWARD_PER_ENV
+def calculateCurricStepMaxReward(allEnvs: list) -> float:
+    reward = 0
+    for env in allEnvs:
+        reward += getRewardMultiplier(env)
+    maxReward: float = reward * MAX_REWARD_PER_ENV
     return maxReward
 
 
@@ -57,3 +63,15 @@ def calculateCurricMaxReward(curricLength, stepMaxReward, gamma) -> float:
     for j in range(curricLength):
         maxReward += ((gamma ** j) * stepMaxReward)
     return maxReward
+
+def getRewardMultiplier(evalEnv):
+    """
+
+    :param evalEnv:
+    :return:
+    """
+    pattern = r'\d+'
+    match = re.search(pattern, evalEnv)
+    if match:
+        return int(match.group())
+    raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)

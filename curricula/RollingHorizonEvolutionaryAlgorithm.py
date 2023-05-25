@@ -102,6 +102,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
             rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
             snapshotReward[i] = rewardI[0]
             rewards[i] = np.sum(rewardI)
+            self.txtLogger.info(f"\n===curriculum {i} done===\n")
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula

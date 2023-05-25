@@ -1,4 +1,3 @@
-import re
 import time
 import torch
 import json
@@ -6,6 +5,7 @@ import json
 import utils
 from training.ParallelEnvironment import MyParallelEnv
 from utils import device, getEnvListThroughDifficulty
+from utils.curriculumHelper import getRewardMultiplier
 
 
 def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
@@ -86,18 +86,6 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
     txtLogger.info(f"Evaluation of {model} succeeded")
     return results
 
-
-def getRewardMultiplier(evalEnv):
-    """
-
-    :param evalEnv:
-    :return:
-    """
-    pattern = r'\d+'
-    match = re.search(pattern, evalEnv)
-    if match:
-        return int(match.group())
-    raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)
 
 
 def getDifficultyMultiplier(difficulty):
