@@ -34,8 +34,27 @@ def plotSnapshotPerformance(y: list, stepMaxReward: int, modelName: str, iterati
     plt.show()
 
 
-def plotBestCurriculumResults(y: list, curricMaxReward: int, modelName: str):
-    print(":)")
+def plotBestCurriculumResults(y: list, curricMaxReward: int, modelName: str, iterationsPerEnv: int):
+    x = range(1, len(y) + 1)
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    ax2 = ax1.twiny()  # create a second x-axis
+    ax1.plot(x, y)
+    ax1.scatter(x, y, marker='x', color='black')
+    ax1.set_xticks(x)
+    ax1.set_ylim(0, curricMaxReward * 1.01)
+    ax1.axhline(y=curricMaxReward, color='red')
+    ax1.set_xlabel('epoch')
+    ax1.set_ylabel('reward')
+    ax1.set_title(f'performance after each epoch (model:{modelName})')
+
+    # set limits and ticks for the second x-axis
+    ax2.set_xlim(ax1.get_xlim())
+    new_tick_locations = [(i * 2) * iterationsPerEnv for i in range(1, len(y) // 2)]
+    ax2.set_xticks(new_tick_locations)
+    ax2.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations])
+    ax2.set_xlabel('#iterations')
+    plt.show()
 
 
 def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
@@ -66,9 +85,11 @@ def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
         epochDict = rewardsDict[epochKey]
         for genKey in epochDict:
             genRewardsStr = epochDict[genKey]
-            numbers = re.findall(r'\d+\.\d+', genRewardsStr)
-            numbers = list(map(float, numbers))
+            numbers = re.findall(r'[0-9]*\.?[0-9]+', genRewardsStr)  # modified regex
+            numbers = [float(n) for n in numbers]
             epochDict[genKey] = numbers
+        # TODO assertion to make sure length hasnt chagned
+    print(epochsTrained-1, len(rewardsDict.keys()))
 
     argsString: str = trainingInfoDict[fullArgs]
     loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in [pair.split('=') for pair in argsString.split(', ')]}
@@ -85,17 +106,14 @@ def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
     if loadedArgsDict[trainEvolutionary]:
         for epochKey in rewardsDict:
             epochDict = rewardsDict[epochKey]
-            print(epochDict)
             genNr, listIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
             bestCurricScore = epochDict[GEN_PREFIX + genNr][listIdx]
-            print(bestCurricScore)
             curricScores.append(bestCurricScore)
-    print(curricScores)
-    exit()
+
 
     assert type(iterationsPerEnv) == int
 
-    plotSnapshotPerformance(snapshotScores, stepMaxReward, modelName, iterationsPerEnv)
+    # plotSnapshotPerformance(snapshotScores, stepMaxReward, modelName, iterationsPerEnv)
     plotBestCurriculumResults(curricScores, curricMaxReward, modelName, iterationsPerEnv)
 
     plt.show()
