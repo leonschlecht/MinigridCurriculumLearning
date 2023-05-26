@@ -38,6 +38,8 @@ trainAdaptive = "trainAdaptive"
 trainRandomRH = "trainRandomRH"
 trainBiasedRandomRH = "trainBiasedRandomRH"
 trainAllParalell = "trainAllParalell"
+nGenerations = "nGen"
+numCurricKey = "numCurric"
 
 
 def saveTrainingInfoToFile(path, jsonBody):
