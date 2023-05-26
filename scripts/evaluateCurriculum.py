@@ -1,9 +1,38 @@
 import utils
+from curricula import RollingHorizonEvolutionaryAlgorithm
 from utils import initializeArgParser
 import os
-import json
 from utils.curriculumHelper import *
+import matplotlib.pyplot as plt
+import numpy as np
 
+
+
+def plotSnapshotPerformance(y: list, stepMaxReward: int, modelName: str, iterationsPerEnv: int):
+    x = range(1, len(y) + 1)
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    ax2 = ax1.twiny()  # create a second x-axis
+    ax1.plot(x, y)
+    ax1.scatter(x, y, marker='x', color='black')
+    ax1.set_xticks(x)
+    ax1.set_ylim(0, stepMaxReward * 1.01)
+    ax1.axhline(y=stepMaxReward, color='red')
+    ax1.set_xlabel('epoch')
+    ax1.set_ylabel('reward')
+    ax1.set_title(f'performance after each epoch (model:{modelName})')
+
+    # set limits and ticks for the second x-axis
+    ax2.set_xlim(ax1.get_xlim())
+    new_tick_locations = [(i*2) * iterationsPerEnv for i in range(1,len(y)//2)]
+    ax2.set_xticks(new_tick_locations)
+    ax2.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations])
+    ax2.set_xlabel('#iterations')
+    plt.show()
+
+
+def plotBestCurriculumResults(y: list, curricMaxReward: int, modelName: str):
+    print(":)")
 
 def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
     # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
@@ -13,37 +42,60 @@ def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
     epochsTrained = evaluationDictionary[epochsDone]
     framesTrained = evaluationDictionary[numFrames]
     modelPerformance = evaluationDictionary[actualPerformance]# {"curricScoreRaw", "curricScoreNormalized", "snapshotScoreRaw", "curriculum"}
-
-    try:
+    keyList = evaluationDictionary.keys()
+    if snapshotScoreKey in keyList:
         snapshotScores = evaluationDictionary[snapshotScoreKey] # if there is an error here, hopefully the values are stored in the actualPerformance part
-    except KeyError:
-        print(modelPerformance)
+    else:
         snapshotScores = []
-        print(modelPerformance)
-        print("---------")
         for epochDict in modelPerformance:
             snapshotScores.append(epochDict[snapshotScoreKey])
 
     bestCurriculaDict = evaluationDictionary[bestCurriculas]
 
     rewardsDict = evaluationDictionary[rewardsKey]
-    for x in rewardsDict:
-        epochDict = rewardsDict[x]
-        for gen in epochDict:
-            genRewardsStr = epochDict[gen]
+
+    stepMaxReward = evaluationDictionary[maxStepRewardKey]
+    curricMaxReward = evaluationDictionary[maxCurricRewardKey]
+
+    for epochKey in rewardsDict:
+        epochDict = rewardsDict[epochKey]
+        for genKey in epochDict:
+            genRewardsStr = epochDict[genKey]
             numbers = re.findall(r'\d+\.\d+', genRewardsStr)
             numbers = list(map(float, numbers))
-            epochDict[gen] = numbers
-    print(rewardsDict)
+            epochDict[genKey] = numbers
+
+    argsString: str = trainingInfoDict[fullArgs]
+    loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in [pair.split('=') for pair in argsString.split(', ')]}
+    loadedArgsKeys = loadedArgsDict.keys()
+
+    modelName = loadedArgsDict[argsModelKey]
+
+    if iterationsPerEnvKey in trainingInfoDict.keys():
+        iterationsPerEnv = int(trainingInfoDict[iterationsPerEnvKey])
+    else:
+        iterationsPerEnv = int(loadedArgsDict[oldArgsIterPerEnvName]) # TODO this might become deprecated if I change iterPerEnv -> stepsPerEnv
+
+
+    assert type(iterationsPerEnv) == int
+
+    curricScores = []
+    if loadedArgsKeys[trainEvolutionary]:
+        curricScores = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(rewardsDict)
+
+    plotSnapshotPerformance(snapshotScores, stepMaxReward, modelName, iterationsPerEnv)
+    plotBestCurriculumResults(curricScores, curricMaxReward, modelName, iterationsPerEnv)
+
+    plt.show()
     # TODO copy get best gen / individual stuff from RHEA train
     # TODO: plot the snapshotscores (copy from colab)
     # TODO: plot maxCurricReward of each epoch
     # TODO plot the snapshot vs curricReward problem
-    # plot reward development of 1 curriculum over multiple generations
-    # plot avg reward of each generation of an epoch
-    # plot max Reward of each gen
-
-    exit()
+    # TODO plot reward development of 1 curriculum over multiple generations
+    # TODO plot avg reward of each generation of an epoch
+    # TODO plot max Reward of each gen
+    # TODO dont log "Device: ..." for loading here
+    # TODO find out a way to properly plot the difficulty list / maybe how it influences the results; and maybe how you can improve it so that it is not even needed in the first place
 
     fullEnvList = evaluationDictionary[curriculaEnvDetailsKey]
     difficultyList = evaluationDictionary[difficultyKey]

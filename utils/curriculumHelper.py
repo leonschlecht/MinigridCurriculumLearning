@@ -29,6 +29,11 @@ maxCurricRewardKey = "maxCurricReward"
 MAX_REWARD_PER_ENV = 1
 
 
+# Key names of hey they appear in the command line args
+oldArgsIterPerEnvName = "iterPerEnv"
+argsModelKey = "model"
+
+
 def saveTrainingInfoToFile(path, jsonBody):
     with open(path, 'w') as f:
         f.write(json.dumps(jsonBody, indent=4, default=str))
