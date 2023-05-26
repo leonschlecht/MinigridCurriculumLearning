@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def tmp():
+    print("\n----------------\n")
+
 
 def plotSnapshotPerformance(y: list, stepMaxReward: int, modelName: str, iterationsPerEnv: int):
     x = range(1, len(y) + 1)
@@ -24,7 +27,7 @@ def plotSnapshotPerformance(y: list, stepMaxReward: int, modelName: str, iterati
 
     # set limits and ticks for the second x-axis
     ax2.set_xlim(ax1.get_xlim())
-    new_tick_locations = [(i*2) * iterationsPerEnv for i in range(1,len(y)//2)]
+    new_tick_locations = [(i * 2) * iterationsPerEnv for i in range(1, len(y) // 2)]
     ax2.set_xticks(new_tick_locations)
     ax2.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations])
     ax2.set_xlabel('#iterations')
@@ -34,6 +37,7 @@ def plotSnapshotPerformance(y: list, stepMaxReward: int, modelName: str, iterati
 def plotBestCurriculumResults(y: list, curricMaxReward: int, modelName: str):
     print(":)")
 
+
 def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
     # evaluationDictionary["actualPerformance"][0] ---> zeigt den avg reward des models zu jedem übernommenen Snapshot
     # evaluationDictionary["actualPerformance"][1] ---> zeigt die zuletzt benutzte Umgebung zu dem Zeitpunkt an
@@ -41,10 +45,11 @@ def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
     selectedEnvList = evaluationDictionary[selectedEnvs]
     epochsTrained = evaluationDictionary[epochsDone]
     framesTrained = evaluationDictionary[numFrames]
-    modelPerformance = evaluationDictionary[actualPerformance]# {"curricScoreRaw", "curricScoreNormalized", "snapshotScoreRaw", "curriculum"}
+    modelPerformance = evaluationDictionary[actualPerformance]  # {"curricScoreRaw", "curricScoreNormalized", "snapshotScoreRaw", "curriculum"}
     keyList = evaluationDictionary.keys()
     if snapshotScoreKey in keyList:
-        snapshotScores = evaluationDictionary[snapshotScoreKey] # if there is an error here, hopefully the values are stored in the actualPerformance part
+        snapshotScores = evaluationDictionary[
+            snapshotScoreKey]  # if there is an error here, hopefully the values are stored in the actualPerformance part
     else:
         snapshotScores = []
         for epochDict in modelPerformance:
@@ -67,21 +72,28 @@ def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
 
     argsString: str = trainingInfoDict[fullArgs]
     loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in [pair.split('=') for pair in argsString.split(', ')]}
-    loadedArgsKeys = loadedArgsDict.keys()
 
     modelName = loadedArgsDict[argsModelKey]
 
     if iterationsPerEnvKey in trainingInfoDict.keys():
         iterationsPerEnv = int(trainingInfoDict[iterationsPerEnvKey])
     else:
-        iterationsPerEnv = int(loadedArgsDict[oldArgsIterPerEnvName]) # TODO this might become deprecated if I change iterPerEnv -> stepsPerEnv
-
-
-    assert type(iterationsPerEnv) == int
+        iterationsPerEnv = int(loadedArgsDict[oldArgsIterPerEnvName])  # TODO this might become deprecated if I change iterPerEnv -> stepsPerEnv
 
     curricScores = []
-    if loadedArgsKeys[trainEvolutionary]:
-        curricScores = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(rewardsDict)
+    tmp()
+    if loadedArgsDict[trainEvolutionary]:
+        for epochKey in rewardsDict:
+            epochDict = rewardsDict[epochKey]
+            print(epochDict)
+            genNr, listIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
+            bestCurricScore = epochDict[GEN_PREFIX + genNr][listIdx]
+            print(bestCurricScore)
+            curricScores.append(bestCurricScore)
+    print(curricScores)
+    exit()
+
+    assert type(iterationsPerEnv) == int
 
     plotSnapshotPerformance(snapshotScores, stepMaxReward, modelName, iterationsPerEnv)
     plotBestCurriculumResults(curricScores, curricMaxReward, modelName, iterationsPerEnv)
@@ -104,7 +116,7 @@ def evaluateCurriculumResults(evaluationDictionary, isRHEA=False):
 
 
 if __name__ == "__main__":
-    args = initializeArgParser()
+    args = initializeArgParser()  # TODO there should be a slimmer version of argparse for this case
     logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"
     txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
 
@@ -117,4 +129,3 @@ if __name__ == "__main__":
     else:
         print("Model doesnt exist!")
     # Given a model name (which should probably have the trained method in it as well)
-

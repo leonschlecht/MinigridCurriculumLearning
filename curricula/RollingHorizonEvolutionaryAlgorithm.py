@@ -40,8 +40,10 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         currentRewardList = np.array(list(currentRewards.values()))  # transform dict to list / matrix
         currentMaxRewardIdx = np.argmax(currentRewardList)  # highest idx in 1d list
         keyIndexPairOfMaxReward = np.unravel_index(currentMaxRewardIdx, currentRewardList.shape)
-        return list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][len(GEN_PREFIX):], \
-            int(keyIndexPairOfMaxReward[1])
+        genNrStr = list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][len(GEN_PREFIX):]
+        listIdx = int(keyIndexPairOfMaxReward[1])
+        return genNrStr, listIdx
+        # TODO this returns something like ('3', 0); should probably return (3, 0)
 
     def executeOneEpoch(self, epoch: int):
         nsga = NSGA2(pop_size=self.numCurric,

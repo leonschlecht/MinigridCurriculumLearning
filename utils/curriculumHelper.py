@@ -32,6 +32,12 @@ MAX_REWARD_PER_ENV = 1
 # Key names of hey they appear in the command line args
 oldArgsIterPerEnvName = "iterPerEnv"
 argsModelKey = "model"
+trainEvolutionary = "trainEvolutionary"
+trainLinear = "trainLinear"
+trainAdaptive = "trainAdaptive"
+trainRandomRH = "trainRandomRH"
+trainBiasedRandomRH = "trainBiasedRandomRH"
+trainAllParalell = "trainAllParalell"
 
 
 def saveTrainingInfoToFile(path, jsonBody):
