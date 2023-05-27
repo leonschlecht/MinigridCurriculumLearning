@@ -76,11 +76,3 @@ def initializeArgParser():
     )
     # TODO create object for type safety
     return args
-
-def initializeEvalArgParser():
-    parser = argparse.ArgumentParser()
-    # General parameters
-    parser.add_argument("--trainAdaptive", default=False, action="store_true",
-                        help="Decides what training method will be used. If set, adaptive curriculum will be used")
-    args = parser.parse_args()
-    return args

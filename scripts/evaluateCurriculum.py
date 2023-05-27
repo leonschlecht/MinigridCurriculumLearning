@@ -212,15 +212,21 @@ def evaluateCurriculumResults(evaluationDictionary):
 
 
 if __name__ == "__main__":
-    args = initializeArgParser(evaluate=True)  # TODO there should be a slimmer version of argparse for this case
-    logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"
+    evalDirectory = os.getcwd() + "\\storage\\save\\evaluate\\"
+    logFilePaths = []
+    evalDirectories = next(os.walk(evalDirectory))[1]
+    for model in evalDirectories:
+        logFilePaths.append(evalDirectory + model + "\\status.json")
 
-    if os.path.exists(logFilePath):
-        with open(logFilePath, 'r') as f:
-            trainingInfoDictionary = json.loads(f.read())
-        assert trainingInfoDictionary is not None
-        evaluateCurriculumResults(trainingInfoDictionary)
+    modelDictionaries = []
+    for logFilePath in logFilePaths:
+        if os.path.exists(logFilePath):
+            with open(logFilePath, 'r') as f:
+                trainingInfoDictionary = json.loads(f.read())
+            assert trainingInfoDictionary is not None
+            modelDictionaries.append(trainingInfoDictionary)
+        else:
+            raise Exception(f"Path '{logFilePath}' doesnt exist!")
+    print(len(modelDictionaries))
+    # evaluateCurriculumResults(trainingInfoDictionary)
 
-    else:
-        raise Exception("Model doesnt exist!")
-    # Given a model name (which should probably have the trained method in it as well)
