@@ -5,10 +5,11 @@ import os
 from utils.curriculumHelper import *
 import matplotlib.pyplot as plt
 import numpy as np
+
 from collections import defaultdict
 
 
-def tmp():
+def newLines():
     print("\n----------------\n")
 
 
@@ -47,46 +48,32 @@ def plotBestCurriculumResults(y: list, curricMaxReward: int, modelName: str, ite
     plotSnapshotPerformance(y, curricMaxReward, modelName, iterationsPerEnv)
 
 
-def plotEnvsUsedDistribution(envDistribution: dict):
-    d = {'MiniGrid-DoorKey-16x16': 0, 'MiniGrid-DoorKey-8x8': 8, 'MiniGrid-DoorKey-6x6': 13, 'MiniGrid-DoorKey-5x5': 1}
-    original_dict = {'MiniGrid-DoorKey-16x16': 0, 'MiniGrid-DoorKey-8x8': 8, 'MiniGrid-DoorKey-6x6': 13, 'MiniGrid-DoorKey-5x5': 1}
+def plotEnvsUsedDistribution(envDistribution: dict, titleInfo='...'):
+    # extract the numeric part of the keys of the envDistribution
+    numericStrDict = {numKey.split('-')[-1]: val for numKey, val in envDistribution.items()}
+    keyValues = sorted([int(fullKey.split("x")[0]) for fullKey in numericStrDict])
 
-    # Step 1: Extract the numeric part of the string from the keys of the dictionary
-    new_dict = {}
-    for numKey in original_dict.keys():
-        numeric_part = numKey.split('-')[-1]
-        new_dict[numeric_part] = original_dict[numKey]
-
-    keyValues = []
-    for fullKey in new_dict:
-        numKey = int(fullKey.split("x")[0])
-        keyValues.append(numKey)
-    keyValues = sorted(keyValues)
-
-    tmp = []
+    numStrKeyMapping = []
     for numKey in keyValues:
-        for dictKey in new_dict:
+        for dictKey in numericStrDict:
             if str(numKey) == dictKey.split('x')[0]:
-                tmp.append((dictKey, numKey))
+                numStrKeyMapping.append((dictKey, numKey))
                 break
 
-    sortedKeys = [fullKey for fullKey, _ in tmp]
-    finalDict = {k: new_dict[k] for k in sortedKeys}
+    sortedKeys = [fullKey for fullKey, _ in numStrKeyMapping]
+    finalDict = {k: numericStrDict[k] for k in sortedKeys}
 
-    print(finalDict)
-
-    keys = list(finalDict.keys())
-    values = list(finalDict.values())
-
+    envs = list(finalDict.keys())
+    envOccurrences = list(finalDict.values())
     fig, ax = plt.subplots()
-    bar_container = ax.bar(keys, values)
-
-    ax.set_ylabel('Count')
-    ax.set_title('Distribution of Keys')
-    ax.set_ylim(0, max(values) * 1.1)
+    bar_container = ax.bar(envs, envOccurrences)
+    ax.set_ylabel('Occurrence')
+    title = 'Distribution of selected envs in ' +  titleInfo
+    ax.set_title(title)
+    ax.set_ylim(0, max(envOccurrences) * 1.1)
 
     # Add labels to the bars
-    ax.bar_label(bar_container, labels=values, fontsize=12, padding=5)
+    ax.bar_label(bar_container, labels=envOccurrences, fontsize=12, padding=5)
 
     plt.show()
 
@@ -111,6 +98,11 @@ def evaluateCurriculumResults(evaluationDictionary):
     stepMaxReward = evaluationDictionary[maxStepRewardKey]
     curricMaxReward = evaluationDictionary[maxCurricRewardKey]
 
+    fullEnvDict = evaluationDictionary[curriculaEnvDetailsKey]
+    difficultyList = evaluationDictionary[difficultyKey]
+    trainingTimeList = evaluationDictionary[epochTrainingTime]
+    trainingTimeSum = evaluationDictionary[sumTrainingTime]
+
     for epochKey in rewardsDict:
         epochDict = rewardsDict[epochKey]
         for genKey in epochDict:
@@ -133,7 +125,7 @@ def evaluateCurriculumResults(evaluationDictionary):
     curricScores = []
     avgEpochRewards = []
     numCurric = float(loadedArgsDict[numCurricKey])
-    tmp()
+    newLines()
     i = 0
     if loadedArgsDict[trainEvolutionary]:
         for epochKey in rewardsDict:
@@ -157,13 +149,32 @@ def evaluateCurriculumResults(evaluationDictionary):
     # TODO plot the envs used
     # TODO also for selectedEnvs
     usedEnvEnumeration = trainingInfoDict[usedEnvEnumerationKey]
-    envDistribution = {env: 0 for env in usedEnvEnumeration}
-    for envsInStep in selectedEnvList:
-        for env in envsInStep:
+    snapshotEnvDistribution = {env: 0 for env in usedEnvEnumeration}
+    for curricStep in selectedEnvList:
+        for env in curricStep:
             envStrRaw = env.split("-custom")[0]
-            envDistribution[envStrRaw] += 1
+            snapshotEnvDistribution[envStrRaw] += 1
 
-    plotEnvsUsedDistribution(envDistribution)
+    bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
+
+    for epochList in bestCurriculaDict:
+        for curricStep in epochList:
+            for env in curricStep: # TODO maybe this might break because of recent log changes
+                envStrRaw = env.split("-custom")[0]
+                bestCurriculaEnvDistribution[envStrRaw] += 1
+
+    allCurricDistribution = {env: 0 for env in usedEnvEnumeration}
+    for epochKey in fullEnvDict:
+        epochGenDict = fullEnvDict[epochKey]
+        for genKey in epochGenDict:
+            curriculumList = epochGenDict[genKey]
+            for curric in curriculumList:
+                for curricStep in curric:
+                    for env in curricStep:
+                        envStrRaw = env.split("-custom")[0]
+                        allCurricDistribution[envStrRaw] += 1
+
+    plotEnvsUsedDistribution(allCurricDistribution)
 
     plt.show()
     # TODO plot the snapshot vs curricReward problem
@@ -174,10 +185,6 @@ def evaluateCurriculumResults(evaluationDictionary):
     # TODO somehow reference the epochs associated with certain rewards
     # TODO log avg first step reward
 
-    fullEnvList = evaluationDictionary[curriculaEnvDetailsKey]
-    difficultyList = evaluationDictionary[difficultyKey]
-    trainingTimeList = evaluationDictionary[epochTrainingTime]
-    trainingTimeSum = evaluationDictionary[sumTrainingTime]
 
 
 if __name__ == "__main__":
