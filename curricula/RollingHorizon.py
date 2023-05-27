@@ -54,7 +54,7 @@ class RollingHorizon(ABC):
             self.ITERATIONS_PER_ENV = exactIterationsPerEnv - 1
         utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
             nameOfCurriculumI), txtLogger=self.txtLogger)  # save TEST_e1_curric0 -> + _CANDIDATE
-        self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
+        # self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
         self.trainingInfoJson[iterationsPerEnvKey] = self.ITERATIONS_PER_ENV
 
     # TODO move curriculumHelper methods here
@@ -231,11 +231,12 @@ class RollingHorizon(ABC):
         :param bestReward: the reward of the best performing curriculum from the last epoch
         :return:
         """
-        selectedEnv = trainingInfoJson[selectedEnvs][-1]
+        currentEpoch = "epoch_" + str(epoch)
+        selectedEnv = trainingInfoJson[selectedEnvs][currentEpoch]
 
         txtLogger.info(
             f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
-        envDetails = trainingInfoJson[curriculaEnvDetailsKey]["epoch_" + str(epoch)]
+        envDetails = trainingInfoJson[curriculaEnvDetailsKey][currentEpoch]
         txtLogger.info(
             f"CurriculaEnvDetails {envDetails}; selectedEnv: {selectedEnv}")
         txtLogger.info(f"Raw Reward of best curriculum: {bestReward}. \

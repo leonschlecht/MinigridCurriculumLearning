@@ -61,7 +61,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     fps = num_frames / evalTime
     return_per_episode = utils.synthesize(logs["return_per_episode"])
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
-    formatted = "EVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:msmM {:.2f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {}".format(
+    formatted = "\tEVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:msmM {:.2f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {}".format(
         evalEnv, model, num_frames, fps, evalTime, *return_per_episode.values(), *num_frames_per_episode.values())
     txtLogger.info(formatted)
 
