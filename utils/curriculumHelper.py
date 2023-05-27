@@ -40,6 +40,7 @@ trainBiasedRandomRH = "trainBiasedRandomRH"
 trainAllParalell = "trainAllParalell"
 nGenerations = "nGen"
 numCurricKey = "numCurric"
+usedEnvEnumerationKey = "usedEnvEnumeration"
 
 
 def saveTrainingInfoToFile(path, jsonBody):
