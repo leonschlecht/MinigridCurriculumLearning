@@ -50,22 +50,9 @@ class Result:
         assert self.epochsTrained == len(self.rewardsDict.keys())
 
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
-        snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
-        bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
-        allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
-
-        # plotEnvsUsedDistribution(allCurricDistribution, "all Curric Distribution")
-        # plotEnvsUsedDistribution(snapshotEnvDistribution, "snapshot Distribution")
-        # plotEnvsUsedDistribution(bestCurriculaEnvDistribution, "best Curricula Distribution")
-        # plotSnapshotPerformance(snapshotScores, stepMaxReward, modelName, iterationsPerEnv)
-        # plotBestCurriculumResults(curricScores, curricMaxReward, modelName, iterationsPerEnv)
-        # plotEpochAvgCurricReward(avgEpochRewards, maxCurricAvgReward, modelName, iterationsPerEnv)
-
-        # TODO plot the snapshot vs curricReward problem
-        # TODO plot reward development of 1 curriculum over multiple generations
-        # TODO find out a way to properly plot the difficulty list / maybe how it influences the results; and maybe how you can improve it so that it is not even needed in the first place
-        # TODO find way to plot multiple models at once (and show some relevant legend for info of model name or sth like that)
-        # TODO save the plots
+        self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
+        self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
+        self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
 
     def getSnapshotScores(self, evalDict: dict, modelPerformance: dict) -> list[float]:
         """

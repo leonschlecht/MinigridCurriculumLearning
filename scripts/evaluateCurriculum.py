@@ -41,7 +41,8 @@ def plotBestCurriculumResults(y: list, curricMaxReward: int, modelName: str, ite
     plotSnapshotPerformance(y, curricMaxReward, modelName, iterationsPerEnv)
 
 
-def plotEnvsUsedDistribution(envDistribution: dict, titleInfo='...'):
+def plotEnvsUsedDistribution(envLists: list[dict], titleInfo='...'):
+    envDistribution = envLists[0]
     # extract the numeric part of the keys of the envDistribution
     numericStrDict = {numKey.split('-')[-1]: val for numKey, val in envDistribution.items()}
     keyValues = sorted([int(fullKey.split("x")[0]) for fullKey in numericStrDict])
@@ -67,8 +68,15 @@ def plotEnvsUsedDistribution(envDistribution: dict, titleInfo='...'):
 
     # Add labels to the bars
     ax.bar_label(bar_container, labels=envOccurrences, fontsize=12, padding=5)
+    # TODO add colors again
+    # TODO plot the snapshot vs curricReward problem
+    # TODO plot reward development of 1 curriculum over multiple generations
+    # TODO find out a way to properly plot the difficulty list / maybe how it influences the results; and maybe how you can improve it so that it is not even needed in the first place
+    # TODO find way to plot multiple models at once (and show some relevant legend for info of model name or sth like that)
+    # TODO save the plots
 
     plt.show()
+
 
 if __name__ == "__main__":
     evalDirectory = os.getcwd() + "\\storage\\save\\evaluate\\"
@@ -87,5 +95,17 @@ if __name__ == "__main__":
             resultClasses.append(resultClass)
         else:
             raise Exception(f"Path '{logFilePath}' doesnt exist!")
+
+    s0 = resultClasses[0].allCurricDistribution
+    s1 = resultClasses[1].allCurricDistribution
+    plotEnvsUsedDistribution([s0, s1], "hello")
+    print(s0, s1)
+
+    # plotEnvsUsedDistribution(allCurricDistribution, "all Curric Distribution")
+    # plotEnvsUsedDistribution(snapshotEnvDistribution, "snapshot Distribution")
+    # plotEnvsUsedDistribution(bestCurriculaEnvDistribution, "best Curricula Distribution")
+    # plotSnapshotPerformance(snapshotScores, stepMaxReward, modelName, iterationsPerEnv)
+    # plotBestCurriculumResults(curricScores, curricMaxReward, modelName, iterationsPerEnv)
+    # plotEpochAvgCurricReward(avgEpochRewards, maxCurricAvgReward, modelName, iterationsPerEnv)
 
 
