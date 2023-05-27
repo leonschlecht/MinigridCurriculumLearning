@@ -1,9 +1,8 @@
 import time
-import torch_ac
 import tensorboardX
 
 import utils
-from baseScripts.MyPPO import MyPPOAlgo
+from training.PPO import MyPPOAlgo
 from utils import device
 from model import ACModel
 
@@ -31,7 +30,9 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     for i in range(args.procs // len(envList)):
         for j in range(len(envList)):
             envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
-    assert len(envs) == args.procs
+    assert len(envs) == args.procs, "Length of envs is not equal to amount of processes"
+    assert args.procs % args.paraEnv == 0, \
+        "The amount of processes must be divisble by the amount of envs to be trained on in parallel"
 
     # Load training status
     try:
@@ -58,6 +59,7 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     framesWithThisEnv = 0
 
     if framesToTrain == 0:
+        txt_logger.info(f'{acmodel}')
         txt_logger.info(f'Created model {model}')
         return 0
     algo = MyPPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,

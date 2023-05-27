@@ -1,0 +1,15 @@
+RHEA:
+- Run:
+ python -m scripts.trainCurriculum --iterPerEnv 20000 --episodes 1 --nGen 2 --numCurric 2 --stepsPerCurric 2 --model debug123123
+
+
+RRH:
+- Run:
+ python -m scripts.trainCurriculum --iterPerEnv 20000 --episodes 1 --numCurric 2 --stepsPerCurric 2 --trainRandomRH --model debug123123
+
+
+- Look at tensorboard (see if there are some random jumps for no reason)
+- Roughly look through the logs
+    - frames correct?
+    - Continuation Reward correct?
+- Does reload / continuation work properly?

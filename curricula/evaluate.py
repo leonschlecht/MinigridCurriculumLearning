@@ -1,11 +1,11 @@
-import re
 import time
 import torch
 import json
 
 import utils
-from baseScripts.MyPEnv import MyParallelEnv
+from training.ParallelEnvironment import MyParallelEnv
 from utils import device, getEnvListThroughDifficulty
+from utils.curriculumHelper import getRewardMultiplier
 
 
 def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
@@ -61,7 +61,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     fps = num_frames / evalTime
     return_per_episode = utils.synthesize(logs["return_per_episode"])
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
-    formatted = "EVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:μσmM {:.2f} {:.2f} {:.2f} {:.2f} | F:μσmM {:.1f} {:.1f} {} {}".format(
+    formatted = "\tEVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:msmM {:.2f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {}".format(
         evalEnv, model, num_frames, fps, evalTime, *return_per_episode.values(), *num_frames_per_episode.values())
     txtLogger.info(formatted)
 
@@ -86,18 +86,6 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
     txtLogger.info(f"Evaluation of {model} succeeded")
     return results
 
-
-def getRewardMultiplier(evalEnv):
-    """
-
-    :param evalEnv:
-    :return:
-    """
-    pattern = r'\d+'
-    match = re.search(pattern, evalEnv)
-    if match:
-        return int(match.group())
-    raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)
 
 
 def getDifficultyMultiplier(difficulty):
@@ -127,5 +115,4 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> int:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv)
         rewardSum += currentReward
     print("Evaluate agent TEST", rewardSum * getDifficultyMultiplier(difficulty))
-    exit()
     return rewardSum * getDifficultyMultiplier(difficulty)

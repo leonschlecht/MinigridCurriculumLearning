@@ -6,7 +6,7 @@ from gymnasium.envs.registration import register
 
 import utils
 from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
-    adaptiveCurriculum, RandomRollingHorizon
+    adaptiveCurriculum, RandomRollingHorizon, allParalell
 from utils import ENV_NAMES
 
 
@@ -25,20 +25,26 @@ def main():
     assert args.numCurric > 0, "There must be at least 1 curriculum"
     assert args.iterPerEnv > 0, "The iterations per curricululm step must be >= 1"
     assert args.trainEpochs > 1, "There must be at least 2 training epochs for the algorithm"
-    assert 0 < args.paraEnv <= len(ENV_NAMES.ALL_ENVS)
+    assert 0 < args.paraEnv <= len(ENV_NAMES.ALL_ENVS), "Cant train on more envs in parallel than there are envs available"
 
     if args.trainEvolutionary:
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)
+        e.startCurriculumTraining()
     elif args.trainBiasedRandomRH:
         e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, False)
+        e.startCurriculumTraining()
     elif args.trainRandomRH:
         e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, True)
+        e.startCurriculumTraining()
     elif args.trainLinear:
         linearCurriculum.startLinearCurriculum(txtLogger, startTime, args)
+    elif args.trainAllParalell:
+        e = allParalell(txtLogger, startTime, cmdLineString, args)
     elif args.trainAdaptive:
         adaptiveCurriculum.startAdaptiveCurriculum(txtLogger, startTime, args)
     else:
         print("No training method selected!")
+
 
 
 def registerEnvs():
@@ -55,9 +61,9 @@ def registerEnvs():
     ENV_SIZE_POWER = 2
     SIZE_MUTIPLICATOR = 10
     maxStepsEnv4 = 12 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv3 = 9 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv2 = 7 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv1 = 4 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+    maxStepsEnv3 = 10 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+    maxStepsEnv2 = 8 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+    maxStepsEnv1 = 6 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
     maxSteps = np.array([maxStepsEnv1, maxStepsEnv2, maxStepsEnv3, maxStepsEnv4])
     difficulty = np.array([1, 0.33, 0.11])
     result = np.round(np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1)))
@@ -70,21 +76,21 @@ def registerEnvs():
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_9x9 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
+            id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 9, "max_steps": int(result[2][i])},
+            kwargs={"size": 10, "max_steps": int(result[2][i])},
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_7x7 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
+            id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 7, "max_steps": int(result[1][i])},
+            kwargs={"size": 8, "max_steps": int(result[1][i])},
         )
 
         register(
-            id=ENV_NAMES.DOORKEY_4x4 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
+            id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 4, "max_steps": int(result[0][i])},
+            kwargs={"size": 6, "max_steps": int(result[0][i])},
         )
 
 
