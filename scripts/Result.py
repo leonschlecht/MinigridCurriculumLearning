@@ -8,7 +8,7 @@ class Result:
     def __init__(self, evaluationDictionary):
         argsString: str = evaluationDictionary[fullArgs]
         self.loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in [pair.split('=') for pair in argsString.split(', ')]}
-
+        self.modelName = self.loadedArgsDict[modelKey]
         self.selectedEnvList = evaluationDictionary[selectedEnvs]
         self.epochsTrained = evaluationDictionary[epochsDone] - 1
         self.framesTrained = evaluationDictionary[numFrames]
@@ -49,9 +49,8 @@ class Result:
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys())
 
-        # usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
-        #usedEnvEnumeration = ["MiniGrid-DoorKey-12x12", "MiniGrid-DoorKey-10x10", "MiniGrid-DoorKey-6x6",
-         #                      "MiniGrid-DoorKey-8x8"],
+        assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.modelName}"
+        usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
         self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
         self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
         self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
@@ -89,16 +88,24 @@ class Result:
     def getBestCurriculaEnvDistribution(self, bestCurriculaDict, usedEnvEnumeration):
         bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
         for epochList in bestCurriculaDict:
-            for curricStep in epochList:
-                for env in curricStep:  # TODO this might break because of recent log changes -> test it
+            curriculum = self.getListOrDictEntry(bestCurriculaDict, epochList)
+            for curricStep in curriculum:
+                for env in curricStep:
                     envStrRaw = env.split("-custom")[0]
                     bestCurriculaEnvDistribution[envStrRaw] += 1
         return bestCurriculaEnvDistribution
 
+    def getListOrDictEntry(self, selectedEnvList, entry):
+        if type(selectedEnvList) == list:
+            return entry
+        else:
+            return selectedEnvList[entry]
+
     def getSnapshotEnvDistribution(self, selectedEnvList, usedEnvEnumeration):
         snapshotEnvDistribution = {env: 0 for env in usedEnvEnumeration}
-        for curricStep in selectedEnvList:
-            for env in curricStep:
+        for entry in selectedEnvList:
+            curricSteps = self.getListOrDictEntry(selectedEnvList, entry)
+            for env in curricSteps:
                 envStrRaw = env.split("-custom")[0]
                 snapshotEnvDistribution[envStrRaw] += 1
         return snapshotEnvDistribution
