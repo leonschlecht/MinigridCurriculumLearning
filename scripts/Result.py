@@ -14,27 +14,24 @@ class Result:
         self.framesTrained = evaluationDictionary[numFrames]
         self.modelPerformance = evaluationDictionary[
             actualPerformance]  # {"curricScoreRaw", "curricScoreNormalized", "snapshotScoreRaw", "curriculum"}
-        self.snapShotScores = self.getSnapshotScores(evaluationDictionary, self.modelPerformance)
         self.bestCurriculaDict = evaluationDictionary[bestCurriculas]
         self.rewardsDict = evaluationDictionary[rewardsKey]
-
         self.stepMaxReward = evaluationDictionary[maxStepRewardKey]
         self.curricMaxReward = evaluationDictionary[maxCurricRewardKey]
-
         self.fullEnvDict = evaluationDictionary[curriculaEnvDetailsKey]
         self.difficultyList = evaluationDictionary[difficultyKey]
         self.trainingTimeList = evaluationDictionary[epochTrainingTime]
         self.trainingTimeSum = evaluationDictionary[sumTrainingTime]
-
-        self.epochDict = self.getEpochDict(self.rewardsDict)
-
         self.modelName = self.loadedArgsDict[argsModelKey]
         self.iterationsPerEnv = self.getIterationsPerEnv(evaluationDictionary, self.loadedArgsDict)
+
+        self.epochDict = self.getEpochDict(self.rewardsDict)
+        self.snapShotScores = self.getSnapshotScores(evaluationDictionary, self.modelPerformance)
 
         bestCurricScores = []
         avgEpochRewards = []
         numCurric = float(self.loadedArgsDict[numCurricKey])
-        if self.loadedArgsDict[trainEvolutionary]: # TODO
+        if self.loadedArgsDict[trainEvolutionary]: # TODO to method
             for epochKey in self.rewardsDict:
                 epochDict = self.rewardsDict[epochKey]
                 bestGen, bestIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
@@ -54,6 +51,7 @@ class Result:
         self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
         self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
         self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
+        print("iterPerEnv", self.iterationsPerEnv, ";; iter done", self.iterationsPerEnv * self.epochsTrained)
 
     def getSnapshotScores(self, evalDict: dict, modelPerformance: dict) -> list[float]:
         """
@@ -68,7 +66,7 @@ class Result:
             snapshotScores = []
             for epochDict in modelPerformance:
                 snapshotScores.append(epochDict[snapshotScoreKey])
-        return snapshotScores
+        return [float(i) / self.stepMaxReward for i in snapshotScores]
 
     def getEpochDict(self, rewardsDict):
         """
