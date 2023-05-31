@@ -32,15 +32,14 @@ class Result:
         avgEpochRewards = []
         numCurric = float(self.loadedArgsDict[numCurricKey])
         if self.loadedArgsDict[trainEvolutionary]: # TODO to method
+            self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
+            self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
             for epochKey in self.rewardsDict:
                 epochDict = self.rewardsDict[epochKey]
                 bestGen, bestIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
-                bestCurricScores.append(epochDict[GEN_PREFIX + bestGen][bestIdx])
+                bestCurricScores.append(epochDict[GEN_PREFIX + bestGen][bestIdx] / self.curricMaxReward)
                 epochRewardsList = np.array(list(epochDict.values()))
-                avgEpochRewards.append(np.sum(epochRewardsList))
-
-            self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
-            self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
+                avgEpochRewards.append(np.sum(epochRewardsList) / self.maxCurricAvgReward)
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
         assert type(self.iterationsPerEnv) == int

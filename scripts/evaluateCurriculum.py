@@ -6,14 +6,10 @@ from scripts.Result import Result
 from utils.curriculumHelper import *
 
 
-def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxReward: int, iterationsPerEnv: int, title: str,
-                    modelNames: list[str]):
-    minX = 0  # min([min(x) for x in xLists])
-    maxX = max([max(x) for x in allXValues]) * 1.1
-
-    # Create a figure and an axis
+def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxReward: int, title: str, modelNames: list[str]):
+    minX = 0
+    maxX = max([max(x) for x in allXValues]) * 1.05
     fig, ax = plt.subplots()
-
     colors = ['blue', 'red', 'green', 'purple']
     linestyles = ['-', '--', '-.', ':']
     for i in range(len(allYValues)):
@@ -26,58 +22,37 @@ def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], 
     ax.set_ylabel('reward')
     ax.set_title(title)
     ax.legend()
-    """
-    ax2.set_xlim(ax1.get_xlim())
-    new_tick_locations = [(i * 2) * iterationsPerEnv for i in range(1, len(aList) // 2)]
-    ax2.set_xticks(new_tick_locations)
-    ax2.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations]))
-    """
+
+    mostIteratiosnDoneXValues = max(allXValues, key=lambda x: x[-1])
+    new_tick_locations = [(2 + i * 2) * mostIteratiosnDoneXValues[1] for i in range(len(mostIteratiosnDoneXValues) // 2)]  # TODO maybe use 250k steps isntead
+    ax.set_xticks(new_tick_locations)
+    ax.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations])
     plt.show()
 
 
-def plotSnapshotPerformance(results: list[Result], title: str):
-    y = []
-    for res in results:
-        y.append(res.snapShotScores)
-
-    x = []
-    for res in results:
-        x.append([])
-        for i in range(res.epochsTrained):
-            x[-1].append(i * res.iterationsPerEnv)
+def plotSnapshotPerformance(results: list[Result], title: str, modelNamesList):
+    y = [res.snapShotScores for res in results]
+    x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained)] for res in results]
     maxReward = 1
-    iterationsPerEnv = results[0].iterationsPerEnv
-    modelNames = []
-    for r in results:
-        if r.iterationsPerEnv > iterationsPerEnv:
-            iterationsPerEnv = r.iterationsPerEnv
-        modelNames.append(r.modelName)
-    print("highest iter env", iterationsPerEnv)
-
-    plotPerformance(y, x, maxReward, iterationsPerEnv, title, modelNames)
+    plotPerformance(y, x, maxReward, title, modelNamesList)
 
 
-def plotEpochAvgCurricReward(results: list[Result], title: str):
-    y = []
-    for res in results:
-        y.append(res.avgEpochRewards)
-    print("y:", y)
-    maxReward = results[0].maxCurricAvgReward
-    iterationsPerEnv = results[0].iterationsPerEnv
-    plotPerformance(y, maxReward, iterationsPerEnv, title)
+def plotEpochAvgCurricReward(results: list[Result], title: str, modelNamesList):
+    y = [res.avgEpochRewards for res in results] # TODO NORMALIZE ??
+    print("avg", y)
+    x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained)] for res in results]
+    maxReward = 1
+    plotPerformance(y, x, maxReward, title, modelNamesList)
 
 
-def plotBestCurriculumResults(results: list[Result], title: str):
-    y = []
-    for res in results:
-        y.append(res.bestCurricScore)
-    maxReward = results[0].curricMaxReward
-    iterationsPerEnv = results[0].iterationsPerEnv
-    for r in results:
-        if r.iterationsPerEnv > iterationsPerEnv:
-            iterationsPerEnv = r.iterationsPerEnv
-    print("highest iter env", iterationsPerEnv)
-    plotPerformance(y, maxReward, iterationsPerEnv, title)
+def plotBestCurriculumResults(results: list[Result], title: str, modelNamesList):
+    y = [res.bestCurricScore for res in results]
+    print(y)
+    x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained)] for res in results]
+
+    maxReward = 1
+
+    plotPerformance(y, x, maxReward, title, modelNamesList)
 
 
 def plotEnvsUsedDistribution(resultClassesList: list[Result], distributionType: str, titleInfo: str):
@@ -146,12 +121,13 @@ if __name__ == "__main__":
         else:
             raise Exception(f"Path '{logFilePath}' doesnt exist!")
 
+    modelNames = [res.modelName for res in resultClasses]
+
     # plotEnvsUsedDistribution(resultClasses, BEST_CURRIC_DISTR, "Distribution of envs of best performing curricula")
     # plotEnvsUsedDistribution(resultClasses, FULL_CURRIC_DISTR, "all Curric Distribution")
     # plotEnvsUsedDistribution(resultClasses, SNAPTSHOTS_DISTR, "snapshot Distribution")
     # TODO are there other distributions that are useful?
 
-    plotSnapshotPerformance(resultClasses, "Snapshot Performance")
-    # plotBestCurriculumResults(resultClasses, "Best Curriculum Results")
-    # plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch")
-
+    # plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNames)
+    plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNames)
+    # plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNames) # TODO this should not have a shared x-axis; or at least still use epochs and not scale
