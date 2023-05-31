@@ -41,6 +41,7 @@ def plotBestCurriculumResults(y: list, curricMaxReward: int, modelName: str, ite
     plotSnapshotPerformance(y, curricMaxReward, modelName, iterationsPerEnv)
 
 
+# current start
 def plotEnvsUsedDistribution(envLists: list[dict], titleInfo='...'):
     envDistribution = envLists[0]
     # extract the numeric part of the keys of the envDistribution
@@ -69,6 +70,75 @@ def plotEnvsUsedDistribution(envLists: list[dict], titleInfo='...'):
     # Add labels to the bars
     ax.bar_label(bar_container, labels=envOccurrences, fontsize=12, padding=5)
     # TODO add colors again
+    #current end
+#incoming start
+def evaluateCurriculumResults(evaluationDictionary):
+    selectedEnvList = evaluationDictionary[selectedEnvs]
+    epochsTrained = evaluationDictionary[epochsDone] - 1
+    framesTrained = evaluationDictionary[numFrames]
+    modelPerformance = evaluationDictionary[actualPerformance]  # {"curricScoreRaw", "curricScoreNormalized", "snapshotScoreRaw", "curriculum"}
+    keyList = evaluationDictionary.keys()
+    if snapshotScoreKey in keyList:
+        snapshotScores = evaluationDictionary[snapshotScoreKey]
+    else:
+        snapshotScores = []
+        for epochDict in modelPerformance:
+            snapshotScores.append(epochDict[snapshotScoreKey])
+
+    bestCurriculaDict = evaluationDictionary[bestCurriculas]
+
+    rewardsDict = evaluationDictionary[rewardsKey]
+
+    stepMaxReward = evaluationDictionary[maxStepRewardKey]
+    curricMaxReward = evaluationDictionary[maxCurricRewardKey]
+
+    for epochKey in rewardsDict:
+        epochDict = rewardsDict[epochKey]
+        for genKey in epochDict:
+            genRewardsStr = epochDict[genKey]
+            numbers = re.findall(r'[0-9]*\.?[0-9]+', genRewardsStr)
+            numbers = [float(n) for n in numbers]
+            epochDict[genKey] = numbers
+        # TODO assertion to make sure length hasnt chagned
+
+    argsString: str = trainingInfoDict[fullArgs]
+    loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in [pair.split('=') for pair in argsString.split(', ')]}
+
+    modelName = loadedArgsDict[argsModelKey]
+
+    if iterationsPerEnvKey in trainingInfoDict.keys():
+        iterationsPerEnv = int(trainingInfoDict[iterationsPerEnvKey])
+    else:
+        iterationsPerEnv = int(loadedArgsDict[oldArgsIterPerEnvName])  # TODO this might become deprecated if I change iterPerEnv -> stepsPerEnv
+
+    curricScores = []
+    avgEpochRewards = []
+    numCurric = float(loadedArgsDict[numCurricKey])
+    tmp()
+    i = 0
+    if loadedArgsDict[trainEvolutionary]:
+        for epochKey in rewardsDict:
+            epochDict = rewardsDict[epochKey]
+            genNr, listIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
+            bestCurricScore = epochDict[GEN_PREFIX + genNr][listIdx]
+            curricScores.append(bestCurricScore)
+            epochRewardsList = np.array(list(epochDict.values()))
+            avgEpochRewards.append(np.sum(epochRewardsList))
+            i += 1
+        noOfGens: float = float(loadedArgsDict[nGenerations])
+        maxCurricAvgReward = curricMaxReward * noOfGens * numCurric
+
+    assert type(iterationsPerEnv) == int
+    assert epochsTrained == len(rewardsDict.keys())
+
+    # plotSnapshotPerformance(snapshotScores, stepMaxReward, modelName, iterationsPerEnv)
+    # plotBestCurriculumResults(curricScores, curricMaxReward, modelName, iterationsPerEnv)
+    plotEpochAvgCurricReward(avgEpochRewards, maxCurricAvgReward, modelName, iterationsPerEnv)
+
+
+
+    plt.show()
+    # incoming change
     # TODO plot the snapshot vs curricReward problem
     # TODO plot reward development of 1 curriculum over multiple generations
     # TODO find out a way to properly plot the difficulty list / maybe how it influences the results; and maybe how you can improve it so that it is not even needed in the first place
