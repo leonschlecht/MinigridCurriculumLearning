@@ -31,21 +31,21 @@ class Result:
         self.modelName = self.loadedArgsDict[argsModelKey]
         self.iterationsPerEnv = self.getIterationsPerEnv(evaluationDictionary, self.loadedArgsDict)
 
-        curricScores = []
+        bestCurricScores = []
         avgEpochRewards = []
         numCurric = float(self.loadedArgsDict[numCurricKey])
-        if self.loadedArgsDict[trainEvolutionary]:
+        if self.loadedArgsDict[trainEvolutionary]: # TODO
             for epochKey in self.rewardsDict:
                 epochDict = self.rewardsDict[epochKey]
-                genNr, listIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
-                bestCurricScore = epochDict[GEN_PREFIX + genNr][listIdx]
-                curricScores.append(bestCurricScore)
+                bestGen, bestIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
+                bestCurricScores.append(epochDict[GEN_PREFIX + bestGen][bestIdx])
                 epochRewardsList = np.array(list(epochDict.values()))
                 avgEpochRewards.append(np.sum(epochRewardsList))
 
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
             self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
-
+        self.avgEpochRewards = avgEpochRewards
+        self.bestCurricScore = bestCurricScores
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys())
 
