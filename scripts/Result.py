@@ -49,7 +49,9 @@ class Result:
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys())
 
-        usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
+        # usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
+        #usedEnvEnumeration = ["MiniGrid-DoorKey-12x12", "MiniGrid-DoorKey-10x10", "MiniGrid-DoorKey-6x6",
+         #                      "MiniGrid-DoorKey-8x8"],
         self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
         self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
         self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)

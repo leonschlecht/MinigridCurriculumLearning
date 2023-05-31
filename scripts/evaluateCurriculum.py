@@ -98,7 +98,8 @@ if __name__ == "__main__":
 
     s0 = resultClasses[0].allCurricDistribution
     s1 = resultClasses[1].allCurricDistribution
-    plotEnvsUsedDistribution([s0, s1], "hello")
+    s2 = resultClasses[2].allCurricDistribution
+    plotEnvsUsedDistribution([s2], "hello")
     print(s0, s1)
 
     # plotEnvsUsedDistribution(allCurricDistribution, "all Curric Distribution")
