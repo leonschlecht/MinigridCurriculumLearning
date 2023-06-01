@@ -32,7 +32,7 @@ class allParalell:
         self.totalEpochs = args.trainEpochs
         self.trainingTime = 0
 
-        self.stepMaxReward = calculateCurricStepMaxReward(len(ENV_NAMES.ALL_ENVS))
+        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
 
         self.trainingInfoJson = {}
