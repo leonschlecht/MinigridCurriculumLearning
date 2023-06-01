@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 
 from scripts.Result import Result
+from utils import storage
 from utils.curriculumHelper import *
 
 
@@ -107,11 +108,11 @@ def plotEnvsUsedDistribution(resultClassesList: list[Result], distributionType: 
 
 
 if __name__ == "__main__":
-    evalDirectory = os.getcwd() + "\\storage\\save\\evaluate\\"
+    evalDirectory = storage.getLogFilePath(["storage", "save", "evaluate"])
     logFilePaths = []
     evalDirectories = next(os.walk(evalDirectory))[1]
     for model in evalDirectories:
-        logFilePaths.append(evalDirectory + model + "\\status.json")
+        logFilePaths.append(evalDirectory + os.sep + model + os.sep + "status.json")
 
     resultClasses = []
     for logFilePath in logFilePaths:

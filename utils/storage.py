@@ -112,7 +112,7 @@ def copyAgent(src, dest, txtLogger) -> None:
     :param txtLogger
     :return:
     """
-    pathPrefix = os.getcwd() + '\\storage\\'
+    pathPrefix = os.getcwd() + os.sep + 'storage' + os.sep
     fullSrcPath = pathPrefix + src
     fullDestPath = pathPrefix + dest
     if os.path.isdir(fullDestPath):
@@ -127,7 +127,7 @@ def deleteModelIfExists(directory) -> bool:
     Deletes a path if it exists. Returns true on success, false otherwise
     :param directory: name of the model to be deleted, which is stored in /storage
     """
-    fullPath = os.getcwd() + "\\storage\\" + directory  # TODO use os.join
+    fullPath = os.getcwd() + os.sep + "storage" + os.sep + directory
     if os.path.exists(fullPath):  # TODO split this into 2 methods
         shutil.rmtree(fullPath)
         return True

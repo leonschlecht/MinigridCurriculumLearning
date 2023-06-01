@@ -33,8 +33,8 @@ def startLinearCurriculum(txtLogger, startTime, args):
     trainingInfoJson["trainingDuration"] = duration
     trainingInfoJson["scoreAfterEachEnv"] = evaluation
 
-    modelPath = os.getcwd() + "\\storage\\" + args.model  # use this ??
-    logFilePath = modelPath + "\\status.json"
+    modelPath = os.getcwd() + os.sep + "storage" + os.sep + args.model  # use this ??
+    logFilePath = modelPath + os.sep + "status.json"
     with open(logFilePath, 'w') as f:
         f.write(json.dumps(trainingInfoJson, indent=4))
     return trainingInfoJson
