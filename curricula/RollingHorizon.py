@@ -40,9 +40,7 @@ class RollingHorizon(ABC):
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
         self.trainingInfoJson = {}
         self.logFilePath = storage.getLogFilePath(["storage", args.model, "status.json"])
-        print(self.logFilePath)
-        exit()
-        self.gamma = args.gamma  # TODO is gamma used properly? Do RH -> Get Max thingy, and update difficulty based on the RH reward or snapshot reward?
+        self.gamma = args.gamma
         self.currentRewardsDict = {}
         self.currentSnapshotRewards = {}
         self.curriculaEnvDetails = {}

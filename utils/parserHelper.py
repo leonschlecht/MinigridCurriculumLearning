@@ -12,6 +12,8 @@ def initializeArgParser():
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainAllParalell", default=False, action="store_true",
                         help="traines all 4 environments in parallel")
+    parser.add_argument("--allSimultaneous", default=True, action="store_false",
+                        help="Determines if all envs should be trained simultaneously from the start, or if the envs should be selected depending on progress")
     parser.add_argument("--trainLinear", default=False, action="store_true",
                         help="Decides what training method will be used. If set, linear curriculum will be used")
     parser.add_argument("--trainBiasedRandomRH", default=False, action="store_true",
