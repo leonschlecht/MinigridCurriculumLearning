@@ -94,13 +94,16 @@ def plotEnvsUsedDistribution(resultClassesList: list[Result], distributionType: 
     # Add labels to the bars
     ax.bar_label(bar_container, labels=envOccurrences, fontsize=12, padding=5)
     plt.show()
-    # TODO add colors again
-    # TODO plot the snapshot vs curricReward problem
-    # TODO find out a way to properly plot the difficulty list / maybe how it influences the results; and maybe how you can improve it so that it is not even needed in the first place
+
     # TODO find way to plot multiple models at once (and show some relevant legend for info of model name or sth like that)
-    # TODO save the plots
     # TODO extra args option to only load 1 model
     # TODO experiment comparison: long iterPerStep with many Gen, with low iterPerStep with low gen
+
+    # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
+
+    # TODO low prio
+    # find out a way to properly plot the difficulty list / maybe how it influences the results; and maybe how you can improve it so that it is not even needed in the first place
+    # save the plots
 
 
 if __name__ == "__main__":
@@ -131,3 +134,4 @@ if __name__ == "__main__":
     # plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNames)
     plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNames)
     # plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNames) # TODO this should not have a shared x-axis; or at least still use epochs and not scale
+

@@ -1,103 +1,65 @@
-    "possibleEnvs": ["MiniGrid-DoorKey-16x16", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-5x5"],
-Possible envs adden
-
-- wie backupen die models (damit nicht alles futsch geht)
-- gamma anpassungen
-- CUDA??
-- visualisierungen (aber so viele Möglichkeiten. Was interessiert uns? Was brauche ich später? [neben den development plots]
+Todos:
+- baseline + logs (ein mal alles para; dann 1x mit entscheiden pro epoch was als nächstes dran kommt)
+- use os . join for these things os.getcwd() + "\\storage\\" + directory)
 
 
-plotly  / seaborn
-spikes sollten durch mehrfach
-better titles
-AOC bestimmen
-ssh einrichten
 
-ggf biased start wiedervwenden
+- EVAL penv verbessern ; vllt kann man da ja was wiederverwenden; man kann evtl auch args.procs auf args.episdoes setzen ?
+- schauen, ob man das Register überhaupt braucht oder direkt in kwargs beim agenten das machen kann
+- mit dem difficulty score etwas rumprobieren vllt ?
+- alle relevanten Experimente backupen / bzw. das status & log davon
 
-gamma experimente machen, wo man schon einen startpunkt hat damit ich nicht alles neumachen muss
 
--------------
 
-- Viel randomness: letzte generation als 1. gen für nächste epoch nutzen ?
-- noch mehr gamma experimente
-- andere Experimente: Für Baseline mit logs; und RRH mit den L
 - 2. Minigrid Umgebung suchen (oder ertsmal Experimente weiter?);
-
 - Cluster Test: läuft ohne fehler oder ggf OS Probleme?
+- penv rumprobieren
 
------------------------
-H
-curricScore zeigt nicht den multiplied wert
-
-
-- mehr SchrittIterationen oder weniger?
-- mehr episoden
-
-
-zB produzierte kurve (3) ; gleiche für (4), ... ---> in 1 grafik
-auch vergleichen mit random, baseline usw
-
-- Dann Anzahl an Generationen
-- Anzahl Level die bereitstellen
-
-
-
-einschärnkungen auch benenne ( alle kombinationen nicht mölgihc) -> Gefühl kriegen
-am ende bayesian optimization
-
------------------------
-Allg.
-- neue Experimente: RHEA 2x2 Tage (GA vs NSGA), RRH 1 Tage, Baseline 1 Tag
-
-Mi
-d: refactoring & Fixes
-- penv speedup noch mal probieren (4-5h)
-
-- penv weiterprobieren ( Prozess pausieren, damit nicht 4 * 32 aktiv sind sondern nur 1 * 32)
-- eval penv verbessern ; vllt kann man da ja was wiederverwenden (zumindest das letzte); man kann evtl auch args.procs auf args.episdoes setzen ?
-
-
-Do
-- eval
-
-Fr
-- eval
-
-Sa
-- anderen Minigrid umgebung als doorkey suchen / funktionsfähig machen (ggf auch paper dazu lesen; bzw sonst noch andere Envs überhaupt)
-
-So
-- cuda noch mal probieren ??( https://www.run.ai/guides/gpu-deep-learning/pytorch-gpu )
-
-Mo
-???
-
-
-===============================
-
-- herausfinden, waru mdie logs vorher korrekt waren ???????
-- check differences cmd line args & when reloading
 
 Home:
-- testen, ob pymoo in 1 Generation immer allse richtig weitergibt und nix ausversehen doppelt passiert (zB schauen ob andere Curricula verwendet werden)
+- wie verändert sich die Eval-Zeit wenn man die Episoden erhöht zB auf 25? [vllt auch nur bei j=0 mehr episoden benutzen]
+- schauen warum %-Performance falsch angezeigt wrude in den logs
+
+Mi: eval weiter; kann jetzt mehrere Sachen gleicheztiig anschauen
+Do: tnt, dann eval weiter; überblick verschaffen
+Fr
+Sa: wenig
+So: wahrscheinlich nur exp laufen
+Mo: -
+Di: -
+Mi
+Do
+
+
+===================================
+Experimente:
+2x2 Tage mit --iterPerStep 100000 --numCurric 3 --nGen 3 --stepsPerCurric 3 ( & 5)
+1 Tag baseline (allPara)
+1 Tag andere baseline
+1 Tag RRH 4 curric
+- auch mal mit anderem GA arbeiten --> Literatur
+
+
+Allgemeines / Demnächst:
+- visualisierungen: die Varianten-plots, um zu sehen was sich wie entwickelt hätte
+- Anfangen zu schreiben (ggf 4h erstmal anfangen / Woche bis ende Juni)
+
+
+
+- cuda noch mal probieren ??( https://www.run.ai/guides/gpu-deep-learning/pytorch-gpu )
+
+
+- herausfinden, waru mdie logs vorher korrekt waren ??????? --> Fixen, dass man allF nicht einfach so hat, sondern eingelesen werdne muss
+- check differences cmd line args & when reloading
+
 
 Q's / Ideen:
-- Curriculum-Rewards normalisieren wichtig? (sonst ist das in der json irreführend)
-- wie viele evaluationen laufen lassen. Was ist mit cutten, wenn garbage?
-- Ist Speicherplatz eigentlich irgendwann ein Problem? die alten Models aus den Files könnte man ggf löschen, müsste dann aber noch mal sicherere gehen mit dem abspeichern
-- welche performance metriken sollen überhaupt verwendet werden? Welche möchte man plotten später? (training vs eval reward, ...)
-
-- Was für Env-Iterationen, Curriculum-Länge & -Anzahl werden überhaupt angestrebt?
-- Kann man vllt so die Minigrid anpassen, dass ich nicht manuell auf register(...) in meinen inits zurückgreifen muss?
+- wie backupen die models (damit nicht alles futsch geht)
+- Evaluationen frühzeitig cutten, wenn garbage?
 - Das Unlearning Problem: wie genau funktionieren die updates überhaupt (2560 update schritte, oder 1x pro level)
-- Wie damit umgehen, dass man evtl nicht alles 1:1 gleich lang machen muss? zB Man kann 200k trainieren 16x16, und 100k 8x8 reicht zum stabilisieren
 - RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist & die Iterationen pro Env noch niedriger sind
 ------------------------------------------
 
-
-unwichtig:
-- ggf die envDetails Struktur flippen (epoch->gen->curric zu epoch->curric->gen) 1/3
 - minimize ersetzen auf das .hasNext() und dann abbrechen bei konvergenz (falls man später viele Gens machen will)
 
 
@@ -106,57 +68,8 @@ Results-Evaluation
 - Experimente-Evaluate ausprobieren, bzw gegeben eine json etwas rumprobieren / stubs erstellen, wie ich damit abeiten kann
 
 
-Other
-- Docstrings schreiben
-- gamma Parameter auswirkungen; summe von 0 oder 1 starten lassen
- wird maxReward richtig geestzt / ist er noch relevant?
 
-
-Erkenntnise:
-- Versucht 8x8 zu selten,16x16 sowieso
-- schlechte Rewardstruktur --> - anpassen, wenn gewisse performance erreicht wird (-> ermutigen von 16x16)
-- diff1 & 2 haben kaum unterschiede auf laufzeit
-- maxSteps beeifnlusst performance (ggf berücksichtigen? Difficulty = 2 sollte ja nicht die performance schmälern, nur weil es schwerer ist)
--> ggf 2* max_reward - actual_reward * difficulty
-- das dauert alles sehr lange und ist dann irgendwie nicht aussagefähig. --> ggf lieber 2-3 experimente für 16h laufen lassen statt 6x8h
-
------------------
-
-
-
-/storage backupen & gut benennen, ggf irgendwo immer noch extra notes reinschreiben
-eval vllt beschleunigen und 0 zurückgeben, wenn er zu oft verkackt hat bzw immer maxSteps braucht; evtl spätere envs skippen
-Rewards-list in json ist ein string ?
-
-Random Questions
-- Kann man evtl partielle inforamtionen aus der letzten iteration mitnehmen ??? zB für den evol Alg.
-- Nehme ich das res.X, um dann einen RH zu simulieren oder nehme ich das beste Ergebnis der Simulationen?
-- wie mit reward experimentieren dass man ihn ermutigt 16x16 auszuprobieren
-- wie dynamisch mit dem switchen umgehen (zb nach jedem update mal probieren?)
-- funzt der 16x16 richtig (oder kann was wegen int-rounding schief gehen ; bzw. warum wird es nie gewählt?
-- Mehr
-
-
-"""
-5x5 aufteilen , 6x6 rausnehmen ; 4x4 mit 2x2 obs
-- observation space reduzieren (komplexität des levels wird schwerer; und man kommt durch zufall leichter an) ; nutzlose iterationen sparen
-    4, 6, 8, 10 (obs space macht es seeehr schwer)
-"""
-
-
--------------------------------------------------------------------------------------
 TODO ggf alte Models löschen, wenn man X epochs weiter ist. Solange man die relevanten logs noch hat
-- Evaluation: use weights, maybe depending on progress --> encourage 16x16 even more;
-- maybe set biased pop for 1st epoch 1st generation like so: pop = Population.new("X", self.createFirstGeneration(self.curricula))
-
-
-Small Refactorings
-- use os . join for these things os.getcwd() + "\\storage\\" + directory)
-- load time or set initially in linear / adaptive
-- überall datetime einsetzen statt time
-
-
-
 =========================================================================
 MA Notizen
 
@@ -165,14 +78,21 @@ Vektor -> Matrix benennen (bzw. ggf 3d für die Repräsentation damit es übersi
 ===========================================================================================
 
 Changelog / Erkenntnisse
-Reward nur am Ende ist super garbage
-
+- Versucht 8x8 zu selten,16x16 sowieso
+- schlechte Rewardstruktur --> - anpassen, wenn gewisse performance erreicht wird (-> ermutigen von 16x16)
+- diff1 & 2 haben kaum unterschiede auf laufzeit
+- maxSteps beeifnlusst performance (ggf berücksichtigen? Difficulty = 2 sollte ja nicht die performance schmälern, nur weil es schwerer ist)
+-> ggf 2* max_reward - actual_reward * difficulty
+- das dauert alles sehr lange und ist dann irgendwie nicht aussagefähig. --> ggf lieber 2-3 experimente für 16h laufen lassen statt 6x8h
 
 
 
 - 8x8, vor allem 16x16 wurde fast nie ausgewählt. Daher Reward anpassen, um ermutigen das zu tun
+- Reward am ende zu viel gewichtung
 - envDifficulty (aka maxSteps) lässt reward etwas verzerrt aussehen; daher multiplier
 - Difficulty Cutoffs: .25 / .75
+
+
 
 17.05 - 24.05:
 5x5 viewsize, dafür kleinere Level 4 7 9 12 (bzw 6 8 10 12) --> schicht entfernt im netz
@@ -184,8 +104,26 @@ Reward nur am Ende ist super garbage
 - RRH Experiment (wollte eig mit neuen Envs testen ...) ; sehr jumpy ( --> colab)
 
 
-25.05 - 03.06
+25.05 - 30.05
+?
+
+
+31.05 - 9.6
+
+
 
 
 
 -------------
+===============================
+Meetingnotes:
+plotly  / seaborn
+spikes sollten durch mehrfach ausführen geringer werden
+AOC bestimmen
+zB produzierte kurve (3) ; gleiche für (4), ... ---> in 1 grafik; auch vergleichen mit random, baseline usw;
+- Dann Anzahl an Generationen
+- Anzahl Level die bereitstellen (6 8 10 12 vs 5 6 8 16 zB)
+einschärnkungen auch benenne ( alle kombinationen nicht möglich zu testen) -> es geht um Gefühl kriegen
+am ende ggf bayesian optimization ( zB 2 Params gleichzeitg variieren lasesn)
+
+-----------------------

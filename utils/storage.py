@@ -132,3 +132,10 @@ def deleteModelIfExists(directory) -> bool:
         shutil.rmtree(fullPath)
         return True
     return False
+
+
+def getLogFilePath(paths: list[str]):
+    fullPath = os.getcwd()
+    for path in paths:
+        fullPath += os.sep + path
+    return fullPath

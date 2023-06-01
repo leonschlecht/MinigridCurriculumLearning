@@ -20,7 +20,6 @@ def main():
     startTime: datetime = datetime.now()
 
     ############
-    # TODO make e.start() methods instaed of doing it in init because of calling eval later
     assert args.stepsPerCurric > 0, "Steps per curriculum must be >= 1"
     assert args.numCurric > 0, "There must be at least 1 curriculum"
     assert args.iterPerEnv > 0, "The iterations per curricululm step must be >= 1"
