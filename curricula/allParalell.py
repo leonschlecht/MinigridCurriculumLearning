@@ -25,7 +25,7 @@ class allParalell:
         self.seed = args.seed
         self.paraEnvs = args.paraEnv
 
-        self.ITERATIONS_PER_ENV = 500000
+        self.ITERATIONS_PER_EVALUATE = 250000
         self.iterationsDone = 0
         self.txtLogger = txtLogger
         self.selectedModel = utils.getEpochModelName(args.model, 0)
@@ -36,7 +36,7 @@ class allParalell:
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
 
         self.trainingInfoJson = {}
-        self.logFilePath = os.getcwd() + os.sep + "storage" + os.sep + args.model + "\\status.json"  # TODO maybe outsource
+        self.logFilePath = os.getcwd() + os.sep + "storage" + os.sep + args.model + os.sep + "status.json"
         self.gamma = args.gamma  # TODO is gamma used properly? Do RH -> Get Max thingy, and update difficulty based on the RH reward or snapshot reward?
         self.currentRewardsDict = {}
         self.currentSnapshotRewards = {}
@@ -53,7 +53,7 @@ class allParalell:
 
         iterationsDone = 0
         for epoch in range(totalEpochs):
-            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
+            iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
             reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
             envNames = self.updateEnvNames(reward)

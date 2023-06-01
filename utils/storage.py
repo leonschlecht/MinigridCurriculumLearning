@@ -93,7 +93,7 @@ def getModelWithCurricSuffix(model, curricNr) -> str:
 
 
 def getEpochModelName(model, epoch) -> str:
-    return model + "\\epoch_" + str(epoch)
+    return model + os.sep + "epoch_" + str(epoch)
 
 
 def getModelWithCandidatePrefix(model: str) -> str:
