@@ -34,30 +34,35 @@ class allParalell:
         self.latestReward = 0
         self.startEpoch = 1
 
+        if self.allEnvsSimultaneous:
+            self.initialEnvNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
+        else:
+            self.initialEnvNames = self.initializeEnvNames()
+
         if self.modelExists:
             self.loadTrainingInfo()
         else:
             self.trainingInfoJson = RollingHorizon.initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed,
                                                                     self.stepMaxReward, None, self.args)
 
-        self.envNames = self.updateEnvNames(self.envDifficulty)
-        self.trainEachCurriculum(self.startEpoch, self.totalEpochs, self.iterationsDone, self.envNames)
+        self.trainEachCurriculum(self.startEpoch, self.totalEpochs, self.iterationsDone, self.initialEnvNames)
 
-    def trainEachCurriculum(self, startEpoch: int, totalEpochs: int, iterationsDone: int, envNames: list):
-        assert self.allEnvsSimultaneous
+    def trainEachCurriculum(self, startEpoch: int, totalEpochs: int, iterationsDone: int, initialEnvNames: list):
+        envNames = initialEnvNames
         for epoch in range(startEpoch, totalEpochs):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
+            reward = 0 # TODO ------>
             if epoch == 0:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
-            reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
+                self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
+            # reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
 
             self.envDifficulty = RollingHorizon.calculateEnvDifficulty(reward, self.stepMaxReward)
             if self.allEnvsSimultaneous:
-                envNames = self.updateEnvNames(self.envDifficulty)
+                envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
             else:
-                # [a b c d]. Perform poor -> Go down in difficulty ; perform well -> go up in difficulty; maybe 2/2 split
-                pass
+                envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, envNames, reward, self.envDifficulty, iterationsDone)
             self.logInfoAfterEpoch(epoch, reward, self.txtLogger, totalEpochs)
             self.txtLogger.info(f"reward {reward}")
@@ -78,11 +83,57 @@ class allParalell:
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
     @staticmethod
-    def updateEnvNames(difficulty) -> list:
+    def updateEnvNamesNoAdjusment(difficulty) -> list:
         envNames = []
         for j in range(len(ENV_NAMES.ALL_ENVS)):
             index = j
             envNames.append(getEnvFromDifficulty(index, difficulty))
+        return envNames
+
+    @staticmethod
+    def initializeEnvNames() -> list:
+        envNames = []
+        for j in range(len(ENV_NAMES.ALL_ENVS)):
+            if j < 2:
+                index = 0
+            else:
+                index = 1
+            envNames.append(getEnvFromDifficulty(index, 0))
+        return envNames
+
+    @staticmethod
+    def updateEnvNamesDynamically(currentEnvNames, difficulty: int) -> list:
+        envNames = []
+        if difficulty == 0:
+            for env in currentEnvNames:
+                cutEnv = env.split("-custom")[0]
+                index = ENV_NAMES.ALL_ENVS.index(cutEnv) - 1
+                if index < 0:
+                    index = 0
+                envNames.append(ENV_NAMES.ALL_ENVS[index])
+        elif difficulty == 2:
+            for env in currentEnvNames:
+                index = ENV_NAMES.ALL_ENVS.index(env) + 1
+                if index >= len(ENV_NAMES.ALL_ENVS):
+                    index = len(ENV_NAMES.ALL_ENVS) - 1
+                envNames.append(ENV_NAMES.ALL_ENVS[index])
+        else:
+            envNames = currentEnvNames
+        # TODO think of way of preventing all same envs
+        assert envNames != []
+        allSame = True
+        envName = envNames[0]
+        for env in envNames:
+            if env != envName:
+                allSame = False
+                break
+        if allSame:
+            # envNames[0] = up
+            # envNames[-1] = down
+            x = 0
+        print("env names = ", envNames)
+        print("before", currentEnvNames)
+        exit()
         return envNames
 
     def updateTrainingInfo(self, trainingInfoJson, epoch, envNames, reward, difficulty, framesDone):
@@ -111,7 +162,7 @@ class allParalell:
         if len(self.trainingInfoJson[difficultyKey]) > 0:
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
         self.iterationsDone = self.trainingInfoJson[numFrames]
-        self.envNames = self.trainingInfoJson[curriculaEnvDetailsKey]
+        self.initialEnvNames = self.trainingInfoJson["currentListOfCurricula"] #TODO test this
         self.startEpoch = self.trainingInfoJson[epochsDone]
         if len(self.trainingInfoJson[snapshotScoreKey]) > 0:
             self.latestReward = self.trainingInfoJson[snapshotScoreKey][-1]
