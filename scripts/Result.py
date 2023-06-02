@@ -50,7 +50,6 @@ class Result:
         self.bestCurricScore = bestCurricScores
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys())
-        print(evaluationDictionary)
         assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.logFilepath}"
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
         self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
