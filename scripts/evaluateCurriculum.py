@@ -65,8 +65,30 @@ def plotDistributionOfBestCurric(resultClassesList: list[Result], titleInfo: str
 
 
 def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str, modelNamesList: list):
+    """
+    Plots the distributions of the envs used for 1st step of curricula
+    :param resultClassesList:
+    :param titleInfo:
+    :param modelNamesList:
+    :return:
+    """
     snapshotDistributions = [res.snapshotEnvDistribution for res in resultClassesList]
-    plotEnvsUsedDistribution(snapshotDistributions, titleInfo, modelNamesList)
+    largeSize = []
+    smallSize = []
+    for s in snapshotDistributions:
+        isSmallSize = True
+        for key in s.keys():
+            if "16x16" in key:
+                isSmallSize = False
+                break
+        if isSmallSize:
+            smallSize.append(s)
+        else:
+            largeSize.append(s)
+    plotEnvsUsedDistribution(smallSize, titleInfo + " small", modelNamesList)
+    plotEnvsUsedDistribution(largeSize, titleInfo + " large", modelNamesList)
+    # TODO use the subplots simultaneous thingy
+    exit()
 
 
 # TODO allCurricDsitribution
@@ -167,7 +189,7 @@ if __name__ == "__main__":
         logFilePaths.append(evalDirectory + os.sep + model + os.sep + "status.json")
     parser = argparse.ArgumentParser()
     # General parameters
-    parser.add_argument("--model", default=None, required=True, help="Option to select a single model for evaluation")
+    parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     args = parser.parse_args()
 
     resultClasses = []
@@ -189,21 +211,17 @@ if __name__ == "__main__":
 
     modelNames = [res.modelName for res in resultClasses]
 
-    # plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of best performing curricula", modelNames)
+    plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of best performing curricula", modelNames)
     plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula", modelNames)
     # TODO all envs distr plot
-    # TODO plot showing differences between earlier and later generations
 
-    #plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNames)
-    #plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNames)
-    # plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNames) # TODO this should not have a shared x-axis; or at least still use epochs and not scale
-
+    plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNames)
+    plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNames)
+    plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNames) # TODO this should not have a shared x-axis; or at least still use epochs and not scale
 
 
-    # TODO find way to plot multiple models at once (and show some relevant legend for info of model name or sth like that)
-    # TODO extra args option to only load 1 model
     # TODO experiment comparison: long iterPerStep with many Gen, with low iterPerStep with low gen
-
+    # TODO plot showing differences between earlier and later generations
     # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
 
     # TODO: low prio stuff
