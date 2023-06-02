@@ -76,7 +76,6 @@ class RollingHorizon(ABC):
             bestCurricScoreRaw: float = np.max(currentRewardsList)
             currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values()))
             currentBestModel = self.getCurrentBestModel()
-            # TODO Test so that currentBestModels reward == bestCurricScoreRaw
             currentBestCurriculum = self.getCurrentBestCurriculum()
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
 
