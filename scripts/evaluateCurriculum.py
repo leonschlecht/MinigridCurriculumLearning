@@ -1,3 +1,4 @@
+import argparse
 import os
 from pathlib import Path
 
@@ -59,7 +60,8 @@ def plotBestCurriculumResults(results: list[Result], title: str, modelNamesList)
 
 
 def plotDistributionOfBestCurric(resultClassesList: list[Result], titleInfo: str, modelNamesList):
-    plotEnvsUsedDistribution(resultClassesList[0].bestCurriculaEnvDistribution, titleInfo, modelNamesList)
+    bestCurricDistr = [res.bestCurriculaEnvDistribution for res in resultClassesList]
+    plotEnvsUsedDistribution(bestCurricDistr, titleInfo, modelNamesList)
 
 
 def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str, modelNamesList: list):
@@ -107,15 +109,18 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, mo
     bar_width = 0.5 / num_distributions
 
     print(allEnvDistributions)
+    # TODO probably not useful 1
+    """
     allEnvs = []
     for envDistr in allEnvDistributions:
         for key in envDistr.keys():
             if key not in allEnvs:
                 allEnvs.append(key)
+    """
     x_offset = -bar_width * (num_distributions - 1) / 2
     for envDistIndex in range(num_distributions):
         envDistribution = allEnvDistributions[envDistIndex]
-        # TODO this is probably not that useful
+        # TODO this is probably not that useful 1
         """
         for env in allEnvs:
             if env not in envDistribution.keys():
@@ -160,27 +165,34 @@ if __name__ == "__main__":
     evalDirectories = next(os.walk(evalDirectory))[1]
     for model in evalDirectories:
         logFilePaths.append(evalDirectory + os.sep + model + os.sep + "status.json")
+    parser = argparse.ArgumentParser()
+    # General parameters
+    parser.add_argument("--model", default=None, required=True, help="Option to select a single model for evaluation")
+    args = parser.parse_args()
 
     resultClasses = []
     for logFilePath in logFilePaths:
-        if "16x16" in logFilePath:
-            continue
-        # TODO maybe create 2 plots showing each distribution once (12x12 vs 16x16 variant ?)
+        modelName = Path(logFilePath).parent.name
+        if args.model == modelName:
+            with open(logFilePath, 'r') as f:
+                trainingInfoDictionary = json.loads(f.read())
+            assert trainingInfoDictionary is not None
+            resultClasses = [Result(trainingInfoDictionary, modelName, logFilePath)]
+            break
         if os.path.exists(logFilePath):
             with open(logFilePath, 'r') as f:
                 trainingInfoDictionary = json.loads(f.read())
             assert trainingInfoDictionary is not None
-            modelName = Path(logFilePath).parent.name
-            resultClass = Result(trainingInfoDictionary, modelName, logFilePath)
-            resultClasses.append(resultClass)
+            resultClasses.append(Result(trainingInfoDictionary, modelName, logFilePath))
         else:
             raise Exception(f"Path '{logFilePath}' doesnt exist!")
 
     modelNames = [res.modelName for res in resultClasses]
 
     # plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of best performing curricula", modelNames)
-    plotDistributionOfBestCurric(resultClasses, "Distribution of env occurence from best performing curricula", modelNames)
-    # TODO are there other distributions that are useful?
+    plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula", modelNames)
+    # TODO all envs distr plot
+    # TODO plot showing differences between earlier and later generations
 
     #plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNames)
     #plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNames)
