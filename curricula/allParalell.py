@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 import utils
 from curricula import train, evaluate, RollingHorizon
 from utils import ENV_NAMES, getEnvFromDifficulty, storage
@@ -14,6 +16,8 @@ class allParalell:
         self.lastEpochStartTime = startTime
         self.envDifficulty = 0
         self.seed = args.seed
+        self.paraEnvs = args.paraEnv
+        print("paraEnv", self.paraEnvs)
 
         self.ITERATIONS_PER_EVALUATE = args.iterPerEnv
         self.iterationsDone = 0
@@ -52,7 +56,7 @@ class allParalell:
         for epoch in range(startEpoch, totalEpochs):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
-            reward = 0 # TODO ------>
+            reward = 0  # TODO ------>
             if epoch == 0:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
@@ -62,7 +66,7 @@ class allParalell:
             if self.allEnvsSimultaneous:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
             else:
-                envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty)
+                envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty, self.seed + epoch)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, envNames, reward, self.envDifficulty, iterationsDone)
             self.logInfoAfterEpoch(epoch, reward, self.txtLogger, totalEpochs)
             self.txtLogger.info(f"reward {reward}")
@@ -102,38 +106,47 @@ class allParalell:
         return envNames
 
     @staticmethod
-    def updateEnvNamesDynamically(currentEnvNames, difficulty: int) -> list:
-        envNames = []
-        if difficulty == 0:
-            for env in currentEnvNames:
-                cutEnv = env.split("-custom")[0]
-                index = ENV_NAMES.ALL_ENVS.index(cutEnv) - 1
-                if index < 0:
-                    index = 0
-                envNames.append(ENV_NAMES.ALL_ENVS[index])
-        elif difficulty == 2:
-            for env in currentEnvNames:
-                index = ENV_NAMES.ALL_ENVS.index(env) + 1
-                if index >= len(ENV_NAMES.ALL_ENVS):
-                    index = len(ENV_NAMES.ALL_ENVS) - 1
-                envNames.append(ENV_NAMES.ALL_ENVS[index])
+    def getHarderEnv(envName) -> str:
+        index = ENV_NAMES.ALL_ENVS.index(envName) + 1
+        if index >= len(ENV_NAMES.ALL_ENVS):
+            index = len(ENV_NAMES.ALL_ENVS) - 1
+        return ENV_NAMES.ALL_ENVS[index]
+
+    @staticmethod
+    def getEasierEnv(envName) -> str:
+        index = ENV_NAMES.ALL_ENVS.index(envName) - 1
+        if index < 0:
+            index = 0
+        return ENV_NAMES.ALL_ENVS[index]
+
+    def updateEnvNamesDynamically(self, currentEnvNames: list, newDifficulty: int, seed: int) -> list:
+        envNames = currentEnvNames
+        print("DIFF=", newDifficulty)
+        print("Before=", currentEnvNames)
+
+        np.random.seed(seed)
+        randomIndexSample = np.random.choice(range(len(ENV_NAMES.ALL_ENVS)), size=self.paraEnvs, replace=False)
+        print(randomIndexSample)
+        if newDifficulty == 1:
+            for i in range(len(envNames)):
+                cutEnv = envNames[i].split("-custom")[0]
+                envNames[i] = cutEnv + "-custom-diif" + str(newDifficulty)
         else:
-            envNames = currentEnvNames
-        # TODO think of way of preventing all same envs
-        assert envNames != []
-        allSame = True
-        envName = envNames[0]
-        for env in envNames:
-            if env != envName:
-                allSame = False
-                break
-        if allSame:
-            # envNames[0] = up
-            # envNames[-1] = down
-            x = 0
+            for i in randomIndexSample:
+                cutEnv = envNames[i].split("-custom")[0]
+                if newDifficulty == 0:
+                    nextEnv = self.getEasierEnv(cutEnv)
+                    print("Made envs easier")
+                elif newDifficulty == 2:
+                    nextEnv = self.getHarderEnv(cutEnv)
+                    print("made envs harder")
+                else:
+                    raise Exception("Invalid new difficulty")
+                envNames[i] = nextEnv + "-custom-diff" + str(newDifficulty)
+        for i in range(len(envNames)):
+            cutEnv = envNames[i].split("-custom")[0]
+            envNames[i] = cutEnv + "-custom-diif" + str(newDifficulty)
         print("env names = ", envNames)
-        print("before", currentEnvNames)
-        exit()
         return envNames
 
     def updateTrainingInfo(self, trainingInfoJson, epoch, envNames, reward, difficulty, framesDone):
@@ -162,7 +175,7 @@ class allParalell:
         if len(self.trainingInfoJson[difficultyKey]) > 0:
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
         self.iterationsDone = self.trainingInfoJson[numFrames]
-        self.initialEnvNames = self.trainingInfoJson["currentListOfCurricula"] #TODO test this
+        self.initialEnvNames = self.trainingInfoJson["currentListOfCurricula"]  # TODO test this
         self.startEpoch = self.trainingInfoJson[epochsDone]
         if len(self.trainingInfoJson[snapshotScoreKey]) > 0:
             self.latestReward = self.trainingInfoJson[snapshotScoreKey][-1]

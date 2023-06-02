@@ -45,7 +45,6 @@ def main():
         print("No training method selected!")
 
 
-
 def registerEnvs():
     """
     Registers the envs before the training. Each env has 3 difficulty settings, with which they decrease their maxsteps
