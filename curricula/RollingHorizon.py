@@ -46,18 +46,15 @@ class RollingHorizon(ABC):
         self.curriculaEnvDetails = {}
         self.model = args.model
         self.modelExists = os.path.exists(self.logFilePath)
-        self.txtLogger.info(f"curricula list start {self.curricula}")
 
     def saveFirstStepOfModel(self, exactIterationsPerEnv: int, nameOfCurriculumI: str):
-        if not self.exactIterationsSet:  # TODO refactor this to common method
+        if not self.exactIterationsSet:
             self.exactIterationsSet = True
             self.ITERATIONS_PER_ENV = exactIterationsPerEnv - 1
         utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
             nameOfCurriculumI), txtLogger=self.txtLogger)  # save TEST_e1_curric0 -> + _CANDIDATE
         # self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
         self.trainingInfoJson[iterationsPerEnvKey] = self.ITERATIONS_PER_ENV
-
-    # TODO move curriculumHelper methods here
 
     def startCurriculumTraining(self):
         """
@@ -83,7 +80,7 @@ class RollingHorizon(ABC):
             currentBestCurriculum = self.getCurrentBestCurriculum()
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
 
-            self.envDifficulty = self.calculateEnvDifficulty(currentSnapshotScore, self.stepMaxReward)
+            self.envDifficulty = calculateEnvDifficulty(currentSnapshotScore, self.stepMaxReward)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurricScoreRaw, currentSnapshotScore,
                                     self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula, self.curriculaEnvDetails,
                                     self.logFilePath, self.curricMaxReward)
@@ -116,7 +113,7 @@ class RollingHorizon(ABC):
     def logInfoAfterCurriculum(self, nameOfCurriculumI, iterationsDone, rewardList, j):
         self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}. Iterations done {iterationsDone}")
         self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {rewardList} (1 entry = 1 curric step)")
-        currentMax = (self.gamma ** j) * self.stepMaxReward
+        currentMax = (self.gamma ** j) * self.stepMaxReward # TODO fix
         self.txtLogger.info(f"\tReward-%-Performance {rewardList / currentMax}\n\n")
         self.txtLogger.info("-------------------------------")
 
@@ -144,12 +141,6 @@ class RollingHorizon(ABC):
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
             self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             self.exactIterationsSet = True
-            """
-            if isinstance(self, RandomRollingHorizon):
-                if not self.fullRandom:
-                    self.curricConsecutivelyChosen = self.trainingInfoJson[consecutivelyChosen]
-                    self.lastChosenCurriculum = self.trainingInfoJson[""] # TODO
-            """
 
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             # TODO maybe do the deletion automatically, but it doesnt matter
@@ -246,15 +237,6 @@ class RollingHorizon(ABC):
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
     @staticmethod
-    def calculateEnvDifficulty(currentReward, maxReward) -> int:
-        if currentReward < maxReward * .25:
-            return 0
-        elif currentReward < maxReward * .75:
-            return 1
-        return 2
-        # TODO this ist not a RH method and should be somewhere else
-
-    @staticmethod
     def randomlyInitializeCurricula(numberOfCurricula: int, stepsPerCurric: int, envDifficulty: int, paraEnv: int,
                                     seed: int) -> list:
         """
@@ -331,7 +313,7 @@ class RollingHorizon(ABC):
 
     @abstractmethod
     def executeOneEpoch(self, epoch: int) -> None:
-        pass  # TODO is epoch used ?
+        pass
 
     @abstractmethod
     def updateSpecificInfo(self, epoch) -> None:

@@ -22,7 +22,9 @@ class allParalell:
         self.ITERATIONS_PER_EVALUATE = args.iterPerEnv
         self.iterationsDone = 0
         self.txtLogger = txtLogger
-        self.totalEpochs = args.trainEpochs
+        TOTAL_ITERATIONS = 10000000
+        self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
+        print(self.totalEpochs)
         self.trainingTime = 0
         self.selectedModel = "model" + os.sep + args.model
 
@@ -56,13 +58,12 @@ class allParalell:
         for epoch in range(startEpoch, totalEpochs):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
-            reward = 0  # TODO ------>
             if epoch == 0:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
-            # reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
+            reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
 
-            self.envDifficulty = RollingHorizon.calculateEnvDifficulty(reward, self.stepMaxReward)
+            self.envDifficulty = calculateEnvDifficulty(reward, self.stepMaxReward)
             if self.allEnvsSimultaneous:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
             else:
@@ -130,7 +131,7 @@ class allParalell:
         if newDifficulty == 1:
             for i in range(len(envNames)):
                 cutEnv = envNames[i].split("-custom")[0]
-                envNames[i] = cutEnv + "-custom-diif" + str(newDifficulty)
+                envNames[i] = cutEnv + ENV_NAMES.CUSTOM_POSTFIX + str(newDifficulty)
         else:
             for i in randomIndexSample:
                 cutEnv = envNames[i].split("-custom")[0]
@@ -142,10 +143,10 @@ class allParalell:
                     print("made envs harder")
                 else:
                     raise Exception("Invalid new difficulty")
-                envNames[i] = nextEnv + "-custom-diff" + str(newDifficulty)
+                envNames[i] = nextEnv + ENV_NAMES.CUSTOM_POSTFIX + str(newDifficulty)
         for i in range(len(envNames)):
             cutEnv = envNames[i].split("-custom")[0]
-            envNames[i] = cutEnv + "-custom-diif" + str(newDifficulty)
+            envNames[i] = cutEnv + ENV_NAMES.CUSTOM_POSTFIX + str(newDifficulty)
         print("env names = ", envNames)
         return envNames
 
@@ -175,7 +176,7 @@ class allParalell:
         if len(self.trainingInfoJson[difficultyKey]) > 0:
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
         self.iterationsDone = self.trainingInfoJson[numFrames]
-        self.initialEnvNames = self.trainingInfoJson["currentListOfCurricula"]  # TODO test this
+        self.initialEnvNames = self.trainingInfoJson["nextEnvList"]  # TODO test this
         self.startEpoch = self.trainingInfoJson[epochsDone]
         if len(self.trainingInfoJson[snapshotScoreKey]) > 0:
             self.latestReward = self.trainingInfoJson[snapshotScoreKey][-1]

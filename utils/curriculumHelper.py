@@ -28,7 +28,6 @@ maxCurricRewardKey = "maxCurricReward"
 
 MAX_REWARD_PER_ENV = 1
 
-
 # Key names of hey they appear in the command line args
 oldArgsIterPerEnvName = "iterPerEnv"
 argsModelKey = "model"
@@ -46,6 +45,9 @@ modelKey = "model"
 SNAPTSHOTS_DISTR = "SNAPTSHOTS_DISTR"
 BEST_CURRIC_DISTR = "BEST_CURRIC_DISTR"
 FULL_CURRIC_DISTR = "FULL_CURRIC_DISTR"
+
+# Used for all Paralell training
+NEXT_ENVS = "NextEnvs"
 
 
 def saveTrainingInfoToFile(path, jsonBody):
@@ -83,6 +85,7 @@ def calculateCurricMaxReward(curricLength, stepMaxReward, gamma) -> float:
         maxReward += ((gamma ** j) * stepMaxReward)
     return maxReward
 
+
 def getRewardMultiplier(evalEnv):
     """
 
@@ -94,3 +97,11 @@ def getRewardMultiplier(evalEnv):
     if match:
         return int(match.group())
     raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)
+
+
+def calculateEnvDifficulty(currentReward, maxReward) -> int:
+    if currentReward < maxReward * .25:
+        return 0
+    elif currentReward < maxReward * .75:
+        return 1
+    return 2

@@ -24,6 +24,7 @@ class RandomRollingHorizon(RollingHorizon):
             self.currentBestCurriculum = None
             self.lastChosenCurriculum = None
             # TODO 1/3 probably needs to be updated upon reload
+        self.txtLogger.info(f"curricula list start {self.curricula}")
 
     def getCurrentBestCurriculum(self):
         currentBestCurriculumIdx = np.argmax(self.currentRewardsDict)
