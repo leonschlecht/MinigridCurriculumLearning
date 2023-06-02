@@ -85,19 +85,23 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str,
             smallSize.append(s)
         else:
             largeSize.append(s)
-    plotEnvsUsedDistribution(smallSize, titleInfo + " small", modelNamesList)
-    plotEnvsUsedDistribution(largeSize, titleInfo + " large", modelNamesList)
+    #plotEnvsUsedDistribution(smallSize, titleInfo + " small", modelNamesList)
+    #plotEnvsUsedDistribution(largeSize, titleInfo + " large", modelNamesList)
+    plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo + " large", modelNamesList)
     # TODO use the subplots simultaneous thingy
     exit()
 
 
 # TODO allCurricDsitribution
 
-def plotEnvsUsedDistrSubplot(allEnvDistributions: list[dict], titleInfo: str, modelNamesList):
-    num_subplots = len(allEnvDistributions)
-    fig, axes = plt.subplots(nrows=num_subplots, ncols=1, figsize=(12, 12))
+def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list, titleInfo: str, modelNamesList):
+    num_subplots = 2
+    fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(12, 12))
+    for distr in smallAndLargeDistributions:
+
+
     for envDistIndex in range(num_subplots):
-        envDistribution = allEnvDistributions[envDistIndex]
+        envDistribution = smallAndLargeDistributions[envDistIndex]
         numericStrDict = {numKey.split('-')[-1]: val for numKey, val in envDistribution.items()}
         keyValues = sorted([int(fullKey.split("x")[0]) for fullKey in numericStrDict])
 
