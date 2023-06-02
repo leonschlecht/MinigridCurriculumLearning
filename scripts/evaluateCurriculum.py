@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 
@@ -120,7 +121,8 @@ if __name__ == "__main__":
             with open(logFilePath, 'r') as f:
                 trainingInfoDictionary = json.loads(f.read())
             assert trainingInfoDictionary is not None
-            resultClass = Result(trainingInfoDictionary)
+            modelName = Path(logFilePath).parent.name
+            resultClass = Result(trainingInfoDictionary, modelName, logFilePath)
             resultClasses.append(resultClass)
         else:
             raise Exception(f"Path '{logFilePath}' doesnt exist!")

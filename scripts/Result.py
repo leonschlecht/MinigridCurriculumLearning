@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import numpy as np
 
 from curricula import RollingHorizonEvolutionaryAlgorithm
@@ -5,7 +8,9 @@ from utils.curriculumHelper import *
 
 
 class Result:
-    def __init__(self, evaluationDictionary):
+    def __init__(self, evaluationDictionary, modelName, logfilePath):
+        # NOTE: the modelName is the name of the directory; not the name of the --model command when the training was performed
+        # This is due to naming convenience / overview in the evaluation
         argsString: str = evaluationDictionary[fullArgs]
         self.loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in [pair.split('=') for pair in argsString.split(', ')]}
         self.modelName = self.loadedArgsDict[modelKey]
@@ -22,8 +27,9 @@ class Result:
         self.difficultyList = evaluationDictionary[difficultyKey]
         self.trainingTimeList = evaluationDictionary[epochTrainingTime]
         self.trainingTimeSum = evaluationDictionary[sumTrainingTime]
-        self.modelName = self.loadedArgsDict[argsModelKey]
+        self.modelName = modelName
         self.iterationsPerEnv = self.getIterationsPerEnv(evaluationDictionary, self.loadedArgsDict)
+        self.logFilepath = logfilePath
 
         self.epochDict = self.getEpochDict(self.rewardsDict)
         self.snapShotScores = self.getSnapshotScores(evaluationDictionary, self.modelPerformance)
@@ -44,8 +50,8 @@ class Result:
         self.bestCurricScore = bestCurricScores
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys())
-
-        assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.modelName}"
+        print(evaluationDictionary)
+        assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.logFilepath}"
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
         self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
         self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
