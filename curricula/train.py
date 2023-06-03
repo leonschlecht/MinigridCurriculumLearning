@@ -37,7 +37,7 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
 
     assert len(envs) == args.procs, f"Length of envs {len(envs)} is not equal to amount of processes {args.procs}"
     assert args.procs % args.paraEnv == 0, \
-        "The amount of processes must be divisble by the amount of envs to be trained on in parallel"
+        "The amount of processes must be divisble by the amount of envs to be trained on in parallel" 
 
     # Load training status
     try:
