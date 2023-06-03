@@ -12,6 +12,8 @@ def initializeArgParser():
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainAllParalell", default=False, action="store_true",
                         help="traines all 4 environments in parallel")
+    parser.add_argument("--allSimultaneous", default=True, action="store_false",
+                        help="Determines if all envs should be trained simultaneously from the start, or if the envs should be selected depending on progress")
     parser.add_argument("--trainLinear", default=False, action="store_true",
                         help="Decides what training method will be used. If set, linear curriculum will be used")
     parser.add_argument("--trainBiasedRandomRH", default=False, action="store_true",
@@ -63,7 +65,7 @@ def initializeArgParser():
                         help="add a GRU to the model to handle text input")
 
     # Evaluation Arguments
-    parser.add_argument("--episodes", type=int, default=15, help="number of episodes of evaluation (default: 15)")
+    parser.add_argument("--episodes", type=int, default=25, help="number of episodes of evaluation (default: 15)")
     parser.add_argument("--argmax", action="store_true", default=False,
                         help="action with highest probability is selected")
     parser.add_argument("--worst-episodes-to-show", type=int, default=10, help="how many worst episodes to show")

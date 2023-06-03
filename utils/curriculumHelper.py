@@ -41,6 +41,11 @@ trainAllParalell = "trainAllParalell"
 nGenerations = "nGen"
 numCurricKey = "numCurric"
 usedEnvEnumerationKey = "usedEnvEnumeration"
+modelKey = "model"
+
+SNAPTSHOTS_DISTR = "SNAPTSHOTS_DISTR"
+BEST_CURRIC_DISTR = "BEST_CURRIC_DISTR"
+FULL_CURRIC_DISTR = "FULL_CURRIC_DISTR"
 
 
 def saveTrainingInfoToFile(path, jsonBody):

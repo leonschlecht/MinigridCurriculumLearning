@@ -9,8 +9,8 @@ def startAdaptiveCurriculum(txtLogger, startTime, args):
     Trains on an adaptive curriculum, i.e. depending on the performance of the agent, the next envs will be determined
     """
     ITERATIONS_PER_ENV = args.iterationsPerEnv
-    modelPath = os.getcwd() + "\\storage\\" + args.model
-    logFilePath = modelPath + "\\status.json"
+    modelPath = os.getcwd() + os.sep + "storage" + os.sep + args.model
+    logFilePath = modelPath + os.sep + "status.json"
 
     if os.path.exists(logFilePath):
         with open(logFilePath, 'r') as f:

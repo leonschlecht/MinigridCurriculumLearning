@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--env", help="name of the environment (REQUIRED)")
 parser.add_argument("--model", required=True,
                     help="name of the trained model (REQUIRED)")
-parser.add_argument("--episodes", type=int, default=10,
+parser.add_argument("--episodes", type=int, default=10, #
                     help="number of episodes of evaluation (default: 100)")
 parser.add_argument("--seed", type=int, default=0,
                     help="random seed (default: 0)")

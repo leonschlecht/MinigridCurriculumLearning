@@ -30,7 +30,12 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     for i in range(args.procs // len(envList)):
         for j in range(len(envList)):
             envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
-    assert len(envs) == args.procs, "Length of envs is not equal to amount of processes"
+
+    i = args.procs // len(envList)
+    for j in range(args.procs - len(envList)):
+        envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
+
+    assert len(envs) == args.procs, f"Length of envs {len(envs)} is not equal to amount of processes {args.procs}"
     assert args.procs % args.paraEnv == 0, \
         "The amount of processes must be divisble by the amount of envs to be trained on in parallel"
 

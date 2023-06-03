@@ -8,7 +8,7 @@ from numpy import ndarray
 
 import utils
 from curricula import train, evaluate
-from utils import ENV_NAMES, getEnvFromDifficulty
+from utils import ENV_NAMES, getEnvFromDifficulty, storage
 from utils import getModelWithCandidatePrefix
 from utils.curriculumHelper import *
 
@@ -39,8 +39,8 @@ class RollingHorizon(ABC):
         self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
         self.trainingInfoJson = {}
-        self.logFilePath = os.getcwd() + "\\storage\\" + args.model + "\\status.json"  # TODO maybe outsource
-        self.gamma = args.gamma  # TODO is gamma used properly? Do RH -> Get Max thingy, and update difficulty based on the RH reward or snapshot reward?
+        self.logFilePath = storage.getLogFilePath(["storage", args.model, "status.json"])
+        self.gamma = args.gamma
         self.currentRewardsDict = {}
         self.currentSnapshotRewards = {}
         self.curriculaEnvDetails = {}
@@ -211,6 +211,7 @@ class RollingHorizon(ABC):
                             iterationsPerEnvKey: args.iterPerEnv,
                             consecutivelyChosen: 0,
                             fullArgs: args,
+                            usedEnvEnumerationKey: ENV_NAMES.ALL_ENVS,
                             additionalNotes: "",
                             numFrames: 0}
         saveTrainingInfoToFile(logFilePath, trainingInfoJson)
