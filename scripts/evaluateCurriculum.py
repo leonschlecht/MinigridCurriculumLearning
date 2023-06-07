@@ -124,7 +124,6 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
             modelNames = modelNamesLarge
         else:
             raise Exception("Invalid env distribution index")
-        print("plotting w", envDistribution)
         plotEnvsUsedDistribution(envDistribution, axes[envDistIndex], modelNames, fig)
     plt.title(titleInfo)
     plt.show()
@@ -133,32 +132,15 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
 def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fig):
     num_distributions = len(allEnvDistributions)
     bar_width = 0.5 / num_distributions
-    print(allEnvDistributions)
+    print("allEnvDistr", allEnvDistributions)
     x_offset = -bar_width * (num_distributions - 1) / 2
     for distrIndex in range(num_distributions):
         envDistribution = allEnvDistributions[distrIndex]
-        # name = envDistribution["name"]
-        print(envDistribution)
-        # Create Mapping from the string MiniGrid-DoorKey-6x6-
-        # to the actual numbers. Results in tuples of ('6x6', 6) and so on for sorting later
-        shortenedEnvFreqMapping = {numKey.split('-')[-1]: val for numKey, val in envDistribution.items()}
-        levelSizeAsNumbers: list[int] = sorted([int(fullKey.split("x")[0]) for fullKey in shortenedEnvFreqMapping])
-        numStrKeyMapping = []
-        for numKey in levelSizeAsNumbers:
-            for dictKey in shortenedEnvFreqMapping:
-                if str(numKey) == dictKey.split('x')[0]:
-                    numStrKeyMapping.append((dictKey, numKey))
-                    break
-
-        sortedKeys = [fullKey for fullKey, _ in numStrKeyMapping]
-        finalDict = {k: shortenedEnvFreqMapping[k] for k in sortedKeys}
-
+        finalDict = envDistribution
         envs = list(finalDict.keys())
         envOccurrences = list(finalDict.values())
-
         x = np.arange(len(envs))
         x = [xi + x_offset + distrIndex * bar_width for xi in x]
-
         ax.bar(x, envOccurrences, width=bar_width, label=modelNames[distrIndex])
 
     ax.set_ylabel('Occurrence') # TODO only for index == 0?
