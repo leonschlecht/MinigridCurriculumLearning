@@ -85,10 +85,8 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str,
             smallSize.append(s)
         else:
             largeSize.append(s)
-    # plotEnvsUsedDistribution(smallSize, titleInfo + " small", modelNamesList)
     # plotEnvsUsedDistribution(largeSize, titleInfo + " large", modelNamesList)
     plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo, modelNamesList)
-    # TODO use the subplots simultaneous thingy
     exit()
 
 
@@ -96,9 +94,10 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str,
 
 def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: str, modelNamesList):
     num_subplots = 2
-    fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(12, 12))
+    fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(10, 10))
     smallDistributions = []
     largeDistributions = []
+    # Prepare the 2 subplot lists
     for distr in smallAndLargeDistributions:
         numericStrDict = {numKey.split('-')[-1]: val for numKey, val in distr.items()}
         keyValues = sorted([int(fullKey.split("x")[0]) for fullKey in numericStrDict])
@@ -112,7 +111,6 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
 
         sortedKeys = [fullKey for fullKey, _ in numStrKeyMapping]
         finalDict = {k: numericStrDict[k] for k in sortedKeys}
-        print(finalDict)
         keyFound = False
         for key in finalDict.keys():
             if "16x16" in key:
@@ -120,10 +118,10 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
                 keyFound = True
         if not keyFound:
             smallDistributions.append(finalDict)
-    print("-----------------")
-    print(smallDistributions)
-    print(largeDistributions)
+
     assert len(smallDistributions) + len(largeDistributions) == len(smallAndLargeDistributions)
+    assert len(smallAndLargeDistributions) > len(smallDistributions) > 0
+    assert len(largeDistributions) > 0
     for envDistIndex in range(num_subplots):
         if envDistIndex == 0:
             envDistribution = smallDistributions
@@ -131,46 +129,17 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
             envDistribution = largeDistributions
         else:
             raise Exception("Invalid env distribution index")
-
-        envs = list(envDistribution[0].keys())
-        print(envDistribution)
-        for envD in envDistribution:
-            envOccurrences = list(envD.values())  # how can ??
-            bar_container = axes[envDistIndex].bar(envs, envOccurrences, label="xyz" + str(envDistIndex))
-        # axes[envDistIndex].bar_label(bar_container, labels=envOccurrences, fontsize=12, padding=5)
-
-        axes[envDistIndex].set_ylabel('Occurrence')
-        axes[envDistIndex].set_title(titleInfo)
-        axes[envDistIndex].set_ylim(0, max(envOccurrences) * 1.1)
-        axes[envDistIndex].legend()
-
+        print("plotting w", envDistribution)
+        plotEnvsUsedDistribution(envDistribution, titleInfo, modelNamesList, axes[envDistIndex])
     plt.show()
 
-
-def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, modelNamesList):
-    fig, ax = plt.subplots(figsize=(10, 8))
+def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, modelNamesList, ax):
     num_distributions = len(allEnvDistributions)
     bar_width = 0.5 / num_distributions
-
     print(allEnvDistributions)
-    # TODO probably not useful 1
-    """
-    allEnvs = []
-    for envDistr in allEnvDistributions:
-        for key in envDistr.keys():
-            if key not in allEnvs:
-                allEnvs.append(key)
-    """
     x_offset = -bar_width * (num_distributions - 1) / 2
-    for envDistIndex in range(num_distributions):
-        envDistribution = allEnvDistributions[envDistIndex]
-        # TODO this is probably not that useful 1
-        """
-        for env in allEnvs:
-            if env not in envDistribution.keys():
-                envDistribution[env] = 0
-        print(envDistribution)
-        """
+    for distrIndex in range(num_distributions):
+        envDistribution = allEnvDistributions[distrIndex]
         # Create Mapping from the string MiniGrid-DoorKey-6x6-
         # to the actual numbers. Results in tuples of ('6x6', 6) and so on for sorting later
         shortenedEnvFreqMapping = {numKey.split('-')[-1]: val for numKey, val in envDistribution.items()}
@@ -189,10 +158,9 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, mo
         envOccurrences = list(finalDict.values())
 
         x = np.arange(len(envs))
-        x = [xi + x_offset + envDistIndex * bar_width for xi in x]
+        x = [xi + x_offset + distrIndex * bar_width for xi in x]
 
-        bar_container = ax.bar(x, envOccurrences, width=bar_width, label=modelNamesList[envDistIndex])
-        # ax.bar_label(bar_container, labels=envOccurrences, fontsize=12, padding=5)
+        ax.bar(x, envOccurrences, width=bar_width, label="123")
 
     ax.set_ylabel('Occurrence')
     ax.set_title(titleInfo)
@@ -200,7 +168,7 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, mo
     ax.set_xticklabels(envs)
     ax.legend(loc='upper right', bbox_to_anchor=(1.2, 1))  # move legend outside of plot
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.show()
+
 
 
 if __name__ == "__main__":
@@ -229,7 +197,8 @@ if __name__ == "__main__":
             assert trainingInfoDictionary is not None
             resultClasses.append(Result(trainingInfoDictionary, modelName, logFilePath))
         else:
-            raise Exception(f"Path '{logFilePath}' doesnt exist!")
+            print(f"Path '{logFilePath}' doesnt exist!")
+            # raise Exception(f"Path '{logFilePath}' doesnt exist!")
 
     modelNames = [res.modelName for res in resultClasses]
 
