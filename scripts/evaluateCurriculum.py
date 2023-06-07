@@ -83,7 +83,8 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str,
 
 def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: str):
     num_subplots = 2
-    fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(10, 10))
+    fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(8, 5))
+    fig.subplots_adjust(bottom=.3)
     smallDistributions = []
     largeDistributions = []
     modelNamesLarge = []
@@ -124,10 +125,12 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
         else:
             raise Exception("Invalid env distribution index")
         print("plotting w", envDistribution)
-        plotEnvsUsedDistribution(envDistribution, titleInfo, axes[envDistIndex], modelNames)
+        plotEnvsUsedDistribution(envDistribution, axes[envDistIndex], modelNames, fig)
+    plt.title(titleInfo)
     plt.show()
 
-def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, ax, modelNames):
+
+def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fig):
     num_distributions = len(allEnvDistributions)
     bar_width = 0.5 / num_distributions
     print(allEnvDistributions)
@@ -158,13 +161,11 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, ax
 
         ax.bar(x, envOccurrences, width=bar_width, label=modelNames[distrIndex])
 
-    ax.set_ylabel('Occurrence')
-    ax.set_title(titleInfo)
+    ax.set_ylabel('Occurrence') # TODO only for index == 0?
     ax.set_xticks(np.arange(len(envs)))
     ax.set_xticklabels(envs)
-    ax.legend(loc='upper right', bbox_to_anchor=(1.2, 1))  # move legend outside of plot
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2))
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-
 
 
 if __name__ == "__main__":
