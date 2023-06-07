@@ -59,12 +59,13 @@ def plotBestCurriculumResults(results: list[Result], title: str, modelNamesList)
     plotPerformance(y, x, maxReward, title, modelNamesList)
 
 
-def plotDistributionOfBestCurric(resultClassesList: list[Result], titleInfo: str, modelNamesList):
-    bestCurricDistr = [res.bestCurriculaEnvDistribution for res in resultClassesList]
-    plotEnvsUsedDistribution(bestCurricDistr, titleInfo, modelNamesList)
+def plotDistributionOfBestCurric(resultClassesList: list[Result], titleInfo: str):
+    bestCurricDistr = [[res.bestCurriculaEnvDistribution, res.modelName] for res in resultClassesList]
+    plotEnvsUsedDistrSubplot(bestCurricDistr, titleInfo)
 
 
-def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str, modelNamesList: list):
+
+def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str):
     """
     Plots the distributions of the envs used for 1st step of curricula
     :param resultClassesList:
@@ -73,15 +74,16 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str,
     :return:
     """
     snapshotDistributions = [[res.snapshotEnvDistribution, res.modelName] for res in resultClassesList]
-
-    # plotEnvsUsedDistribution(largeSize, titleInfo + " large", modelNamesList)
     plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo)
-    exit()
 
 
 # TODO allCurricDsitribution
+def plotDistributionOfAllCurric(resultClassesList: list[Result], titleInfo: str):
+    bestCurricDistr = [[res.allCurricDistribution, res.modelName] for res in resultClassesList]
+    plotEnvsUsedDistrSubplot(bestCurricDistr, titleInfo)
 
-def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: str):
+
+def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: str):
     num_subplots = 2
     fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(8, 5))
     fig.subplots_adjust(bottom=.3)
@@ -125,14 +127,14 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
         else:
             raise Exception("Invalid env distribution index")
         plotEnvsUsedDistribution(envDistribution, axes[envDistIndex], modelNames, fig)
-    plt.title(titleInfo)
+    fig.suptitle(titleInfo, fontsize=16)
+
     plt.show()
 
 
 def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fig):
     num_distributions = len(allEnvDistributions)
     bar_width = 0.5 / num_distributions
-    print("allEnvDistr", allEnvDistributions)
     x_offset = -bar_width * (num_distributions - 1) / 2
     for distrIndex in range(num_distributions):
         envDistribution = allEnvDistributions[distrIndex]
@@ -157,7 +159,6 @@ if __name__ == "__main__":
     for model in evalDirectories:
         logFilePaths.append(evalDirectory + os.sep + model + os.sep + "status.json")
     parser = argparse.ArgumentParser()
-    # General parameters
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     args = parser.parse_args()
 
@@ -180,17 +181,25 @@ if __name__ == "__main__":
             # raise Exception(f"Path '{logFilePath}' doesnt exist!")
 
     modelNamesList = [res.modelName for res in resultClasses]
+    # TODO morgen:
+    # mit paraEnv & RRH hinbekommen anzuzeigen bzw zu vergleichen (ggf Type in Result oder so als variable für easy access) (2h ~)
+    # den 50k run rüberkopiert
+    # Tensorboard anschauen
+    # conda einrichten auf dem ssh & einen Testlauf starten (2h limit erstmal)
+    # 2. minigrid env suchen & wenigstens ausführbar machen (2h limit)
+    # Recherche für verwendete EA (2h limit)
+    # Evaluation Kram verschönern (den Distribution plots; die Farben, die gestirchelten Linien, shared-Y entscheiden, ...
 
-    plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of best performing curricula", modelNamesList)
-    plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula", modelNamesList)
+    plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of 1st RH step")
+    plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula")
     # TODO all envs distr plot
-
+    # TODO plot progression of curricula against one another
+    plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
     plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNamesList)
     plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNamesList)
     plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch",
                              modelNamesList)  # TODO this should not have a shared x-axis; or at least still use epochs and not scale
 
-    # TODO experiment comparison: long iterPerStep with many Gen, with low iterPerStep with low gen
     # TODO plot showing differences between earlier and later generations
     # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
 

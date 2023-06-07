@@ -55,7 +55,6 @@ class Result:
         self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
         self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
         self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
-        print("iterPerEnv", self.iterationsPerEnv, ";; iter done", self.iterationsPerEnv * self.epochsTrained)
 
     def getSnapshotScores(self, evalDict: dict, modelPerformance: dict) -> list[float]:
         """
