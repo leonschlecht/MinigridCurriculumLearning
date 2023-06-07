@@ -16,7 +16,7 @@ class allParalell:
         self.lastEpochStartTime = startTime
         self.envDifficulty = 0
         self.seed = args.seed
-        self.paraEnvs = args.paraEnv
+        self.paraEnvs = len(ENV_NAMES.ALL_ENVS)
         print("paraEnv", self.paraEnvs)
 
         self.ITERATIONS_PER_EVALUATE = args.iterPerEnv
@@ -55,7 +55,8 @@ class allParalell:
 
     def trainEachCurriculum(self, startEpoch: int, totalEpochs: int, iterationsDone: int, initialEnvNames: list):
         envNames = initialEnvNames
-        for epoch in range(startEpoch, totalEpochs):
+        print("training will go on until", totalEpochs * 5)
+        for epoch in range(startEpoch, totalEpochs * 5):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
             if epoch == 0:
@@ -176,7 +177,7 @@ class allParalell:
         if len(self.trainingInfoJson[difficultyKey]) > 0:
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
         self.iterationsDone = self.trainingInfoJson[numFrames]
-        self.initialEnvNames = self.trainingInfoJson["nextEnvList"]  # TODO test this
+        # self.initialEnvNames = self.trainingInfoJson["nextEnvList"]  # TODO test this
         self.startEpoch = self.trainingInfoJson[epochsDone]
         if len(self.trainingInfoJson[snapshotScoreKey]) > 0:
             self.latestReward = self.trainingInfoJson[snapshotScoreKey][-1]
