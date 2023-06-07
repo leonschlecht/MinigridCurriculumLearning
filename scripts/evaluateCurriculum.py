@@ -72,36 +72,26 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str,
     :param modelNamesList:
     :return:
     """
-    snapshotDistributions = [res.snapshotEnvDistribution for res in resultClassesList]
-    largeSize = []
-    smallSize = []
-    for s in snapshotDistributions:
-        isSmallSize = True
-        for key in s.keys():
-            if "16x16" in key:
-                isSmallSize = False
-                break
-        if isSmallSize:
-            smallSize.append(s)
-        else:
-            largeSize.append(s)
+    snapshotDistributions = [[res.snapshotEnvDistribution, res.modelName] for res in resultClassesList]
+
     # plotEnvsUsedDistribution(largeSize, titleInfo + " large", modelNamesList)
-    plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo, modelNamesList)
+    plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo)
     exit()
 
 
 # TODO allCurricDsitribution
 
-def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: str, modelNamesList):
+def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: str):
     num_subplots = 2
     fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(10, 10))
     smallDistributions = []
     largeDistributions = []
+    modelNamesLarge = []
+    modelNamesSmall = []
     # Prepare the 2 subplot lists
     for distr in smallAndLargeDistributions:
-        numericStrDict = {numKey.split('-')[-1]: val for numKey, val in distr.items()}
+        numericStrDict = {numKey.split('-')[-1]: val for numKey, val in distr[0].items()}
         keyValues = sorted([int(fullKey.split("x")[0]) for fullKey in numericStrDict])
-
         numStrKeyMapping = []
         for numKey in keyValues:
             for dictKey in numericStrDict:
@@ -115,9 +105,11 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
         for key in finalDict.keys():
             if "16x16" in key:
                 largeDistributions.append(finalDict)
+                modelNamesLarge.append(distr[1])
                 keyFound = True
         if not keyFound:
             smallDistributions.append(finalDict)
+            modelNamesSmall.append(distr[1])
 
     assert len(smallDistributions) + len(largeDistributions) == len(smallAndLargeDistributions)
     assert len(smallAndLargeDistributions) > len(smallDistributions) > 0
@@ -125,21 +117,25 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[dict], titleInfo: 
     for envDistIndex in range(num_subplots):
         if envDistIndex == 0:
             envDistribution = smallDistributions
+            modelNames = modelNamesSmall
         elif envDistIndex == 1:
             envDistribution = largeDistributions
+            modelNames = modelNamesLarge
         else:
             raise Exception("Invalid env distribution index")
         print("plotting w", envDistribution)
-        plotEnvsUsedDistribution(envDistribution, titleInfo, modelNamesList, axes[envDistIndex])
+        plotEnvsUsedDistribution(envDistribution, titleInfo, axes[envDistIndex], modelNames)
     plt.show()
 
-def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, modelNamesList, ax):
+def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, ax, modelNames):
     num_distributions = len(allEnvDistributions)
     bar_width = 0.5 / num_distributions
     print(allEnvDistributions)
     x_offset = -bar_width * (num_distributions - 1) / 2
     for distrIndex in range(num_distributions):
         envDistribution = allEnvDistributions[distrIndex]
+        # name = envDistribution["name"]
+        print(envDistribution)
         # Create Mapping from the string MiniGrid-DoorKey-6x6-
         # to the actual numbers. Results in tuples of ('6x6', 6) and so on for sorting later
         shortenedEnvFreqMapping = {numKey.split('-')[-1]: val for numKey, val in envDistribution.items()}
@@ -160,7 +156,7 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], titleInfo: str, mo
         x = np.arange(len(envs))
         x = [xi + x_offset + distrIndex * bar_width for xi in x]
 
-        ax.bar(x, envOccurrences, width=bar_width, label="123")
+        ax.bar(x, envOccurrences, width=bar_width, label=modelNames[distrIndex])
 
     ax.set_ylabel('Occurrence')
     ax.set_title(titleInfo)
@@ -200,16 +196,16 @@ if __name__ == "__main__":
             print(f"Path '{logFilePath}' doesnt exist!")
             # raise Exception(f"Path '{logFilePath}' doesnt exist!")
 
-    modelNames = [res.modelName for res in resultClasses]
+    modelNamesList = [res.modelName for res in resultClasses]
 
-    plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of best performing curricula", modelNames)
-    plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula", modelNames)
+    plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of best performing curricula", modelNamesList)
+    plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula", modelNamesList)
     # TODO all envs distr plot
 
-    plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNames)
-    plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNames)
+    plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNamesList)
+    plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNamesList)
     plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch",
-                             modelNames)  # TODO this should not have a shared x-axis; or at least still use epochs and not scale
+                             modelNamesList)  # TODO this should not have a shared x-axis; or at least still use epochs and not scale
 
     # TODO experiment comparison: long iterPerStep with many Gen, with low iterPerStep with low gen
     # TODO plot showing differences between earlier and later generations
