@@ -191,28 +191,11 @@ if __name__ == "__main__":
             # raise Exception(f"Path '{logFilePath}' doesnt exist!")
 
     modelNamesList = [res.modelName for res in resultClasses]
-    # TODO morgen:
-    # den 50k run rüberkopiert
-    # Tensorboard anschauen
-
-    # mit paraEnv & RRH hinbekommen anzuzeigen bzw zu vergleichen (ggf Type in Result oder so als variable für easy access) (2h ~)
-    # 2. minigrid env suchen & wenigstens ausführbar machen (2h limit)
-    # Recherche für verwendete EA (2h limit)
-    # Evaluation Kram verschönern (den Distribution plots; die Farben, die gestirchelten Linien, shared-Y entscheiden, ...
-
-    # TODO limit x-axis (so the baseline paraEnv doesnt destroy everything on its own)
 
     # plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of 1st RH step")
     # plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula")
     # plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
-    plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNamesList)
-    plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNamesList)
+    # plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNamesList)
+    # plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNamesList)
     plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNamesList)
     # TODO this should not have a shared x-axis; or at least still use epochs and not scale
-
-    # TODO plot showing differences between earlier and later generations
-    # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
-
-    # TODO: low prio stuff
-    # find out a way to properly plot the difficulty list / maybe how it influences the results; and maybe how you can improve it so that it is not even needed in the first place
-    # save the plots
