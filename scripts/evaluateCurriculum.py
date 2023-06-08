@@ -163,32 +163,54 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
 
 
 if __name__ == "__main__":
-    evalDirectory = storage.getLogFilePath(["storage", "save", "evaluate"])
-    logFilePaths = []
-    evalDirectories = next(os.walk(evalDirectory))[1]
+    evalDirBasePath = storage.getLogFilePath(["storage", "save", "evaluate"])
+    fullLogfilePaths = []
+    evalDirectories = next(os.walk(evalDirBasePath))[1]
     for model in evalDirectories:
-        logFilePaths.append(evalDirectory + os.sep + model + os.sep + "status.json")
+        print(model)
+        path = evalDirBasePath + os.sep + model + os.sep
+        json_files = [f for f in os.listdir(path) if f.endswith('.json')]
+        fullLogfilePaths.append([])
+        for jsonFile in json_files:
+            fullLogfilePaths[-1].append(path + jsonFile)
+        print(fullLogfilePaths)
     parser = argparse.ArgumentParser()
+
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     args = parser.parse_args()
-
     resultClasses = []
-    for logFilePath in logFilePaths:
-        modelName = Path(logFilePath).parent.name
-        if args.model == modelName:
-            with open(logFilePath, 'r') as f:
-                trainingInfoDictionary = json.loads(f.read())
-            assert trainingInfoDictionary is not None
-            resultClasses = [Result(trainingInfoDictionary, modelName, logFilePath)]
-            break
-        if os.path.exists(logFilePath):
-            with open(logFilePath, 'r') as f:
-                trainingInfoDictionary = json.loads(f.read())
-            assert trainingInfoDictionary is not None
-            resultClasses.append(Result(trainingInfoDictionary, modelName, logFilePath))
-        else:
-            print(f"Path '{logFilePath}' doesnt exist!")
-            # raise Exception(f"Path '{logFilePath}' doesnt exist!")
+    for logFilePaths in fullLogfilePaths:
+        modelName = Path(logFilePaths[0]).parent.name
+        dicts = {}
+        helper: list[Result] = []
+        for path in logFilePaths:
+            if args.model == modelName:
+                with open(path, 'r') as f:
+                    trainingInfoDictionary = json.loads(f.read())
+                assert trainingInfoDictionary is not None
+                resultClasses = [Result(trainingInfoDictionary, modelName, path)]
+                break
+                # TODO merge dict here too
+            if os.path.exists(path):
+                print("path", path)
+                with open(path, 'r') as f:
+                    trainingInfoDictionary = json.loads(f.read())
+                assert trainingInfoDictionary is not None
+                helper.append(Result(trainingInfoDictionary, modelName, path))
+            else:
+                print(f"Path '{path}' doesnt exist!")
+                # raise Exception(f"Path '{logFilePath}' doesnt exist!")
+        snapshotDistr = helper[0].snapshotEnvDistribution
+        for h in helper:
+            if h == helper[0]:
+                continue
+            print(h.snapshotEnvDistribution)
+            for k in snapshotDistr.keys():
+                snapshotDistr[k] += h.snapshotEnvDistribution[k]
+            # TODO get average of all distributions
+        print(snapshotDistr)
+        exit()
+        resultClasses.append(Result(trainingInfoDictionary, modelName, logFilePaths))
 
     modelNamesList = [res.modelName for res in resultClasses]
 
