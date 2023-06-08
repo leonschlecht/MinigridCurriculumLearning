@@ -11,16 +11,22 @@ from utils.curriculumHelper import *
 from matplotlib.ticker import MaxNLocator
 
 
-def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxReward: int, title: str, modelNames: list[str]):
+def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxReward: int, title: str, modelNames: list[str], limitX=False):
     minX = 0
-    maxX = max([max(x) for x in allXValues]) * 1.05
+    maxXlist = ([max(x) for x in allXValues])
+    print(maxXlist)
+    maxXlist.remove(max(maxXlist))
+    print("maxX", maxXlist)
     fig, ax = plt.subplots()
     colors = ['blue', 'red', 'green', 'purple']
     linestyles = ['-', '--', '-.', ':']
+    new_list = set(maxXlist)
+    new_list.remove(max(new_list))
+    print(max(new_list))
     for i in range(len(allYValues)):
-        ax.plot(allXValues[i], allYValues[i], label=modelNames[i], color=colors[i % len(colors)], linestyle=linestyles[i % len(linestyles)])
+        ax.plot(allXValues[i], allYValues[i], label=modelNames[i])
         # TODO add scatter again ??
-
+    maxX = max(maxXlist)
     ax.set_ylim([0, maxReward])
     ax.set_xlim([minX, maxX])
     ax.set_xlabel('iterations')
@@ -28,9 +34,13 @@ def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], 
     ax.set_title(title)
     ax.legend()
 
-    mostIteratiosnDoneXValues = max(allXValues, key=lambda x: x[-1])
-    new_tick_locations = [(2 + i * 2) * mostIteratiosnDoneXValues[1] for i in
-                          range(len(mostIteratiosnDoneXValues) // 2)]  # TODO maybe use 250k steps isntead
+    mostIterationsDoneXValues = allXValues[0]
+    for i in range(len(maxXlist)):
+        if maxX == allXValues[i][-1]:
+            mostIterationsDoneXValues = allXValues[i]
+            break
+    # TODO maybe use 250k steps isntead for ticks
+    new_tick_locations = [(2 + i * 2) * mostIterationsDoneXValues[1] for i in range(len(mostIterationsDoneXValues) // 2)]
     ax.set_xticks(new_tick_locations)
     ax.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations])
     plt.show()
@@ -40,14 +50,14 @@ def plotSnapshotPerformance(results: list[Result], title: str, modelNamesList):
     y = [res.snapShotScores for res in results]
     x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained)] for res in results]
     maxReward = 1
-    plotPerformance(y, x, maxReward, title, modelNamesList)
+    plotPerformance(y, x, maxReward, title, modelNamesList, limitX=True)
 
 
 def plotEpochAvgCurricReward(results: list[Result], title: str, modelNamesList):
     y = [res.avgEpochRewards for res in results]  # TODO NORMALIZE ??
     x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained)] for res in results]
     maxReward = 1
-    plotPerformance(y, x, maxReward, title, modelNamesList)
+    plotPerformance(y, x, maxReward, title, modelNamesList, limitX=True)
 
 
 def plotBestCurriculumResults(results: list[Result], title: str, modelNamesList):
@@ -56,13 +66,12 @@ def plotBestCurriculumResults(results: list[Result], title: str, modelNamesList)
 
     maxReward = 1
 
-    plotPerformance(y, x, maxReward, title, modelNamesList)
+    plotPerformance(y, x, maxReward, title, modelNamesList, limitX=True)
 
 
 def plotDistributionOfBestCurric(resultClassesList: list[Result], titleInfo: str):
     bestCurricDistr = [[res.bestCurriculaEnvDistribution, res.modelName] for res in resultClassesList]
-    plotEnvsUsedDistrSubplot(bestCurricDistr, titleInfo)
-
+    plotEnvsUsedDistrSubplot(bestCurricDistr, titleInfo, limitY=True)
 
 
 def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str):
@@ -74,16 +83,15 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str)
     :return:
     """
     snapshotDistributions = [[res.snapshotEnvDistribution, res.modelName] for res in resultClassesList]
-    plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo)
+    plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo, limitY=True)
 
 
-# TODO allCurricDsitribution
 def plotDistributionOfAllCurric(resultClassesList: list[Result], titleInfo: str):
     bestCurricDistr = [[res.allCurricDistribution, res.modelName] for res in resultClassesList]
     plotEnvsUsedDistrSubplot(bestCurricDistr, titleInfo)
 
 
-def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: str):
+def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: str, limitY=False):
     num_subplots = 2
     fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(8, 5))
     fig.subplots_adjust(bottom=.3)
@@ -126,30 +134,32 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: 
             modelNames = modelNamesLarge
         else:
             raise Exception("Invalid env distribution index")
-        plotEnvsUsedDistribution(envDistribution, axes[envDistIndex], modelNames, fig)
+        plotEnvsUsedDistribution(envDistribution, axes[envDistIndex], modelNames, fig, limitY)
     fig.suptitle(titleInfo, fontsize=16)
 
     plt.show()
 
 
-def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fig):
+def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fig, limitY=False):
     num_distributions = len(allEnvDistributions)
     bar_width = 0.5 / num_distributions
     x_offset = -bar_width * (num_distributions - 1) / 2
+    maxO = []
     for distrIndex in range(num_distributions):
         envDistribution = allEnvDistributions[distrIndex]
         finalDict = envDistribution
         envs = list(finalDict.keys())
         envOccurrences = list(finalDict.values())
+        maxO.append(max(envOccurrences))
         x = np.arange(len(envs))
         x = [xi + x_offset + distrIndex * bar_width for xi in x]
         ax.bar(x, envOccurrences, width=bar_width, label=modelNames[distrIndex])
-
-    ax.set_ylabel('Occurrence') # TODO only for index == 0?
+    ax.set_ylabel('Occurrence')  # TODO only for index == 0?
     ax.set_xticks(np.arange(len(envs)))
     ax.set_xticklabels(envs)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2))
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+    ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way
 
 
 if __name__ == "__main__":
@@ -182,23 +192,23 @@ if __name__ == "__main__":
 
     modelNamesList = [res.modelName for res in resultClasses]
     # TODO morgen:
-    # mit paraEnv & RRH hinbekommen anzuzeigen bzw zu vergleichen (ggf Type in Result oder so als variable für easy access) (2h ~)
     # den 50k run rüberkopiert
     # Tensorboard anschauen
-    # conda einrichten auf dem ssh & einen Testlauf starten (2h limit erstmal)
+
+    # mit paraEnv & RRH hinbekommen anzuzeigen bzw zu vergleichen (ggf Type in Result oder so als variable für easy access) (2h ~)
     # 2. minigrid env suchen & wenigstens ausführbar machen (2h limit)
     # Recherche für verwendete EA (2h limit)
     # Evaluation Kram verschönern (den Distribution plots; die Farben, die gestirchelten Linien, shared-Y entscheiden, ...
 
-    plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of 1st RH step")
-    plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula")
-    # TODO all envs distr plot
-    # TODO plot progression of curricula against one another
-    plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
+    # TODO limit x-axis (so the baseline paraEnv doesnt destroy everything on its own)
+
+    # plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of 1st RH step")
+    # plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula")
+    # plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
     plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNamesList)
     plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNamesList)
-    plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch",
-                             modelNamesList)  # TODO this should not have a shared x-axis; or at least still use epochs and not scale
+    plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNamesList)
+    # TODO this should not have a shared x-axis; or at least still use epochs and not scale
 
     # TODO plot showing differences between earlier and later generations
     # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?

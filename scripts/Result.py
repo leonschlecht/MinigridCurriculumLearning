@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 import numpy as np
 
 from curricula import RollingHorizonEvolutionaryAlgorithm
@@ -13,6 +10,7 @@ class Result:
         # This is due to naming convenience / overview in the evaluation
         argsString: str = evaluationDictionary[fullArgs]
         self.loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in [pair.split('=') for pair in argsString.split(', ')]}
+        self.loadedArgsDict[trainEvolutionary] = self.getTrainEvolutionary(self.loadedArgsDict[trainEvolutionary])
         self.modelName = self.loadedArgsDict[modelKey]
         self.selectedEnvList = evaluationDictionary[selectedEnvs]
         self.epochsTrained = evaluationDictionary[epochsDone] - 1
@@ -37,7 +35,9 @@ class Result:
         bestCurricScores = []
         avgEpochRewards = []
         numCurric = float(self.loadedArgsDict[numCurricKey])
-        if self.loadedArgsDict[trainEvolutionary]: # TODO to method
+        usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
+
+        if self.loadedArgsDict[trainEvolutionary]:  # TODO to method
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
             self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
             for epochKey in self.rewardsDict:
@@ -46,15 +46,45 @@ class Result:
                 bestCurricScores.append(epochDict[GEN_PREFIX + bestGen][bestIdx] / self.curricMaxReward)
                 epochRewardsList = np.array(list(epochDict.values()))
                 avgEpochRewards.append(np.sum(epochRewardsList) / self.maxCurricAvgReward)
+            self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
+            self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
+            self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
+
+        elif self.loadedArgsDict[trainAllParalell]:
+            print("AllPara detected")
+            self.allCurricDistribution = []
+            bestCurricScores = self.snapShotScores
+            avgEpochRewards = self.snapShotScores
+            self.snapshotEnvDistribution: dict = {}
+            for env in usedEnvEnumeration:
+                self.snapshotEnvDistribution[env] = self.epochsTrained
+            self.bestCurriculaEnvDistribution = self.snapshotEnvDistribution
+            self.allCurricDistribution = self.snapshotEnvDistribution
+            print(self.snapshotEnvDistribution)
+            # TODO there is still the differentiation between adjusting the envs used and using all 4 at the same time
+        elif self.loadedArgsDict[trainBiasedRandomRH]:
+            print("biased random rh detected")
+        elif self.loadedArgsDict[trainRandomRH]:
+            print("random rh detected")
+            # TODO can probably copy some stuff from the trainevolutioanry thigns above
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
+        assert self.bestCurricScore != []
+        assert self.avgEpochRewards != []
         assert type(self.iterationsPerEnv) == int
-        assert self.epochsTrained == len(self.rewardsDict.keys())
+        assert self.epochsTrained == len(self.rewardsDict.keys()) or not self.loadedArgsDict[trainEvolutionary]
         assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.logFilepath}"
-        usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
-        self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
-        self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
-        self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
+        assert sum(self.snapshotEnvDistribution.values()) > 0
+        assert sum(self.bestCurriculaEnvDistribution.values()) > 0
+
+    @staticmethod
+    def getTrainEvolutionary(param):
+        if param == "True)":
+            return True
+        elif param == "False)":
+            return False
+        else:
+            raise Exception("Error while parsing train evolutionary parameter")
 
     def getSnapshotScores(self, evalDict: dict, modelPerformance: dict) -> list[float]:
         """
