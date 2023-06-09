@@ -21,10 +21,12 @@ class RollingHorizon(ABC):
         self.stepsPerCurric = args.stepsPerCurric
         self.cmdLineString = cmdLineString
         self.lastEpochStartTime = startTime
-        self.envDifficulty = 0
+        self.envDifficulty = 1 # 1 meaning 100% maxsteps allowed
         self.exactIterationsSet = False
         self.seed = args.seed
         self.paraEnvs = args.paraEnv
+        self.difficultyStepsize = args.difficultyStepsize
+        print("difficultystepsize", self.difficultyStepsize)
         # TODO does RHEA even need a curric list becasue it gets generated always anyway
         self.curricula = self.randomlyInitializeCurricula(args.numCurric, args.stepsPerCurric, self.envDifficulty,
                                                           self.paraEnvs, self.seed)
@@ -79,7 +81,7 @@ class RollingHorizon(ABC):
             currentBestCurriculum = self.getCurrentBestCurriculum()
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
 
-            self.envDifficulty = calculateEnvDifficulty(currentSnapshotScore, self.stepMaxReward)
+            self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.ITERATIONS_PER_ENV*2)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurricScoreRaw, currentSnapshotScore,
                                     self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula, self.curriculaEnvDetails,
                                     self.logFilePath, self.curricMaxReward)
@@ -160,7 +162,7 @@ class RollingHorizon(ABC):
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}]")
         else:
             self.txtLogger.info("Creating model. . .")
-            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
+            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(self.envDifficulty, self.envDifficulty)], self.args,
                                 self.txtLogger)
             self.trainingInfoJson = self.initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed,
                                                           self.stepMaxReward, self.curricMaxReward, self.args)

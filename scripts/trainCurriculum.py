@@ -8,6 +8,7 @@ import utils
 from curricula import linearCurriculum, RollingHorizonEvolutionaryAlgorithm, \
     adaptiveCurriculum, RandomRollingHorizon, allParalell
 from utils import ENV_NAMES
+from utils.curriculumHelper import maxStepsEnv4, maxStepsEnv3, maxStepsEnv2, maxStepsEnv1
 
 
 def main():
@@ -57,43 +58,29 @@ def registerEnvs():
         entry_point="minigrid.envs:EmptyEnv",
         kwargs={"size": 8, "agent_start_pos": None},
     ) """
-    ENV_SIZE_POWER = 2
-    SIZE_MUTIPLICATOR = 10
-    maxStepsEnv4 = 12 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv3 = 10 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv2 = 8 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv1 = 6 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxSteps = np.array([maxStepsEnv1, maxStepsEnv2, maxStepsEnv3, maxStepsEnv4])
-    difficulty = np.array([1 - i * .1 for i in range(10)])
 
-    print(difficulty)
-    result = np.round(np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1)))
-    print(result.shape[1])
-    c = 0
-    print(result[0])
-    for i in range(result.shape[1]):
-        register(
-            id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
-            entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 12, "max_steps": int(result[3][i])},
-        )
-        register(
-            id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
-            entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 10, "max_steps": int(result[2][i])},
-        )
+    register(
+        id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(1),
+        entry_point="minigrid.envs:DoorKeyEnv",
+        kwargs={"size": 12, "max_steps": int(maxStepsEnv4)},
+    )
+    register(
+        id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(1),
+        entry_point="minigrid.envs:DoorKeyEnv",
+        kwargs={"size": 10, "max_steps": int(maxStepsEnv3)},
+    )
 
-        register(
-            id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
-            entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 8, "max_steps": int(result[1][i])},
-        )
+    register(
+        id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(1),
+        entry_point="minigrid.envs:DoorKeyEnv",
+        kwargs={"size": 8, "max_steps": int(maxStepsEnv2)},
+    )
 
-        register(
-            id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
-            entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 6, "max_steps": int(result[0][i])},
-        )
+    register(
+        id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(1),
+        entry_point="minigrid.envs:DoorKeyEnv",
+        kwargs={"size": 6, "max_steps": int(maxStepsEnv1)},
+    )
 
 
 if __name__ == "__main__":

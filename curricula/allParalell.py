@@ -11,6 +11,7 @@ from utils.curriculumHelper import *
 class allParalell:
     def __init__(self, txtLogger, startTime, cmdLineString: str, args):
         # random.seed(args.seed)
+        self.difficultyStepSize = args.difficultyStepsize
         self.args = args
         self.cmdLineString = cmdLineString
         self.lastEpochStartTime = startTime
@@ -64,7 +65,7 @@ class allParalell:
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
             reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
 
-            self.envDifficulty = calculateEnvDifficulty(reward, self.stepMaxReward)
+            self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.difficultyStepSize)
             if self.allEnvsSimultaneous:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
             else:

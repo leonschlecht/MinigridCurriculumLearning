@@ -101,20 +101,12 @@ def getRewardMultiplier(evalEnv):
     raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)
 
 
-def calculateEnvDifficulty(currentReward, maxReward, iterationsDone, difficultyStepSize) -> float:
-    # stepsize indicates when to do a .1 difficulty jump
-    value = iterationsDone * difficultyStepSize / 10000 # TODO Fix;
-    # TODO Register Env
-    ENV_SIZE_POWER = 2
-    SIZE_MUTIPLICATOR = 10
-    maxStepsEnv4 = 12 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv3 = 10 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv2 = 8 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxStepsEnv1 = 6 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-    maxSteps = np.array([maxStepsEnv1, maxStepsEnv2, maxStepsEnv3, maxStepsEnv4])
-    difficulty = np.array([1 - i * .1 for i in range(10)])
-
-    print(difficulty)
+def calculateEnvDifficulty(iterationsDone, difficultyStepsize) -> float:
+    value = 1 - (iterationsDone / difficultyStepsize / 10)
+    print(ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value))
+    print("NEW difficulty value", value)
+    value = max(0.1, value)
+    assert value <= 1
     register(
         id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
         entry_point="minigrid.envs:DoorKeyEnv",
@@ -137,10 +129,11 @@ def calculateEnvDifficulty(currentReward, maxReward, iterationsDone, difficultyS
         entry_point="minigrid.envs:DoorKeyEnv",
         kwargs={"size": 6, "max_steps": int(maxStepsEnv4 * value)},
     )
+    return value
 
-    if value < 0.1:
-        return 0.1
-    elif value > 1:
-        return 1
-    else:
-        return value
+ENV_SIZE_POWER = 2
+SIZE_MUTIPLICATOR = 10
+maxStepsEnv4 = 12 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+maxStepsEnv3 = 10 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+maxStepsEnv2 = 8 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+maxStepsEnv1 = 6 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
