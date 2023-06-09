@@ -161,3 +161,16 @@ class Result:
             iterationsPerEnv = int(loadedArgsDict[oldArgsIterPerEnvName])  # TODO this might become deprecated if I change iterPerEnv -> stepsPerEnv
 
         return iterationsPerEnv
+
+    def finishAggregation(self, amountOfTrainingRuns: int) -> None:
+        assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards)
+
+        self.snapShotScores = np.divide(self.snapShotScores, amountOfTrainingRuns)
+        self.bestCurricScore = np.divide(self.bestCurricScore, amountOfTrainingRuns)
+        self.avgEpochRewards = np.divide(self.avgEpochRewards, amountOfTrainingRuns)
+
+        for k in self.snapshotEnvDistribution.keys():
+            self.snapshotEnvDistribution[k] /= amountOfTrainingRuns
+            self.bestCurriculaEnvDistribution[k] /= amountOfTrainingRuns
+            self.allCurricDistribution[k] /= amountOfTrainingRuns
+        print("snap", self.snapShotScores)

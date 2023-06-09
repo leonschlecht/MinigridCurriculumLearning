@@ -3,7 +3,8 @@ import os
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
+import pandas as pd
+
 
 from scripts.Result import Result
 from utils import storage
@@ -23,8 +24,8 @@ def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], 
     new_list = set(maxXlist)
     if len(new_list) > 1:
         new_list.remove(max(new_list))
-    for i in range(len(allYValues)):
-        ax.plot(allXValues[i], allYValues[i], label=modelNames[i])
+    for j in range(len(allYValues)):
+        ax.plot(allXValues[j], allYValues[j], label=modelNames[j])
         # TODO add scatter again ??
     maxX = max(maxXlist)
     ax.set_ylim([0, maxYValue])
@@ -35,12 +36,12 @@ def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], 
     ax.legend()
 
     mostIterationsDoneXValues = allXValues[0]
-    for i in range(len(maxXlist)):
-        if maxX == allXValues[i][-1]:
-            mostIterationsDoneXValues = allXValues[i]
+    for j in range(len(maxXlist)):
+        if maxX == allXValues[j][-1]:
+            mostIterationsDoneXValues = allXValues[j]
             break
     # TODO maybe use 250k steps isntead for ticks
-    new_tick_locations = [(2 + i * 2) * mostIterationsDoneXValues[1] for i in range(len(mostIterationsDoneXValues) // 2)]
+    new_tick_locations = [(2 + j * 2) * mostIterationsDoneXValues[1] for j in range(len(mostIterationsDoneXValues) // 2)]
     ax.set_xticks(new_tick_locations)
     ax.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations])
     plt.show()
@@ -92,7 +93,6 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str)
     :return:
     """
     snapshotDistributions = [[res.snapshotEnvDistribution, res.modelName] for res in resultClassesList]
-    print(snapshotDistributions)
     plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo, limitY=True)
 
 
@@ -102,8 +102,8 @@ def plotDistributionOfAllCurric(resultClassesList: list[Result], titleInfo: str)
 
 
 def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: str, limitY=False):
-    numSubplots = len(smallAndLargeDistributions)
-    print("numSub", numSubplots)
+    numSubplots = 2
+    print(len(smallAndLargeDistributions))
     fig, axes = plt.subplots(nrows=1, ncols=numSubplots, figsize=(8, 5))
     fig.subplots_adjust(bottom=.3)
     smallDistributions = []
@@ -158,7 +158,6 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: 
 
 def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fig, limitY=False):
     num_distributions = len(allEnvDistributions)
-    print("allEvn", allEnvDistributions)
     bar_width = 0.5 / num_distributions
     x_offset = -bar_width * (num_distributions - 1) / 2
     maxO = []
@@ -198,21 +197,18 @@ if __name__ == "__main__":
         modelName = Path(logFilePaths[0]).parent.name
         dicts = {}
         helper: list[Result] = []
-        Break = False
+        singleModelEval = False
         for path in logFilePaths:
-            print(args.model, modelName)
             if args.model == modelName:
-                print(":)")
                 with open(path, 'r') as f:
                     trainingInfoDictionary = json.loads(f.read())
                 assert trainingInfoDictionary is not None
                 resultClasses = [Result(trainingInfoDictionary, modelName, path)]
-                Break = True
+                singleModelEval = True
                 break
 
                 # TODO merge dict here too
             if os.path.exists(path):
-                print(":(")
                 with open(path, 'r') as f:
                     trainingInfoDictionary = json.loads(f.read())
                 assert trainingInfoDictionary is not None
@@ -220,26 +216,48 @@ if __name__ == "__main__":
             else:
                 print(f"Path '{path}' doesnt exist!")
                 # raise Exception(f"Path '{logFilePath}' doesnt exist!")
-        if Break:
+        if singleModelEval:
             break
+
         snapshotDistr = helper[0].snapshotEnvDistribution
+        avgBestCurricDistr = helper[0].bestCurriculaEnvDistribution
+        avgAllCurricDistr = helper[0].allCurricDistribution
+        snapshotScores = helper[0].snapShotScores
+        bestCurricScores = helper[0].bestCurricScore
+        avgEpochRewards = helper[0].avgEpochRewards
+        print(len(bestCurricScores), len(snapshotScores),len(avgEpochRewards))
+        print(helper[0].modelName)
+
         for h in helper:
             if h == helper[0]:
                 continue
             for k in snapshotDistr.keys():
                 snapshotDistr[k] += h.snapshotEnvDistribution[k]
-            # TODO get average of all distributions (prolly need std dist)
-        # TODO
-        # Get average of            self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
-        #             self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
-        #             self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
-        # snapshot, bestCurric & avgEpochReward
+                avgBestCurricDistr[k] += h.bestCurriculaEnvDistribution[k]
+                avgAllCurricDistr[k] += h.allCurricDistribution[k]
+            for idx in range(len(snapshotScores)):
+                snapshotScores[idx] += h.snapShotScores[idx]
+                bestCurricScores[idx] += h.bestCurricScore[idx]
+                avgEpochRewards[idx] += h.avgEpochRewards[idx]
+            # TODO get average of all distributions (prolly need std dev too)
 
-        resultClasses.append(Result(trainingInfoDictionary, modelName, logFilePaths))
+        helper[0].snapShotScores = snapshotScores
+        helper[0].bestCurricScore = bestCurricScores
+        helper[0].avgEpochRewards = avgEpochRewards
+        helper[0].snapshotEnvDistribution = snapshotDistr
+        helper[0].bestCurriculaEnvDistribution = avgBestCurricDistr
+        helper[0].allCurricDistribution = avgAllCurricDistr # TODO is this useful to aggegrate?
+        # # TODO (Maybe aggregate difficulty too)
+
+        helper[0].finishAggregation(len(helper))
+        resultClasses.append(helper[0])
 
     modelNamesList = [res.modelName for res in resultClasses]
 
-    # plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
+
+    # TODo do this in a different way for pandas;
+
+    plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
     # plotDifficulty(resultClasses, "Overview of Difficulty List", modelNamesList)
     plotSnapshotEnvDistribution(resultClasses, "First Step Env Distribution")
 
