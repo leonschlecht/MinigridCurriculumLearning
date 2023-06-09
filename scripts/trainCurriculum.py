@@ -24,7 +24,8 @@ def main():
     assert args.numCurric > 0, "There must be at least 1 curriculum"
     assert args.iterPerEnv > 0, "The iterations per curricululm step must be >= 1"
     assert args.trainEpochs > 1, "There must be at least 2 training epochs for the algorithm"
-    assert 0 < args.paraEnv <= len(ENV_NAMES.ALL_ENVS), "Cant train on more envs in parallel than there are envs available"
+    assert 0 < args.paraEnv <= len(
+        ENV_NAMES.ALL_ENVS), "Cant train on more envs in parallel than there are envs available"
 
     if args.trainEvolutionary:
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)
@@ -63,16 +64,19 @@ def registerEnvs():
     maxStepsEnv2 = 8 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
     maxStepsEnv1 = 6 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
     maxSteps = np.array([maxStepsEnv1, maxStepsEnv2, maxStepsEnv3, maxStepsEnv4])
-    difficulty = np.array([1, 0.33, 0.11])
-    result = np.round(np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1)))
+    difficulty = np.array([1 - i * .1 for i in range(10)])
 
-    for i in range(len(difficulty)):
+    print(difficulty)
+    result = np.round(np.matmul(maxSteps.reshape(-1, 1), difficulty.reshape(1, -1)))
+    print(result.shape[1])
+    c = 0
+    print(result[0])
+    for i in range(result.shape[1]):
         register(
             id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",
             kwargs={"size": 12, "max_steps": int(result[3][i])},
         )
-
         register(
             id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(i),
             entry_point="minigrid.envs:DoorKeyEnv",

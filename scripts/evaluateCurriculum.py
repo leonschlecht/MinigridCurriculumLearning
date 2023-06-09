@@ -214,10 +214,13 @@ if __name__ == "__main__":
 
     modelNamesList = [res.modelName for res in resultClasses]
 
-    # plotSnapshotEnvDistribution(resultClasses, "Distribution of envs of 1st RH step")
-    # plotDistributionOfBestCurric(resultClasses, "Distribution of env occurrence from best performing curricula")
-    # plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
-    # plotSnapshotPerformance(resultClasses, "Snapshot Performance", modelNamesList)
-    # plotBestCurriculumResults(resultClasses, "Best Curriculum Results", modelNamesList)
+    plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
+    plotSnapshotEnvDistribution(resultClasses, "First Step Env Distribution")
+
+    plotBestCurriculumResults(resultClasses, "Reward of Best Curriculum per Epoch", modelNamesList)
+    plotDistributionOfBestCurric(resultClasses, "Best Curricula Env Distribution")
+
     plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNamesList)
+    plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
+
     # TODO this should not have a shared x-axis; or at least still use epochs and not scale
