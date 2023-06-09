@@ -11,23 +11,23 @@ from utils.curriculumHelper import *
 from matplotlib.ticker import MaxNLocator
 
 
-def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxReward: int, title: str, modelNames: list[str], limitX=False):
+def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str, modelNames: list[str], limitX=False):
+    fig, ax = plt.subplots()
+
     minX = 0
     maxXlist = ([max(x) for x in allXValues])
-    print(maxXlist)
-    maxXlist.remove(max(maxXlist))
-    print("maxX", maxXlist)
-    fig, ax = plt.subplots()
-    colors = ['blue', 'red', 'green', 'purple']
-    linestyles = ['-', '--', '-.', ':']
+    if len(maxXlist) > 1:
+        maxXlist.remove(max(maxXlist))
+    # colors = ['blue', 'red', 'green', 'purple']
+    # linestyles = ['-', '--', '-.', ':']
     new_list = set(maxXlist)
-    new_list.remove(max(new_list))
-    print(max(new_list))
+    if len(new_list) > 1:
+        new_list.remove(max(new_list))
     for i in range(len(allYValues)):
         ax.plot(allXValues[i], allYValues[i], label=modelNames[i])
         # TODO add scatter again ??
     maxX = max(maxXlist)
-    ax.set_ylim([0, maxReward])
+    ax.set_ylim([0, maxYValue])
     ax.set_xlim([minX, maxX])
     ax.set_xlabel('iterations')
     ax.set_ylabel('reward')
@@ -50,7 +50,16 @@ def plotSnapshotPerformance(results: list[Result], title: str, modelNamesList):
     y = [res.snapShotScores for res in results]
     x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained)] for res in results]
     maxReward = 1
+
     plotPerformance(y, x, maxReward, title, modelNamesList, limitX=True)
+
+
+def plotDifficulty(results: list[Result], title: str, modelNamesList):
+    y = [res.difficultyList for res in results]
+    x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained+1)] for res in results]
+    maxYValue = 2
+    # TODO fix y-axis in this case so it shows integers only
+    plotPerformance(y, x, maxYValue, title, modelNamesList, limitX=True)
 
 
 def plotEpochAvgCurricReward(results: list[Result], title: str, modelNamesList):
@@ -83,6 +92,7 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str)
     :return:
     """
     snapshotDistributions = [[res.snapshotEnvDistribution, res.modelName] for res in resultClassesList]
+    print(snapshotDistributions)
     plotEnvsUsedDistrSubplot(snapshotDistributions, titleInfo, limitY=True)
 
 
@@ -92,8 +102,9 @@ def plotDistributionOfAllCurric(resultClassesList: list[Result], titleInfo: str)
 
 
 def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: str, limitY=False):
-    num_subplots = 2
-    fig, axes = plt.subplots(nrows=1, ncols=num_subplots, figsize=(8, 5))
+    numSubplots = len(smallAndLargeDistributions)
+    print("numSub", numSubplots)
+    fig, axes = plt.subplots(nrows=1, ncols=numSubplots, figsize=(8, 5))
     fig.subplots_adjust(bottom=.3)
     smallDistributions = []
     largeDistributions = []
@@ -123,18 +134,23 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: 
             modelNamesSmall.append(distr[1])
 
     assert len(smallDistributions) + len(largeDistributions) == len(smallAndLargeDistributions)
-    assert len(smallAndLargeDistributions) > len(smallDistributions) > 0
-    assert len(largeDistributions) > 0
-    for envDistIndex in range(num_subplots):
-        if envDistIndex == 0:
-            envDistribution = smallDistributions
-            modelNames = modelNamesSmall
-        elif envDistIndex == 1:
-            envDistribution = largeDistributions
-            modelNames = modelNamesLarge
+    assert len(smallAndLargeDistributions) >= len(smallDistributions) >= 0
+    assert len(largeDistributions) >= 0
+
+    distributionsList = []
+    if len(smallDistributions) > 0:
+        distributionsList.append([smallDistributions, modelNamesSmall])
+    if len(largeDistributions) > 0:
+        distributionsList.append([largeDistributions, modelNamesLarge])
+
+    envDistrIndex = 0
+    for distribution in distributionsList:
+        if len(distributionsList) == 1:
+            axesObj = axes
         else:
-            raise Exception("Invalid env distribution index")
-        plotEnvsUsedDistribution(envDistribution, axes[envDistIndex], modelNames, fig, limitY)
+            axesObj = axes[envDistrIndex]
+        plotEnvsUsedDistribution(distribution[0], axesObj, distribution[1], fig, limitY)
+        envDistrIndex += 1
     fig.suptitle(titleInfo, fontsize=16)
 
     plt.show()
@@ -142,6 +158,7 @@ def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: 
 
 def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fig, limitY=False):
     num_distributions = len(allEnvDistributions)
+    print("allEvn", allEnvDistributions)
     bar_width = 0.5 / num_distributions
     x_offset = -bar_width * (num_distributions - 1) / 2
     maxO = []
@@ -167,13 +184,11 @@ if __name__ == "__main__":
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
     for model in evalDirectories:
-        print(model)
         path = evalDirBasePath + os.sep + model + os.sep
         json_files = [f for f in os.listdir(path) if f.endswith('.json')]
         fullLogfilePaths.append([])
         for jsonFile in json_files:
             fullLogfilePaths[-1].append(path + jsonFile)
-        print(fullLogfilePaths)
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
@@ -183,16 +198,21 @@ if __name__ == "__main__":
         modelName = Path(logFilePaths[0]).parent.name
         dicts = {}
         helper: list[Result] = []
+        Break = False
         for path in logFilePaths:
+            print(args.model, modelName)
             if args.model == modelName:
+                print(":)")
                 with open(path, 'r') as f:
                     trainingInfoDictionary = json.loads(f.read())
                 assert trainingInfoDictionary is not None
                 resultClasses = [Result(trainingInfoDictionary, modelName, path)]
+                Break = True
                 break
+
                 # TODO merge dict here too
             if os.path.exists(path):
-                print("path", path)
+                print(":(")
                 with open(path, 'r') as f:
                     trainingInfoDictionary = json.loads(f.read())
                 assert trainingInfoDictionary is not None
@@ -200,21 +220,27 @@ if __name__ == "__main__":
             else:
                 print(f"Path '{path}' doesnt exist!")
                 # raise Exception(f"Path '{logFilePath}' doesnt exist!")
+        if Break:
+            break
         snapshotDistr = helper[0].snapshotEnvDistribution
         for h in helper:
             if h == helper[0]:
                 continue
-            print(h.snapshotEnvDistribution)
             for k in snapshotDistr.keys():
                 snapshotDistr[k] += h.snapshotEnvDistribution[k]
-            # TODO get average of all distributions
-        print(snapshotDistr)
-        exit()
+            # TODO get average of all distributions (prolly need std dist)
+        # TODO
+        # Get average of            self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
+        #             self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
+        #             self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
+        # snapshot, bestCurric & avgEpochReward
+
         resultClasses.append(Result(trainingInfoDictionary, modelName, logFilePaths))
 
     modelNamesList = [res.modelName for res in resultClasses]
 
-    plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
+    # plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
+    # plotDifficulty(resultClasses, "Overview of Difficulty List", modelNamesList)
     plotSnapshotEnvDistribution(resultClasses, "First Step Env Distribution")
 
     plotBestCurriculumResults(resultClasses, "Reward of Best Curriculum per Epoch", modelNamesList)
