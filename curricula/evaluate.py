@@ -87,17 +87,6 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
     return results
 
 
-
-def getDifficultyMultiplier(difficulty):
-    if difficulty == 0:
-        return 1
-    elif difficulty == 1:
-        return 1.1
-    elif difficulty == 2:
-        return 1.2
-    raise Exception("Something went wrong with the difficulty multiplier! input difficulty:", difficulty)
-
-
 def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     """
     Evaluates and calculates the average performance in ALL environments
@@ -114,5 +103,5 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     for evalEnv in envs:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv)
         rewardSum += currentReward
-    print("Evaluate agent TEST", rewardSum * getDifficultyMultiplier(difficulty))
-    return rewardSum * getDifficultyMultiplier(difficulty)
+    print("Evaluate agent TEST", rewardSum)
+    return rewardSum
