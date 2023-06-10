@@ -1,3 +1,4 @@
+import multiprocessing
 import sys
 from datetime import datetime
 
@@ -12,6 +13,10 @@ from utils.curriculumHelper import maxStepsEnv4, maxStepsEnv3, maxStepsEnv2, max
 
 
 def main():
+    try:
+        multiprocessing.get_context("fork")
+    except:
+        print("fork not set")
     cmdLineString = ' '.join(sys.argv)
     args = utils.initializeArgParser()
     # TODO add --debug option with some preset parameters, and only use more params if != default ones (+ rnd model name)
