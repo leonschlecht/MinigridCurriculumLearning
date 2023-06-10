@@ -21,7 +21,7 @@ class RollingHorizon(ABC):
         self.stepsPerCurric = args.stepsPerCurric
         self.cmdLineString = cmdLineString
         self.lastEpochStartTime = startTime
-        self.envDifficulty = 1 # 1 meaning 100% maxsteps allowed
+        self.envDifficulty: float = 1.0 # 1 meaning 100% maxsteps allowed
         self.exactIterationsSet = False
         self.seed = args.seed
         self.paraEnvs = args.paraEnv
@@ -162,7 +162,7 @@ class RollingHorizon(ABC):
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}]")
         else:
             self.txtLogger.info("Creating model. . .")
-            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(self.envDifficulty, self.envDifficulty)], self.args,
+            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
                                 self.txtLogger)
             self.trainingInfoJson = self.initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed,
                                                           self.stepMaxReward, self.curricMaxReward, self.args)
