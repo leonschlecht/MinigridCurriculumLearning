@@ -1,40 +1,32 @@
 import multiprocessing
 import gymnasium as gym
 
-from Minigrid.minigrid.wrappers import ViewSizeWrapper
-
-if __name__ == "__main__":
-    multiprocessing.set_start_method("fork")  # TODO this should crash but it doesnt ???
-    x = 0
-
+multiprocessing.set_start_method("fork")
 
 def worker(conn, env):
     while True:
-        try:
-            cmd, data = conn.recv()
-            if cmd == "step":
-                obs, reward, terminated, truncated, info = env.step(data)
-                if terminated or truncated:
-                    obs, _ = env.reset()
-                conn.send((obs, reward, terminated, truncated, info))
-            elif cmd == "reset":
+        cmd, data = conn.recv()
+        if cmd == "step":
+            obs, reward, terminated, truncated, info = env.step(data)
+            if terminated or truncated:
                 obs, _ = env.reset()
-                conn.send(obs)
-            else:
-                raise NotImplementedError
-        except:
-            break
-
+            conn.send((obs, reward, terminated, truncated, info))
+        elif cmd == "reset":
+            obs, _ = env.reset()
+            conn.send(obs)
+        else:
+            raise NotImplementedError
 
 class MyParallelEnv(gym.Env):
     """A concurrent execution of environments in multiple processes."""
 
     def __init__(self, envs):
         assert len(envs) >= 1, "No environment given."
+
         self.envs = envs
         self.observation_space = self.envs[0].observation_space
         self.action_space = self.envs[0].action_space
-        self.name = envs[0]
+
         self.locals = []
         for env in self.envs[1:]:
             local, remote = multiprocessing.Pipe()
@@ -44,7 +36,7 @@ class MyParallelEnv(gym.Env):
             p.start()
             remote.close()
 
-    def reset(self, seed=None, options=None):
+    def reset(self):
         for local in self.locals:
             local.send(("reset", None))
         results = [self.envs[0].reset()[0]] + [local.recv() for local in self.locals]
