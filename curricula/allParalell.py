@@ -15,7 +15,7 @@ class allParalell:
         self.args = args
         self.cmdLineString = cmdLineString
         self.lastEpochStartTime = startTime
-        self.envDifficulty = 0
+        self.envDifficulty: float = 1.0
         self.seed = args.seed
         self.paraEnvs = len(ENV_NAMES.ALL_ENVS)
         print("paraEnv", self.paraEnvs)
@@ -64,8 +64,7 @@ class allParalell:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
             reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
-
-            self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.difficultyStepSize)
+            self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
             if self.allEnvsSimultaneous:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
             else:

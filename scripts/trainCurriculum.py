@@ -58,26 +58,26 @@ def registerEnvs():
         entry_point="minigrid.envs:EmptyEnv",
         kwargs={"size": 8, "agent_start_pos": None},
     ) """
-
+    s = "1.0"
     register(
-        id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(1),
+        id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + s,
         entry_point="minigrid.envs:DoorKeyEnv",
         kwargs={"size": 12, "max_steps": int(maxStepsEnv4)},
     )
     register(
-        id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(1),
+        id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + s,
         entry_point="minigrid.envs:DoorKeyEnv",
         kwargs={"size": 10, "max_steps": int(maxStepsEnv3)},
     )
 
     register(
-        id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(1),
+        id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + s,
         entry_point="minigrid.envs:DoorKeyEnv",
         kwargs={"size": 8, "max_steps": int(maxStepsEnv2)},
     )
 
     register(
-        id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(1),
+        id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + s,
         entry_point="minigrid.envs:DoorKeyEnv",
         kwargs={"size": 6, "max_steps": int(maxStepsEnv1)},
     )
