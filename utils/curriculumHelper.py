@@ -102,10 +102,15 @@ def getRewardMultiplier(evalEnv):
 
 
 def calculateEnvDifficulty(iterationsDone, difficultyStepsize) -> float:
-    value = 1 - (iterationsDone / difficultyStepsize / 10)
+    startDecreaseNum = 500000
+    if iterationsDone >= startDecreaseNum:
+        value = 1 - ((iterationsDone - startDecreaseNum) / difficultyStepsize / 10)
+    else:
+        value = 1
     print(ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value))
+    print(iterationsDone, difficultyStepsize)
     print("NEW difficulty value", value)
-    value = max(0.1, value)
+    value = max(0.15, value) # TODO what should the lowest value be?
     assert value <= 1
     register(
         id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
