@@ -11,6 +11,7 @@ if __name__ == "__main__":
 def worker(conn, env):
     while True:
         try:
+            print(1)
             cmd, data = conn.recv()
             if cmd == "step":
                 obs, reward, terminated, truncated, info = env.step(data)
@@ -31,6 +32,7 @@ class MyParallelEnv(gym.Env):
     """A concurrent execution of environments in multiple processes."""
 
     def __init__(self, envs):
+        print("penv constructor")
         assert len(envs) >= 1, "No environment given."
         self.envs = envs
         self.observation_space = self.envs[0].observation_space
