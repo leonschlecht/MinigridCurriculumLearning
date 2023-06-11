@@ -18,16 +18,14 @@ class allParalell:
         self.envDifficulty: float = 1.0
         self.seed = args.seed
         self.paraEnvs = len(ENV_NAMES.ALL_ENVS)
-        print("paraEnv", self.paraEnvs)
 
         self.ITERATIONS_PER_EVALUATE = args.iterPerEnv
         self.iterationsDone = 0
         self.txtLogger = txtLogger
         TOTAL_ITERATIONS = 10000000
         self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
-        print(self.totalEpochs)
         self.trainingTime = 0
-        self.selectedModel = "model" + os.sep + args.model
+        self.selectedModel = args.model + os.sep + "model"
 
         self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
 
@@ -64,7 +62,7 @@ class allParalell:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
             reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
-            # reward = 0
+            # TODO can probably speedup by re-using envs(in static mode at least)
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
             if self.allEnvsSimultaneous:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
@@ -122,7 +120,7 @@ class allParalell:
             index = 0
         return ENV_NAMES.ALL_ENVS[index]
 
-    def updateEnvNamesDynamically(self, currentEnvNames: list, newDifficulty: int, seed: int) -> list:
+    def updateEnvNamesDynamically(self, currentEnvNames: list, newDifficulty: float, seed: int) -> list:
         envNames = currentEnvNames
         print("DIFF=", newDifficulty)
         print("Before=", currentEnvNames)
