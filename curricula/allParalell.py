@@ -64,6 +64,7 @@ class allParalell:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
             reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
+            # reward = 0
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
             if self.allEnvsSimultaneous:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
