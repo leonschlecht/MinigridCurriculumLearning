@@ -72,6 +72,8 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     }
 
     env.reset()
+    env.end()
+    env.close()
     return evaluationResult
 
 
