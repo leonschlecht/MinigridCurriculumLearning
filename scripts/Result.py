@@ -9,7 +9,8 @@ class Result:
         # NOTE: the modelName is the name of the directory; not the name of the --model command when the training was performed
         # This is due to naming convenience / overview in the evaluation
         argsString: str = evaluationDictionary[fullArgs]
-        self.loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in [pair.split('=') for pair in argsString.split(', ')]}
+        self.loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in
+                                     [pair.split('=') for pair in argsString.split(', ')]}
         self.loadedArgsDict[trainEvolutionary] = self.getTrainEvolutionary(self.loadedArgsDict[trainEvolutionary])
         self.modelName = self.loadedArgsDict[modelKey]
         self.selectedEnvList = evaluationDictionary[selectedEnvs]
@@ -48,7 +49,8 @@ class Result:
                 avgEpochRewards.append(np.sum(epochRewardsList) / self.maxCurricAvgReward)
             self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
             self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
-            self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
+            self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict,
+                                                                                     usedEnvEnumeration)
 
         elif self.loadedArgsDict[trainAllParalell]:
             print("AllPara detected")
@@ -158,16 +160,23 @@ class Result:
         if iterationsPerEnvKey in trainingInfoDict.keys():
             iterationsPerEnv = int(trainingInfoDict[iterationsPerEnvKey])
         else:
-            iterationsPerEnv = int(loadedArgsDict[oldArgsIterPerEnvName])  # TODO this might become deprecated if I change iterPerEnv -> stepsPerEnv
+            iterationsPerEnv = int(loadedArgsDict[
+                                       oldArgsIterPerEnvName])  # TODO this might become deprecated if I change iterPerEnv -> stepsPerEnv
 
         return iterationsPerEnv
 
-    def finishAggregation(self, amountOfTrainingRuns: int) -> None:
+    def finishAggregation(self, snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr, avgBestCurricDistr,
+                          avgAllCurricDistr, amountOfTrainingRuns: int) -> None:
+        # # TODO (Maybe aggregate difficulty too)
         assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards)
 
-        self.snapShotScores = np.divide(self.snapShotScores, amountOfTrainingRuns)
-        self.bestCurricScore = np.divide(self.bestCurricScore, amountOfTrainingRuns)
-        self.avgEpochRewards = np.divide(self.avgEpochRewards, amountOfTrainingRuns)
+        self.snapShotScores = np.divide(snapshotScores, amountOfTrainingRuns)
+        self.bestCurricScore = np.divide(bestCurricScores, amountOfTrainingRuns)
+        self.avgEpochRewards = np.divide(avgEpochRewards, amountOfTrainingRuns)
+
+        self.snapshotEnvDistribution = snapshotDistr
+        self.bestCurriculaEnvDistribution = avgBestCurricDistr
+        self.allCurricDistribution = avgAllCurricDistr  # TODO is this useful to aggegrate?
 
         for k in self.snapshotEnvDistribution.keys():
             self.snapshotEnvDistribution[k] /= amountOfTrainingRuns

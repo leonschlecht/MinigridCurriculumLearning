@@ -103,7 +103,6 @@ def plotDistributionOfAllCurric(resultClassesList: list[Result], titleInfo: str)
 
 def plotEnvsUsedDistrSubplot(smallAndLargeDistributions: list[list], titleInfo: str, limitY=False):
     numSubplots = 2
-    print(len(smallAndLargeDistributions))
     fig, axes = plt.subplots(nrows=1, ncols=numSubplots, figsize=(8, 5))
     fig.subplots_adjust(bottom=.3)
     smallDistributions = []
@@ -225,7 +224,6 @@ if __name__ == "__main__":
         snapshotScores = helper[0].snapShotScores
         bestCurricScores = helper[0].bestCurricScore
         avgEpochRewards = helper[0].avgEpochRewards
-        print(len(bestCurricScores), len(snapshotScores),len(avgEpochRewards))
         print(helper[0].modelName)
 
         for h in helper:
@@ -240,16 +238,12 @@ if __name__ == "__main__":
                 bestCurricScores[idx] += h.bestCurricScore[idx]
                 avgEpochRewards[idx] += h.avgEpochRewards[idx]
             # TODO get average of all distributions (prolly need std dev too)
+        for h in helper:
+            print(h)
 
-        helper[0].snapShotScores = snapshotScores
-        helper[0].bestCurricScore = bestCurricScores
-        helper[0].avgEpochRewards = avgEpochRewards
-        helper[0].snapshotEnvDistribution = snapshotDistr
-        helper[0].bestCurriculaEnvDistribution = avgBestCurricDistr
-        helper[0].allCurricDistribution = avgAllCurricDistr # TODO is this useful to aggegrate?
-        # # TODO (Maybe aggregate difficulty too)
+        exit()
 
-        helper[0].finishAggregation(len(helper))
+        helper[0].finishAggregation(snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr, avgBestCurricDistr, avgAllCurricDistr, len(helper))
         resultClasses.append(helper[0])
 
     modelNamesList = [res.modelName for res in resultClasses]
