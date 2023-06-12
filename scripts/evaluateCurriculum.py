@@ -40,7 +40,7 @@ def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], 
         if maxX == allXValues[j][-1]:
             mostIterationsDoneXValues = allXValues[j]
             break
-    # TODO maybe use 250k steps isntead for ticks
+    # TODO maybe use 250k (or so) steps isntead for ticks
     new_tick_locations = [(2 + j * 2) * mostIterationsDoneXValues[1] for j in range(len(mostIterationsDoneXValues) // 2)]
     ax.set_xticks(new_tick_locations)
     ax.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations])
@@ -64,7 +64,7 @@ def plotDifficulty(results: list[Result], title: str, modelNamesList):
 
 
 def plotEpochAvgCurricReward(results: list[Result], title: str, modelNamesList):
-    y = [res.avgEpochRewards for res in results]  # TODO NORMALIZE ??
+    y = [res.avgEpochRewards for res in results]  # TODO NORMALIZE ?? (already done i think ??)
     x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained)] for res in results]
     maxReward = 1
     plotPerformance(y, x, maxReward, title, modelNamesList, limitX=True)
@@ -175,7 +175,7 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
     ax.set_xticklabels(envs)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2))
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-    ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way
+    ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way to cut things off
 
 
 if __name__ == "__main__":
@@ -255,8 +255,6 @@ if __name__ == "__main__":
     modelNamesList = [res.modelName for res in resultClasses]
 
 
-    # TODo do this in a different way for pandas;
-
     plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
     # plotDifficulty(resultClasses, "Overview of Difficulty List", modelNamesList)
     plotSnapshotEnvDistribution(resultClasses, "First Step Env Distribution")
@@ -267,4 +265,4 @@ if __name__ == "__main__":
     plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNamesList)
     plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
 
-    # TODO this should not have a shared x-axis; or at least still use epochs and not scale
+    # TODO this should not have a shared x-axis; or at least still use epochs and not scale ???

@@ -1,8 +1,8 @@
 import multiprocessing
 import gymnasium as gym
 
+
 def worker(conn, env):
-    print("worker start")
     while True:
         try:
             cmd, data = conn.recv()
@@ -21,7 +21,6 @@ def worker(conn, env):
                 raise NotImplementedError
         except:
             break
-    print("worker ended!")
 
 
 class MyParallelEnv(gym.Env):
@@ -59,10 +58,8 @@ class MyParallelEnv(gym.Env):
         return results
 
     def end(self):
-        print("End called")
         for local in self.locals:
             local.send(("end", None))
-
 
     def render(self):
         raise NotImplementedError
