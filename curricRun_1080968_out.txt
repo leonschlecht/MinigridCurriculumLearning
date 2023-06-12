@@ -1,0 +1,693 @@
+Start 
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : cp2019-12
+srun: cpus-per-task       : 2
+srun: jobid               : 1080968
+srun: job-name            : curriculumTest
+srun: mem                 : 20G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1080968: nodes(1):`cp2019-12', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1080968.0 on host cp2019-12, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node cp2019-12, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+difficultystepsize 100000
+Creating model. . .
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=7, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Created model 12x12_100k_3step_3gen_3curric/epoch_0
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_0 ---> 12x12_100k_3step_3gen_3curric/epoch_1
+
+The training will go on for 25 epochs
+
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=7, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Created model 12x12_100k_3step_3gen_3curric/epoch_0
+
+--------------------------------------------------------------
+                     START EPOCH 1
+--------------------------------------------------------------
+
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1
+	Algorithm loaded in 0.16 sec
+done= 0 toTrain= 100000
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=1794, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1/log.csv', fd=4, position=0, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1/events.out.tfevents.1686517238.cp2019-12', fd=7, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 4096 | U 1 | AllF 0004096 | FPS 1126 | D 3 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.73 | V 0.1802 | pL 0.0191 | vL 0.0277 | g 0.1738
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 8192 | U 2 | AllF 0008192 | FPS 1422 | D 6 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.75 | V 0.1988 | pL 0.0304 | vL 0.0050 | g 0.0764
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 12288 | U 3 | AllF 0012288 | FPS 1463 | D 9 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.81 | V 0.1686 | pL 0.0284 | vL 0.0009 | g 0.0560
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 16384 | U 4 | AllF 0016384 | FPS 1319 | D 12 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.88 | V 0.1429 | pL 0.0256 | vL 0.0004 | g 0.0274
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 20480 | U 5 | AllF 0020480 | FPS 1292 | D 15 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.91 | V 0.1154 | pL 0.0307 | vL 0.0005 | g 0.0227
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 24576 | U 6 | AllF 0024576 | FPS 1233 | D 19 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.93 | V 0.0968 | pL 0.0157 | vL 0.0002 | g 0.0173
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 28672 | U 7 | AllF 0028672 | FPS 1185 | D 22 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.94 | V 0.0857 | pL 0.0148 | vL 0.0001 | g 0.0163
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 32768 | U 8 | AllF 0032768 | FPS 1131 | D 26 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0690 | pL 0.0171 | vL 0.0002 | g 0.0146
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 36864 | U 9 | AllF 0036864 | FPS 1175 | D 29 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0585 | pL 0.0104 | vL 0.0001 | g 0.0073
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 40960 | U 10 | AllF 0040960 | FPS 1120 | D 33 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0466 | pL 0.0125 | vL 0.0001 | g 0.0101
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 45056 | U 11 | AllF 0045056 | FPS 1153 | D 36 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0378 | pL 0.0065 | vL 0.0000 | g 0.0065
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 49152 | U 12 | AllF 0049152 | FPS 1187 | D 40 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0334 | pL 0.0056 | vL 0.0000 | g 0.0067
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 53248 | U 13 | AllF 0053248 | FPS 1128 | D 44 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0289 | pL 0.0049 | vL 0.0000 | g 0.0062
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 57344 | U 14 | AllF 0057344 | FPS 1173 | D 47 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0241 | pL 0.0041 | vL 0.0000 | g 0.0096
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 61440 | U 15 | AllF 0061440 | FPS 1125 | D 51 | rR:msmM 0.005 0.03 0.00 0.16 | F:msmM 638.6 8.0 594.0 640.0 | H 1.94 | V 0.0230 | pL 0.0053 | vL 0.0001 | g 0.0077
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 65536 | U 16 | AllF 0065536 | FPS 1139 | D 54 | rR:msmM 0.005 0.03 0.00 0.16 | F:msmM 818.6 181.6 594.0 1000.0 | H 1.94 | V 0.0190 | pL 0.0044 | vL 0.0000 | g 0.0062
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 69632 | U 17 | AllF 0069632 | FPS 1187 | D 58 | rR:msmM 0.005 0.03 0.00 0.16 | F:msmM 818.6 181.6 594.0 1000.0 | H 1.94 | V 0.0152 | pL 0.0029 | vL 0.0000 | g 0.0045
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 73728 | U 18 | AllF 0073728 | FPS 1168 | D 61 | rR:msmM 0.017 0.09 0.00 0.53 | F:msmM 810.5 196.6 335.0 1000.0 | H 1.94 | V 0.0155 | pL -0.0002 | vL 0.0004 | g 0.0232
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 77824 | U 19 | AllF 0077824 | FPS 1184 | D 65 | rR:msmM 0.017 0.09 0.00 0.53 | F:msmM 810.5 196.6 335.0 1000.0 | H 1.94 | V 0.0096 | pL 0.0019 | vL 0.0000 | g 0.0086
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 81920 | U 20 | AllF 0081920 | FPS 1168 | D 68 | rR:msmM 0.033 0.13 0.00 0.53 | F:msmM 795.7 199.5 335.0 1000.0 | H 1.94 | V 0.0064 | pL -0.0014 | vL 0.0004 | g 0.0167
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 86016 | U 21 | AllF 0086016 | FPS 1179 | D 72 | rR:msmM 0.033 0.13 0.00 0.53 | F:msmM 795.7 199.5 335.0 1000.0 | H 1.94 | V 0.0061 | pL 0.0010 | vL 0.0000 | g 0.0113
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 90112 | U 22 | AllF 0090112 | FPS 1151 | D 75 | rR:msmM 0.033 0.13 0.00 0.53 | F:msmM 795.7 199.5 335.0 1000.0 | H 1.94 | V 0.0047 | pL 0.0005 | vL 0.0000 | g 0.0050
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 94208 | U 23 | AllF 0094208 | FPS 1164 | D 79 | rR:msmM 0.033 0.13 0.00 0.53 | F:msmM 784.4 197.8 335.0 1000.0 | H 1.94 | V 0.0037 | pL 0.0007 | vL 0.0000 | g 0.0042
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 98304 | U 24 | AllF 0098304 | FPS 1175 | D 82 | rR:msmM 0.016 0.09 0.00 0.53 | F:msmM 805.2 184.0 527.0 1000.0 | H 1.94 | V 0.0041 | pL 0.0010 | vL 0.0000 | g 0.0039
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 102400 | U 25 | AllF 0102400 | FPS 1121 | D 86 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 808.8 179.6 640.0 1000.0 | H 1.94 | V 0.0039 | pL 0.0011 | vL 0.0000 | g 0.0044
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 11456.0 | FPS 1565 | duration 7.320852041244507 | R:msmM 0.01 0.05 0.00 0.26 | F:msmM 358.0 11.1 296.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 19970.0 | FPS 1533 | duration 13.02795958518982 | R:msmM 0.03 0.14 0.00 0.82 | F:msmM 624.1 88.7 130.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 31585.0 | FPS 1519 | duration 20.798031330108643 | R:msmM 0.01 0.08 0.00 0.47 | F:msmM 987.0 72.2 585.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 46080.0 | FPS 1540 | duration 29.916526317596436 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1440.0 0.0 1440.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 succeeded
+Evaluate agent TEST 0.40101562440395355
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1_CANDIDATE
+	Trained iteration j=0 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1. Iterations done 102400
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 = [0.40101562 0.         0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01113932 0.         0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.21 sec
+done= 102400 toTrain= 204799
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=11027, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1/log.csv', fd=4, position=6294, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1/events.out.tfevents.1686517397.cp2019-12', fd=170, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 4096 | U 26 | AllF 0106496 | FPS 1160 | D 3 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.95 | V 0.0022 | pL 0.0004 | vL 0.0000 | g 0.0047
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 8192 | U 27 | AllF 0110592 | FPS 1254 | D 7 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0020 | pL 0.0004 | vL 0.0000 | g 0.0058
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 12288 | U 28 | AllF 0114688 | FPS 1328 | D 10 | rR:msmM 0.015 0.08 0.00 0.47 | F:msmM 191.8 180.2 0.0 379.0 | H 1.94 | V 0.0032 | pL -0.0017 | vL 0.0004 | g 0.0316
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 16384 | U 29 | AllF 0118784 | FPS 1346 | D 13 | rR:msmM 0.015 0.08 0.00 0.47 | F:msmM 191.8 180.2 0.0 379.0 | H 1.94 | V -0.0052 | pL -0.0010 | vL 0.0000 | g 0.0074
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 20480 | U 30 | AllF 0122880 | FPS 1362 | D 16 | rR:msmM 0.028 0.11 0.00 0.47 | F:msmM 487.6 145.2 223.0 640.0 | H 1.94 | V -0.0021 | pL -0.0030 | vL 0.0003 | g 0.0169
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 24576 | U 31 | AllF 0126976 | FPS 1346 | D 19 | rR:msmM 0.037 0.12 0.00 0.47 | F:msmM 485.5 147.5 223.0 640.0 | H 1.94 | V -0.0016 | pL -0.0009 | vL 0.0001 | g 0.0087
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 28672 | U 32 | AllF 0131072 | FPS 1357 | D 22 | rR:msmM 0.037 0.12 0.00 0.47 | F:msmM 485.5 147.5 223.0 640.0 | H 1.94 | V -0.0033 | pL -0.0003 | vL 0.0000 | g 0.0034
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 32768 | U 33 | AllF 0135168 | FPS 1373 | D 25 | rR:msmM 0.008 0.05 0.00 0.27 | F:msmM 489.2 142.2 293.0 640.0 | H 1.94 | V -0.0028 | pL -0.0005 | vL 0.0000 | g 0.0047
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 36864 | U 34 | AllF 0139264 | FPS 1344 | D 28 | rR:msmM 0.049 0.19 0.00 0.88 | F:msmM 351.5 84.9 49.0 640.0 | H 1.94 | V 0.0018 | pL -0.0075 | vL 0.0018 | g 0.0507
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 40960 | U 35 | AllF 0143360 | FPS 1351 | D 31 | rR:msmM 0.068 0.21 0.00 0.88 | F:msmM 467.8 176.7 49.0 640.0 | H 1.94 | V 0.0070 | pL -0.0012 | vL 0.0003 | g 0.0223
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 45056 | U 36 | AllF 0147456 | FPS 1379 | D 34 | rR:msmM 0.068 0.21 0.00 0.88 | F:msmM 467.8 176.7 49.0 640.0 | H 1.94 | V 0.0044 | pL 0.0005 | vL 0.0002 | g 0.0112
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 49152 | U 37 | AllF 0151552 | FPS 1426 | D 37 | rR:msmM 0.041 0.16 0.00 0.70 | F:msmM 477.5 161.2 119.0 640.0 | H 1.94 | V 0.0074 | pL 0.0008 | vL 0.0001 | g 0.0114
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 53248 | U 38 | AllF 0155648 | FPS 1330 | D 40 | rR:msmM 0.042 0.16 0.00 0.75 | F:msmM 463.7 152.8 100.0 640.0 | H 1.94 | V 0.0056 | pL -0.0023 | vL 0.0005 | g 0.0152
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 57344 | U 39 | AllF 0159744 | FPS 1295 | D 43 | rR:msmM 0.070 0.20 0.00 0.75 | F:msmM 437.5 157.3 100.0 640.0 | H 1.94 | V 0.0093 | pL -0.0022 | vL 0.0009 | g 0.0277
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 61440 | U 40 | AllF 0163840 | FPS 1214 | D 46 | rR:msmM 0.028 0.12 0.00 0.64 | F:msmM 482.6 152.6 145.0 640.0 | H 1.94 | V 0.0156 | pL 0.0044 | vL 0.0000 | g 0.0065
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 65536 | U 41 | AllF 0167936 | FPS 1249 | D 50 | rR:msmM 0.046 0.15 0.00 0.64 | F:msmM 468.0 159.0 145.0 640.0 | H 1.94 | V 0.0149 | pL -0.0005 | vL 0.0005 | g 0.0185
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 69632 | U 42 | AllF 0172032 | FPS 1196 | D 53 | rR:msmM 0.022 0.10 0.00 0.56 | F:msmM 476.4 147.8 174.0 640.0 | H 1.94 | V 0.0113 | pL 0.0001 | vL 0.0005 | g 0.0225
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 73728 | U 43 | AllF 0176128 | FPS 1169 | D 57 | rR:msmM 0.048 0.15 0.00 0.67 | F:msmM 477.0 160.6 134.0 640.0 | H 1.94 | V 0.0166 | pL -0.0008 | vL 0.0008 | g 0.0227
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 77824 | U 44 | AllF 0180224 | FPS 1167 | D 60 | rR:msmM 0.059 0.16 0.00 0.67 | F:msmM 454.0 153.7 134.0 640.0 | H 1.94 | V 0.0189 | pL 0.0028 | vL 0.0002 | g 0.0089
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 81920 | U 45 | AllF 0184320 | FPS 1134 | D 64 | rR:msmM 0.056 0.18 0.00 0.78 | F:msmM 478.9 163.9 88.0 640.0 | H 1.94 | V 0.0175 | pL 0.0013 | vL 0.0007 | g 0.0155
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 86016 | U 46 | AllF 0188416 | FPS 1150 | D 67 | rR:msmM 0.109 0.26 0.00 0.87 | F:msmM 437.8 187.8 51.0 640.0 | H 1.93 | V 0.0354 | pL -0.0050 | vL 0.0021 | g 0.0353
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 90112 | U 47 | AllF 0192512 | FPS 1122 | D 71 | rR:msmM 0.121 0.26 0.00 0.87 | F:msmM 434.0 190.6 51.0 640.0 | H 1.93 | V 0.0318 | pL 0.0025 | vL 0.0004 | g 0.0131
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 94208 | U 48 | AllF 0196608 | FPS 1131 | D 75 | rR:msmM 0.161 0.29 0.00 0.89 | F:msmM 413.0 199.7 44.0 640.0 | H 1.92 | V 0.0409 | pL -0.0015 | vL 0.0025 | g 0.0307
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 98304 | U 49 | AllF 0200704 | FPS 1157 | D 78 | rR:msmM 0.261 0.33 0.00 0.89 | F:msmM 314.2 161.6 44.0 640.0 | H 1.91 | V 0.0498 | pL -0.0063 | vL 0.0035 | g 0.0442
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 102400 | U 50 | AllF 0204800 | FPS 1147 | D 82 | rR:msmM 0.207 0.30 0.00 0.89 | F:msmM 418.6 206.6 44.0 640.0 | H 1.93 | V 0.0445 | pL 0.0000 | vL 0.0018 | g 0.0204
+
+	Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 8360.0 | FPS 1158 | duration 7.219804525375366 | R:msmM 0.38 0.36 0.00 0.94 | F:msmM 232.2 126.1 26.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 19429.0 | FPS 1529 | duration 12.71058201789856 | R:msmM 0.06 0.16 0.00 0.56 | F:msmM 607.2 86.8 313.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 28890.0 | FPS 1382 | duration 20.89895987510681 | R:msmM 0.10 0.25 0.00 0.93 | F:msmM 902.8 239.5 81.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 42637.0 | FPS 1430 | duration 29.822122812271118 | R:msmM 0.08 0.24 0.00 0.88 | F:msmM 1332.4 335.8 190.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 succeeded
+Evaluate agent TEST 4.711549503107865
+	Trained iteration j=1 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1. Iterations done 204800
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 = [0.40101562 4.24039455 0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01237703 0.13087638 0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.22 sec
+done= 204800 toTrain= 307199
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=20105, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1/log.csv', fd=4, position=13563, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1/events.out.tfevents.1686517551.cp2019-12', fd=480, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 4096 | U 51 | AllF 0208896 | FPS 1113 | D 3 | rR:msmM 0.209 0.36 0.00 0.94 | F:msmM 16.3 31.4 0.0 124.0 | H 1.90 | V 0.0752 | pL -0.0168 | vL 0.0056 | g 0.0573
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 8192 | U 52 | AllF 0212992 | FPS 1341 | D 6 | rR:msmM 0.429 0.36 0.00 0.94 | F:msmM 78.4 81.2 0.0 255.0 | H 1.87 | V 0.0821 | pL -0.0176 | vL 0.0072 | g 0.0610
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 12288 | U 53 | AllF 0217088 | FPS 1387 | D 9 | rR:msmM 0.325 0.31 0.00 0.94 | F:msmM 254.8 108.8 26.0 360.0 | H 1.87 | V 0.0909 | pL 0.0074 | vL 0.0031 | g 0.0311
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 16384 | U 54 | AllF 0221184 | FPS 1417 | D 12 | rR:msmM 0.265 0.33 0.00 0.89 | F:msmM 273.9 114.4 44.0 360.0 | H 1.86 | V 0.1082 | pL -0.0157 | vL 0.0067 | g 0.0519
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 20480 | U 55 | AllF 0225280 | FPS 1345 | D 15 | rR:msmM 0.539 0.32 0.00 0.95 | F:msmM 175.5 114.4 18.0 360.0 | H 1.81 | V 0.1426 | pL -0.0323 | vL 0.0081 | g 0.0781
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 24576 | U 56 | AllF 0229376 | FPS 1394 | D 18 | rR:msmM 0.551 0.33 0.00 0.97 | F:msmM 172.0 120.7 11.0 360.0 | H 1.84 | V 0.1328 | pL -0.0131 | vL 0.0076 | g 0.0619
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 28672 | U 57 | AllF 0233472 | FPS 1316 | D 21 | rR:msmM 0.661 0.32 0.00 0.97 | F:msmM 129.4 116.1 12.0 360.0 | H 1.78 | V 0.2090 | pL -0.0334 | vL 0.0111 | g 0.0897
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 32768 | U 58 | AllF 0237568 | FPS 1259 | D 25 | rR:msmM 0.569 0.37 0.00 0.95 | F:msmM 162.2 131.0 20.0 360.0 | H 1.79 | V 0.2094 | pL -0.0107 | vL 0.0097 | g 0.0802
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 36864 | U 59 | AllF 0241664 | FPS 1327 | D 28 | rR:msmM 0.640 0.30 0.00 0.96 | F:msmM 140.7 115.0 16.0 360.0 | H 1.78 | V 0.2396 | pL -0.0223 | vL 0.0112 | g 0.0842
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 40960 | U 60 | AllF 0245760 | FPS 1261 | D 31 | rR:msmM 0.745 0.28 0.00 0.95 | F:msmM 98.9 103.2 18.0 360.0 | H 1.77 | V 0.2661 | pL -0.0267 | vL 0.0117 | g 0.1155
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 45056 | U 61 | AllF 0249856 | FPS 1299 | D 34 | rR:msmM 0.658 0.30 0.00 0.96 | F:msmM 133.6 113.5 14.0 360.0 | H 1.77 | V 0.2640 | pL -0.0157 | vL 0.0124 | g 0.0961
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 49152 | U 62 | AllF 0253952 | FPS 1286 | D 37 | rR:msmM 0.784 0.22 0.00 0.97 | F:msmM 85.6 84.0 12.0 360.0 | H 1.70 | V 0.3539 | pL -0.0469 | vL 0.0147 | g 0.1182
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 53248 | U 63 | AllF 0258048 | FPS 1219 | D 41 | rR:msmM 0.818 0.19 0.00 0.97 | F:msmM 72.3 72.7 13.0 360.0 | H 1.63 | V 0.4425 | pL -0.0537 | vL 0.0151 | g 0.1302
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 57344 | U 64 | AllF 0262144 | FPS 1242 | D 44 | rR:msmM 0.857 0.11 0.38 0.97 | F:msmM 57.1 44.0 12.0 248.0 | H 1.57 | V 0.5279 | pL -0.0644 | vL 0.0134 | g 0.1213
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 61440 | U 65 | AllF 0266240 | FPS 1192 | D 48 | rR:msmM 0.887 0.07 0.56 0.97 | F:msmM 45.0 29.2 12.0 176.0 | H 1.52 | V 0.5970 | pL -0.0588 | vL 0.0103 | g 0.1316
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 65536 | U 66 | AllF 0270336 | FPS 1175 | D 51 | rR:msmM 0.896 0.08 0.47 0.97 | F:msmM 41.4 32.6 11.0 213.0 | H 1.48 | V 0.6602 | pL -0.0351 | vL 0.0077 | g 0.0946
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 69632 | U 67 | AllF 0274432 | FPS 1202 | D 54 | rR:msmM 0.906 0.06 0.59 0.97 | F:msmM 37.5 23.3 12.0 163.0 | H 1.44 | V 0.6939 | pL -0.0304 | vL 0.0053 | g 0.0764
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 73728 | U 68 | AllF 0278528 | FPS 1157 | D 58 | rR:msmM 0.920 0.05 0.67 0.97 | F:msmM 32.0 19.2 12.0 134.0 | H 1.35 | V 0.7399 | pL -0.0372 | vL 0.0044 | g 0.0863
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 77824 | U 69 | AllF 0282624 | FPS 1165 | D 62 | rR:msmM 0.926 0.03 0.76 0.97 | F:msmM 29.7 13.8 11.0 96.0 | H 1.35 | V 0.7660 | pL -0.0204 | vL 0.0027 | g 0.0575
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 81920 | U 70 | AllF 0286720 | FPS 1153 | D 65 | rR:msmM 0.928 0.03 0.81 0.98 | F:msmM 28.7 12.5 10.0 75.0 | H 1.32 | V 0.7761 | pL -0.0178 | vL 0.0024 | g 0.0506
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 86016 | U 71 | AllF 0290816 | FPS 1174 | D 69 | rR:msmM 0.927 0.03 0.83 0.98 | F:msmM 29.2 11.2 10.0 67.0 | H 1.34 | V 0.7812 | pL -0.0124 | vL 0.0021 | g 0.0530
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 90112 | U 72 | AllF 0294912 | FPS 1159 | D 72 | rR:msmM 0.938 0.03 0.82 0.98 | F:msmM 24.9 10.6 10.0 70.0 | H 1.30 | V 0.8097 | pL -0.0145 | vL 0.0020 | g 0.0606
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 94208 | U 73 | AllF 0299008 | FPS 1112 | D 76 | rR:msmM 0.937 0.03 0.85 0.98 | F:msmM 25.1 10.2 9.0 61.0 | H 1.33 | V 0.8152 | pL -0.0000 | vL 0.0017 | g 0.0428
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 98304 | U 74 | AllF 0303104 | FPS 1149 | D 79 | rR:msmM 0.937 0.02 0.85 0.98 | F:msmM 25.3 9.8 10.0 60.0 | H 1.35 | V 0.8139 | pL 0.0010 | vL 0.0017 | g 0.0455
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 | curF 102400 | U 75 | AllF 0307200 | FPS 1125 | D 83 | rR:msmM 0.933 0.03 0.84 0.98 | F:msmM 26.6 11.2 9.0 64.0 | H 1.38 | V 0.8041 | pL 0.0031 | vL 0.0018 | g 0.0451
+
+	Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 542.0 | FPS 565 | duration 0.9587080478668213 | R:msmM 0.95 0.02 0.91 0.97 | F:msmM 21.7 6.6 13.0 35.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 1244.0 | FPS 594 | duration 2.0934433937072754 | R:msmM 0.93 0.03 0.89 0.97 | F:msmM 49.8 18.0 22.0 81.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 2649.0 | FPS 471 | duration 5.626990795135498 | R:msmM 0.90 0.05 0.80 0.97 | F:msmM 106.0 50.9 38.0 223.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 : F 5763.0 | FPS 594 | duration 9.698447465896606 | R:msmM 0.86 0.06 0.75 0.97 | F:msmM 230.5 102.3 42.0 408.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 succeeded
+Evaluate agent TEST 32.43245989322662
+	Trained iteration j=2 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1. Iterations done 307200
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen1 = [ 0.40101562  4.24039455 26.27029251] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01375225 0.14541819 0.90090166]
+
+
+-------------------------------
+
+===curriculum 0 done===
+
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1
+	Algorithm loaded in 0.28 sec
+done= 0 toTrain= 102399
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=29270, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1/log.csv', fd=4, position=0, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1/events.out.tfevents.1686517654.cp2019-12', fd=790, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 4096 | U 1 | AllF 0004096 | FPS 1087 | D 4 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.77 | V 0.2014 | pL 0.0242 | vL 0.0236 | g 0.1828
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 8192 | U 2 | AllF 0008192 | FPS 1343 | D 7 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.76 | V 0.2415 | pL 0.0355 | vL 0.0055 | g 0.0795
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 12288 | U 3 | AllF 0012288 | FPS 1410 | D 10 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.82 | V 0.2118 | pL 0.0350 | vL 0.0009 | g 0.0458
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 16384 | U 4 | AllF 0016384 | FPS 1404 | D 12 | rR:msmM 0.010 0.05 0.00 0.31 | F:msmM 15.4 85.6 0.0 492.0 | H 1.91 | V 0.1796 | pL 0.0304 | vL 0.0004 | g 0.0301
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 20480 | U 5 | AllF 0020480 | FPS 1365 | D 15 | rR:msmM 0.010 0.05 0.00 0.31 | F:msmM 635.4 25.8 492.0 640.0 | H 1.91 | V 0.1254 | pL 0.0457 | vL 0.0010 | g 0.0386
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 24576 | U 6 | AllF 0024576 | FPS 1404 | D 18 | rR:msmM 0.010 0.05 0.00 0.31 | F:msmM 635.4 25.8 492.0 640.0 | H 1.93 | V 0.1052 | pL 0.0177 | vL 0.0002 | g 0.0174
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 28672 | U 7 | AllF 0028672 | FPS 1397 | D 21 | rR:msmM 0.010 0.05 0.00 0.31 | F:msmM 635.4 25.8 492.0 640.0 | H 1.93 | V 0.0939 | pL 0.0151 | vL 0.0002 | g 0.0114
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 32768 | U 8 | AllF 0032768 | FPS 1429 | D 24 | rR:msmM 0.019 0.10 0.00 0.60 | F:msmM 628.8 62.3 282.0 640.0 | H 1.93 | V 0.0812 | pL 0.0120 | vL 0.0005 | g 0.0167
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 36864 | U 9 | AllF 0036864 | FPS 1398 | D 27 | rR:msmM 0.031 0.12 0.00 0.60 | F:msmM 622.5 70.5 282.0 640.0 | H 1.94 | V 0.0739 | pL 0.0124 | vL 0.0003 | g 0.0199
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 40960 | U 10 | AllF 0040960 | FPS 1421 | D 30 | rR:msmM 0.031 0.12 0.00 0.60 | F:msmM 622.5 70.5 282.0 640.0 | H 1.93 | V 0.0585 | pL 0.0201 | vL 0.0003 | g 0.0167
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 45056 | U 11 | AllF 0045056 | FPS 1314 | D 33 | rR:msmM 0.031 0.12 0.00 0.60 | F:msmM 622.5 70.5 282.0 640.0 | H 1.94 | V 0.0513 | pL 0.0089 | vL 0.0001 | g 0.0091
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 49152 | U 12 | AllF 0049152 | FPS 1268 | D 36 | rR:msmM 0.031 0.12 0.00 0.60 | F:msmM 622.5 70.5 282.0 640.0 | H 1.94 | V 0.0428 | pL 0.0076 | vL 0.0000 | g 0.0062
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 53248 | U 13 | AllF 0053248 | FPS 1268 | D 40 | rR:msmM 0.016 0.09 0.00 0.50 | F:msmM 631.0 50.1 352.0 640.0 | H 1.94 | V 0.0394 | pL 0.0044 | vL 0.0004 | g 0.0176
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 57344 | U 14 | AllF 0057344 | FPS 1262 | D 43 | rR:msmM 0.016 0.09 0.00 0.50 | F:msmM 631.0 50.1 352.0 640.0 | H 1.94 | V 0.0329 | pL 0.0061 | vL 0.0001 | g 0.0082
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 61440 | U 15 | AllF 0061440 | FPS 1288 | D 46 | rR:msmM 0.016 0.09 0.00 0.50 | F:msmM 631.0 50.1 352.0 640.0 | H 1.94 | V 0.0232 | pL 0.0080 | vL 0.0001 | g 0.0098
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 65536 | U 16 | AllF 0065536 | FPS 1183 | D 50 | rR:msmM 0.016 0.09 0.00 0.50 | F:msmM 631.0 50.1 352.0 640.0 | H 1.94 | V 0.0207 | pL 0.0037 | vL 0.0000 | g 0.0049
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 69632 | U 17 | AllF 0069632 | FPS 1145 | D 53 | rR:msmM 0.016 0.09 0.00 0.50 | F:msmM 631.0 50.1 352.0 640.0 | H 1.94 | V 0.0170 | pL 0.0030 | vL 0.0000 | g 0.0049
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 73728 | U 18 | AllF 0073728 | FPS 1168 | D 57 | rR:msmM 0.015 0.08 0.00 0.49 | F:msmM 631.4 48.0 364.0 640.0 | H 1.94 | V 0.0175 | pL 0.0010 | vL 0.0003 | g 0.0182
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 77824 | U 19 | AllF 0077824 | FPS 1115 | D 60 | rR:msmM 0.015 0.08 0.00 0.49 | F:msmM 631.4 48.0 364.0 640.0 | H 1.94 | V 0.0181 | pL 0.0034 | vL 0.0000 | g 0.0124
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 81920 | U 20 | AllF 0081920 | FPS 1109 | D 64 | rR:msmM 0.019 0.09 0.00 0.49 | F:msmM 631.1 48.0 364.0 640.0 | H 1.94 | V 0.0176 | pL 0.0050 | vL 0.0001 | g 0.0082
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 86016 | U 21 | AllF 0086016 | FPS 1136 | D 68 | rR:msmM 0.019 0.09 0.00 0.49 | F:msmM 631.1 48.0 364.0 640.0 | H 1.94 | V 0.0133 | pL 0.0026 | vL 0.0000 | g 0.0046
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 90112 | U 22 | AllF 0090112 | FPS 1111 | D 71 | rR:msmM 0.019 0.09 0.00 0.49 | F:msmM 631.1 48.0 364.0 640.0 | H 1.94 | V 0.0107 | pL 0.0018 | vL 0.0000 | g 0.0037
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 94208 | U 23 | AllF 0094208 | FPS 1119 | D 75 | rR:msmM 0.004 0.02 0.00 0.11 | F:msmM 639.7 1.7 630.0 640.0 | H 1.94 | V 0.0085 | pL 0.0018 | vL 0.0000 | g 0.0036
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 98304 | U 24 | AllF 0098304 | FPS 1146 | D 79 | rR:msmM 0.004 0.02 0.00 0.11 | F:msmM 639.7 1.7 630.0 640.0 | H 1.94 | V 0.0069 | pL 0.0009 | vL 0.0000 | g 0.0036
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 102400 | U 25 | AllF 0102400 | FPS 1155 | D 82 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 640.0 0.0 640.0 640.0 | H 1.94 | V 0.0053 | pL 0.0018 | vL 0.0000 | g 0.0048
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 11276.0 | FPS 1548 | duration 7.285527467727661 | R:msmM 0.02 0.12 0.00 0.71 | F:msmM 352.4 42.5 116.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 20257.0 | FPS 1510 | duration 13.418199062347412 | R:msmM 0.01 0.07 0.00 0.41 | F:msmM 633.0 38.8 417.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 30769.0 | FPS 1451 | duration 21.201098680496216 | R:msmM 0.04 0.16 0.00 0.70 | F:msmM 961.5 149.6 329.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 45869.0 | FPS 1500 | duration 30.58147382736206 | R:msmM 0.01 0.04 0.00 0.23 | F:msmM 1433.4 36.7 1229.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 succeeded
+Evaluate agent TEST 0.7321952916681767
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1_CANDIDATE
+	Trained iteration j=0 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1. Iterations done 102400
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 = [0.73219529 0.         0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.02033876 0.         0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.27 sec
+done= 102400 toTrain= 204799
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=38427, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1/log.csv', fd=4, position=7481, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1/events.out.tfevents.1686517811.cp2019-12', fd=1100, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 4096 | U 26 | AllF 0106496 | FPS 1140 | D 3 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0068 | pL 0.0011 | vL 0.0000 | g 0.0026
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 8192 | U 27 | AllF 0110592 | FPS 1337 | D 6 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0062 | pL 0.0010 | vL 0.0000 | g 0.0043
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 12288 | U 28 | AllF 0114688 | FPS 1293 | D 10 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0060 | pL 0.0012 | vL 0.0000 | g 0.0026
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 16384 | U 29 | AllF 0118784 | FPS 1424 | D 13 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0057 | pL 0.0010 | vL 0.0000 | g 0.0069
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 20480 | U 30 | AllF 0122880 | FPS 1356 | D 16 | rR:msmM 0.006 0.03 0.00 0.20 | F:msmM 317.8 318.1 0.0 640.0 | H 1.94 | V 0.0039 | pL 0.0001 | vL 0.0001 | g 0.0088
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 24576 | U 31 | AllF 0126976 | FPS 1363 | D 19 | rR:msmM 0.006 0.03 0.00 0.20 | F:msmM 317.8 318.1 0.0 640.0 | H 1.94 | V 0.0024 | pL 0.0003 | vL 0.0000 | g 0.0040
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 28672 | U 32 | AllF 0131072 | FPS 1406 | D 21 | rR:msmM 0.006 0.03 0.00 0.20 | F:msmM 317.8 318.1 0.0 640.0 | H 1.94 | V 0.0022 | pL 0.0004 | vL 0.0000 | g 0.0061
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 32768 | U 33 | AllF 0135168 | FPS 1368 | D 24 | rR:msmM 0.041 0.14 0.00 0.63 | F:msmM 796.9 216.7 266.0 1000.0 | H 1.94 | V 0.0045 | pL -0.0038 | vL 0.0007 | g 0.0292
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 36864 | U 34 | AllF 0139264 | FPS 1248 | D 28 | rR:msmM 0.041 0.14 0.00 0.63 | F:msmM 796.9 216.7 266.0 1000.0 | H 1.94 | V -0.0014 | pL -0.0005 | vL 0.0000 | g 0.0073
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 40960 | U 35 | AllF 0143360 | FPS 1259 | D 31 | rR:msmM 0.041 0.14 0.00 0.63 | F:msmM 796.9 216.7 266.0 1000.0 | H 1.94 | V -0.0002 | pL -0.0001 | vL 0.0000 | g 0.0040
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 45056 | U 36 | AllF 0147456 | FPS 1221 | D 34 | rR:msmM 0.041 0.14 0.00 0.63 | F:msmM 796.9 216.7 266.0 1000.0 | H 1.94 | V 0.0011 | pL 0.0001 | vL 0.0000 | g 0.0028
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 49152 | U 37 | AllF 0151552 | FPS 1183 | D 38 | rR:msmM 0.041 0.14 0.00 0.63 | F:msmM 796.9 216.7 266.0 1000.0 | H 1.94 | V 0.0022 | pL -0.0000 | vL 0.0000 | g 0.0031
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 53248 | U 38 | AllF 0155648 | FPS 1191 | D 41 | rR:msmM 0.004 0.02 0.00 0.14 | F:msmM 818.7 178.8 640.0 1000.0 | H 1.94 | V 0.0026 | pL 0.0005 | vL 0.0000 | g 0.0041
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 57344 | U 39 | AllF 0159744 | FPS 1166 | D 45 | rR:msmM 0.004 0.02 0.00 0.14 | F:msmM 818.7 178.8 640.0 1000.0 | H 1.94 | V 0.0021 | pL -0.0002 | vL 0.0000 | g 0.0073
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 61440 | U 40 | AllF 0163840 | FPS 1175 | D 48 | rR:msmM 0.015 0.06 0.00 0.25 | F:msmM 654.2 72.8 543.0 1000.0 | H 1.94 | V 0.0045 | pL -0.0008 | vL 0.0001 | g 0.0094
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 65536 | U 41 | AllF 0167936 | FPS 1136 | D 52 | rR:msmM 0.015 0.06 0.00 0.25 | F:msmM 811.7 180.9 543.0 1000.0 | H 1.94 | V 0.0017 | pL 0.0006 | vL 0.0000 | g 0.0053
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 69632 | U 42 | AllF 0172032 | FPS 1157 | D 56 | rR:msmM 0.015 0.06 0.00 0.25 | F:msmM 811.7 180.9 543.0 1000.0 | H 1.94 | V 0.0041 | pL 0.0008 | vL 0.0000 | g 0.0055
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 73728 | U 43 | AllF 0176128 | FPS 1143 | D 59 | rR:msmM 0.015 0.06 0.00 0.25 | F:msmM 811.7 180.9 543.0 1000.0 | H 1.95 | V 0.0033 | pL 0.0007 | vL 0.0000 | g 0.0035
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 77824 | U 44 | AllF 0180224 | FPS 1164 | D 63 | rR:msmM 0.020 0.08 0.00 0.39 | F:msmM 808.3 186.8 435.0 1000.0 | H 1.94 | V 0.0058 | pL -0.0008 | vL 0.0001 | g 0.0181
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 81920 | U 45 | AllF 0184320 | FPS 1155 | D 66 | rR:msmM 0.012 0.07 0.00 0.39 | F:msmM 802.3 189.0 435.0 1000.0 | H 1.94 | V 0.0021 | pL 0.0007 | vL 0.0000 | g 0.0045
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 86016 | U 46 | AllF 0188416 | FPS 1164 | D 70 | rR:msmM 0.012 0.07 0.00 0.39 | F:msmM 802.3 189.0 435.0 1000.0 | H 1.95 | V 0.0014 | pL 0.0004 | vL 0.0000 | g 0.0029
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 90112 | U 47 | AllF 0192512 | FPS 1149 | D 73 | rR:msmM 0.012 0.07 0.00 0.39 | F:msmM 802.3 189.0 435.0 1000.0 | H 1.94 | V 0.0023 | pL -0.0008 | vL 0.0000 | g 0.0036
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 94208 | U 48 | AllF 0196608 | FPS 1145 | D 77 | rR:msmM 0.020 0.08 0.00 0.39 | F:msmM 785.4 183.9 435.0 1000.0 | H 1.94 | V -0.0001 | pL -0.0004 | vL 0.0000 | g 0.0042
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 98304 | U 49 | AllF 0200704 | FPS 1156 | D 80 | rR:msmM 0.008 0.05 0.00 0.26 | F:msmM 814.3 177.1 640.0 1000.0 | H 1.95 | V 0.0003 | pL 0.0002 | vL 0.0000 | g 0.0029
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 102400 | U 50 | AllF 0204800 | FPS 1156 | D 84 | rR:msmM 0.008 0.05 0.00 0.26 | F:msmM 814.3 177.1 640.0 1000.0 | H 1.95 | V -0.0000 | pL -0.0001 | vL 0.0000 | g 0.0017
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 11047.0 | FPS 1415 | duration 7.804897308349609 | R:msmM 0.04 0.17 0.00 0.87 | F:msmM 345.2 59.8 54.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 20480.0 | FPS 1546 | duration 13.24744725227356 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 640.0 0.0 640.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 31182.0 | FPS 1445 | duration 21.583703756332397 | R:msmM 0.03 0.11 0.00 0.51 | F:msmM 974.4 99.7 545.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 46080.0 | FPS 1552 | duration 29.689136028289795 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1440.0 0.0 1440.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 succeeded
+Evaluate agent TEST 0.5517812557518482
+	Trained iteration j=1 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1. Iterations done 204800
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 = [0.73219529 0.49660313 0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.02259862 0.01532726 0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.29 sec
+done= 204800 toTrain= 307199
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=47551, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1/log.csv', fd=4, position=14636, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1/events.out.tfevents.1686517969.cp2019-12', fd=1410, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 4096 | U 51 | AllF 0208896 | FPS 1105 | D 4 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.95 | V 0.0002 | pL -0.0000 | vL 0.0000 | g 0.0019
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 8192 | U 52 | AllF 0212992 | FPS 1263 | D 7 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.95 | V 0.0014 | pL 0.0002 | vL 0.0000 | g 0.0020
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 12288 | U 53 | AllF 0217088 | FPS 1430 | D 10 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.95 | V 0.0013 | pL 0.0002 | vL 0.0000 | g 0.0016
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 16384 | U 54 | AllF 0221184 | FPS 1441 | D 12 | rR:msmM 0.011 0.06 0.00 0.35 | F:msmM 14.5 80.7 0.0 464.0 | H 1.94 | V 0.0036 | pL -0.0012 | vL 0.0002 | g 0.0143
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 20480 | U 55 | AllF 0225280 | FPS 1401 | D 15 | rR:msmM 0.026 0.10 0.00 0.49 | F:msmM 332.3 313.8 0.0 640.0 | H 1.94 | V 0.0038 | pL -0.0015 | vL 0.0003 | g 0.0146
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 24576 | U 56 | AllF 0229376 | FPS 1253 | D 19 | rR:msmM 0.026 0.10 0.00 0.49 | F:msmM 332.3 313.8 0.0 640.0 | H 1.94 | V 0.0025 | pL 0.0008 | vL 0.0000 | g 0.0030
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 28672 | U 57 | AllF 0233472 | FPS 1277 | D 22 | rR:msmM 0.026 0.10 0.00 0.49 | F:msmM 332.3 313.8 0.0 640.0 | H 1.94 | V 0.0015 | pL 0.0001 | vL 0.0000 | g 0.0031
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 32768 | U 58 | AllF 0237568 | FPS 1302 | D 25 | rR:msmM 0.026 0.10 0.00 0.49 | F:msmM 801.1 189.5 464.0 1000.0 | H 1.95 | V 0.0027 | pL 0.0006 | vL 0.0000 | g 0.0013
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 36864 | U 59 | AllF 0241664 | FPS 1255 | D 28 | rR:msmM 0.015 0.08 0.00 0.49 | F:msmM 806.6 182.1 571.0 1000.0 | H 1.95 | V 0.0023 | pL 0.0004 | vL 0.0000 | g 0.0013
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 40960 | U 60 | AllF 0245760 | FPS 1195 | D 32 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 808.8 179.6 640.0 1000.0 | H 1.95 | V 0.0013 | pL 0.0004 | vL 0.0000 | g 0.0027
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 45056 | U 61 | AllF 0249856 | FPS 1220 | D 35 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 808.8 179.6 640.0 1000.0 | H 1.95 | V 0.0010 | pL 0.0001 | vL 0.0000 | g 0.0012
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 49152 | U 62 | AllF 0253952 | FPS 1203 | D 39 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 808.8 179.6 640.0 1000.0 | H 1.95 | V 0.0010 | pL 0.0001 | vL 0.0000 | g 0.0016
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 53248 | U 63 | AllF 0258048 | FPS 1239 | D 42 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.95 | V 0.0007 | pL -0.0000 | vL 0.0000 | g 0.0026
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 57344 | U 64 | AllF 0262144 | FPS 1178 | D 45 | rR:msmM 0.011 0.06 0.00 0.34 | F:msmM 792.1 185.7 468.0 1000.0 | H 1.94 | V 0.0042 | pL -0.0010 | vL 0.0001 | g 0.0074
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 61440 | U 65 | AllF 0266240 | FPS 1061 | D 49 | rR:msmM 0.016 0.07 0.00 0.34 | F:msmM 644.4 70.9 468.0 1000.0 | H 1.94 | V 0.0056 | pL 0.0005 | vL 0.0001 | g 0.0068
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 65536 | U 66 | AllF 0270336 | FPS 1145 | D 53 | rR:msmM 0.016 0.07 0.00 0.34 | F:msmM 813.2 189.2 468.0 1000.0 | H 1.95 | V 0.0061 | pL 0.0013 | vL 0.0000 | g 0.0015
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 69632 | U 67 | AllF 0274432 | FPS 1147 | D 56 | rR:msmM 0.016 0.07 0.00 0.34 | F:msmM 813.2 189.2 468.0 1000.0 | H 1.95 | V 0.0049 | pL 0.0010 | vL 0.0000 | g 0.0014
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 73728 | U 68 | AllF 0278528 | FPS 1137 | D 60 | rR:msmM 0.016 0.07 0.00 0.34 | F:msmM 813.2 189.2 468.0 1000.0 | H 1.94 | V 0.0050 | pL 0.0004 | vL 0.0000 | g 0.0029
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 77824 | U 69 | AllF 0282624 | FPS 1145 | D 64 | rR:msmM 0.021 0.07 0.00 0.34 | F:msmM 800.5 189.8 468.0 1000.0 | H 1.94 | V 0.0051 | pL 0.0004 | vL 0.0000 | g 0.0026
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 81920 | U 70 | AllF 0286720 | FPS 1133 | D 67 | rR:msmM 0.005 0.03 0.00 0.16 | F:msmM 807.3 181.1 595.0 1000.0 | H 1.95 | V 0.0045 | pL 0.0011 | vL 0.0000 | g 0.0014
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 86016 | U 71 | AllF 0290816 | FPS 1123 | D 71 | rR:msmM 0.019 0.08 0.00 0.44 | F:msmM 806.8 181.7 595.0 1000.0 | H 1.94 | V 0.0061 | pL -0.0011 | vL 0.0002 | g 0.0082
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 90112 | U 72 | AllF 0294912 | FPS 1136 | D 75 | rR:msmM 0.019 0.08 0.00 0.44 | F:msmM 806.8 181.7 595.0 1000.0 | H 1.94 | V 0.0017 | pL 0.0003 | vL 0.0000 | g 0.0027
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 94208 | U 73 | AllF 0299008 | FPS 1090 | D 78 | rR:msmM 0.019 0.08 0.00 0.44 | F:msmM 806.8 181.7 595.0 1000.0 | H 1.95 | V 0.0021 | pL 0.0005 | vL 0.0000 | g 0.0011
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 98304 | U 74 | AllF 0303104 | FPS 1121 | D 82 | rR:msmM 0.014 0.08 0.00 0.44 | F:msmM 808.2 180.2 622.0 1000.0 | H 1.95 | V 0.0015 | pL 0.0003 | vL 0.0000 | g 0.0016
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 | curF 102400 | U 75 | AllF 0307200 | FPS 1167 | D 85 | rR:msmM 0.014 0.08 0.00 0.44 | F:msmM 808.2 180.2 622.0 1000.0 | H 1.95 | V 0.0021 | pL 0.0005 | vL 0.0000 | g 0.0009
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 10509.0 | FPS 1391 | duration 7.554710388183594 | R:msmM 0.09 0.23 0.00 0.82 | F:msmM 328.4 76.3 70.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 19562.0 | FPS 1489 | duration 13.141882181167603 | R:msmM 0.05 0.16 0.00 0.78 | F:msmM 611.3 97.3 155.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 32000.0 | FPS 1558 | duration 20.544153213500977 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1000.0 0.0 1000.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 : F 45493.0 | FPS 1473 | duration 30.875883102416992 | R:msmM 0.01 0.08 0.00 0.47 | F:msmM 1421.7 102.1 853.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 succeeded
+Evaluate agent TEST 1.1404687389731407
+	Trained iteration j=2 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1. Iterations done 307200
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen1 = [0.73219529 0.49660313 0.92377968] (1 entry = 1 curric step)
+	Reward-%-Performance [0.02510958 0.01703029 0.03167969]
+
+
+-------------------------------
+
+===curriculum 1 done===
+
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1
+	Algorithm loaded in 0.3 sec
+done= 0 toTrain= 102399
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=56812, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1/log.csv', fd=4, position=0, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1/events.out.tfevents.1686518128.cp2019-12', fd=1720, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 4096 | U 1 | AllF 0004096 | FPS 1150 | D 3 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.77 | V 0.1586 | pL 0.0069 | vL 0.0251 | g 0.1526
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 8192 | U 2 | AllF 0008192 | FPS 1407 | D 6 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.79 | V 0.1768 | pL 0.0249 | vL 0.0050 | g 0.0948
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 12288 | U 3 | AllF 0012288 | FPS 1280 | D 10 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.84 | V 0.1529 | pL 0.0265 | vL 0.0009 | g 0.0351
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 16384 | U 4 | AllF 0016384 | FPS 1438 | D 12 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.88 | V 0.1292 | pL 0.0226 | vL 0.0004 | g 0.0201
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 20480 | U 5 | AllF 0020480 | FPS 1379 | D 15 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.91 | V 0.1021 | pL 0.0271 | vL 0.0005 | g 0.0241
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 24576 | U 6 | AllF 0024576 | FPS 1428 | D 18 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.93 | V 0.0853 | pL 0.0145 | vL 0.0001 | g 0.0119
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 28672 | U 7 | AllF 0028672 | FPS 1413 | D 21 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.94 | V 0.0721 | pL 0.0122 | vL 0.0001 | g 0.0107
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 32768 | U 8 | AllF 0032768 | FPS 1347 | D 24 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.94 | V 0.0627 | pL 0.0108 | vL 0.0001 | g 0.0110
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 36864 | U 9 | AllF 0036864 | FPS 1276 | D 27 | rR:msmM 0.026 0.10 0.00 0.42 | F:msmM 346.2 309.7 0.0 640.0 | H 1.94 | V 0.0541 | pL 0.0065 | vL 0.0004 | g 0.0200
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 40960 | U 10 | AllF 0040960 | FPS 1265 | D 31 | rR:msmM 0.026 0.10 0.00 0.42 | F:msmM 626.2 53.6 415.0 640.0 | H 1.94 | V 0.0383 | pL 0.0099 | vL 0.0001 | g 0.0102
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 45056 | U 11 | AllF 0045056 | FPS 1273 | D 34 | rR:msmM 0.026 0.10 0.00 0.42 | F:msmM 626.2 53.6 415.0 640.0 | H 1.94 | V 0.0305 | pL 0.0055 | vL 0.0000 | g 0.0092
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 49152 | U 12 | AllF 0049152 | FPS 1184 | D 37 | rR:msmM 0.026 0.10 0.00 0.42 | F:msmM 1026.2 417.1 415.0 1440.0 | H 1.94 | V 0.0236 | pL 0.0059 | vL 0.0001 | g 0.0079
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 53248 | U 13 | AllF 0053248 | FPS 1138 | D 41 | rR:msmM 0.026 0.10 0.00 0.42 | F:msmM 1026.2 417.1 415.0 1440.0 | H 1.94 | V 0.0203 | pL 0.0034 | vL 0.0000 | g 0.0072
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 57344 | U 14 | AllF 0057344 | FPS 1211 | D 44 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 1040.0 400.0 640.0 1440.0 | H 1.94 | V 0.0153 | pL 0.0030 | vL 0.0000 | g 0.0053
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 61440 | U 15 | AllF 0061440 | FPS 1201 | D 48 | rR:msmM 0.005 0.03 0.00 0.17 | F:msmM 1038.4 401.7 588.0 1440.0 | H 1.94 | V 0.0125 | pL 0.0019 | vL 0.0001 | g 0.0058
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 65536 | U 16 | AllF 0065536 | FPS 1151 | D 51 | rR:msmM 0.005 0.03 0.00 0.17 | F:msmM 1038.4 401.7 588.0 1440.0 | H 1.94 | V 0.0103 | pL 0.0014 | vL 0.0000 | g 0.0035
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 69632 | U 17 | AllF 0069632 | FPS 1166 | D 55 | rR:msmM 0.005 0.03 0.00 0.17 | F:msmM 1038.4 401.7 588.0 1440.0 | H 1.94 | V 0.0090 | pL 0.0013 | vL 0.0000 | g 0.0053
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 73728 | U 18 | AllF 0073728 | FPS 1181 | D 58 | rR:msmM 0.005 0.03 0.00 0.17 | F:msmM 1038.4 401.7 588.0 1440.0 | H 1.94 | V 0.0067 | pL 0.0011 | vL 0.0000 | g 0.0049
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 77824 | U 19 | AllF 0077824 | FPS 1179 | D 62 | rR:msmM 0.005 0.03 0.00 0.17 | F:msmM 988.4 398.4 588.0 1440.0 | H 1.94 | V 0.0054 | pL 0.0009 | vL 0.0000 | g 0.0032
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 81920 | U 20 | AllF 0081920 | FPS 1136 | D 65 | rR:msmM 0.005 0.03 0.00 0.17 | F:msmM 638.4 9.0 588.0 640.0 | H 1.94 | V 0.0051 | pL 0.0010 | vL 0.0000 | g 0.0037
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 86016 | U 21 | AllF 0086016 | FPS 1040 | D 69 | rR:msmM 0.005 0.03 0.00 0.17 | F:msmM 638.4 9.0 588.0 640.0 | H 1.94 | V 0.0039 | pL 0.0005 | vL 0.0000 | g 0.0037
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 90112 | U 22 | AllF 0090112 | FPS 1151 | D 73 | rR:msmM 0.005 0.03 0.00 0.17 | F:msmM 638.4 9.0 588.0 640.0 | H 1.94 | V 0.0043 | pL 0.0008 | vL 0.0000 | g 0.0034
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 94208 | U 23 | AllF 0094208 | FPS 1163 | D 76 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 1040.0 400.0 640.0 1440.0 | H 1.94 | V 0.0038 | pL 0.0011 | vL 0.0000 | g 0.0032
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 98304 | U 24 | AllF 0098304 | FPS 1150 | D 80 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 1040.0 400.0 640.0 1440.0 | H 1.94 | V 0.0044 | pL 0.0007 | vL 0.0000 | g 0.0033
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 102400 | U 25 | AllF 0102400 | FPS 1144 | D 84 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 1040.0 400.0 640.0 1440.0 | H 1.94 | V 0.0037 | pL 0.0008 | vL 0.0000 | g 0.0031
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 11422.0 | FPS 1568 | duration 7.286736011505127 | R:msmM 0.01 0.06 0.00 0.27 | F:msmM 356.9 12.8 292.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 20294.0 | FPS 1524 | duration 13.314841508865356 | R:msmM 0.01 0.06 0.00 0.36 | F:msmM 634.2 32.4 454.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 31522.0 | FPS 1576 | duration 20.00736141204834 | R:msmM 0.02 0.09 0.00 0.53 | F:msmM 985.1 83.2 522.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 45999.0 | FPS 1468 | duration 31.343313694000244 | R:msmM 0.00 0.03 0.00 0.15 | F:msmM 1437.5 14.1 1359.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 succeeded
+Evaluate agent TEST 0.39600000251084566
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1_CANDIDATE
+	Trained iteration j=0 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1. Iterations done 102400
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 = [0.396 0.    0.   ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.011 0.    0.   ]
+
+
+-------------------------------
+	Algorithm loaded in 0.34 sec
+done= 102400 toTrain= 204799
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=66009, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1/log.csv', fd=4, position=6657, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1/events.out.tfevents.1686518286.cp2019-12', fd=2030, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 4096 | U 26 | AllF 0106496 | FPS 1050 | D 4 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0035 | pL 0.0005 | vL 0.0000 | g 0.0076
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 8192 | U 27 | AllF 0110592 | FPS 1280 | D 7 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.95 | V 0.0014 | pL 0.0003 | vL 0.0000 | g 0.0029
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 12288 | U 28 | AllF 0114688 | FPS 1282 | D 10 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 180.0 180.0 0.0 360.0 | H 1.94 | V 0.0000 | pL -0.0001 | vL 0.0000 | g 0.0065
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 16384 | U 29 | AllF 0118784 | FPS 1312 | D 13 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 180.0 180.0 0.0 360.0 | H 1.95 | V 0.0013 | pL 0.0001 | vL 0.0000 | g 0.0045
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 20480 | U 30 | AllF 0122880 | FPS 1456 | D 16 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 180.0 180.0 0.0 360.0 | H 1.94 | V 0.0006 | pL 0.0001 | vL 0.0000 | g 0.0066
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 24576 | U 31 | AllF 0126976 | FPS 1421 | D 19 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 360.0 0.0 360.0 360.0 | H 1.95 | V 0.0004 | pL 0.0001 | vL 0.0000 | g 0.0054
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 28672 | U 32 | AllF 0131072 | FPS 1325 | D 22 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 360.0 0.0 360.0 360.0 | H 1.95 | V -0.0000 | pL 0.0001 | vL 0.0000 | g 0.0021
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 32768 | U 33 | AllF 0135168 | FPS 1318 | D 25 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 680.0 320.0 360.0 1000.0 | H 1.95 | V -0.0002 | pL -0.0000 | vL 0.0000 | g 0.0031
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 36864 | U 34 | AllF 0139264 | FPS 1215 | D 29 | rR:msmM 0.003 0.02 0.00 0.11 | F:msmM 679.9 320.1 357.0 1000.0 | H 1.94 | V -0.0002 | pL -0.0007 | vL 0.0000 | g 0.0060
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 40960 | U 35 | AllF 0143360 | FPS 1153 | D 32 | rR:msmM 0.022 0.11 0.00 0.61 | F:msmM 653.6 327.3 157.0 1000.0 | H 1.94 | V 0.0025 | pL -0.0028 | vL 0.0005 | g 0.0251
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 45056 | U 36 | AllF 0147456 | FPS 1237 | D 36 | rR:msmM 0.022 0.11 0.00 0.61 | F:msmM 653.6 327.3 157.0 1000.0 | H 1.94 | V 0.0011 | pL -0.0001 | vL 0.0000 | g 0.0071
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 49152 | U 37 | AllF 0151552 | FPS 1216 | D 39 | rR:msmM 0.022 0.11 0.00 0.61 | F:msmM 353.6 35.3 157.0 360.0 | H 1.94 | V -0.0030 | pL -0.0009 | vL 0.0000 | g 0.0052
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 53248 | U 38 | AllF 0155648 | FPS 1134 | D 43 | rR:msmM 0.019 0.11 0.00 0.61 | F:msmM 353.7 35.3 157.0 360.0 | H 1.94 | V -0.0031 | pL -0.0006 | vL 0.0000 | g 0.0050
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 57344 | U 39 | AllF 0159744 | FPS 1160 | D 46 | rR:msmM 0.019 0.11 0.00 0.61 | F:msmM 353.7 35.3 157.0 360.0 | H 1.94 | V -0.0022 | pL -0.0004 | vL 0.0000 | g 0.0059
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 61440 | U 40 | AllF 0163840 | FPS 1153 | D 50 | rR:msmM 0.019 0.11 0.00 0.61 | F:msmM 353.7 35.3 157.0 360.0 | H 1.95 | V -0.0032 | pL -0.0008 | vL 0.0000 | g 0.0031
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 65536 | U 41 | AllF 0167936 | FPS 1167 | D 53 | rR:msmM 0.016 0.09 0.00 0.52 | F:msmM 674.8 326.5 193.0 1000.0 | H 1.94 | V 0.0002 | pL -0.0029 | vL 0.0002 | g 0.0159
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 69632 | U 42 | AllF 0172032 | FPS 1173 | D 57 | rR:msmM 0.016 0.09 0.00 0.52 | F:msmM 674.8 326.5 193.0 1000.0 | H 1.94 | V 0.0072 | pL 0.0016 | vL 0.0000 | g 0.0073
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 73728 | U 43 | AllF 0176128 | FPS 1125 | D 60 | rR:msmM 0.016 0.09 0.00 0.52 | F:msmM 674.8 326.5 193.0 1000.0 | H 1.94 | V 0.0069 | pL 0.0012 | vL 0.0000 | g 0.0026
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 77824 | U 44 | AllF 0180224 | FPS 1128 | D 64 | rR:msmM 0.013 0.07 0.00 0.42 | F:msmM 656.0 323.9 232.0 1000.0 | H 1.94 | V 0.0082 | pL -0.0005 | vL 0.0001 | g 0.0177
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 81920 | U 45 | AllF 0184320 | FPS 1153 | D 68 | rR:msmM 0.021 0.09 0.00 0.42 | F:msmM 393.9 158.4 232.0 1000.0 | H 1.94 | V 0.0089 | pL 0.0011 | vL 0.0001 | g 0.0053
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 86016 | U 46 | AllF 0188416 | FPS 1144 | D 71 | rR:msmM 0.021 0.09 0.00 0.42 | F:msmM 373.9 115.1 232.0 1000.0 | H 1.94 | V 0.0071 | pL 0.0013 | vL 0.0000 | g 0.0024
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 90112 | U 47 | AllF 0192512 | FPS 1141 | D 75 | rR:msmM 0.021 0.09 0.00 0.42 | F:msmM 353.9 24.8 232.0 360.0 | H 1.94 | V 0.0062 | pL 0.0010 | vL 0.0000 | g 0.0036
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 94208 | U 48 | AllF 0196608 | FPS 1139 | D 78 | rR:msmM 0.031 0.09 0.00 0.42 | F:msmM 352.6 25.2 232.0 360.0 | H 1.94 | V 0.0076 | pL 0.0006 | vL 0.0001 | g 0.0104
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 98304 | U 49 | AllF 0200704 | FPS 1139 | D 82 | rR:msmM 0.010 0.04 0.00 0.18 | F:msmM 678.7 321.4 327.0 1000.0 | H 1.94 | V -0.0008 | pL 0.0000 | vL 0.0000 | g 0.0025
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 102400 | U 50 | AllF 0204800 | FPS 1124 | D 86 | rR:msmM 0.014 0.06 0.00 0.33 | F:msmM 676.8 323.5 269.0 1000.0 | H 1.94 | V 0.0005 | pL -0.0015 | vL 0.0001 | g 0.0111
+
+	Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 11072.0 | FPS 1458 | duration 7.593901872634888 | R:msmM 0.05 0.16 0.00 0.84 | F:msmM 346.0 54.0 65.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 20282.0 | FPS 1464 | duration 13.855401277542114 | R:msmM 0.01 0.07 0.00 0.37 | F:msmM 633.8 32.9 451.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 31363.0 | FPS 1476 | duration 21.242027282714844 | R:msmM 0.02 0.12 0.00 0.67 | F:msmM 980.1 110.8 363.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 46080.0 | FPS 1530 | duration 30.11880373954773 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1440.0 0.0 1440.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 succeeded
+Evaluate agent TEST 0.6150156282819808
+	Trained iteration j=1 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1. Iterations done 204800
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 = [0.396      0.55351407 0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01222222 0.01708377 0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.35 sec
+done= 204800 toTrain= 307199
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=75150, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1/log.csv', fd=4, position=13360, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1/events.out.tfevents.1686518447.cp2019-12', fd=2340, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 4096 | U 51 | AllF 0208896 | FPS 1139 | D 3 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.95 | V 0.0001 | pL -0.0002 | vL 0.0000 | g 0.0022
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 8192 | U 52 | AllF 0212992 | FPS 1283 | D 7 | rR:msmM 0.023 0.13 0.00 0.74 | F:msmM 5.8 32.4 0.0 186.0 | H 1.94 | V 0.0040 | pL -0.0026 | vL 0.0005 | g 0.0314
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 12288 | U 53 | AllF 0217088 | FPS 1397 | D 10 | rR:msmM 0.023 0.13 0.00 0.74 | F:msmM 5.8 32.4 0.0 186.0 | H 1.94 | V 0.0158 | pL 0.0028 | vL 0.0000 | g 0.0029
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 16384 | U 54 | AllF 0221184 | FPS 1376 | D 13 | rR:msmM 0.023 0.13 0.00 0.74 | F:msmM 5.8 32.4 0.0 186.0 | H 1.94 | V 0.0130 | pL 0.0021 | vL 0.0000 | g 0.0021
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 20480 | U 55 | AllF 0225280 | FPS 1375 | D 16 | rR:msmM 0.023 0.13 0.00 0.74 | F:msmM 305.8 315.5 0.0 640.0 | H 1.94 | V 0.0099 | pL 0.0027 | vL 0.0000 | g 0.0021
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 24576 | U 56 | AllF 0229376 | FPS 1375 | D 19 | rR:msmM 0.051 0.20 0.00 0.89 | F:msmM 308.2 313.5 0.0 640.0 | H 1.94 | V 0.0128 | pL -0.0024 | vL 0.0011 | g 0.0176
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 28672 | U 57 | AllF 0233472 | FPS 1358 | D 22 | rR:msmM 0.051 0.20 0.00 0.89 | F:msmM 328.2 313.6 0.0 640.0 | H 1.94 | V 0.0101 | pL 0.0014 | vL 0.0000 | g 0.0031
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 32768 | U 58 | AllF 0237568 | FPS 1353 | D 25 | rR:msmM 0.028 0.16 0.00 0.89 | F:msmM 802.4 219.9 76.0 1000.0 | H 1.94 | V 0.0077 | pL 0.0021 | vL 0.0000 | g 0.0019
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 36864 | U 59 | AllF 0241664 | FPS 1311 | D 28 | rR:msmM 0.028 0.16 0.00 0.89 | F:msmM 802.4 219.9 76.0 1000.0 | H 1.95 | V 0.0068 | pL 0.0012 | vL 0.0000 | g 0.0009
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 40960 | U 60 | AllF 0245760 | FPS 1261 | D 31 | rR:msmM 0.034 0.16 0.00 0.89 | F:msmM 800.2 221.9 76.0 1000.0 | H 1.94 | V 0.0074 | pL 0.0007 | vL 0.0002 | g 0.0048
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 45056 | U 61 | AllF 0249856 | FPS 1254 | D 34 | rR:msmM 0.006 0.03 0.00 0.20 | F:msmM 817.8 182.6 569.0 1000.0 | H 1.95 | V 0.0056 | pL 0.0009 | vL 0.0000 | g 0.0011
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 49152 | U 62 | AllF 0253952 | FPS 1195 | D 38 | rR:msmM 0.006 0.03 0.00 0.20 | F:msmM 817.8 182.6 569.0 1000.0 | H 1.95 | V 0.0051 | pL 0.0009 | vL 0.0000 | g 0.0009
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 53248 | U 63 | AllF 0258048 | FPS 1195 | D 41 | rR:msmM 0.006 0.03 0.00 0.20 | F:msmM 817.8 182.6 569.0 1000.0 | H 1.95 | V 0.0040 | pL 0.0008 | vL 0.0000 | g 0.0013
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 57344 | U 64 | AllF 0262144 | FPS 1156 | D 45 | rR:msmM 0.006 0.03 0.00 0.20 | F:msmM 817.8 182.6 569.0 1000.0 | H 1.95 | V 0.0034 | pL 0.0006 | vL 0.0000 | g 0.0013
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 61440 | U 65 | AllF 0266240 | FPS 1164 | D 48 | rR:msmM 0.014 0.05 0.00 0.23 | F:msmM 657.3 90.8 545.0 1000.0 | H 1.94 | V 0.0031 | pL -0.0001 | vL 0.0001 | g 0.0043
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 65536 | U 66 | AllF 0270336 | FPS 1073 | D 52 | rR:msmM 0.007 0.04 0.00 0.23 | F:msmM 817.0 183.7 545.0 1000.0 | H 1.95 | V 0.0030 | pL 0.0006 | vL 0.0000 | g 0.0009
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 69632 | U 67 | AllF 0274432 | FPS 1146 | D 56 | rR:msmM 0.007 0.04 0.00 0.23 | F:msmM 817.0 183.7 545.0 1000.0 | H 1.95 | V 0.0026 | pL 0.0004 | vL 0.0000 | g 0.0006
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 73728 | U 68 | AllF 0278528 | FPS 1160 | D 59 | rR:msmM 0.007 0.04 0.00 0.23 | F:msmM 817.0 183.7 545.0 1000.0 | H 1.95 | V 0.0024 | pL 0.0001 | vL 0.0000 | g 0.0010
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 77824 | U 69 | AllF 0282624 | FPS 1183 | D 63 | rR:msmM 0.012 0.07 0.00 0.38 | F:msmM 813.8 189.2 443.0 1000.0 | H 1.94 | V 0.0034 | pL -0.0012 | vL 0.0002 | g 0.0053
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 81920 | U 70 | AllF 0286720 | FPS 1175 | D 66 | rR:msmM 0.012 0.07 0.00 0.38 | F:msmM 813.8 189.2 443.0 1000.0 | H 1.95 | V 0.0036 | pL 0.0010 | vL 0.0000 | g 0.0006
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 86016 | U 71 | AllF 0290816 | FPS 1158 | D 70 | rR:msmM 0.012 0.07 0.00 0.38 | F:msmM 813.8 189.2 443.0 1000.0 | H 1.95 | V 0.0030 | pL 0.0006 | vL 0.0000 | g 0.0004
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 90112 | U 72 | AllF 0294912 | FPS 1170 | D 73 | rR:msmM 0.012 0.07 0.00 0.38 | F:msmM 802.6 188.5 443.0 1000.0 | H 1.95 | V 0.0023 | pL 0.0004 | vL 0.0000 | g 0.0004
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 94208 | U 73 | AllF 0299008 | FPS 1113 | D 77 | rR:msmM 0.012 0.07 0.00 0.38 | F:msmM 802.6 188.5 443.0 1000.0 | H 1.95 | V 0.0023 | pL 0.0004 | vL 0.0000 | g 0.0011
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 98304 | U 74 | AllF 0303104 | FPS 1032 | D 81 | rR:msmM 0.030 0.12 0.00 0.55 | F:msmM 802.9 207.6 318.0 1000.0 | H 1.94 | V 0.0051 | pL -0.0036 | vL 0.0005 | g 0.0114
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 | curF 102400 | U 75 | AllF 0307200 | FPS 1155 | D 84 | rR:msmM 0.061 0.18 0.00 0.84 | F:msmM 787.9 233.0 183.0 1000.0 | H 1.94 | V 0.0069 | pL -0.0036 | vL 0.0010 | g 0.0104
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 11183.0 | FPS 1481 | duration 7.551132917404175 | R:msmM 0.04 0.12 0.00 0.55 | F:msmM 349.5 36.8 179.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 20480.0 | FPS 1529 | duration 13.390987634658813 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 640.0 0.0 640.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 31324.0 | FPS 1508 | duration 20.774100303649902 | R:msmM 0.02 0.12 0.00 0.71 | F:msmM 978.9 117.6 324.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 : F 45387.0 | FPS 1467 | duration 30.930012702941895 | R:msmM 0.02 0.09 0.00 0.53 | F:msmM 1418.3 120.6 747.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 succeeded
+Evaluate agent TEST 0.6355156246572733
+	Trained iteration j=2 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1. Iterations done 307200
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric2_gen1 = [0.396      0.55351407 0.51476766] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01358025 0.01898196 0.01765321]
+
+
+-------------------------------
+
+===curriculum 2 done===
+
+
+
+currentRewards after gen1: {'gen1': array([30.91170269,  2.1525781 ,  1.46428172])}
+snapshot Rewards after gen1: {'gen1': array([0.40101562, 0.73219529, 0.396     ])}
+currentEnvDetails for gen1: [[['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'], ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'], ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0']], [['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'], ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'], ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0']], [['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'], ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'], ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0']]]
+
+
+===       Generation 1 done      ===
+
+EVALUATE PYMOO DONE. Generation 1
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2
+	Algorithm loaded in 0.37 sec
+done= 0 toTrain= 102399
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=85399, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2/log.csv', fd=4, position=0, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2/events.out.tfevents.1686518606.cp2019-12', fd=2650, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 4096 | U 1 | AllF 0004096 | FPS 1142 | D 3 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.73 | V 0.1802 | pL 0.0191 | vL 0.0277 | g 0.1738
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 8192 | U 2 | AllF 0008192 | FPS 1347 | D 7 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.75 | V 0.1988 | pL 0.0304 | vL 0.0050 | g 0.0764
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 12288 | U 3 | AllF 0012288 | FPS 1401 | D 9 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.81 | V 0.1686 | pL 0.0284 | vL 0.0009 | g 0.0560
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 16384 | U 4 | AllF 0016384 | FPS 1381 | D 12 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.88 | V 0.1429 | pL 0.0256 | vL 0.0004 | g 0.0274
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 20480 | U 5 | AllF 0020480 | FPS 1381 | D 15 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.91 | V 0.1154 | pL 0.0307 | vL 0.0005 | g 0.0227
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 24576 | U 6 | AllF 0024576 | FPS 1343 | D 18 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.93 | V 0.0968 | pL 0.0157 | vL 0.0002 | g 0.0173
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 28672 | U 7 | AllF 0028672 | FPS 1343 | D 22 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 320.0 320.0 0.0 640.0 | H 1.94 | V 0.0857 | pL 0.0148 | vL 0.0001 | g 0.0163
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 32768 | U 8 | AllF 0032768 | FPS 1337 | D 25 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0690 | pL 0.0171 | vL 0.0002 | g 0.0146
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 36864 | U 9 | AllF 0036864 | FPS 1382 | D 28 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0585 | pL 0.0104 | vL 0.0001 | g 0.0073
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 40960 | U 10 | AllF 0040960 | FPS 1293 | D 31 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0466 | pL 0.0125 | vL 0.0001 | g 0.0101
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 45056 | U 11 | AllF 0045056 | FPS 1317 | D 34 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0378 | pL 0.0065 | vL 0.0000 | g 0.0065
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 49152 | U 12 | AllF 0049152 | FPS 1273 | D 37 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0334 | pL 0.0056 | vL 0.0000 | g 0.0067
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 53248 | U 13 | AllF 0053248 | FPS 1135 | D 41 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0289 | pL 0.0049 | vL 0.0000 | g 0.0062
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 57344 | U 14 | AllF 0057344 | FPS 1152 | D 44 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 820.0 180.0 640.0 1000.0 | H 1.94 | V 0.0241 | pL 0.0041 | vL 0.0000 | g 0.0096
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 61440 | U 15 | AllF 0061440 | FPS 1191 | D 48 | rR:msmM 0.005 0.03 0.00 0.16 | F:msmM 638.6 8.0 594.0 640.0 | H 1.94 | V 0.0230 | pL 0.0053 | vL 0.0001 | g 0.0077
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 65536 | U 16 | AllF 0065536 | FPS 1134 | D 51 | rR:msmM 0.005 0.03 0.00 0.16 | F:msmM 818.6 181.6 594.0 1000.0 | H 1.94 | V 0.0190 | pL 0.0044 | vL 0.0000 | g 0.0062
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 69632 | U 17 | AllF 0069632 | FPS 1122 | D 55 | rR:msmM 0.005 0.03 0.00 0.16 | F:msmM 818.6 181.6 594.0 1000.0 | H 1.94 | V 0.0152 | pL 0.0029 | vL 0.0000 | g 0.0045
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 73728 | U 18 | AllF 0073728 | FPS 1132 | D 59 | rR:msmM 0.017 0.09 0.00 0.53 | F:msmM 810.5 196.6 335.0 1000.0 | H 1.94 | V 0.0155 | pL -0.0002 | vL 0.0004 | g 0.0232
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 77824 | U 19 | AllF 0077824 | FPS 1135 | D 62 | rR:msmM 0.017 0.09 0.00 0.53 | F:msmM 810.5 196.6 335.0 1000.0 | H 1.94 | V 0.0096 | pL 0.0019 | vL 0.0000 | g 0.0086
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 81920 | U 20 | AllF 0081920 | FPS 1125 | D 66 | rR:msmM 0.033 0.13 0.00 0.53 | F:msmM 795.7 199.5 335.0 1000.0 | H 1.94 | V 0.0064 | pL -0.0014 | vL 0.0004 | g 0.0167
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 86016 | U 21 | AllF 0086016 | FPS 1130 | D 70 | rR:msmM 0.033 0.13 0.00 0.53 | F:msmM 795.7 199.5 335.0 1000.0 | H 1.94 | V 0.0061 | pL 0.0010 | vL 0.0000 | g 0.0113
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 90112 | U 22 | AllF 0090112 | FPS 1071 | D 73 | rR:msmM 0.033 0.13 0.00 0.53 | F:msmM 795.7 199.5 335.0 1000.0 | H 1.94 | V 0.0047 | pL 0.0005 | vL 0.0000 | g 0.0050
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 94208 | U 23 | AllF 0094208 | FPS 1165 | D 77 | rR:msmM 0.033 0.13 0.00 0.53 | F:msmM 784.4 197.8 335.0 1000.0 | H 1.94 | V 0.0037 | pL 0.0007 | vL 0.0000 | g 0.0042
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 98304 | U 24 | AllF 0098304 | FPS 1139 | D 81 | rR:msmM 0.016 0.09 0.00 0.53 | F:msmM 805.2 184.0 527.0 1000.0 | H 1.94 | V 0.0041 | pL 0.0010 | vL 0.0000 | g 0.0039
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 102400 | U 25 | AllF 0102400 | FPS 1144 | D 84 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 808.8 179.6 640.0 1000.0 | H 1.94 | V 0.0039 | pL 0.0011 | vL 0.0000 | g 0.0044
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 11456.0 | FPS 1526 | duration 7.509659051895142 | R:msmM 0.01 0.05 0.00 0.26 | F:msmM 358.0 11.1 296.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 19970.0 | FPS 1499 | duration 13.324036598205566 | R:msmM 0.03 0.14 0.00 0.82 | F:msmM 624.1 88.7 130.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 31585.0 | FPS 1541 | duration 20.50092840194702 | R:msmM 0.01 0.08 0.00 0.47 | F:msmM 987.0 72.2 585.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 46080.0 | FPS 1487 | duration 30.9918053150177 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1440.0 0.0 1440.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 succeeded
+Evaluate agent TEST 0.40101562440395355
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2_CANDIDATE
+	Trained iteration j=0 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2. Iterations done 102400
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 = [0.40101562 0.         0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01113932 0.         0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.4 sec
+done= 102400 toTrain= 204799
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=94629, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2/log.csv', fd=4, position=6300, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2/events.out.tfevents.1686518765.cp2019-12', fd=2960, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 4096 | U 26 | AllF 0106496 | FPS 1089 | D 4 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0021 | pL 0.0005 | vL 0.0000 | g 0.0053
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 8192 | U 27 | AllF 0110592 | FPS 1334 | D 7 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0024 | pL 0.0002 | vL 0.0000 | g 0.0082
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 12288 | U 28 | AllF 0114688 | FPS 1351 | D 10 | rR:msmM 0.004 0.02 0.00 0.13 | F:msmM 179.6 179.6 0.0 360.0 | H 1.94 | V 0.0033 | pL 0.0001 | vL 0.0000 | g 0.0100
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 16384 | U 29 | AllF 0118784 | FPS 1402 | D 13 | rR:msmM 0.004 0.02 0.00 0.13 | F:msmM 179.6 179.6 0.0 360.0 | H 1.94 | V 0.0013 | pL 0.0002 | vL 0.0000 | g 0.0058
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 20480 | U 30 | AllF 0122880 | FPS 1511 | D 15 | rR:msmM 0.009 0.03 0.00 0.14 | F:msmM 498.7 139.5 348.0 640.0 | H 1.94 | V 0.0015 | pL -0.0003 | vL 0.0000 | g 0.0066
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 24576 | U 31 | AllF 0126976 | FPS 1383 | D 18 | rR:msmM 0.004 0.02 0.00 0.14 | F:msmM 499.0 139.1 360.0 640.0 | H 1.95 | V -0.0012 | pL -0.0004 | vL 0.0000 | g 0.0045
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 28672 | U 32 | AllF 0131072 | FPS 1312 | D 22 | rR:msmM 0.004 0.02 0.00 0.14 | F:msmM 499.0 139.1 360.0 640.0 | H 1.94 | V 0.0005 | pL 0.0001 | vL 0.0000 | g 0.0061
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 32768 | U 33 | AllF 0135168 | FPS 1320 | D 25 | rR:msmM 0.034 0.13 0.00 0.55 | F:msmM 475.7 148.2 182.0 640.0 | H 1.94 | V 0.0042 | pL -0.0034 | vL 0.0007 | g 0.0285
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 36864 | U 34 | AllF 0139264 | FPS 1323 | D 28 | rR:msmM 0.063 0.16 0.00 0.55 | F:msmM 358.1 44.3 182.0 513.0 | H 1.94 | V -0.0014 | pL -0.0044 | vL 0.0003 | g 0.0180
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 40960 | U 35 | AllF 0143360 | FPS 1257 | D 31 | rR:msmM 0.046 0.13 0.00 0.55 | F:msmM 477.4 138.0 307.0 640.0 | H 1.94 | V -0.0064 | pL -0.0019 | vL 0.0000 | g 0.0061
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 45056 | U 36 | AllF 0147456 | FPS 1216 | D 34 | rR:msmM 0.029 0.09 0.00 0.41 | F:msmM 478.7 136.7 307.0 640.0 | H 1.94 | V -0.0025 | pL -0.0011 | vL 0.0001 | g 0.0091
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 49152 | U 37 | AllF 0151552 | FPS 1296 | D 38 | rR:msmM 0.014 0.06 0.00 0.28 | F:msmM 477.6 137.0 330.0 640.0 | H 1.94 | V -0.0068 | pL -0.0016 | vL 0.0000 | g 0.0042
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 53248 | U 38 | AllF 0155648 | FPS 1235 | D 41 | rR:msmM 0.014 0.06 0.00 0.28 | F:msmM 486.3 138.2 330.0 640.0 | H 1.94 | V -0.0066 | pL -0.0017 | vL 0.0000 | g 0.0065
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 57344 | U 39 | AllF 0159744 | FPS 1207 | D 44 | rR:msmM 0.014 0.06 0.00 0.28 | F:msmM 461.9 138.6 290.0 640.0 | H 1.94 | V -0.0039 | pL -0.0022 | vL 0.0001 | g 0.0152
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 61440 | U 40 | AllF 0163840 | FPS 1146 | D 48 | rR:msmM 0.009 0.05 0.00 0.28 | F:msmM 497.8 142.7 290.0 640.0 | H 1.94 | V -0.0054 | pL -0.0026 | vL 0.0001 | g 0.0085
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 65536 | U 41 | AllF 0167936 | FPS 1198 | D 51 | rR:msmM 0.029 0.12 0.00 0.65 | F:msmM 482.1 153.4 138.0 640.0 | H 1.94 | V -0.0032 | pL -0.0023 | vL 0.0004 | g 0.0255
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 69632 | U 42 | AllF 0172032 | FPS 1171 | D 55 | rR:msmM 0.020 0.11 0.00 0.65 | F:msmM 466.8 148.3 138.0 640.0 | H 1.94 | V -0.0008 | pL -0.0007 | vL 0.0001 | g 0.0073
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 73728 | U 43 | AllF 0176128 | FPS 1184 | D 58 | rR:msmM 0.058 0.18 0.00 0.69 | F:msmM 459.3 159.1 122.0 640.0 | H 1.94 | V 0.0055 | pL -0.0057 | vL 0.0012 | g 0.0296
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 77824 | U 44 | AllF 0180224 | FPS 1123 | D 62 | rR:msmM 0.082 0.22 0.00 0.76 | F:msmM 433.5 164.5 94.0 640.0 | H 1.94 | V 0.0008 | pL -0.0044 | vL 0.0005 | g 0.0219
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 81920 | U 45 | AllF 0184320 | FPS 1117 | D 66 | rR:msmM 0.075 0.20 0.00 0.76 | F:msmM 462.3 165.4 94.0 640.0 | H 1.93 | V 0.0006 | pL -0.0049 | vL 0.0013 | g 0.0210
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 86016 | U 46 | AllF 0188416 | FPS 1125 | D 69 | rR:msmM 0.077 0.21 0.00 0.76 | F:msmM 461.6 167.0 94.0 640.0 | H 1.94 | V -0.0017 | pL -0.0046 | vL 0.0009 | g 0.0155
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 90112 | U 47 | AllF 0192512 | FPS 1159 | D 73 | rR:msmM 0.058 0.17 0.00 0.75 | F:msmM 460.6 153.1 98.0 640.0 | H 1.94 | V -0.0016 | pL -0.0015 | vL 0.0002 | g 0.0059
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 94208 | U 48 | AllF 0196608 | FPS 1161 | D 76 | rR:msmM 0.077 0.21 0.00 0.84 | F:msmM 453.1 166.0 63.0 640.0 | H 1.94 | V 0.0008 | pL -0.0042 | vL 0.0009 | g 0.0134
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 98304 | U 49 | AllF 0200704 | FPS 1152 | D 80 | rR:msmM 0.054 0.19 0.00 0.84 | F:msmM 447.0 163.5 63.0 640.0 | H 1.94 | V 0.0052 | pL 0.0005 | vL 0.0000 | g 0.0028
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 102400 | U 50 | AllF 0204800 | FPS 1160 | D 84 | rR:msmM 0.033 0.15 0.00 0.84 | F:msmM 488.1 155.9 63.0 640.0 | H 1.94 | V 0.0050 | pL 0.0004 | vL 0.0001 | g 0.0057
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 10998.0 | FPS 1363 | duration 8.07129693031311 | R:msmM 0.06 0.15 0.00 0.62 | F:msmM 343.7 48.3 153.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 20181.0 | FPS 1524 | duration 13.239824056625366 | R:msmM 0.02 0.08 0.00 0.31 | F:msmM 630.7 36.2 490.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 30894.0 | FPS 1469 | duration 21.033719062805176 | R:msmM 0.04 0.13 0.00 0.67 | F:msmM 965.4 117.1 367.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 45580.0 | FPS 1473 | duration 30.944087743759155 | R:msmM 0.01 0.07 0.00 0.41 | F:msmM 1424.4 87.0 940.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 succeeded
+Evaluate agent TEST 1.084304690361023
+	Trained iteration j=1 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2. Iterations done 204800
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 = [0.40101562 0.97587422 0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01237703 0.03011957 0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.41 sec
+done= 204800 toTrain= 307199
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=103721, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2/log.csv', fd=4, position=13668, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2/events.out.tfevents.1686518924.cp2019-12', fd=3270, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 4096 | U 51 | AllF 0208896 | FPS 1166 | D 3 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.95 | V 0.0050 | pL 0.0008 | vL 0.0000 | g 0.0017
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 8192 | U 52 | AllF 0212992 | FPS 1320 | D 7 | rR:msmM 0.030 0.12 0.00 0.55 | F:msmM 12.8 50.0 0.0 229.0 | H 1.94 | V 0.0090 | pL -0.0030 | vL 0.0004 | g 0.0113
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 12288 | U 53 | AllF 0217088 | FPS 1323 | D 10 | rR:msmM 0.030 0.12 0.00 0.55 | F:msmM 350.3 38.0 181.0 360.0 | H 1.94 | V 0.0096 | pL 0.0031 | vL 0.0001 | g 0.0045
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 16384 | U 54 | AllF 0221184 | FPS 1388 | D 13 | rR:msmM 0.030 0.12 0.00 0.55 | F:msmM 350.3 38.0 181.0 360.0 | H 1.94 | V 0.0076 | pL 0.0011 | vL 0.0000 | g 0.0016
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 20480 | U 55 | AllF 0225280 | FPS 1367 | D 16 | rR:msmM 0.051 0.14 0.00 0.56 | F:msmM 344.4 43.1 174.0 360.0 | H 1.94 | V 0.0154 | pL -0.0044 | vL 0.0010 | g 0.0139
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 24576 | U 56 | AllF 0229376 | FPS 1444 | D 18 | rR:msmM 0.056 0.14 0.00 0.56 | F:msmM 343.7 43.0 174.0 360.0 | H 1.94 | V 0.0133 | pL 0.0032 | vL 0.0002 | g 0.0089
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 28672 | U 57 | AllF 0233472 | FPS 1369 | D 22 | rR:msmM 0.039 0.11 0.00 0.38 | F:msmM 349.5 30.4 249.0 360.0 | H 1.94 | V 0.0117 | pL 0.0020 | vL 0.0000 | g 0.0026
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 32768 | U 58 | AllF 0237568 | FPS 1269 | D 25 | rR:msmM 0.029 0.11 0.00 0.49 | F:msmM 350.9 35.3 206.0 360.0 | H 1.94 | V 0.0131 | pL -0.0016 | vL 0.0004 | g 0.0097
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 36864 | U 59 | AllF 0241664 | FPS 1326 | D 28 | rR:msmM 0.046 0.14 0.00 0.53 | F:msmM 345.5 45.2 188.0 360.0 | H 1.94 | V 0.0165 | pL 0.0013 | vL 0.0005 | g 0.0098
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 40960 | U 60 | AllF 0245760 | FPS 1226 | D 31 | rR:msmM 0.078 0.19 0.00 0.63 | F:msmM 335.0 63.6 146.0 360.0 | H 1.92 | V 0.0282 | pL -0.0072 | vL 0.0017 | g 0.0193
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 45056 | U 61 | AllF 0249856 | FPS 1213 | D 35 | rR:msmM 0.152 0.25 0.00 0.79 | F:msmM 311.8 84.4 84.0 360.0 | H 1.92 | V 0.0327 | pL -0.0033 | vL 0.0019 | g 0.0214
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 49152 | U 62 | AllF 0253952 | FPS 1190 | D 38 | rR:msmM 0.111 0.23 0.00 0.79 | F:msmM 325.4 76.2 84.0 360.0 | H 1.93 | V 0.0286 | pL 0.0003 | vL 0.0010 | g 0.0181
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 53248 | U 63 | AllF 0258048 | FPS 1115 | D 42 | rR:msmM 0.139 0.24 0.00 0.74 | F:msmM 315.8 81.8 105.0 360.0 | H 1.92 | V 0.0397 | pL -0.0038 | vL 0.0019 | g 0.0247
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 57344 | U 64 | AllF 0262144 | FPS 1206 | D 45 | rR:msmM 0.209 0.25 0.00 0.84 | F:msmM 296.6 86.4 64.0 360.0 | H 1.92 | V 0.0375 | pL -0.0055 | vL 0.0017 | g 0.0182
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 61440 | U 65 | AllF 0266240 | FPS 1172 | D 49 | rR:msmM 0.190 0.25 0.00 0.84 | F:msmM 302.6 84.0 64.0 360.0 | H 1.91 | V 0.0560 | pL -0.0030 | vL 0.0018 | g 0.0239
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 65536 | U 66 | AllF 0270336 | FPS 1132 | D 52 | rR:msmM 0.209 0.29 0.00 0.89 | F:msmM 292.8 98.9 42.0 360.0 | H 1.92 | V 0.0469 | pL -0.0040 | vL 0.0022 | g 0.0210
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 69632 | U 67 | AllF 0274432 | FPS 1150 | D 56 | rR:msmM 0.231 0.30 0.00 0.89 | F:msmM 283.8 104.1 42.0 360.0 | H 1.91 | V 0.0620 | pL -0.0077 | vL 0.0035 | g 0.0343
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 73728 | U 68 | AllF 0278528 | FPS 1105 | D 60 | rR:msmM 0.340 0.37 0.00 0.94 | F:msmM 244.0 128.6 26.0 360.0 | H 1.89 | V 0.0984 | pL -0.0084 | vL 0.0054 | g 0.0457
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 77824 | U 69 | AllF 0282624 | FPS 1168 | D 63 | rR:msmM 0.492 0.35 0.00 0.95 | F:msmM 192.0 124.7 21.0 360.0 | H 1.87 | V 0.1265 | pL -0.0181 | vL 0.0065 | g 0.0420
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 81920 | U 70 | AllF 0286720 | FPS 1160 | D 67 | rR:msmM 0.448 0.34 0.00 0.95 | F:msmM 210.6 124.4 21.0 360.0 | H 1.86 | V 0.1322 | pL -0.0013 | vL 0.0067 | g 0.0500
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 86016 | U 71 | AllF 0290816 | FPS 1173 | D 70 | rR:msmM 0.434 0.34 0.00 0.94 | F:msmM 216.3 123.2 22.0 360.0 | H 1.86 | V 0.1466 | pL -0.0092 | vL 0.0056 | g 0.0517
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 90112 | U 72 | AllF 0294912 | FPS 1159 | D 74 | rR:msmM 0.553 0.36 0.00 0.94 | F:msmM 168.9 130.2 24.0 360.0 | H 1.81 | V 0.1934 | pL -0.0282 | vL 0.0100 | g 0.0683
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 94208 | U 73 | AllF 0299008 | FPS 1160 | D 77 | rR:msmM 0.627 0.35 0.00 0.94 | F:msmM 141.4 125.8 24.0 360.0 | H 1.79 | V 0.2314 | pL -0.0291 | vL 0.0132 | g 0.0798
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 98304 | U 74 | AllF 0303104 | FPS 1154 | D 81 | rR:msmM 0.677 0.28 0.00 0.94 | F:msmM 124.5 101.2 26.0 360.0 | H 1.80 | V 0.2577 | pL -0.0216 | vL 0.0111 | g 0.0704
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 | curF 102400 | U 75 | AllF 0307200 | FPS 1126 | D 84 | rR:msmM 0.728 0.28 0.00 0.96 | F:msmM 104.7 103.7 17.0 360.0 | H 1.77 | V 0.3003 | pL -0.0298 | vL 0.0128 | g 0.0950
+
+	Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 941.0 | FPS 484 | duration 1.944967269897461 | R:msmM 0.91 0.05 0.81 0.97 | F:msmM 37.6 19.0 13.0 78.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 2323.0 | FPS 437 | duration 5.3163487911224365 | R:msmM 0.87 0.06 0.75 0.98 | F:msmM 92.9 39.6 17.0 177.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 6343.0 | FPS 539 | duration 11.76990270614624 | R:msmM 0.77 0.13 0.50 0.95 | F:msmM 253.7 145.3 54.0 550.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 : F 8316.0 | FPS 429 | duration 19.404077529907227 | R:msmM 0.79 0.13 0.48 0.96 | F:msmM 332.6 214.9 57.0 835.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 succeeded
+Evaluate agent TEST 29.61176995754242
+	Trained iteration j=2 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2. Iterations done 307200
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric0_gen2 = [ 0.40101562  0.97587422 23.98553367] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01375225 0.03346619 0.82254917]
+
+
+-------------------------------
+
+===curriculum 0 done===
+
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2
+	Algorithm loaded in 0.43 sec
+done= 0 toTrain= 102399
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/log.txt', fd=3, position=112912, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2/log.csv', fd=4, position=0, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2/events.out.tfevents.1686519050.cp2019-12', fd=3580, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 4096 | U 1 | AllF 0004096 | FPS 1129 | D 4 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.75 | V 0.2320 | pL 0.0405 | vL 0.0271 | g 0.2147
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 8192 | U 2 | AllF 0008192 | FPS 1230 | D 7 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.79 | V 0.2131 | pL 0.0377 | vL 0.0031 | g 0.0713
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 12288 | U 3 | AllF 0012288 | FPS 1439 | D 10 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 180.0 180.0 0.0 360.0 | H 1.85 | V 0.1791 | pL 0.0456 | vL 0.0016 | g 0.0509
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 16384 | U 4 | AllF 0016384 | FPS 1375 | D 13 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 180.0 180.0 0.0 360.0 | H 1.91 | V 0.1578 | pL 0.0276 | vL 0.0003 | g 0.0206
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 20480 | U 5 | AllF 0020480 | FPS 1462 | D 16 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 180.0 180.0 0.0 360.0 | H 1.93 | V 0.1346 | pL 0.0238 | vL 0.0002 | g 0.0176
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 24576 | U 6 | AllF 0024576 | FPS 1314 | D 19 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 360.0 0.0 360.0 360.0 | H 1.93 | V 0.1038 | pL 0.0278 | vL 0.0005 | g 0.0298
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 28672 | U 7 | AllF 0028672 | FPS 1324 | D 22 | rR:msmM 0.018 0.10 0.00 0.56 | F:msmM 354.2 32.4 174.0 360.0 | H 1.94 | V 0.0931 | pL 0.0148 | vL 0.0005 | g 0.0296
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 32768 | U 8 | AllF 0032768 | FPS 1364 | D 25 | rR:msmM 0.018 0.10 0.00 0.56 | F:msmM 674.2 327.4 174.0 1000.0 | H 1.94 | V 0.0713 | pL 0.0178 | vL 0.0003 | g 0.0167
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 36864 | U 9 | AllF 0036864 | FPS 1306 | D 28 | rR:msmM 0.021 0.10 0.00 0.56 | F:msmM 674.1 327.5 174.0 1000.0 | H 1.94 | V 0.0577 | pL 0.0138 | vL 0.0002 | g 0.0155
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 40960 | U 10 | AllF 0040960 | FPS 1343 | D 31 | rR:msmM 0.003 0.02 0.00 0.11 | F:msmM 679.9 320.1 356.0 1000.0 | H 1.94 | V 0.0481 | pL 0.0081 | vL 0.0001 | g 0.0083
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 45056 | U 11 | AllF 0045056 | FPS 1273 | D 34 | rR:msmM 0.003 0.02 0.00 0.11 | F:msmM 679.9 320.1 356.0 1000.0 | H 1.94 | V 0.0432 | pL 0.0074 | vL 0.0001 | g 0.0082
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 49152 | U 12 | AllF 0049152 | FPS 1240 | D 38 | rR:msmM 0.003 0.02 0.00 0.11 | F:msmM 379.9 111.4 356.0 1000.0 | H 1.94 | V 0.0325 | pL 0.0079 | vL 0.0001 | g 0.0082
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 53248 | U 13 | AllF 0053248 | FPS 1230 | D 41 | rR:msmM 0.003 0.02 0.00 0.11 | F:msmM 359.9 0.7 356.0 360.0 | H 1.94 | V 0.0294 | pL 0.0050 | vL 0.0001 | g 0.0077
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 57344 | U 14 | AllF 0057344 | FPS 1202 | D 44 | rR:msmM 0.011 0.06 0.00 0.34 | F:msmM 356.9 17.1 262.0 360.0 | H 1.94 | V 0.0253 | pL 0.0028 | vL 0.0002 | g 0.0134
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 61440 | U 15 | AllF 0061440 | FPS 1101 | D 48 | rR:msmM 0.011 0.06 0.00 0.34 | F:msmM 356.9 17.1 262.0 360.0 | H 1.94 | V 0.0206 | pL 0.0039 | vL 0.0001 | g 0.0075
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 65536 | U 16 | AllF 0065536 | FPS 1170 | D 52 | rR:msmM 0.018 0.10 0.00 0.56 | F:msmM 674.2 327.3 175.0 1000.0 | H 1.94 | V 0.0172 | pL 0.0016 | vL 0.0005 | g 0.0161
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 69632 | U 17 | AllF 0069632 | FPS 1147 | D 55 | rR:msmM 0.024 0.10 0.00 0.56 | F:msmM 672.8 328.8 175.0 1000.0 | H 1.94 | V 0.0176 | pL 0.0033 | vL 0.0001 | g 0.0112
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 73728 | U 18 | AllF 0073728 | FPS 1160 | D 59 | rR:msmM 0.024 0.10 0.00 0.56 | F:msmM 672.8 328.8 175.0 1000.0 | H 1.94 | V 0.0134 | pL 0.0024 | vL 0.0000 | g 0.0061
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 77824 | U 19 | AllF 0077824 | FPS 1149 | D 62 | rR:msmM 0.007 0.04 0.00 0.22 | F:msmM 658.5 320.9 313.0 1000.0 | H 1.94 | V 0.0097 | pL 0.0022 | vL 0.0000 | g 0.0067
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 81920 | U 20 | AllF 0081920 | FPS 1129 | D 66 | rR:msmM 0.013 0.05 0.00 0.22 | F:msmM 397.5 155.9 313.0 1000.0 | H 1.94 | V 0.0084 | pL 0.0009 | vL 0.0001 | g 0.0077
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 86016 | U 21 | AllF 0086016 | FPS 1129 | D 70 | rR:msmM 0.041 0.12 0.00 0.48 | F:msmM 372.6 60.4 313.0 629.0 | H 1.94 | V 0.0102 | pL -0.0021 | vL 0.0004 | g 0.0209
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 90112 | U 22 | AllF 0090112 | FPS 1118 | D 73 | rR:msmM 0.050 0.14 0.00 0.50 | F:msmM 369.1 66.7 201.0 629.0 | H 1.94 | V 0.0001 | pL -0.0022 | vL 0.0003 | g 0.0265
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 94208 | U 23 | AllF 0094208 | FPS 1118 | D 77 | rR:msmM 0.071 0.16 0.00 0.51 | F:msmM 363.3 73.2 197.0 629.0 | H 1.94 | V 0.0100 | pL -0.0017 | vL 0.0004 | g 0.0251
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 98304 | U 24 | AllF 0098304 | FPS 1062 | D 81 | rR:msmM 0.053 0.15 0.00 0.55 | F:msmM 623.7 335.1 182.0 1000.0 | H 1.94 | V 0.0063 | pL -0.0023 | vL 0.0005 | g 0.0363
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 | curF 102400 | U 25 | AllF 0102400 | FPS 1119 | D 84 | rR:msmM 0.046 0.13 0.00 0.55 | F:msmM 626.7 331.7 182.0 1000.0 | H 1.94 | V -0.0048 | pL -0.0026 | vL 0.0002 | g 0.0184
+
+	Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 for 102400 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 : F 10586.0 | FPS 1428 | duration 7.41422176361084 | R:msmM 0.09 0.21 0.00 0.81 | F:msmM 330.8 70.4 75.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 : F 20480.0 | FPS 1429 | duration 14.336279153823853 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 640.0 0.0 640.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 : F 32000.0 | FPS 1540 | duration 20.777971267700195 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1000.0 0.0 1000.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 : F 46080.0 | FPS 1496 | duration 30.81230401992798 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1440.0 0.0 1440.0 1440.0
+Evaluation of 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 succeeded
+Evaluate agent TEST 0.5503125004470348
+Copied Agent! 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 ---> 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2_CANDIDATE
+	Trained iteration j=0 of curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2. Iterations done 102400
+	Reward for curriculum 12x12_100k_3step_3gen_3curric/epoch_1_curric1_gen2 = [0.5503125 0.        0.       ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01528646 0.         0.        ]
+
+
+-------------------------------
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 93, in <module>
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 38, in main
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 69, in startCurriculumTraining
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/curricula/RollingHorizonEvolutionaryAlgorithm.py", line 67, in executeOneEpoch
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/optimize.py", line 67, in minimize
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/algorithm.py", line 141, in run
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/algorithm.py", line 161, in next
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/evaluator.py", line 69, in eval
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/evaluator.py", line 90, in _eval
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 187, in evaluate
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 229, in do
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 237, in _evaluate_vectorized
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/curricula/curriculumProblem.py", line 34, in _evaluate
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/curricula/RollingHorizonEvolutionaryAlgorithm.py", line 104, in trainEveryCurriculum
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 106, in trainACurriculum
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/curricula/train.py", line 68, in startTraining
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/training/PPO.py", line 17, in __init__
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/training/BaesAlgorithm.py", line 50, in __init__
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/training/ParallelEnvironment.py", line 45, in __init__
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/multiprocessing/process.py", line 121, in start
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/multiprocessing/context.py", line 224, in _Popen
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/multiprocessing/context.py", line 281, in _Popen
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/multiprocessing/popen_fork.py", line 19, in __init__
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/multiprocessing/popen_fork.py", line 65, in _launch
+OSError: [Errno 24] Too many open files
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1080968.0 (status=0x0100).
+srun: error: cp2019-12: task 0: Exited with exit code 1
+END run
