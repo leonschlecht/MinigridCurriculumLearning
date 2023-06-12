@@ -10,17 +10,20 @@ if __name__ == "__main__":
 
 def worker(conn, env):
     while True:
-        cmd, data = conn.recv()
-        if cmd == "step":
-            obs, reward, terminated, truncated, info = env.step(data)
-            if terminated or truncated:
+        try:
+            cmd, data = conn.recv()
+            if cmd == "step":
+                obs, reward, terminated, truncated, info = env.step(data)
+                if terminated or truncated:
+                    obs, _ = env.reset()
+                conn.send((obs, reward, terminated, truncated, info))
+            elif cmd == "reset":
                 obs, _ = env.reset()
-            conn.send((obs, reward, terminated, truncated, info))
-        elif cmd == "reset":
-            obs, _ = env.reset()
-            conn.send(obs)
-        else:
-            raise NotImplementedError
+                conn.send(obs)
+            else:
+                raise NotImplementedError
+        except:
+            break
     print("worker ended!")
 
 

@@ -48,6 +48,7 @@ class MyBaseAlgo(ABC):
         # Store parameters
 
         self.env = MyParallelEnv(envs)
+        print(2)
         self.acmodel = acmodel
         self.device = device
         self.num_frames_per_proc = num_frames_per_proc
