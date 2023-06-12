@@ -135,6 +135,8 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             # txt_logger.info("\t\tStatus saved")
 
     txt_logger.info(f'\n\tTrained on {envList} using model {model} for {framesWithThisEnv} frames')
+    print("?")
+    algo.env.end()
     algo.env.close()
     tb_writer.close()
     csv_file.close()

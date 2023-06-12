@@ -48,7 +48,6 @@ class MyBaseAlgo(ABC):
         # Store parameters
 
         self.env = MyParallelEnv(envs)
-        print(2)
         self.acmodel = acmodel
         self.device = device
         self.num_frames_per_proc = num_frames_per_proc
@@ -104,6 +103,7 @@ class MyBaseAlgo(ABC):
         self.log_return = [0] * self.num_procs
         self.log_reshaped_return = [0] * self.num_procs
         self.log_num_frames = [0] * self.num_procs
+
 
     def collect_experiences(self):
         """Collects rollouts and computes advantages.
