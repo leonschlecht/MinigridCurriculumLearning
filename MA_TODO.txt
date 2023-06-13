@@ -5,36 +5,40 @@ Fr: d Difficulty Funktion anpassen, (s.u) @1;
     d Difficulty Plot
 Sa: 2h, danach krank
 So: pause / krank
-Mo:
+Mo: krank
 Di: normalize env distr (and keep other one too)
 
-100k 4step ====> FEHLT LETZTER EPOCH ORDNER (cluster2.sh)
-75k ====> FEHLT LETZTER EPOCH ORDNER (cluster4.sh)
-50k ==> maxEpoch erhöhen
+
+
+==================
+100k 4step  - json angepasst -1 cluster2
+50k
 100k 3 3 3
+
+75k cluster4.sh : habe da jetzt epochs in json angepasst
 150k (cluster5.sh)
 100k 3 4gen 3 (cl6)
 25k (cl7)
 
-RICHTIGE ENV CONT VERWENDEN
 
-12x12_100k_3step_3gen_3curric  Tesde1232                          test12x12_100k_4step_3gen_3curric  testRun2
-qwoieuwqeio                    Test123                            test12x12_150k_3step_3gen_3curric  testRun5
-save                           Test123123123                      test12x12_25k_3step_3gen_3curric   testRun6
-slurm3                         test12x12_100k_3step_3gen_3curric  test12x12_50k_3step_3gen_3curric
-Tesde123                       test12x12_100k_3step_4gen_3curric  test12x12_75k_3step_3gen_3curric
+===================
+--- RICHTIGE ENV CONT VERWENDEN
+- automatisches entfenen der ordner
 
+
+- iterationsPerEnv Column
+other columns as well
+Then find out how to plot multiple of those uin the same plot (maybe can just overlap them?)
+
+
+
+Commands:
 python -m scripts.trainCurriculum --iterPerEnv 5000 --procs 4 --model mo12312
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 
 
-=====> HERE:
-- iterationsPerEnv Column
-other columns as well
-Then find out how to plot multiple of those uin the same plot (maybe can just overlap them?)
-
-==========================
+===============================
 
 - DONE?: Cluster hinbekommen
 - nicht relevant im cluster?: ggf speedup iwi
@@ -59,14 +63,7 @@ Then find out how to plot multiple of those uin the same plot (maybe can just ov
 
 
 
-=============
-3 3 3 25k, 50k, 75k, 100k, 150k
---> das sind 5 runs, aber ich hatte 7 in Queue
-
-cluster8.sh noch unbenutzt
-
-
-======================================
+=================================================
 
 
 Q's
@@ -95,14 +92,12 @@ Next:
 - 2. env oder 2. algo ausprobieren?
 - evaluate merge fertigkriegen
 - diverging curricula vergleich
-- difficulty auf 1 reduzieren
 
 - RRH run; dynamische baseline mit paraEnv; ...
 - minimal mit schreiben anfangen
 
 
 lineplot startpunkte
-matplotlib übereinanerlegen
 -----------
 neue todos:
 

@@ -1,9 +1,9 @@
 import argparse
 import os
 import random
+import shutil
 from abc import ABC, abstractmethod
 
-import numpy as np
 from numpy import ndarray
 
 import utils
@@ -21,12 +21,11 @@ class RollingHorizon(ABC):
         self.stepsPerCurric = args.stepsPerCurric
         self.cmdLineString = cmdLineString
         self.lastEpochStartTime = startTime
-        self.envDifficulty: float = 1.0 # 1 meaning 100% maxsteps allowed
+        self.envDifficulty: float = 1.0  # 1 meaning 100% maxsteps allowed
         self.exactIterationsSet = False
         self.seed = args.seed
         self.paraEnvs = args.paraEnv
         self.difficultyStepsize = args.difficultyStepsize
-        print("difficultystepsize", self.difficultyStepsize)
         # TODO does RHEA even need a curric list becasue it gets generated always anyway
         self.curricula = self.randomlyInitializeCurricula(args.numCurric, args.stepsPerCurric, self.envDifficulty,
                                                           self.paraEnvs, self.seed)
@@ -81,7 +80,7 @@ class RollingHorizon(ABC):
             currentBestCurriculum = self.getCurrentBestCurriculum()
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
 
-            self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.ITERATIONS_PER_ENV*2)
+            self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.difficultyStepsize)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurricScoreRaw, currentSnapshotScore,
                                     self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula, self.curriculaEnvDetails,
                                     self.logFilePath, self.curricMaxReward)
@@ -114,7 +113,7 @@ class RollingHorizon(ABC):
     def logInfoAfterCurriculum(self, nameOfCurriculumI, iterationsDone, rewardList, j):
         self.txtLogger.info(f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}. Iterations done {iterationsDone}")
         self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {rewardList} (1 entry = 1 curric step)")
-        currentMax = (self.gamma ** j) * self.stepMaxReward # TODO fix
+        currentMax = (self.gamma ** j) * self.stepMaxReward  # TODO fix
         self.txtLogger.info(f"\tReward-%-Performance {rewardList / currentMax}\n\n")
         self.txtLogger.info("-------------------------------")
 
@@ -142,6 +141,7 @@ class RollingHorizon(ABC):
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
             self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             self.exactIterationsSet = True
+
             register(
                 id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
                 entry_point="minigrid.envs:DoorKeyEnv",
@@ -166,21 +166,14 @@ class RollingHorizon(ABC):
             )
             # TODO move registration stuff
 
-            # delete existing folders, that were created ---> maybe just last one because others should be finished ...
-            # TODO maybe do the deletion automatically, but it doesnt matter
-            """
-            for k in range(self.numCurric):
-                path = utils.getModelWithCurricSuffix(self.model, startEpoch, k)
-                if utils.deleteModelIfExists(path):
-                    print("deleted", k)
-                    snapshotPath = utils.getModelWithCandidatePrefix(path)
-                    utils.deleteModelIfExists(snapshotPath)
-                    delete Gen thingy if need be
-                    # TODO test if delete _gen folders; OR probably get prefix -> look for them in list, delete all of these folders that contain it
-                else:
-                    self.txtLogger.info(f"Nothing to delete {k}")
-                    break
-            """
+            # TODO maybe move this to storage
+            prefix = f"epoch_{startEpoch}_"
+            path = os.getcwd() + os.sep + "storage" + os.sep + self.model + os.sep
+            dirs = (os.listdir(path))
+            for directory in dirs:
+                if prefix in directory:
+                    shutil.rmtree(path + os.sep + directory)
+                    print("deleted: ./", directory)
 
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}]")
         else:
@@ -221,7 +214,7 @@ class RollingHorizon(ABC):
                             snapshotScoreKey: [],
                             sumTrainingTime: 0,
                             cmdLineStringKey: cmdLineString,
-                            difficultyKey: [0],
+                            difficultyKey: [1.0],
                             seedKey: seed,
                             iterationsPerEnvKey: args.iterPerEnv,
                             consecutivelyChosen: 0,

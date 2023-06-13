@@ -63,6 +63,7 @@ def registerEnvs():
         entry_point="minigrid.envs:EmptyEnv",
         kwargs={"size": 8, "agent_start_pos": None},
     ) """
+    # Register Default envs at normal difficulty
     s = "1.0"
     register(
         id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + s,

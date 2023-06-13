@@ -118,12 +118,8 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
                 csv_logger.writerow(header)
             csv_logger.writerow(data)
             csv_file.flush()
-            j = 0
             for field, value in zip(header, data):
                 tb_writer.add_scalar(field, value, currentFramesDone)
-                # print(j, field, value, currentFramesDone)
-                j += 1
-            # time.sleep(30)
 
         # Save status
         if update % args.save_interval == 0 or currentFramesDone >= framesToTrain:
@@ -135,7 +131,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             # txt_logger.info("\t\tStatus saved")
 
     txt_logger.info(f'\n\tTrained on {envList} using model {model} for {framesWithThisEnv} frames')
-    print("?")
     algo.env.end()
     algo.env.close()
     tb_writer.close()

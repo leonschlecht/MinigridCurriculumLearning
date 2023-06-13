@@ -15,7 +15,6 @@ def worker(conn, env):
                 obs, _ = env.reset()
                 conn.send(obs)
             elif cmd == "end":
-                print("END")
                 break
             else:
                 raise NotImplementedError
@@ -27,7 +26,6 @@ class MyParallelEnv(gym.Env):
     """A concurrent execution of environments in multiple processes."""
 
     def __init__(self, envs):
-        print("penv constructor")
         assert len(envs) >= 1, "No environment given."
         self.envs = envs
         self.observation_space = self.envs[0].observation_space
