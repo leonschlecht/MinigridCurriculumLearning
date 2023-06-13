@@ -142,6 +142,29 @@ class RollingHorizon(ABC):
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
             self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             self.exactIterationsSet = True
+            register(
+                id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
+                entry_point="minigrid.envs:DoorKeyEnv",
+                kwargs={"size": 12, "max_steps": int(maxStepsEnv4 * self.envDifficulty)},
+            )
+            register(
+                id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
+                entry_point="minigrid.envs:DoorKeyEnv",
+                kwargs={"size": 10, "max_steps": int(maxStepsEnv4 * self.envDifficulty)},
+            )
+
+            register(
+                id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
+                entry_point="minigrid.envs:DoorKeyEnv",
+                kwargs={"size": 8, "max_steps": int(maxStepsEnv4 * self.envDifficulty)},
+            )
+
+            register(
+                id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
+                entry_point="minigrid.envs:DoorKeyEnv",
+                kwargs={"size": 6, "max_steps": int(maxStepsEnv4 * self.envDifficulty)},
+            )
+            # TODO move registration stuff
 
             # delete existing folders, that were created ---> maybe just last one because others should be finished ...
             # TODO maybe do the deletion automatically, but it doesnt matter
