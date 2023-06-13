@@ -4,7 +4,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import seaborn as sns
 
 from scripts.Result import Result
 from utils import storage
@@ -12,7 +12,8 @@ from utils.curriculumHelper import *
 from matplotlib.ticker import MaxNLocator
 
 
-def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str, modelNames: list[str], limitX=False):
+def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
+                    modelNames: list[str], limitX=False):
     fig, ax = plt.subplots()
 
     minX = 0
@@ -41,7 +42,8 @@ def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], 
             mostIterationsDoneXValues = allXValues[j]
             break
     # TODO maybe use 250k (or so) steps isntead for ticks
-    new_tick_locations = [(2 + j * 2) * mostIterationsDoneXValues[1] for j in range(len(mostIterationsDoneXValues) // 2)]
+    new_tick_locations = [(2 + j * 2) * mostIterationsDoneXValues[1] for j in
+                          range(len(mostIterationsDoneXValues) // 2)]
     ax.set_xticks(new_tick_locations)
     ax.set_xticklabels([str(tick // 1000) + 'k' for tick in new_tick_locations])
     plt.show()
@@ -57,7 +59,7 @@ def plotSnapshotPerformance(results: list[Result], title: str, modelNamesList):
 
 def plotDifficulty(results: list[Result], title: str, modelNamesList):
     y = [res.difficultyList for res in results]
-    x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained+1)] for res in results]
+    x = [[i * res.iterationsPerEnv for i in range(res.epochsTrained + 1)] for res in results]
     maxYValue = 2
     # TODO fix y-axis in this case so it shows integers only
     plotPerformance(y, x, maxYValue, title, modelNamesList, limitX=True)
@@ -192,6 +194,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     args = parser.parse_args()
     resultClasses = []
+    dataFrames = []
     for logFilePaths in fullLogfilePaths:
         modelName = Path(logFilePaths[0]).parent.name
         dicts = {}
@@ -226,7 +229,9 @@ if __name__ == "__main__":
         avgEpochRewards = helper[0].avgEpochRewards
         print(helper[0].modelName)
 
+        snapshots = []
         for h in helper:
+            snapshots.append(h.snapshotEnvDistribution)
             if h == helper[0]:
                 continue
             for k in snapshotDistr.keys():
@@ -238,16 +243,30 @@ if __name__ == "__main__":
                 bestCurricScores[idx] += h.bestCurricScore[idx]
                 avgEpochRewards[idx] += h.avgEpochRewards[idx]
             # TODO get average of all distributions (prolly need std dev too)
+        objects = []
         for h in helper:
-            print(h)
-
-        exit()
-
-        helper[0].finishAggregation(snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr, avgBestCurricDistr, avgAllCurricDistr, len(helper))
+            print(h.snapshotEnvDistribution)
+            print(h.snapShotScores)
+            objects.append({'snapshotScore': h.snapShotScores, "snapshotDistribution": h.snapshotEnvDistribution})
+        df = pd.DataFrame(objects)
+        dataFrames.append(df)
+        print(df)
+        helper[0].finishAggregation(snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr,
+                                    avgBestCurricDistr, avgAllCurricDistr, len(helper))
         resultClasses.append(helper[0])
+        break
 
+    print(dataFrames)
+    sns.set_theme(style="darkgrid")
+
+
+    # Plot the responses for different events and regions
+    sns.lineplot(x="timepoint", y="signal",
+                 hue="region", style="event",
+                 data=dataFrames[0])
+    plt.show()
+    exit()
     modelNamesList = [res.modelName for res in resultClasses]
-
 
     plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
     # plotDifficulty(resultClasses, "Overview of Difficulty List", modelNamesList)
