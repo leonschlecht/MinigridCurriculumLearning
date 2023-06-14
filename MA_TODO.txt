@@ -6,29 +6,57 @@ Fr: d Difficulty Funktion anpassen, (s.u) @1;
 Sa: 2h, danach krank
 So: pause / krank
 Mo: krank
-Di: normalize env distr (and keep other one too)
+
+cpu_long_stud
 
 
+Themen:
+- etwas krank gewesen. Wie mit 2-3-4 Tagen umgehen ?
+- seaborn / DF ==>
+- diff anpassen
+- kleine bugfixes
+    - cluster lädt algo instant
+    - Linux anpassungen (prozesse nicht beendet)
+    - X nicht manuell löschen
+    - gitignore anpassen, dass ich schneller zugriff auf logs habe, statt mühselig kopieren
+- 7 einzelne Dateien im selben ORdner sein müssen
+- vllt Cuda benutzen ?
+- Andere Experimente mit NSGA
 
-==================
-100k 4step  - json angepasst -1 cluster2
-50k
-100k 3 3 3
 
-75k cluster4.sh : habe da jetzt epochs in json angepasst
-150k (cluster5.sh)
-100k 3 4gen 3 (cl6)
-25k (cl7)
+TODO
+- Schreiben anfangen
+- Eval weiter (ID spalte)
+-
 
+===
 
-===================
---- RICHTIGE ENV CONT VERWENDEN
-- automatisches entfenen der ordner
-
+normalize env distr (and keep other one too)
 
 - iterationsPerEnv Column
 other columns as well
 Then find out how to plot multiple of those uin the same plot (maybe can just overlap them?)
+
+
+============
+NOTES:
+
+
+
+==================
+Aktuelle Runs:
+
+100k 4step
+100k 3 3 3
+50k
+75k cluster4.sh : habe da jetzt epochs in json angepasst
+150k (cluster5.sh)
+100k 3 4gen 3 (cl6)
+25k (cl7)
+long 25k
+
+
+===================
 
 
 
@@ -38,11 +66,6 @@ eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 
 
-===============================
-
-- DONE?: Cluster hinbekommen
-- nicht relevant im cluster?: ggf speedup iwi
-- Done?: PENV Fix: Damit es lokal auch geht auf dem Rechner: die prozesse schließen / heraufinden, woran es liegt
 
 - Baseline (
 	alle 4 gleichzeitig;
@@ -59,7 +82,6 @@ eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 
 - Brauchen wir nicht einen anderen trainingsalgortihmus? Wie kann man das erklären mit dem "ja durch 10x10 trainieren wurde er im 12x12 besser; aber immer beim 12x12 trainieren hat er alles verlernt"
-- 25k Schritte oder weniger machbar mit höheren HorizonLenghts, wegen insta laden
 
 
 
@@ -107,15 +129,9 @@ neue todos:
 
 
  # TODO plot progression of curricula against one another
-- evaluate's mergen
 - überlegen, wie man sich am besten die Sachen vergleichen kann. Ggf parameter, oder liste an models
 # TODO plot showing differences between earlier and later generations
 # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
-
-# TODO: low prio stuff
-# find out a way to properly plot the difficulty list / maybe how it influences the results; and maybe how you can improve it so that it is not even needed in the first place
-# save the plots
-
 
 
 ===============

@@ -258,9 +258,8 @@ if __name__ == "__main__":
 
     print(dataFrames)
     sns.set_theme(style="darkgrid")
+    # TODO ID ...
 
-
-    # Plot the responses for different events and regions
     sns.lineplot(x="timepoint", y="signal",
                  hue="region", style="event",
                  data=dataFrames[0])
