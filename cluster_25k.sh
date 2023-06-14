@@ -2,7 +2,7 @@
 #SBATCH --job-name=c_25_7_4g_3
 #SBATCH --output=c_25_7_g4_3Run_%j_out.txt
 #SBATCH --time=21:59:00
-#SBATCH --partition=cpu_long_stud,cadpool_stud,cpu_normal_stud
+#SBATCH --partition=cpu_normal_stud,cpu_long_stud,cadpool_stud
 #SBATCH --exclude=cp2019-11,cc1l01
 #SBATCH --cpus-per-task=3
 #SBATCH --mem=20G
