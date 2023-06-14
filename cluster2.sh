@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH --job-name=curriculumTest
-#SBATCH --output=pt2curricRun_%j_out.txt
-#SBATCH --time=11:59:00
-#SBATCH --partition=cadpool_stud,cpu_normal_stud
+#SBATCH --job-name=c100_4_3_3
+#SBATCH --output=pt3curricRun_%j_out.txt
+#SBATCH --time=23:59:00
+#SBATCH --partition=cpu_normal_stud,cpu_long_stud
 #SBATCH --exclude=cp2019-11,cc1l01
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=20G

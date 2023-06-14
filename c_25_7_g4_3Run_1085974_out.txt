@@ -1,0 +1,92 @@
+Start 
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : nox
+srun: cpus-per-task       : 2
+srun: jobid               : 1085974
+srun: job-name            : c_25_7_4g_3
+srun: mem                 : 20G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1085974: nodes(1):`nox', cpu counts: 4(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1085974.0 on host nox, 2 tasks: [0-1]
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node nox, 2 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 94, in <module>
+    main()
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 38, in main
+    e.startCurriculumTraining()
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 64, in startCurriculumTraining
+    startEpoch, rewards = self.initializeTrainingVariables(self.modelExists)
+  File "/home/schlecht/Test12/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 175, in initializeTrainingVariables
+    shutil.rmtree(path + os.sep + directory)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/shutil.py", line 725, in rmtree
+    _rmtree_safe_fd(fd, path, onerror)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/shutil.py", line 681, in _rmtree_safe_fd
+    onerror(os.unlink, fullname, sys.exc_info())
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/shutil.py", line 679, in _rmtree_safe_fd
+    os.unlink(entry.name, dir_fd=topfd)
+FileNotFoundError: [Errno 2] No such file or directory: 'log.csv'
+deleted: ./ epoch_3_curric0_gen1
+deleted: ./ epoch_3_curric0_gen1_CANDIDATE
+deleted: ./ epoch_3_curric1_gen1
+Continung training from epoch 3... [total epochs: 50]
+
+--------------------------------------------------------------
+                     START EPOCH 3
+--------------------------------------------------------------
+
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1085974.0 (status=0x0100).
+srun: error: nox: task 1: Exited with exit code 1
+Copied Agent! new_25k_7step_4gen_3curric/epoch_3 ---> new_25k_7step_4gen_3curric/epoch_3_curric0_gen1
+	Algorithm loaded in 0.32 sec
+done= 61438 toTrain= 92157
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/new_25k_7step_4gen_3curric/log.txt', fd=3, position=566732, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/new_25k_7step_4gen_3curric/epoch_3_curric0_gen1/log.csv', fd=4, position=2567, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/new_25k_7step_4gen_3curric/epoch_3_curric0_gen1/events.out.tfevents.1686748127.nox', fd=7, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 6144 | U 11 | AllF 0067582 | FPS 0953 | D 6 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0576 | pL 0.0094 | vL 0.0001 | g 0.0072
+	['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 12288 | U 12 | AllF 0073726 | FPS 0965 | D 13 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0469 | pL 0.0080 | vL 0.0000 | g 0.0061
+	['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 18432 | U 13 | AllF 0079870 | FPS 0914 | D 19 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0407 | pL 0.0070 | vL 0.0000 | g 0.0049
+	['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 24576 | U 14 | AllF 0086014 | FPS 0890 | D 26 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0343 | pL 0.0060 | vL 0.0000 | g 0.0040
+	['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 30720 | U 15 | AllF 0092158 | FPS 0867 | D 33 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0303 | pL 0.0048 | vL 0.0000 | g 0.0054
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1'] using model new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 for 30720 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1 with new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 : F 14785.0 | FPS 204 | duration 72.60974407196045 | R:msmM 0.63 0.19 0.24 0.96 | F:msmM 591.4 299.7 71.0 1221.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1 with new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 : F 67692.0 | FPS 968 | duration 69.9323365688324 | R:msmM 0.02 0.11 0.00 0.53 | F:msmM 1410.2 135.8 757.0 1440.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1 with new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 : F 68088.0 | FPS 899 | duration 75.73044228553772 | R:msmM 0.02 0.08 0.00 0.40 | F:msmM 1418.5 91.4 968.0 1440.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1 with new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 : F 69120.0 | FPS 850 | duration 81.29231762886047 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1440.0 0.0 1440.0 1440.0
+Evaluation of new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 succeeded
+Evaluate agent TEST 4.177875041117271
+Copied Agent! new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 ---> new_25k_7step_4gen_3curric/epoch_3_curric0_gen1_CANDIDATE
+	Trained iteration j=0 of curriculum new_25k_7step_4gen_3curric/epoch_3_curric0_gen1. Iterations done 92158
+	Reward for curriculum new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 = [4.17787504 0.         0.         0.         0.         0.
+ 0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.11605208 0.         0.         0.         0.         0.
+ 0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.27 sec
+done= 92158 toTrain= 122877
+3 
+ [popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/new_25k_7step_4gen_3curric/log.txt', fd=3, position=569806, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/new_25k_7step_4gen_3curric/epoch_3_curric0_gen1/log.csv', fd=4, position=3421, mode='a', flags=558081), popenfile(path='/home/schlecht/Test12/MinigridCurriculumLearning/storage/new_25k_7step_4gen_3curric/epoch_3_curric0_gen1/events.out.tfevents.1686748462.nox', fd=10, position=0, mode='w', flags=557057)]
+	['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 6144 | U 16 | AllF 0098302 | FPS 0778 | D 8 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0279 | pL 0.0048 | vL 0.0000 | g 0.0040
+	['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 12288 | U 17 | AllF 0104446 | FPS 0791 | D 15 | rR:msmM 0.037 0.18 0.00 0.90 | F:msmM 7.3 35.3 0.0 197.0 | H 1.94 | V 0.0272 | pL -0.0004 | vL 0.0011 | g 0.0280
+	['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 18432 | U 18 | AllF 0110590 | FPS 0788 | D 23 | rR:msmM 0.037 0.18 0.00 0.90 | F:msmM 7.3 35.3 0.0 197.0 | H 1.94 | V 0.0285 | pL 0.0051 | vL 0.0000 | g 0.0064
+	['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 24576 | U 19 | AllF 0116734 | FPS 0785 | D 31 | rR:msmM 0.037 0.18 0.00 0.90 | F:msmM 7.3 35.3 0.0 197.0 | H 1.94 | V 0.0241 | pL 0.0040 | vL 0.0000 | g 0.0051
+	['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1'] | new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 | curF 30720 | U 20 | AllF 0122878 | FPS 0791 | D 39 | rR:msmM 0.063 0.21 0.00 0.90 | F:msmM 32.4 124.2 0.0 624.0 | H 1.94 | V 0.0250 | pL -0.0002 | vL 0.0006 | g 0.0246
+
+	Trained on ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1'] using model new_25k_7step_4gen_3curric/epoch_3_curric0_gen1 for 30720 frames
