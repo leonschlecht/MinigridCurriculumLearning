@@ -8,7 +8,7 @@
 #SBATCH --mem=20G
 #SBATCH --verbose
 
-echo "Start "
+echo "Start"
 
 srun -c 2 -v python3 -m scripts.trainCurriculum --procs 32 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 100000 --model test12x12_100k_3step_3gen_3curric
 
