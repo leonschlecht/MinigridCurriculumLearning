@@ -10,6 +10,8 @@
 
 echo "Start2"
 
-srun -c 3 -v python3 -m scripts.trainCurriculum --procs 48 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 150000 --model s9152_150k_3step_3gen_3curric --trainEpochs 35 --seed 9152
+srun -c 3 -v python3 -m scripts.trainCurriculum --procs 48 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 150000 --model s2330_150k_3step_3gen_3curric --trainEpochs 35 --seed 2330
+srun -c 3 -v python3 -m scripts.trainCurriculum --procs 48 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 150000 --model s1214_150k_3step_3gen_3curric --trainEpochs 35 --seed 1214
+srun -c 3 -v python3 -m scripts.trainCurriculum --procs 48 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 150000 --model s2529_150k_3step_3gen_3curric --trainEpochs 35 --seed 2529
 
 echo "END run"
