@@ -8,9 +8,9 @@
 #SBATCH --mem=20G
 #SBATCH --verbose
 
-echo "Start"
-srun -c 2 -v python3 -m scripts.trainCurriculum --procs 32 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 75000 --model 75k_3step_3gen_3curric_s8515 --trainEpochs 67 --seed 8516
+echo "------------Cluster Job Start-----------------------"
 
+srun -c 3 -v python3 -m scripts.trainCurriculum --procs 48 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 75000 --model s8515_75k_3step_3gen_3 curric --trainEpochs 67 --seed 8515
 
-echo "END run"
+echo "---------- Cluster Job End ---------------------"
 
