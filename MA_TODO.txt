@@ -21,67 +21,44 @@ NOTES:
 
 ==================
 Aktuelle Runs:
-100k 3 3 3 (cluster1)
+100k 3 3 3 => 6 done
+
+100k 4step  => 1 fast done nach 40h
+ 1
  9152
  2330
  1214
  8515
  2529
 
-
-100k 4step  - json angepasst -1 cluster2
-
- 9152
- 2330
- 1214
- 8515
- 2529
-50k (cluster3)
-
- 9152
- 2330
- 1214
- 8515
- 2529
-75k cluster4.sh : habe da jetzt epochs in json angepasst
-
- 9152
- 2330
- 1214
- 8515
+50k (3 3 3) ==> 5 done
  2529
 
-150k (cluster5.sh)
+75k (3 3 3) ==> 3 done
+ 1214
+ 8515
 
- 9152
+150k => 5 done
+
+100k 3 4gen 3 =>
+1 DONE
+9152 started
+2330
+1214
+8515
+2529
+
+25k => seed 1noch nicht done;
+1
+ 9152 DONE
  2330
  1214
  8515
  2529
 
-100k 3 4gen 3 (cl6)
+long 25k => ??
 
- 9152
- 2330
- 1214
- 8515
- 2529
 
-25k (cl7)
-
- 9152
- 2330
- 1214
- 8515
- 2529
-
-long 25k
-
- 9152
- 2330
- 1214
- 8515
- 2529
 
 python3 -m scripts.trainCurriculum --procs 48 --numCurric 3 --stepsPerCurric 4 --nGen 3 --iterPerEnv 100000 --model test12x12_100k_4step_3gen_3curric
 
