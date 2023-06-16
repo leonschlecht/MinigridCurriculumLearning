@@ -25,15 +25,16 @@ class allParalell:
         TOTAL_ITERATIONS = 10000000
         self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
         self.trainingTime = 0
-        self.selectedModel = args.model + os.sep + "model"
+        self.model = args.model + "s_" + self.seed
+
+        self.selectedModel = self.model + os.sep + "model"
 
         self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
 
         self.trainingInfoJson = {}
-        self.logFilePath = storage.getLogFilePath(["storage", args.model, "status.json"])
+        self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])
 
         self.curriculaEnvDetails = {}
-        self.model = args.model
         self.modelExists = os.path.exists(self.logFilePath)
         self.allEnvsSimultaneous = args.allSimultaneous
         self.latestReward = 0
