@@ -5,8 +5,6 @@ import utils
 from training.PPO import MyPPOAlgo
 from utils import device
 from model import ACModel
-import psutil
-
 
 def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: list, args, txt_logger) -> int:
     """
@@ -74,9 +72,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
 
-    print("done=", currentFramesDone, "toTrain=", framesToTrain) # TODO remove
-    proc = psutil.Process()
-    print(len(proc.open_files()), "\n", proc.open_files())
     while currentFramesDone < framesToTrain:
         update_start_time = time.time()
 

@@ -67,9 +67,7 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     txtLogger.info(f"Rewards: {trainingInfoJson[rewardsKey]}")
 
     now = datetime.now()
-    timeDiff = 0
-    print(timeDiff)
-    txtLogger.info(f"Time ended at {now} , total training time: {timeDiff}")
+    txtLogger.info(f"Time ended at {now} , total training time: _") # TODO
     txtLogger.info("-------------------\n\n")
 
 
@@ -109,8 +107,6 @@ def calculateEnvDifficulty(iterationsDone, difficultyStepsize) -> float:
         value = 1 - ((iterationsDone - startDecreaseNum) / difficultyStepsize / 20)
     value = max(value, 0.15)
 
-    print(ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value))
-    print("NEW difficulty value", value, iterationsDone, difficultyStepsize)
     assert value <= 1
     register(
         id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value),

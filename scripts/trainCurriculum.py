@@ -49,7 +49,7 @@ def main():
     elif args.trainAdaptive:
         adaptiveCurriculum.startAdaptiveCurriculum(txtLogger, startTime, args)
     else:
-        print("No training method selected!")
+        raise Exception("No training method selected!")
 
 
 def registerEnvs():

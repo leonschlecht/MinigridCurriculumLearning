@@ -182,4 +182,3 @@ class Result:
             self.snapshotEnvDistribution[k] /= amountOfTrainingRuns
             self.bestCurriculaEnvDistribution[k] /= amountOfTrainingRuns
             self.allCurricDistribution[k] /= amountOfTrainingRuns
-        print("snap", self.snapShotScores)
