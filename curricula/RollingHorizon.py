@@ -26,26 +26,25 @@ class RollingHorizon(ABC):
         self.seed = args.seed
         self.paraEnvs = args.paraEnv
         self.difficultyStepsize = args.difficultyStepsize
-        # TODO does RHEA even need a curric list becasue it gets generated always anyway
         self.curricula = self.randomlyInitializeCurricula(args.numCurric, args.stepsPerCurric, self.envDifficulty,
                                                           self.paraEnvs, self.seed)
 
         self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.iterationsDone = 0
         self.txtLogger = txtLogger
-        self.selectedModel = utils.getEpochModelName(args.model, 0)
+        self.model = args.model + "_s" + str(self.seed)
+        self.selectedModel = utils.getEpochModelName(self.model, 0)
         self.totalEpochs = args.trainEpochs
         self.trainingTime = 0
 
         self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
         self.trainingInfoJson = {}
-        self.logFilePath = storage.getLogFilePath(["storage", args.model, "status.json"])
+        self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])
         self.gamma = args.gamma
         self.currentRewardsDict = {}
         self.currentSnapshotRewards = {}
         self.curriculaEnvDetails = {}
-        self.model = args.model
         self.modelExists = os.path.exists(self.logFilePath)
 
     def saveFirstStepOfModel(self, exactIterationsPerEnv: int, nameOfCurriculumI: str):
