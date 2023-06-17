@@ -179,51 +179,47 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
     ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way to cut things off
 
 
-def getSpecificModel(modelName):
-    print(modelName)
-    for logFilePaths in fullLogfilePaths:
-        modelName = Path(logFilePaths[0]).parent.name
-        dicts = {}
-        helper: list[Result] = []
-        for path in logFilePaths:
-            if args.model == modelName:
-                with open(path, 'r') as f:
-                    trainingInfoDictionary = json.loads(f.read())
-                assert trainingInfoDictionary is not None
-                resultClasses = [Result(trainingInfoDictionary, modelName, path)]
-                break
+def getSpecificModel(specificModelList, modelName):
+    print(specificModelList)
+    df = pd.DataFrame()
+    resultClasses = []
+    for logPath in specificModelList:
+        with open(logPath, 'r') as f:
+            trainingInfoDictionary = json.loads(f.read())
+        assert trainingInfoDictionary is not None
+        resultClasses.append(Result(trainingInfoDictionary, modelName, logPath))
+    return df
 
 
 def getAllModels():
     pass
 
-
-if __name__ == "__main__":
+def main():
     evalDirBasePath = storage.getLogFilePath(["storage", "save", "evaluate"])
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
+    statusJson = "status.json"
+    specificModelList = []
     for model in evalDirectories:
         path = evalDirBasePath + os.sep + model + os.sep
-        json_files = [f for f in os.listdir(path) if f.endswith('.json')]
+        json_files = [f for f in os.listdir(path) if f == statusJson]
         fullLogfilePaths.append([])
         for jsonFile in json_files:
             fullLogfilePaths[-1].append(path + jsonFile)
         seededExperimentsDirs = (next(os.walk(path)))[1]
         for seededExperiment in seededExperimentsDirs:
-            path = evalDirBasePath + os.sep + model + os.sep + seededExperiment
-            jsonFIlesHelper = [f for f in os.listdir(path) if f.endswith('.json') and "evaluation" not in f.lower()]
+            path = evalDirBasePath + os.sep + model + os.sep + seededExperiment + os.sep
+            jsonFIlesHelper = [f for f in os.listdir(path) if f == statusJson]
             for jsonFile2 in jsonFIlesHelper:
                 fullLogfilePaths[-1].append(path + jsonFile2)
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
-    args = parser.parse_args()
+        if model == args.model:
+            specificModelList = fullLogfilePaths[-1]
+            break
     resultClasses = []
     dataFrames = []
-    exit()
     if args.model is not None:
-        getSpecificModel(args.model)
+        assert specificModelList != []
+        dataFrames = getSpecificModel(specificModelList, args.model)
     else:
         getAllModels()
 
@@ -301,3 +297,9 @@ if __name__ == "__main__":
     plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
 
     # TODO this should not have a shared x-axis; or at least still use epochs and not scale ???
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
+    args = parser.parse_args()
+    main()
