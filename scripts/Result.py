@@ -30,7 +30,6 @@ class Result:
         self.iterationsPerEnv = self.getIterationsPerEnv(evaluationDictionary, self.loadedArgsDict)
         self.logFilepath = logfilePath
 
-        self.epochDict = self.getEpochDict(self.rewardsDict)
         self.snapShotScores = self.getSnapshotScores(evaluationDictionary, self.modelPerformance)
 
         bestCurricScores = []
@@ -39,6 +38,8 @@ class Result:
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
 
         if self.loadedArgsDict[trainEvolutionary]:  # TODO to method
+            self.epochDict = self.getEpochDict(self.rewardsDict) # TODO THIS SEEMS BUGGED ??? / why does it only show g1,g2,g3
+            print("ep dict", self.epochDict)
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
             self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
             for epochKey in self.rewardsDict:
@@ -71,6 +72,7 @@ class Result:
             # TODO can probably copy some stuff from the trainevolutioanry thigns above
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
+        print("modelname:", self.modelName)
         assert self.bestCurricScore != []
         assert self.avgEpochRewards != []
         assert type(self.iterationsPerEnv) == int
@@ -81,6 +83,7 @@ class Result:
 
     @staticmethod
     def getTrainEvolutionary(param):
+        # this is because of bad conversion from an args object that is stored in a txt file
         if param == "True)":
             return True
         elif param == "False)":

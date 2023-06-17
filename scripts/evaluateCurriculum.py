@@ -179,36 +179,41 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
     ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way to cut things off
 
 
-def getSpecificModel(specificModelList, modelName):
+def getSpecificModel(specificModelList: list, modelName: str):
+    assert specificModelList != [], "Model List must not be empty"
+
     results = []
     for logPath in specificModelList:
         with open(logPath, 'r') as f:
             trainingInfoDictionary = json.loads(f.read())
         assert trainingInfoDictionary is not None
-        results.append(Result(trainingInfoDictionary, modelName, logPath))
+        if (trainingInfoDictionary[epochsDone]) > 1:
+            results.append(Result(trainingInfoDictionary, modelName, logPath))
+        else:
+            print("Epochs <= 1")
 
     dfRow = []
     for result in results:
-        print(len(result.snapShotScores))
         dfRow.append({"snapshotScore": result.snapShotScores,
-                        "bestCurricScore": result.bestCurricScore, # TODO careful with AllPara
-                        "avgEpochRewards": result.avgEpochRewards, # TODO careful with allPara
-                        "snapshotDistribution": result.snapshotEnvDistribution,
-                        "bestCurricDistribution": result.bestCurriculaEnvDistribution,
-                        "allCurricDistribution": result.allCurricDistribution,
-                        "id": modelName,
-                        "iterPerEnv": result.iterationsPerEnv})
+                      "bestCurricScore": result.bestCurricScore,  # TODO careful with AllPara
+                      "avgEpochRewards": result.avgEpochRewards,  # TODO careful with allPara
+                      "snapshotDistribution": result.snapshotEnvDistribution,
+                      "bestCurricDistribution": result.bestCurriculaEnvDistribution,
+                      "allCurricDistribution": result.allCurricDistribution,
+                      "id": modelName,
+                      "iterPerEnv": result.iterationsPerEnv})
     df = pd.DataFrame(dfRow)
-    print(df)
     # TODO assert all iterPerEnv are equal ?
     return df
 
 
-def getAllModels(logfilePaths):
-    for l in logfilePaths:
-        print(l)
-    df = 0
+def getAllModels(logfilePaths: list[list]):
+    df = pd.DataFrame()
+    for logfilePath in logfilePaths:
+        tmpDf: pd.DataFrame = getSpecificModel(logfilePath[0], logfilePath[1])
+        df = df.append(tmpDf)
     return df
+
 
 def main():
     evalDirBasePath = storage.getLogFilePath(["storage", "save", "evaluate"])
@@ -217,37 +222,35 @@ def main():
     statusJson = "status.json"
     specificModelList = []
     for model in evalDirectories:
+        if model == "old":
+            continue
         path = evalDirBasePath + os.sep + model + os.sep
         json_files = [f for f in os.listdir(path) if f == statusJson]
-        fullLogfilePaths.append([])
+        fullLogfilePaths.append([[], model])
         for jsonFile in json_files:
-            fullLogfilePaths[-1].append(path + jsonFile)
+            fullLogfilePaths[-1][0].append(path + jsonFile)
         seededExperimentsDirs = (next(os.walk(path)))[1]
         for seededExperiment in seededExperimentsDirs:
             path = evalDirBasePath + os.sep + model + os.sep + seededExperiment + os.sep
             jsonFIlesHelper = [f for f in os.listdir(path) if f == statusJson]
             for jsonFile2 in jsonFIlesHelper:
-                fullLogfilePaths[-1].append(path + jsonFile2)
+                fullLogfilePaths[-1][0].append(path + jsonFile2)
         if model == args.model:
-            specificModelList = fullLogfilePaths[-1]
+            specificModelList = fullLogfilePaths[-1][0]
             break
-    resultClasses = []
-    dataFrames = []
+
     if args.model is not None:
-        assert specificModelList != []
-        dataFrames = getSpecificModel(specificModelList, args.model)
+        dataFrame = getSpecificModel(specificModelList, args.model)
     else:
-        dataFrames = getAllModels(fullLogfilePaths)
+        dataFrame = getAllModels(fullLogfilePaths)
 
-    print(dataFrames)
     sns.set_theme(style="darkgrid")
-    # TODO ID ...
-
-    sns.lineplot(x="timepoint", y="signal",
-                 hue="region", style="event",
-                 data=dataFrames[0])
+    sns.lineplot(x="snapshotScore", y="iterPerEnv", data=dataFrame)
     plt.show()
     exit()
+
+    """
+    # DEPRECATED 
     modelNamesList = [res.modelName for res in resultClasses]
 
     plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
@@ -259,8 +262,9 @@ def main():
 
     plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNamesList)
     plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
+    """
+    # TODO the plotDistributionOfAllCurric should not have a shared x-axis; or at least still use epochs and not scale ???
 
-    # TODO this should not have a shared x-axis; or at least still use epochs and not scale ???
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
