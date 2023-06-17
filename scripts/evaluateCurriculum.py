@@ -180,19 +180,35 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
 
 
 def getSpecificModel(specificModelList, modelName):
-    print(specificModelList)
-    df = pd.DataFrame()
-    resultClasses = []
+    results = []
     for logPath in specificModelList:
         with open(logPath, 'r') as f:
             trainingInfoDictionary = json.loads(f.read())
         assert trainingInfoDictionary is not None
-        resultClasses.append(Result(trainingInfoDictionary, modelName, logPath))
+        results.append(Result(trainingInfoDictionary, modelName, logPath))
+
+    dfRow = []
+    for result in results:
+        print(len(result.snapShotScores))
+        dfRow.append({"snapshotScore": result.snapShotScores,
+                        "bestCurricScore": result.bestCurricScore, # TODO careful with AllPara
+                        "avgEpochRewards": result.avgEpochRewards, # TODO careful with allPara
+                        "snapshotDistribution": result.snapshotEnvDistribution,
+                        "bestCurricDistribution": result.bestCurriculaEnvDistribution,
+                        "allCurricDistribution": result.allCurricDistribution,
+                        "id": modelName,
+                        "iterPerEnv": result.iterationsPerEnv})
+    df = pd.DataFrame(dfRow)
+    print(df)
+    # TODO assert all iterPerEnv are equal ?
     return df
 
 
-def getAllModels():
-    pass
+def getAllModels(logfilePaths):
+    for l in logfilePaths:
+        print(l)
+    df = 0
+    return df
 
 def main():
     evalDirBasePath = storage.getLogFilePath(["storage", "save", "evaluate"])
@@ -221,59 +237,7 @@ def main():
         assert specificModelList != []
         dataFrames = getSpecificModel(specificModelList, args.model)
     else:
-        getAllModels()
-
-    exit()
-    for logFilePaths in fullLogfilePaths:
-        modelName = Path(logFilePaths[0]).parent.name
-        dicts = {}
-        helper: list[Result] = []
-        for path in logFilePaths:
-            if os.path.exists(path):
-                with open(path, 'r') as f:
-                    trainingInfoDictionary = json.loads(f.read())
-                assert trainingInfoDictionary is not None
-                helper.append(Result(trainingInfoDictionary, modelName, path))
-            else:
-                print(f"Path '{path}' doesnt exist!")
-                # raise Exception(f"Path '{logFilePath}' doesnt exist!")
-        # if singleModelEval:
-        #   break
-
-        snapshotDistr = helper[0].snapshotEnvDistribution
-        avgBestCurricDistr = helper[0].bestCurriculaEnvDistribution
-        avgAllCurricDistr = helper[0].allCurricDistribution
-        snapshotScores = helper[0].snapShotScores
-        bestCurricScores = helper[0].bestCurricScore
-        avgEpochRewards = helper[0].avgEpochRewards
-        print(helper[0].modelName)
-
-        snapshots = []
-        for h in helper:
-            snapshots.append(h.snapshotEnvDistribution)
-            if h == helper[0]:
-                continue
-            for k in snapshotDistr.keys():
-                snapshotDistr[k] += h.snapshotEnvDistribution[k]
-                avgBestCurricDistr[k] += h.bestCurriculaEnvDistribution[k]
-                avgAllCurricDistr[k] += h.allCurricDistribution[k]
-            for idx in range(len(snapshotScores)):
-                snapshotScores[idx] += h.snapShotScores[idx]
-                bestCurricScores[idx] += h.bestCurricScore[idx]
-                avgEpochRewards[idx] += h.avgEpochRewards[idx]
-            # TODO get average of all distributions (prolly need std dev too)
-        objects = []
-        for h in helper:
-            print(h.snapshotEnvDistribution)
-            print(h.snapShotScores)
-            objects.append({'snapshotScore': h.snapShotScores, "snapshotDistribution": h.snapshotEnvDistribution})
-        df = pd.DataFrame(objects)
-        dataFrames.append(df)
-        print(df)
-        helper[0].finishAggregation(snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr,
-                                    avgBestCurricDistr, avgAllCurricDistr, len(helper))
-        resultClasses.append(helper[0])
-        break
+        dataFrames = getAllModels(fullLogfilePaths)
 
     print(dataFrames)
     sns.set_theme(style="darkgrid")
