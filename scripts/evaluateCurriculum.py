@@ -179,6 +179,25 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
     ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way to cut things off
 
 
+def getSpecificModel(modelName):
+    print(modelName)
+    for logFilePaths in fullLogfilePaths:
+        modelName = Path(logFilePaths[0]).parent.name
+        dicts = {}
+        helper: list[Result] = []
+        for path in logFilePaths:
+            if args.model == modelName:
+                with open(path, 'r') as f:
+                    trainingInfoDictionary = json.loads(f.read())
+                assert trainingInfoDictionary is not None
+                resultClasses = [Result(trainingInfoDictionary, modelName, path)]
+                break
+
+
+def getAllModels():
+    pass
+
+
 if __name__ == "__main__":
     evalDirBasePath = storage.getLogFilePath(["storage", "save", "evaluate"])
     fullLogfilePaths = []
@@ -189,27 +208,31 @@ if __name__ == "__main__":
         fullLogfilePaths.append([])
         for jsonFile in json_files:
             fullLogfilePaths[-1].append(path + jsonFile)
+        seededExperimentsDirs = (next(os.walk(path)))[1]
+        for seededExperiment in seededExperimentsDirs:
+            path = evalDirBasePath + os.sep + model + os.sep + seededExperiment
+            jsonFIlesHelper = [f for f in os.listdir(path) if f.endswith('.json') and "evaluation" not in f.lower()]
+            for jsonFile2 in jsonFIlesHelper:
+                fullLogfilePaths[-1].append(path + jsonFile2)
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     args = parser.parse_args()
     resultClasses = []
     dataFrames = []
+    exit()
+    if args.model is not None:
+        getSpecificModel(args.model)
+    else:
+        getAllModels()
+
+    exit()
     for logFilePaths in fullLogfilePaths:
         modelName = Path(logFilePaths[0]).parent.name
         dicts = {}
         helper: list[Result] = []
-        singleModelEval = False
         for path in logFilePaths:
-            if args.model == modelName:
-                with open(path, 'r') as f:
-                    trainingInfoDictionary = json.loads(f.read())
-                assert trainingInfoDictionary is not None
-                resultClasses = [Result(trainingInfoDictionary, modelName, path)]
-                singleModelEval = True
-                break
-
-                # TODO merge dict here too
             if os.path.exists(path):
                 with open(path, 'r') as f:
                     trainingInfoDictionary = json.loads(f.read())
@@ -218,8 +241,8 @@ if __name__ == "__main__":
             else:
                 print(f"Path '{path}' doesnt exist!")
                 # raise Exception(f"Path '{logFilePath}' doesnt exist!")
-        if singleModelEval:
-            break
+        # if singleModelEval:
+        #   break
 
         snapshotDistr = helper[0].snapshotEnvDistribution
         avgBestCurricDistr = helper[0].bestCurriculaEnvDistribution
