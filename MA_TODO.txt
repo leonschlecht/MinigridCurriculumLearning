@@ -1,16 +1,249 @@
-Todos:
+seed an modelnamen anhängen, dass ich das nicht immer in der sbatch 2x ändern muss
+in tmp ordner kopieren alles
+Alte Modelsachen automatisch löschen
+ist 10G RRH langsamer als 20G? (3 vs 2 procs?
+autocalc bis 5kk (trainEpochs ersetzen)
+
+
+- seaborn / DF ==>
+- diff anpassen
+- Andere Experimente mit NSGA
+
+
+TODO
+- Schreiben anfangen
+- Eval weiter (ID spalte) & mit barplots testen
+-normalize env distr (and keep other one too)
+
+- iterationsPerEnv Column
+
+
+==============================
+Aktuelle Runs:
+100k 3 3 3 => 6 done
+
+100k 4step  => 1 fast done nach 40h
+ 1 almost done
+ 9152 Q
+ 2330 Q
+ 1214
+ 8515
+ 2529
+
+50k (3 3 3) ==> 5 done
+
+75k (3 3 3) ==> 3 done
+ 1214 Q
+ 8515 Q
+
+150k => 5 done
+
+100k 3 4gen 3 =>
+1 DONE
+9152 done
+2330 Q
+1214 Q
+8515 Q
+2529 Q
+
+25k 3 3 3 => seed 1noch nicht done;
+ 1 -> 50
+ 9152 -> 50
+ 2330 Q
+ 1214 Q
+ 8515 Q
+ 2529 Q
+
+
+
+           1087661 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
+           1087663 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
+           1087660 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
+           1087662 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
+           1087659 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
+           1087668 cpu_norma c100_4_3 schlecht PD       0:00      1 (PartitionTimeLimit)
+           1087664 cpu_norma c4_75_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
+           1087665 cpu_norma c4_75_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
+
+
+
+RRH
+    150k
+         1 done
+         9152 almost
+         2330 Q
+         1214 Q
+         8515 Q
+         2529 Q
+         8258 Q
+         1517 Q
+          185 Q
+         3053 Q
+    100k
+        ?
+
+
+    50k mit 5 length & 4 curric
+         1 Q
+         9152 Q
+         2330 Q
+         1214 Q
+         8515 Q
+         2529 Q
+         8258 Q
+         1517 Q
+          185 Q
+         3053 Q
+
+
+
+==============================
+
+ 1
+ 9152
+ 2330
+ 1214
+ 8515
+ 2529
+
+ 8258
+ 1517
+  185
+ 3053 <--- 4s hiermit ?=?
+ 9030 <-- 4s 100k hiermit ;;; 100k RRH anpassen auf trainEpochs ;; bzw auf 5 Mio einfach normen dann spar ich das
+ 4221
+ 2450
+ 7477
+ 1938
+ 1291
+ 8646
+ 1032
+ 6646
+ 1315
+ 6471
+ 3259
+ 9607
+
+
+
+
+
+===================
+
+eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
+
+
+- Baseline (
+	alle 4 gleichzeitig;
+	alle 4 dynamisch je nach performance;
+	linear curriculum
+- Experimente
+
+- Vergleich mit SOTA (iwelche teacher-student krams vllt ??
+- Visualisierungen
+	pandas aggr
+	einzelne Experimente filtern (zB Baseline oder Gen oder ...)
+	Todos durchgehen
+
+
+
+- Brauchen wir nicht einen anderen trainingsalgortihmus? Wie kann man das erklären mit dem "ja durch 10x10 trainieren wurde er im 12x12 besser; aber immer beim 12x12 trainieren hat er alles verlernt"
+
+
+
+=================================================
+
+
+Q's
+Wie viele Experimente?
+- Generationen ausprobieren (3,4,5. Noch mehr?
+- iterationen pro Curric Schritt ausprobieren (50-200k)
+- Curriclänge (3-5)
+- anderen Evol Alg ausprobieren
+
+
+
+-------------------------------------------
+Für MA:
+Difficulty Spikes: 1 Model zeigen & 1 linie anschauen (difficulty daneben plotten) ; spikes erklären dadurch
+
+pandas benutzen: seaborn
+https://seaborn.pydata.org/examples/errorband_lineplots.html
+
+wie lang hat man auf welchen trainiert?
+
+
+========================
+
+Next:
+- Cluster rumprobieren (
+- 2. env oder 2. algo ausprobieren?
+- evaluate merge fertigkriegen
+- diverging curricula vergleich
+
+- RRH run; dynamische baseline mit paraEnv; ...
+- minimal mit schreiben anfangen
+
+
+lineplot startpunkte
+-----------
+neue todos:
+
+# mit paraEnv & RRH hinbekommen anzuzeigen bzw zu vergleichen (ggf Type in Result oder so als variable für easy access) (2h ~)
+# 2. minigrid env suchen & wenigstens ausführbar machen (2h limit)
+# Recherche für verwendete EA (2h limit)
+
+
+ # TODO plot progression of curricula against one another
+- überlegen, wie man sich am besten die Sachen vergleichen kann. Ggf parameter, oder liste an models
+# TODO plot showing differences between earlier and later generations
+# TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
+
+
+===============
+
+Performance Plot:
+-250k steps (oder 500k)
+- überlegen wie man cutten kann bei ungelcihheit
+- legend out of plot; und irgendwie zu viele Lines
+
+
+Distribution plot:
+- shared y axis? (oder vllt relative Anzahlen benutzen?)
+- auch mit dem YMax umgehen
+- Benennung -> 12x12 in title und dann aus der Legende raus (ggf einfach .split auf den Ordnernamen)
+-
+
+todos:
 - baseline + logs (ein mal alles para --> jeweils alle 250k eval
     ; dann 1x mit entscheiden pro epoch was als nächstes dran kommt)
-
-- schauen, ob man das Register überhaupt braucht oder direkt in kwargs beim agenten das machen kann
-- mit dem difficulty score etwas rumprobieren vllt ?
-- alle relevanten Experimente backupen / bzw. das status & log davon
-
-
-
 - 2. Minigrid Umgebung suchen (oder ertsmal Experimente weiter?);
 - Cluster Test: läuft ohne fehler oder ggf OS Probleme?
 - penv rumprobieren
+
+
+- alle relevanten Experimente backupen / bzw. das status & log davon
+
+
+Maybes:
+- mit dem difficulty score etwas rumprobieren vllt ?
+
+
+
+BESPRECHEN:
+- difficulty score rausnehmen, bzw. nur max 1 Schritt machen (damit hyperparameter weniger und weniger verzerr ist)
+- 2. Umgebung
+- ssh Sachen (wichtig für Note?). + blockiert sein?
+- bald anderen GA ausprobieren
+- Nxt week: ?
+- algo laden dauert .15s auf cluster
+
+
+
+
+Unwichtig:
+- schauen, ob man das Register überhaupt braucht oder direkt in kwargs beim agenten das machen kann
+
 
 
 Home:
@@ -19,21 +252,7 @@ Home:
 
 - schauen warum %-Performance falsch angezeigt wrude in den logs
 
-==================================
-
-Zeitplan
-Mi: eval weiter; kann jetzt mehrere Sachen gleicheztiig anschauen
-Do: tnt, dann eval weiter; überblick verschaffen; os.sep
-Fr
-Sa: wenig
-So: wahrscheinlich nur exp laufen
-Mo: -
-Di: -
-Mi
-Do
-
-
-===================================
+===================================================================
 Experimente:
 2x2 Tage mit --iterPerStep 100000 --numCurric 3 --nGen 3 --stepsPerCurric 3 ( & 5)
 1 Tag baseline (allPara)
@@ -111,6 +330,13 @@ Changelog / Erkenntnisse
 
 
 31.05 - 9.6
+- Difficulty verursacht zu große Spikes
+- Difficulty zeitbasiert machen
+- Cluster angefangen bzw. etwas startprobleme
+- viel an der Evaluate rumgebastelt (so dass man jetzt mehreere models vergleichen kann)
+- viele Experimente laufen lassen
+- Baseline mit logs gemacht
+
 
 
 
@@ -124,7 +350,7 @@ spikes sollten durch mehrfach ausführen geringer werden
 AOC bestimmen
 zB produzierte kurve (3) ; gleiche für (4), ... ---> in 1 grafik; auch vergleichen mit random, baseline usw;
 - Dann Anzahl an Generationen
-- Anzahl Level die bereitstellen (6 8 10 12 vs 5 6 8 16 zB)
+- Anzahl Level die benutzt wurden (6 8 10 12 vs 5 6 8 16 zB)
 einschärnkungen auch benenne ( alle kombinationen nicht möglich zu testen) -> es geht um Gefühl kriegen
 am ende ggf bayesian optimization ( zB 2 Params gleichzeitg variieren lasesn)
 

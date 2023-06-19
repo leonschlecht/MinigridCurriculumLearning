@@ -6,7 +6,6 @@ from training.PPO import MyPPOAlgo
 from utils import device
 from model import ACModel
 
-
 def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: list, args, txt_logger) -> int:
     """
     :param currentFramesDone:
@@ -24,16 +23,11 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     tb_writer = tensorboardX.SummaryWriter(model_dir)
 
     utils.seed(args.seed)
-
     # Load environments
     envs = []
     for i in range(args.procs // len(envList)):
         for j in range(len(envList)):
             envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
-
-    i = args.procs // len(envList)
-    for j in range(args.procs - len(envList)):
-        envs.append(utils.make_env(envList[j], args.seed + 10000 * (i * len(envList) + j)))
 
     assert len(envs) == args.procs, f"Length of envs {len(envs)} is not equal to amount of processes {args.procs}"
     assert args.procs % args.paraEnv == 0, \
@@ -66,6 +60,8 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     if framesToTrain == 0:
         txt_logger.info(f'{acmodel}')
         txt_logger.info(f'Created model {model}')
+        tb_writer.close()
+        csv_file.close()
         return 0
     algo = MyPPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                      args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
@@ -76,7 +72,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
 
-    print("done=", currentFramesDone, "toTrain=", framesToTrain) # TODO remove
     while currentFramesDone < framesToTrain:
         update_start_time = time.time()
 
@@ -118,7 +113,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
                 csv_logger.writerow(header)
             csv_logger.writerow(data)
             csv_file.flush()
-
             for field, value in zip(header, data):
                 tb_writer.add_scalar(field, value, currentFramesDone)
 
@@ -132,6 +126,8 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             # txt_logger.info("\t\tStatus saved")
 
     txt_logger.info(f'\n\tTrained on {envList} using model {model} for {framesWithThisEnv} frames')
+    algo.env.end()
     algo.env.close()
     tb_writer.close()
+    csv_file.close()
     return status["num_frames"]

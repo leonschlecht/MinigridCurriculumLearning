@@ -1,12 +1,6 @@
 import multiprocessing
 import gymnasium as gym
 
-from Minigrid.minigrid.wrappers import ViewSizeWrapper
-
-if __name__ == "__main__":
-    multiprocessing.set_start_method("fork")  # TODO this should crash but it doesnt ???
-    x = 0
-
 
 def worker(conn, env):
     while True:
@@ -20,6 +14,8 @@ def worker(conn, env):
             elif cmd == "reset":
                 obs, _ = env.reset()
                 conn.send(obs)
+            elif cmd == "end":
+                break
             else:
                 raise NotImplementedError
         except:
@@ -58,6 +54,10 @@ class MyParallelEnv(gym.Env):
             obs, _ = self.envs[0].reset()
         results = zip(*[(obs, reward, terminated, truncated, info)] + [local.recv() for local in self.locals])
         return results
+
+    def end(self):
+        for local in self.locals:
+            local.send(("end", None))
 
     def render(self):
         raise NotImplementedError

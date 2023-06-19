@@ -72,6 +72,8 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     }
 
     env.reset()
+    env.end()
+    env.close()
     return evaluationResult
 
 
@@ -85,17 +87,6 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
         # TODO check if this is even useful anymore and not already covered by other logfile
     txtLogger.info(f"Evaluation of {model} succeeded")
     return results
-
-
-
-def getDifficultyMultiplier(difficulty):
-    if difficulty == 0:
-        return 1
-    elif difficulty == 1:
-        return 1.1
-    elif difficulty == 2:
-        return 1.2
-    raise Exception("Something went wrong with the difficulty multiplier! input difficulty:", difficulty)
 
 
 def evaluateAgent(model, difficulty, args, txtLogger) -> int:
@@ -114,5 +105,5 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     for evalEnv in envs:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv)
         rewardSum += currentReward
-    print("Evaluate agent TEST", rewardSum * getDifficultyMultiplier(difficulty))
-    return rewardSum * getDifficultyMultiplier(difficulty)
+    print("Evaluate agent TEST", rewardSum)
+    return rewardSum
