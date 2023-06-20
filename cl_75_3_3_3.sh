@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=c4_75_3_3_3
-#SBATCH --output=c4_75_3_3_3curricRun_%j_out.txt
+#SBATCH --job-name=c75_3_3_3
+#SBATCH --output=c5_75_3_3_3curricRun_%j_out.txt
 #SBATCH --time=20:59:00
 #SBATCH --partition=cpu_normal_stud,cpu_long_stud
 #SBATCH --exclude=cp2019-11,cc1l01
@@ -10,7 +10,8 @@
 
 echo "------------Cluster Job Start-----------------------"
 
-srun -c 3 -v python3 -m scripts.trainCurriculum --procs 48 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 75000 --model s8515_75k_3step_3gen_3 curric --trainEpochs 67 --seed 8515
+srun -c 2 -v python3 -m scripts.trainCurriculum --procs 32 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 75000 --model 75k_3step_3gen_3curric_s8258 --trainEpochs 67 --seed 8258
+
 
 echo "---------- Cluster Job End ---------------------"
 
