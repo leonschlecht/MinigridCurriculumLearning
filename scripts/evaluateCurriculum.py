@@ -178,6 +178,7 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way to cut things off
 
+iterationSteps = "iterationSteps"
 
 def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], "Model List must not be empty"
@@ -194,17 +195,19 @@ def getSpecificModel(specificModelList: list, modelName: str):
 
     dfRow = []
     for result in results:
-        dfRow.append({"snapshotScore": result.snapShotScores,
+        assert (len(result.snapShotScores)) == (len(result.bestCurricScore)) == (len(result.avgEpochRewards))
+        dfRow.append({"snapshotScore": np.array(result.snapShotScores),
                       "bestCurricScore": result.bestCurricScore,  # TODO careful with AllPara
                       "avgEpochRewards": result.avgEpochRewards,  # TODO careful with allPara
                       "snapshotDistribution": result.snapshotEnvDistribution,
                       "bestCurricDistribution": result.bestCurriculaEnvDistribution,
                       "allCurricDistribution": result.allCurricDistribution,
                       "id": modelName,
-                      "iterPerEnv": result.iterationsPerEnv})
+                      iterationSteps: np.array(result.iterationsList)})
     df = pd.DataFrame(dfRow)
     # TODO assert all iterPerEnv are equal ?
     return df
+
 
 
 def getAllModels(logfilePaths: list[list]):
@@ -243,27 +246,24 @@ def main():
         dataFrame = getSpecificModel(specificModelList, args.model)
     else:
         dataFrame = getAllModels(fullLogfilePaths)
+    print("\ndataframe\n", dataFrame)
 
-    sns.set_theme(style="darkgrid")
-    sns.lineplot(x="snapshotScore", y="iterPerEnv", data=dataFrame)
+    import numpy as np
+    print("---------------")
+    df = dataFrame.head(1)
+    print((df[iterationSteps]))
+    sns.lineplot(data=df[iterationSteps])
+    # sns.lineplot(x=iterationSteps, y=iterationSteps, data=dataFrame)
+
+    # Set the labels and title
+    plt.xlabel('iterDone')
+    plt.ylabel('snapval')
+    plt.title('Plot of snapval vs iterDone for id=1 and id=2')
+    # Show the legend
+    plt.legend()
+
+    # Show the plot
     plt.show()
-    exit()
-
-    """
-    # DEPRECATED 
-    modelNamesList = [res.modelName for res in resultClasses]
-
-    plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
-    # plotDifficulty(resultClasses, "Overview of Difficulty List", modelNamesList)
-    plotSnapshotEnvDistribution(resultClasses, "First Step Env Distribution")
-
-    plotBestCurriculumResults(resultClasses, "Reward of Best Curriculum per Epoch", modelNamesList)
-    plotDistributionOfBestCurric(resultClasses, "Best Curricula Env Distribution")
-
-    plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNamesList)
-    plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
-    """
-    # TODO the plotDistributionOfAllCurric should not have a shared x-axis; or at least still use epochs and not scale ???
 
 
 if __name__ == "__main__":

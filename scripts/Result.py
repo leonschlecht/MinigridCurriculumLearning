@@ -38,8 +38,7 @@ class Result:
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
 
         if self.loadedArgsDict[trainEvolutionary]:  # TODO to method
-            self.epochDict = self.getEpochDict(self.rewardsDict) # TODO THIS SEEMS BUGGED ??? / why does it only show g1,g2,g3
-            print("ep dict", self.epochDict)
+            self.epochDict = self.getEpochDict(self.rewardsDict)  # TODO THIS SEEMS BUGGED ??? / why does it only show g1,g2,g3
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
             self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
             for epochKey in self.rewardsDict:
@@ -72,9 +71,14 @@ class Result:
             # TODO can probably copy some stuff from the trainevolutioanry thigns above
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
+        self.iterationsList = []
+        for i in range(1, self.epochsTrained + 1):
+            self.iterationsList.append(self.iterationsPerEnv * i)
+
         print("modelname:", self.modelName)
         assert self.bestCurricScore != []
         assert self.avgEpochRewards != []
+        assert len(self.iterationsList) == len(self.snapShotScores)
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys()) or not self.loadedArgsDict[trainEvolutionary]
         assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.logFilepath}"
