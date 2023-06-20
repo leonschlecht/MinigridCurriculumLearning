@@ -1,7 +1,6 @@
 import torch
 
 import utils
-from Minigrid.minigrid.wrappers import ViewSizeWrapper
 from .other import device
 from model import ACModel
 
