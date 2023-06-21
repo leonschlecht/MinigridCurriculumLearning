@@ -22,7 +22,8 @@ def main():
     # TODO add --debug option with some preset parameters, and only use more params if != default ones (+ rnd model name)
 
     # TODO this is not clear if it creates a folder or not
-    txtLogger = utils.get_txt_logger(utils.get_model_dir(args.model))
+    model = args.model + "_s" + str(args.seed)
+    txtLogger = utils.get_txt_logger(utils.get_model_dir(model))
     startTime: datetime = datetime.now()
 
     ############
