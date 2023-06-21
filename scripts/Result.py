@@ -28,6 +28,7 @@ class Result:
         self.trainingTimeSum = evaluationDictionary[sumTrainingTime]
         self.modelName = modelName
         self.iterationsPerEnv = self.getIterationsPerEnv(evaluationDictionary, self.loadedArgsDict)
+        self.iterationsPerEnv = int(self.loadedArgsDict["iterPerEnv"])
         self.logFilepath = logfilePath
 
         self.snapShotScores = self.getSnapshotScores(evaluationDictionary, self.modelPerformance)
@@ -53,7 +54,7 @@ class Result:
                                                                                      usedEnvEnumeration)
 
         elif self.loadedArgsDict[trainAllParalell]:
-            print("AllPara detected")
+            # print("AllPara detected")
             self.allCurricDistribution = []
             bestCurricScores = self.snapShotScores
             avgEpochRewards = self.snapShotScores
@@ -62,7 +63,6 @@ class Result:
                 self.snapshotEnvDistribution[env] = self.epochsTrained
             self.bestCurriculaEnvDistribution = self.snapshotEnvDistribution
             self.allCurricDistribution = self.snapshotEnvDistribution
-            print(self.snapshotEnvDistribution)
             # TODO there is still the differentiation between adjusting the envs used and using all 4 at the same time
         elif self.loadedArgsDict[trainBiasedRandomRH]:
             print("biased random rh detected")
@@ -76,7 +76,6 @@ class Result:
             self.iterationsList.append(self.iterationsPerEnv * i)
 
         # print("modelname:", self.modelName)
-        print(len(self.snapShotScores))
         errorPrefix = f"model: {self.modelName}_s{self.loadedArgsDict[seedKey]}:"
         assert self.bestCurricScore != []
         assert self.avgEpochRewards != []

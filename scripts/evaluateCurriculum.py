@@ -185,7 +185,6 @@ iterationSteps = "iterationSteps"
 
 def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], "Model List must not be empty"
-
     results = []
     for logPath in specificModelList:
         with open(logPath, 'r') as f:
@@ -214,7 +213,7 @@ def getSpecificModel(specificModelList: list, modelName: str):
                         "allCurricDistribution": result.allCurricDistribution,
                         "id": modelName})
     rewardScoreDf = pd.DataFrame(scoreHelper)
-    print("median", medianLen, "; ", max(medianLen))
+    # print("median", medianLen, "; ", max(medianLen))
     medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
     rewardScoreDf = rewardScoreDf[rewardScoreDf[iterationSteps] <= results[0].iterationsPerEnv * medianLen]
 
@@ -233,7 +232,7 @@ def getAllModels(logfilePaths: list[list]):
     return scoreDf, distrDf
 
 
-def main():
+def main(comparisons):
     evalDirBasePath = storage.getLogFilePath(["storage", "save", "evaluate"])
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
@@ -261,30 +260,50 @@ def main():
         scoreDf, distrDf = getSpecificModel(specificModelList, args.model)
     else:
         scoreDf, distrDf = getAllModels(fullLogfilePaths)
-    print("\ndataframe\n", scoreDf)
-    print(scoreDf["id"].unique())
+
     models = scoreDf["id"].unique()
+    filteredDf = []
     sns.set_theme(style="dark")
-    for m in models:
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=scoreDf[scoreDf["id"] == m])
-        print(scoreDf[scoreDf["id"] == m])
-        print("-------------------------------------------")
-    if args.model is not None:
-        # sns.scatterplot(x=x_average, y=y_average, color="red", marker="X", s=100)
-        print("scatter thingys")
+    if args.model is None and not args.skip:
+        modelsEntered = 0
+        print("Available models\n", models)
+        while modelsEntered < comparisons:
+            val = input("Enter model\n")
+            if val in models:
+                print("added:", val)
+                modelsEntered += 1
+                filteredDf.append(scoreDf[scoreDf["id"] == val])
+            else:
+                print("Model doesnt exist. Enter again\n")
+        for df in filteredDf:
+            sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"])
+        plt.show()
+    if args.model is not None and not args.skip:
+        filteredDf = scoreDf[scoreDf["id"] == args.model]
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredDf, label=args.model)
+        plt.show()
+    if args.skip:
+        print("starting evaluation. . .")
+        for m in models:
+            modelDf = scoreDf[scoreDf["id"] == m]
+            filteredIterDf = modelDf[iterationSteps]
+            firstIterVal = filteredIterDf[0]
+            occur = len(filteredIterDf[filteredIterDf == firstIterVal])
+            print(f"{occur} experiments done with {m}")
+            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
+            plt.legend()
+            plt.show()
 
 
-    plt.legend() # TODO
-
-    # Show the plot
-    plt.show()
-    filepath = Path('./out.csv')
-    filepath.parent.mkdir(parents=True, exist_ok=True)
+    # filepath = Path('./out.csv') # TODO save as csv
+    # filepath.parent.mkdir(parents=True, exist_ok=True)
     # scoreDf.to_csv(filepath, index=False)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
+    parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
+    parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     args = parser.parse_args()
-    main()
+    main(args.comparisons)
