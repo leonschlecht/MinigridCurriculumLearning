@@ -72,18 +72,23 @@ class Result:
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
         self.iterationsList = []
-        for i in range(1, self.epochsTrained + 1):
+        for i in range(1, len(self.snapShotScores)+1):
             self.iterationsList.append(self.iterationsPerEnv * i)
 
-        print("modelname:", self.modelName)
+        # print("modelname:", self.modelName)
+        print(len(self.snapShotScores))
+        errorPrefix = f"model: {self.modelName}_s{self.loadedArgsDict[seedKey]}:"
         assert self.bestCurricScore != []
         assert self.avgEpochRewards != []
-        assert len(self.iterationsList) == len(self.snapShotScores)
+        assert len(self.iterationsList) == len(self.snapShotScores), \
+            f"{errorPrefix} {len(self.iterationsList)} and {len(self.snapShotScores)} "
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys()) or not self.loadedArgsDict[trainEvolutionary]
         assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.logFilepath}"
         assert sum(self.snapshotEnvDistribution.values()) > 0
         assert sum(self.bestCurriculaEnvDistribution.values()) > 0
+        assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards),\
+            f"{errorPrefix} {len(self.snapShotScores)}, {len(self.bestCurricScore)}, {len(self.avgEpochRewards)}"
 
     @staticmethod
     def getTrainEvolutionary(param):
@@ -175,6 +180,7 @@ class Result:
     def finishAggregation(self, snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr, avgBestCurricDistr,
                           avgAllCurricDistr, amountOfTrainingRuns: int) -> None:
         # # TODO (Maybe aggregate difficulty too)
+        # TODO is this still needed ?
         assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards)
 
         self.snapShotScores = np.divide(snapshotScores, amountOfTrainingRuns)

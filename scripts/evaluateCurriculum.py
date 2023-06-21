@@ -179,7 +179,9 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way to cut things off
 
+
 iterationSteps = "iterationSteps"
+
 
 def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], "Model List must not be empty"
@@ -192,33 +194,43 @@ def getSpecificModel(specificModelList: list, modelName: str):
         if (trainingInfoDictionary[epochsDone]) > 1:
             results.append(Result(trainingInfoDictionary, modelName, logPath))
         else:
-            print("Epochs <= 1")
+            print("Epochs <= 1", logPath)
 
-    dfRow = []
+    scoreHelper = []
+    distributionHelper = []
+    medianLen = []
     for result in results:
-        assert (len(result.snapShotScores)) == (len(result.bestCurricScore)) == (len(result.avgEpochRewards))
-        dfRow.append({"snapshotScore": tuple(result.snapShotScores),
-                      "bestCurricScore": result.bestCurricScore,
-                      "avgEpochRewards": result.avgEpochRewards,
-                      "snapshotDistribution": result.snapshotEnvDistribution,
-                      "bestCurricDistribution": result.bestCurriculaEnvDistribution,
-                      "allCurricDistribution": result.allCurricDistribution,
-                      "id": modelName,
-                      iterationSteps: tuple(result.iterationsList)})
-        print(result.snapshotEnvDistribution)
-        exit()
-    df = pd.DataFrame(dfRow)
-    # TODO assert all iterPerEnv are equal ?
-    return df
+        medianLen.append(result.epochsTrained)
+        # Create DF1 for scores etc
+        for i in range(len(result.snapShotScores)):
+            scoreHelper.append({"snapshotScore": result.snapShotScores[i],
+                            "bestCurricScore": result.bestCurricScore[i],
+                            "avgEpochRewards": result.avgEpochRewards[i],
+                            "id": modelName,
+                            iterationSteps: result.iterationsList[i]})
 
+        distributionHelper.append({"snapshotDistribution": result.snapshotEnvDistribution,
+                        "bestCurricDistribution": result.bestCurriculaEnvDistribution,
+                        "allCurricDistribution": result.allCurricDistribution,
+                        "id": modelName})
+    rewardScoreDf = pd.DataFrame(scoreHelper)
+    print("median", medianLen, "; ", max(medianLen))
+    medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
+    rewardScoreDf = rewardScoreDf[rewardScoreDf[iterationSteps] <= results[0].iterationsPerEnv * medianLen]
+
+    # TODO assert all iterPerEnv are equal ?
+    distributionDf = pd.DataFrame(distributionHelper)
+    return rewardScoreDf, distributionDf
 
 
 def getAllModels(logfilePaths: list[list]):
-    df = pd.DataFrame()
+    scoreDf = pd.DataFrame()
+    distrDf = pd.DataFrame()
     for logfilePath in logfilePaths:
-        tmpDf: pd.DataFrame = getSpecificModel(logfilePath[0], logfilePath[1])
-        df = df.append(tmpDf)
-    return df
+        tmpScoreDf, tmpDistrDf = getSpecificModel(logfilePath[0], logfilePath[1])
+        scoreDf = scoreDf.append(tmpScoreDf)
+        distrDf = distrDf.append(tmpDistrDf)
+    return scoreDf, distrDf
 
 
 def main():
@@ -246,27 +258,26 @@ def main():
             break
 
     if args.model is not None:
-        dataFrame = getSpecificModel(specificModelList, args.model)
+        scoreDf, distrDf = getSpecificModel(specificModelList, args.model)
     else:
-        dataFrame = getAllModels(fullLogfilePaths)
-    print("\ndataframe\n", dataFrame)
+        scoreDf, distrDf = getAllModels(fullLogfilePaths)
+    print("\ndataframe\n", scoreDf)
+    print(scoreDf)
+    sns.lineplot(x=iterationSteps, y="snapshotScore", data=scoreDf)
+    if args.model is not None:
+        # sns.scatterplot(x=x_average, y=y_average, color="red", marker="X", s=100)
+        print("scatter thingys")
 
-    print("---------------")
-    df = dataFrame.head(1)
-    print((df[iterationSteps]))
-    print(df["snapshotDistribution"])
+    plt.xlabel('iterations done')
+    plt.ylabel('reward score')
 
-    sns.lineplot(x=iterationSteps, y=iterationSteps, data=df)
-
-    # Set the labels and title
-    plt.xlabel('iterDone')
-    plt.ylabel('snapval')
-    plt.title('Plot of snapval vs iterDone for id=1 and id=2')
-    # Show the legend
-    plt.legend()
+    plt.legend() # TODO
 
     # Show the plot
     plt.show()
+    filepath = Path('./out.csv')
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+    # scoreDf.to_csv(filepath, index=False)
 
 
 if __name__ == "__main__":
