@@ -10,6 +10,7 @@ from scripts.Result import Result
 from utils import storage
 from utils.curriculumHelper import *
 from matplotlib.ticker import MaxNLocator
+import numpy as np
 
 
 def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
@@ -196,14 +197,16 @@ def getSpecificModel(specificModelList: list, modelName: str):
     dfRow = []
     for result in results:
         assert (len(result.snapShotScores)) == (len(result.bestCurricScore)) == (len(result.avgEpochRewards))
-        dfRow.append({"snapshotScore": np.array(result.snapShotScores),
-                      "bestCurricScore": result.bestCurricScore,  # TODO careful with AllPara
-                      "avgEpochRewards": result.avgEpochRewards,  # TODO careful with allPara
+        dfRow.append({"snapshotScore": tuple(result.snapShotScores),
+                      "bestCurricScore": result.bestCurricScore,
+                      "avgEpochRewards": result.avgEpochRewards,
                       "snapshotDistribution": result.snapshotEnvDistribution,
                       "bestCurricDistribution": result.bestCurriculaEnvDistribution,
                       "allCurricDistribution": result.allCurricDistribution,
                       "id": modelName,
-                      iterationSteps: np.array(result.iterationsList)})
+                      iterationSteps: tuple(result.iterationsList)})
+        print(result.snapshotEnvDistribution)
+        exit()
     df = pd.DataFrame(dfRow)
     # TODO assert all iterPerEnv are equal ?
     return df
@@ -248,12 +251,12 @@ def main():
         dataFrame = getAllModels(fullLogfilePaths)
     print("\ndataframe\n", dataFrame)
 
-    import numpy as np
     print("---------------")
     df = dataFrame.head(1)
     print((df[iterationSteps]))
-    sns.lineplot(data=df[iterationSteps])
-    # sns.lineplot(x=iterationSteps, y=iterationSteps, data=dataFrame)
+    print(df["snapshotDistribution"])
+
+    sns.lineplot(x=iterationSteps, y=iterationSteps, data=df)
 
     # Set the labels and title
     plt.xlabel('iterDone')
