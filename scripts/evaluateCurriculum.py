@@ -262,14 +262,17 @@ def main():
     else:
         scoreDf, distrDf = getAllModels(fullLogfilePaths)
     print("\ndataframe\n", scoreDf)
-    print(scoreDf)
-    sns.lineplot(x=iterationSteps, y="snapshotScore", data=scoreDf)
+    print(scoreDf["id"].unique())
+    models = scoreDf["id"].unique()
+    sns.set_theme(style="dark")
+    for m in models:
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=scoreDf[scoreDf["id"] == m])
+        print(scoreDf[scoreDf["id"] == m])
+        print("-------------------------------------------")
     if args.model is not None:
         # sns.scatterplot(x=x_average, y=y_average, color="red", marker="X", s=100)
         print("scatter thingys")
 
-    plt.xlabel('iterations done')
-    plt.ylabel('reward score')
 
     plt.legend() # TODO
 
