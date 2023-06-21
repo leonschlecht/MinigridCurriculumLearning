@@ -92,7 +92,8 @@ class RollingHorizon(ABC):
                                    self.stepMaxReward, self.totalEpochs)
 
             self.resetEpochVariables()
-
+        self.trainingInfoJson["done"] = True
+        saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
         printFinalLogs(self.trainingInfoJson, self.txtLogger)
 
     def trainACurriculum(self, i: int, iterationsDone: int, genNr: int, curricula: list) -> ndarray:
@@ -216,6 +217,7 @@ class RollingHorizon(ABC):
                             maxStepRewardKey: stepMaxReward,
                             maxCurricRewardKey: curricMaxReward,
                             epochsDone: 1,
+                            "done": False,
                             epochTrainingTime: [],
                             snapshotScoreKey: [],
                             sumTrainingTime: 0,
