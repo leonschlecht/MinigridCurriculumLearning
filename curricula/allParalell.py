@@ -25,7 +25,7 @@ class allParalell:
         TOTAL_ITERATIONS = 10000000
         self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
         self.trainingTime = 0
-        self.model = args.model + "s_" + self.seed
+        self.model = args.model + "s_" + str(self.seed)
 
         self.selectedModel = self.model + os.sep + "model"
 
