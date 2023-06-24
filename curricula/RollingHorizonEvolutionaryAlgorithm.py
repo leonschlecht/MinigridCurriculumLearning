@@ -43,7 +43,6 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         genNrStr = list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][len(GEN_PREFIX):]
         listIdx = int(keyIndexPairOfMaxReward[1])
         return genNrStr, listIdx
-        # TODO this returns something like ('3', 0); should probably return (3, 0)
 
     def executeOneEpoch(self, epoch: int):
         algorithm = NSGA2(pop_size=self.numCurric,
@@ -52,7 +51,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
                           mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
                           eliminate_duplicates=True,
                           )
-        # TODO nsga3 ref dirs ????
+
         # NSGA2 Default: # sampling: FloatRandomSampling = FloatRandomSampling(),
         # selection: TournamentSelection = TournamentSelection(func_comp=binary_tournament),
         # crossover: SBX = SBX(eta=15, prob=0.9),
