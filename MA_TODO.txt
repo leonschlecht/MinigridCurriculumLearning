@@ -1,13 +1,5 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-Morgen:
-1-2h neue runs starten. Bei
-    - jedem exp schauen wie weit es gekommen ist, und da weitermachen bis finished
-    - notieren welche runs und welche seeds durch sind. ggf eine tabelle dafür anlegen
-5-6h: Basic Chapter machen
-    - Literaturliste für CL anlegen
-    - 5 Seiten schreiben
-    - 2 Abbildungen raussuchen
 
 
 GA RUNS
@@ -33,30 +25,25 @@ AllPara const diff
 - sehr schneller anstieg, aber erst 400k und 1x
 
 
-NSGA RUNS
-100 3 3 3: 20G & 3c, 32 procs
 
-50 3 3 3: 10G 2 cc, 32proc
+
+NSGA RUNS
+100 3 3 3: 20G & 3c, 32 procs ---> DONE ?
+
+50 3 3 3: 10G 2 cc, 32proc c
 
 25 4s 3 3: 20G 3c 48 proc
 
 25 3 4g 3: 20G 2c 48proc
+25 3 3 3
 
+25 7s 1g 3: -> zu Viele CPUs & memory (ich glaube limit sind 80 CPUs und ?? 25 * 20G + bisschen was
 
-seeds = [1,
-         # 9152,
-         # 2330,
-         # 1214,
-         8515]
-
-
-50er vllt fehlerhaft ?? nicht losgeshcickt alle
 
 =================================================
-Why are some of the seed=1 runs having differnet snapshotscore length compared with the other runs ?
-think about how to plot the curriculum progressions
-should eval distr. also be normalized? Because it looks distorted otherwise
-Warum geht das mit dem snapshotscore bei manchen nicht( Bzw 1 unterschied? 75k 3 3 3 s1; oder 100k 4s 3g 3c_s1 ---> ggf wenn DONE ?
+- Why are some of the seed=1 runs having differnet snapshotscore length compared with the other runs ?
+- should eval distr. also be normalized? Because it looks distorted otherwise
+- Warum geht das mit dem snapshotscore bei manchen nicht( Bzw 1 unterschied? 75k 3 3 3 s1; oder 100k 4s 3g 3c_s1 ---> ggf wenn DONE ?
 
 
 envDistribution aufteilen in einzelne spalten
@@ -68,11 +55,14 @@ stackedBarplot: heatmap: zeile curricula, spalte environments; Rot markeiren was
 Themen:
 - 4W 1. Draft
 - Gliederung besprechen
-- Welche Experimente noch starten? (Vllt ins Extrem treiben)
 - Bis nächstes mal: NSGA Experimente; Eval: was vorzeigen; Kapitel 1 & 2 schreiben
 - models behalten oder löschen
 
-
+NEXT W:
+- anderen trainigsalgorithmus
+- andere Envs?
+- welche parameter alles testen?
+- clusterjobs optimieren?
 
 
 ---------------------------------------------------
@@ -81,31 +71,7 @@ Themen:
 -normalize env distr (and keep other one too)
 
 
-============================================================
-SEEDLISTE
- 1
- 9152
- 2330
- 1214
- 8515
- 2529
- 8258
- 1517
-  185
- 3053
- 9030
- 4221
- 2450
- 7477
- 1938
- 1291
- 8646
- 1032
- 6646
- 1315
- 6471
- 3259
- 9607
+
 
 
 =============================================================
@@ -115,11 +81,6 @@ SEEDLISTE
 
 
 - Brauchen wir nicht einen anderen trainingsalgortihmus? Wie kann man das erklären mit dem "ja durch 10x10 trainieren wurde er im 12x12 besser; aber immer beim 12x12 trainieren hat er alles verlernt"
-
-
-Für MA:
-Difficulty Spikes: 1 Model zeigen & 1 linie anschauen (difficulty daneben plotten) ; spikes erklären dadurch
-
 
 
 
@@ -219,3 +180,30 @@ am ende ggf bayesian optimization ( zB 2 Params gleichzeitg variieren lasesn)
 ===
 ZUR MA
 60-80 Seiten
+
+
+============================================================
+SEEDLISTE
+ 1
+ 9152
+ 2330
+ 1214
+ 8515
+ 2529
+ 8258
+ 1517
+  185
+ 3053
+ 9030
+ 4221
+ 2450
+ 7477
+ 1938
+ 1291
+ 8646
+ 1032
+ 6646
+ 1315
+ 6471
+ 3259
+ 9607

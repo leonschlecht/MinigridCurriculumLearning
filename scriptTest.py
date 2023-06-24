@@ -1,26 +1,41 @@
-seeds = [1,
-         # 9152,
-         # 2330,
-         # 1214,
-         8515]
-experiments = [
-    "NSGA_100k_3s_3g_3c",
-    "NSGA_100k_3s_4g_3c",
-    "NSGA_100k_4s_3g_3c",
+import os
+import subprocess
 
-]
+seeds = [1,
+         9152,
+         2330,
+         1214,
+         8515]
+experiments = []
+
+
+def make_experiments(algo: str, iterationsPerEnv: int, stepsPerCurric: int, nGen: int, numCurric: int):
+    """
+
+    :param algo:
+    :param iterationsPerEnv: iterations per Env in 100k
+    :param stepsPerCurric:
+    :param nGen:
+    :param numCurric:
+    :return:
+    """
+    experiment = f"{algo}_{iterationsPerEnv}k_{stepsPerCurric}s_{nGen}g_{numCurric}c"
+    if experiment in experiments:
+        raise Exception("Experiment with those parameters already exists!")
+    experiments.append(experiment)
+
 
 template = '''#!/bin/bash
-#SBATCH --job-name=c_{jobName}
-#SBATCH --output=c_{name}_%j_out.txt
-#SBATCH --time=23:59:00
-#SBATCH --partition=cpu_normal_stud,cpu_long_stud
+#SBATCH --job-name=c{jobName}
+#SBATCH --output={outputName}_%j_out.txt
+#SBATCH --time=47:59:00
+#SBATCH --partition=cpu_long_stud
 #SBATCH --exclude=cp2019-11,cc1l01
-#SBATCH --cpus-per-task=3
+#SBATCH --cpus-per-task=4
 #SBATCH --mem=20G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
-srun -c 3 -v python3 -m scripts.trainCurriculum --procs 48 --numCurric {numCurric} --stepsPerCurric {stepsPerCurric] --nGen {gen} --iterPerEnv {iterPerEnv} --model {modelName} --seed {seed}
+srun -c 4 -v python3 -m scripts.trainCurriculum --procs 32 --numCurric {numCurric} --stepsPerCurric {stepsPerCurric} --nGen {gen} --iterPerEnv {iterPerEnv} --model {modelName} --seed {seed}
 echo "---------- Cluster Job End ---------------------"
 '''
 
@@ -48,24 +63,49 @@ def createScripts():
             stepsPerCurric = getDigits(expSplit[2])
             nGen = getDigits(expSplit[3])
             curricAmount = getDigits(expSplit[4])
-            print(iterations)
             fullScripts.append(filename)
-            with open(filename, "w") as file:
-                file.write(template.format(
-                    jobName=fullExperimentName,
-                    outputName=experiment,
-                    numCurric=curricAmount,
-                    stepPerCurric=stepsPerCurric,
-                    gen=nGen,
-                    iterPerEnv=iterations,
-                    modelName=experiment,
-                    seed=seed)
-                )
+            if not os.path.isfile(filename):
+                with open(filename, "w+") as file:
+                    formatted = template.format(
+                        jobName=fullExperimentName,
+                        outputName=experiment,
+                        numCurric=curricAmount,
+                        stepsPerCurric=stepsPerCurric,
+                        gen=nGen,
+                        iterPerEnv=iterations,
+                        modelName=experiment,
+                        seed=seed)
+                    file.write(formatted)
+            else:
+                print("file exists already", filename)
+        print("All Scripts created!")
 
-        def executeScripts():
-            print("executing...")
-            print(fullScripts)
 
-        if __name__ == "__main__":
-            createScripts()
-            executeScripts()
+def executeScripts():
+    for script in fullScripts:
+        path = "./" + script
+        print("path", path)
+        result = subprocess.call(["sbatch", path])
+
+        if result == 0:
+            print("Script executed successfully!")
+        else:
+            raise Exception("Script execution failed.")
+    print("All Scripts started")
+
+
+if __name__ == "__main__":
+    # make_experiments(algo="NSGA", iterationsPerEnv=100, stepsPerCurric=3, nGen=3, numCurric=3)  # EXPERIMENT DONE
+    make_experiments(algo="NSGA", iterationsPerEnv=50, stepsPerCurric=3, nGen=3, numCurric=3) # cancel tmrw
+    make_experiments(algo="NSGA", iterationsPerEnv=25, stepsPerCurric=4, nGen=3, numCurric=3) # cancel tmrw
+    make_experiments(algo="NSGA", iterationsPerEnv=25, stepsPerCurric=3, nGen=4, numCurric=3) # cancel tmrw
+    make_experiments(algo="NSGA", iterationsPerEnv=25, stepsPerCurric=3, nGen=3, numCurric=3) # cancel tomorrow
+    make_experiments(algo="NSGA", iterationsPerEnv=25, stepsPerCurric=3, nGen=3, numCurric=3) # cancel tomorrow
+    make_experiments(algo="NSGA", iterationsPerEnv=25, stepsPerCurric=7, nGen=1, numCurric=3) # Runs 48h on multiple cpu
+
+    # make_experiments(algo="NSGA", iterationsPerEnv=100, stepsPerCurric=3, nGen=4, numCurric=3) # NOT STARTED
+    # make_experiments(algo="NSGA", iterationsPerEnv=100, stepsPerCurric=4, nGen=3, numCurric=3) # NOT STARTED
+
+    createScripts()
+
+    # executeScripts()
