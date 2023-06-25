@@ -1,150 +1,93 @@
-Themen:
-- 4W 1. Draft
-- Gliederung besprechen
-- Seitenzahl ? (ballpark für jedes kapitel)
-- Was kommt in die Intro?
-- Welche Experimente noch starten? (Vllt ins Extrem treiben)
-- Bis nächstes mal: NSGA Experimente; Eval: was vorzeigen; Kapitel 1 & 2 schreiben
-- models behalten oder löschen
+eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-=================
+Morgen
+- Teacherstudent Teil in RW fertig (also das 1 Paper durch & schon mit sätzen formuliert; 2. paper anfangen zu lesen und stichpunkte machen)
+- Types of CL Teacherstudent hinzufügen & 1 andere methode
 
-- Wichtig: diff evaluieren
-- Alte Modelsachen automatisch löschen
+
+
+wie begründet man die EnvWahl? Welche Domain ist das genau?
+Limitation: es gibt nur 4 envs; sonst könnte man evtl auch irgendwann sagen "hey xyz ist zu einfach, das müssen wir nicht ständig zeigen" ; die random init ist evtl etwas ineffizient für den Algorithmus, weil man die aktuellen fähigkeiten nicht berücksichtigt ;;
+- L2: easy and hard might be more clear, if there were more environments / data to chooes from
+- Unclear how RHEA with model-driven would work / look like or if it would even make sense in the slightest
+
 
 
 TODO
-- Schreiben anfangen
-- Eval weiter (ID spalte) & mit barplots testen
+- CL Types Kapitel (Fokussiere dich auf 5-6 Paper)
+- 2 Grafiken einbinden (smoothing Nr1, und vllt die data driven / model driven #2)
+
+
+--
+- Ich brauche eine Self paced baseline & evtl ein teacher-student
+- Baseline trainieren ohne CL (random order der samples) --> Quasi 1 epoch mit 4 batches
+
+- think about how to plot the curriculum progressions
+
+
+
+
+==============
+
+
+GA RUNS
+100k 3 3 3 -> 3.25kk noch
+- sieht stabil aus, aber muss noch abwarten auf diff increase
+100k 3 4gen 3 -> 3.5kk noch
+- sehr stabil, aber noch auf diff increase warten
+100k 4s 3 3 -> 3,5kk noch
+- sehr jumpy?
+150k 3 3 3
+- sehr stabil
+25k 3 3 3
+- stabil aber noch viel zu wenig
+50k 3 3 3
+- sehr stabil, noch viel zu wenig
+75k 3 3 3
+- stabil, aber noch viel zu wenig
+AllPara
+- scheint schwach zu sein, aber konstant (evtl noch zu früh den absprung gehabt mit den difficulties)
+AllPara const diff
+- 1 Experiment erst; und nur 2kk iter
+25k 7s 4g 3c
+- sehr schneller anstieg, aber erst 400k und 1x
+
+
+=================================================
+- Why are some of the seed=1 runs having differnet snapshotscore length compared with the other runs ?
+- should eval distr. also be normalized? Because it looks distorted otherwise
+- Warum geht das mit dem snapshotscore bei manchen nicht( Bzw 1 unterschied? 75k 3 3 3 s1; oder 100k 4s 3g 3c_s1 ---> ggf wenn DONE ?
+
+envDistribution aufteilen in einzelne spalten
+stackedBarplot: heatmap: zeile curricula, spalte environments; Rot markeiren was oft ist und weiß was weniger
+
+
+
+
+Themen:
+- 4W 1. Draft
+- Gliederung besprechen
+- Bis nächstes mal: NSGA Experimente; Eval: was vorzeigen; Kapitel 1 & 2 schreiben
+- models behalten oder löschen
+
+NEXT W:
+- anderen trainigsalgorithmus
+- andere Envs?
+- welche parameter alles testen?
+- clusterjobs optimieren?
+
+
+---------------------------------------------------
+
+
 -normalize env distr (and keep other one too)
 
 
-==============================
-Aktuelle Runs:
-100k 3 3 3 => 6 done
-
-100k 4step  => 1 fast done nach 40h
- 1 almost done
- 9152 Q
- 2330 Q
- 1214
- 8515
- 2529
-
-50k (3 3 3) ==> 5 done
-
-75k (3 3 3) ==> 3 done
- 1214 Q
- 8515 Q
-
-150k => 5 done
-
-100k 3 4gen 3 =>
-1 DONE
-9152 done
-2330 Q
-1214 Q
-8515 Q
-2529 Q
-
-25k 3 3 3 => seed 1noch nicht done;
- 1 -> 50
- 9152 -> 50
- 2330 Q
- 1214 Q
- 8515 Q
- 2529 Q
 
 
+=============================================================
 
-           1087661 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
-           1087663 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
-           1087660 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
-           1087662 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
-           1087659 cpu_long_ c_100_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
-           1087668 cpu_norma c100_4_3 schlecht PD       0:00      1 (PartitionTimeLimit)
-           1087664 cpu_norma c4_75_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
-           1087665 cpu_norma c4_75_3_ schlecht PD       0:00      1 (PartitionTimeLimit)
-
-
-
-RRH
-    150k
-         1 done
-         9152 almost
-         2330 Q
-         1214 Q
-         8515 Q
-         2529 Q
-         8258 Q
-         1517 Q
-          185 Q
-         3053 Q
-    100k
-        ?
-
-
-    50k mit 5 length & 4 curric
-         1 Q
-         9152 Q
-         2330 Q
-         1214 Q
-         8515 Q
-         2529 Q
-         8258 Q
-         1517 Q
-          185 Q
-         3053 Q
-
-
-
-==============================
-
- 1
- 9152
- 2330
- 1214
- 8515
- 2529
-
- 8258
- 1517
-  185
- 3053 <--- 4s hiermit ?=?
- 9030 <-- 4s 100k hiermit ;;; 100k RRH anpassen auf trainEpochs ;; bzw auf 5 Mio einfach normen dann spar ich das
- 4221
- 2450
- 7477
- 1938
- 1291
- 8646
- 1032
- 6646
- 1315
- 6471
- 3259
- 9607
-
-
-
-
-
-===================
-
-eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
-
-
-- Baseline (
-	alle 4 gleichzeitig;
-	alle 4 dynamisch je nach performance;
-	linear curriculum
-- Experimente
-
-- Vergleich mit SOTA (iwelche teacher-student krams vllt ??
-- Visualisierungen
-	pandas aggr
-	einzelne Experimente filtern (zB Baseline oder Gen oder ...)
-	Todos durchgehen
+# TODO the plotDistributionOfAllCurric should not have a shared x-axis; or at least still use epochs and not scale ???
 
 
 
@@ -152,146 +95,22 @@ eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 
 
-=================================================
-
-
-Q's
-Wie viele Experimente?
-- Generationen ausprobieren (3,4,5. Noch mehr?
-- iterationen pro Curric Schritt ausprobieren (50-200k)
-- Curriclänge (3-5)
-- anderen Evol Alg ausprobieren
-
-
-
--------------------------------------------
-Für MA:
-Difficulty Spikes: 1 Model zeigen & 1 linie anschauen (difficulty daneben plotten) ; spikes erklären dadurch
-
-pandas benutzen: seaborn
-https://seaborn.pydata.org/examples/errorband_lineplots.html
-
-wie lang hat man auf welchen trainiert?
-
-
-========================
-
-Next:
-- Cluster rumprobieren (
-- 2. env oder 2. algo ausprobieren?
-- evaluate merge fertigkriegen
-- diverging curricula vergleich
-
-- RRH run; dynamische baseline mit paraEnv; ...
-- minimal mit schreiben anfangen
-
-
-lineplot startpunkte
------------
-neue todos:
-
-# mit paraEnv & RRH hinbekommen anzuzeigen bzw zu vergleichen (ggf Type in Result oder so als variable für easy access) (2h ~)
-# 2. minigrid env suchen & wenigstens ausführbar machen (2h limit)
-# Recherche für verwendete EA (2h limit)
-
-
  # TODO plot progression of curricula against one another
-- überlegen, wie man sich am besten die Sachen vergleichen kann. Ggf parameter, oder liste an models
 # TODO plot showing differences between earlier and later generations
 # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
 
-
-===============
-
-Performance Plot:
--250k steps (oder 500k)
-- überlegen wie man cutten kann bei ungelcihheit
-- legend out of plot; und irgendwie zu viele Lines
-
-
-Distribution plot:
-- shared y axis? (oder vllt relative Anzahlen benutzen?)
-- auch mit dem YMax umgehen
-- Benennung -> 12x12 in title und dann aus der Legende raus (ggf einfach .split auf den Ordnernamen)
--
-
 todos:
-- baseline + logs (ein mal alles para --> jeweils alle 250k eval
-    ; dann 1x mit entscheiden pro epoch was als nächstes dran kommt)
 - 2. Minigrid Umgebung suchen (oder ertsmal Experimente weiter?);
-- Cluster Test: läuft ohne fehler oder ggf OS Probleme?
-- penv rumprobieren
 
-
-- alle relevanten Experimente backupen / bzw. das status & log davon
-
-
-Maybes:
-- mit dem difficulty score etwas rumprobieren vllt ?
-
-
-
-BESPRECHEN:
-- difficulty score rausnehmen, bzw. nur max 1 Schritt machen (damit hyperparameter weniger und weniger verzerr ist)
-- 2. Umgebung
-- ssh Sachen (wichtig für Note?). + blockiert sein?
-- bald anderen GA ausprobieren
-- Nxt week: ?
-- algo laden dauert .15s auf cluster
-
-
-
-
-Unwichtig:
-- schauen, ob man das Register überhaupt braucht oder direkt in kwargs beim agenten das machen kann
-
-
-
-Home:
-- wie verändert sich die Eval-Zeit wenn man die Episoden erhöht zB auf 25? [vllt auch nur bei j=0 mehr episoden benutzen]
-    - EVAL penv verbessern ; vllt kann man da ja was wiederverwenden; man kann evtl auch args.procs auf args.episdoes setzen ?
-
-- schauen warum %-Performance falsch angezeigt wrude in den logs
 
 ===================================================================
-Experimente:
-2x2 Tage mit --iterPerStep 100000 --numCurric 3 --nGen 3 --stepsPerCurric 3 ( & 5)
-1 Tag baseline (allPara)
-1 Tag andere baseline
-1 Tag RRH 4 curric
-- auch mal mit anderem GA arbeiten --> Literatur
 
-
-Allgemeines / Demnächst:
-- visualisierungen: die Varianten-plots, um zu sehen was sich wie entwickelt hätte
-- Anfangen zu schreiben (ggf 4h erstmal anfangen / Woche bis ende Juni)
-
-
-
-- cuda noch mal probieren ??( https://www.run.ai/guides/gpu-deep-learning/pytorch-gpu )
-
-
-- herausfinden, waru mdie logs vorher korrekt waren ??????? --> Fixen, dass man allF nicht einfach so hat, sondern eingelesen werdne muss
-- check differences cmd line args & when reloading
-
-
-Q's / Ideen:
-- wie backupen die models (damit nicht alles futsch geht)
-- Evaluationen frühzeitig cutten, wenn garbage?
+Random Gedanken
 - Das Unlearning Problem: wie genau funktionieren die updates überhaupt (2560 update schritte, oder 1x pro level)
 - RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist & die Iterationen pro Env noch niedriger sind
-------------------------------------------
-
 - minimize ersetzen auf das .hasNext() und dann abbrechen bei konvergenz (falls man später viele Gens machen will)
 
 
-Results-Evaluation
-- eval: zählen welche env wie oft im training vorkam
-- Experimente-Evaluate ausprobieren, bzw gegeben eine json etwas rumprobieren / stubs erstellen, wie ich damit abeiten kann
-
-
-
-TODO ggf alte Models löschen, wenn man X epochs weiter ist. Solange man die relevanten logs noch hat
 =========================================================================
 MA Notizen
 
@@ -338,21 +157,64 @@ Changelog / Erkenntnisse
 - viele Experimente laufen lassen
 - Baseline mit logs gemacht
 
+10.06 - 20.06
+- eval auf DF umstellen
+- Clusterexperimente anfangen
+- letzten bugs fixen
+- anfangen schreiben
 
 
+21.06 - 28.06
+?
 
 
-
--------------
-===============================
+-------------===============================
 Meetingnotes:
-plotly  / seaborn
-spikes sollten durch mehrfach ausführen geringer werden
-AOC bestimmen
-zB produzierte kurve (3) ; gleiche für (4), ... ---> in 1 grafik; auch vergleichen mit random, baseline usw;
-- Dann Anzahl an Generationen
-- Anzahl Level die benutzt wurden (6 8 10 12 vs 5 6 8 16 zB)
 einschärnkungen auch benenne ( alle kombinationen nicht möglich zu testen) -> es geht um Gefühl kriegen
-am ende ggf bayesian optimization ( zB 2 Params gleichzeitg variieren lasesn)
 
 -----------------------
+
+ALTE NOTES
+- ggf nur 1 leichte Env ist zu wenig
+- 100k iterationen pro step zu wenig
+- mit dem difficulty hochgehen macht immense Probleme. Quasi 1 wasted epoch dann; ggf langsamer hochgehen
+
+
+=============---------------------------------------------------
+Pareto optimum (die linie für evol)
+Sobel Sampling (funzt wahrsch nur für reel-wertige)
+am ende ggf bayesian optimization ( zB 2 Params gleichzeitg variieren lasesn)
+
+
+
+
+===
+ZUR MA
+60-80 Seiten
+
+
+============================================================
+SEEDLISTE
+ 1
+ 9152
+ 2330
+ 1214
+ 8515
+ 2529
+ 8258
+ 1517
+  185
+ 3053
+ 9030
+ 4221
+ 2450
+ 7477
+ 1938
+ 1291
+ 8646
+ 1032
+ 6646
+ 1315
+ 6471
+ 3259
+ 9607

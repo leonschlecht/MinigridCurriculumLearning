@@ -10,6 +10,7 @@ from scripts.Result import Result
 from utils import storage
 from utils.curriculumHelper import *
 from matplotlib.ticker import MaxNLocator
+import numpy as np
 
 
 def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
@@ -179,102 +180,130 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
     ax.set_ylim([0, np.average(maxO) + 1])  # TODO find better way to cut things off
 
 
-if __name__ == "__main__":
+iterationSteps = "iterationSteps"
+
+
+def getSpecificModel(specificModelList: list, modelName: str):
+    assert specificModelList != [], "Model List must not be empty"
+    results = []
+    for logPath in specificModelList:
+        with open(logPath, 'r') as f:
+            trainingInfoDictionary = json.loads(f.read())
+        assert trainingInfoDictionary is not None
+        if (trainingInfoDictionary[epochsDone]) > 1:
+            results.append(Result(trainingInfoDictionary, modelName, logPath))
+        else:
+            print("Epochs <= 1", logPath)
+
+    scoreHelper = []
+    distributionHelper = []
+    medianLen = []
+    for result in results:
+        medianLen.append(result.epochsTrained)
+        # Create DF1 for scores etc
+        for i in range(len(result.snapShotScores)):
+            scoreHelper.append({"snapshotScore": result.snapShotScores[i],
+                            "bestCurricScore": result.bestCurricScore[i],
+                            "avgEpochRewards": result.avgEpochRewards[i],
+                            "id": modelName,
+                            iterationSteps: result.iterationsList[i]})
+
+        distributionHelper.append({"snapshotDistribution": result.snapshotEnvDistribution,
+                        "bestCurricDistribution": result.bestCurriculaEnvDistribution,
+                        "allCurricDistribution": result.allCurricDistribution,
+                        "id": modelName})
+    rewardScoreDf = pd.DataFrame(scoreHelper)
+    # print("median", medianLen, "; ", max(medianLen))
+    medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
+    rewardScoreDf = rewardScoreDf[rewardScoreDf[iterationSteps] <= results[0].iterationsPerEnv * medianLen]
+
+    # TODO assert all iterPerEnv are equal ?
+    distributionDf = pd.DataFrame(distributionHelper)
+    return rewardScoreDf, distributionDf
+
+
+def getAllModels(logfilePaths: list[list]):
+    scoreDf = pd.DataFrame()
+    distrDf = pd.DataFrame()
+    for logfilePath in logfilePaths:
+        tmpScoreDf, tmpDistrDf = getSpecificModel(logfilePath[0], logfilePath[1])
+        scoreDf = scoreDf.append(tmpScoreDf)
+        distrDf = distrDf.append(tmpDistrDf)
+    return scoreDf, distrDf
+
+
+def main(comparisons):
     evalDirBasePath = storage.getLogFilePath(["storage", "save", "evaluate"])
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
+    statusJson = "status.json"
+    specificModelList = []
     for model in evalDirectories:
+        if model == "old":
+            continue
         path = evalDirBasePath + os.sep + model + os.sep
-        json_files = [f for f in os.listdir(path) if f.endswith('.json')]
-        fullLogfilePaths.append([])
+        json_files = [f for f in os.listdir(path) if f == statusJson]
+        fullLogfilePaths.append([[], model])
         for jsonFile in json_files:
-            fullLogfilePaths[-1].append(path + jsonFile)
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
-    args = parser.parse_args()
-    resultClasses = []
-    dataFrames = []
-    for logFilePaths in fullLogfilePaths:
-        modelName = Path(logFilePaths[0]).parent.name
-        dicts = {}
-        helper: list[Result] = []
-        singleModelEval = False
-        for path in logFilePaths:
-            if args.model == modelName:
-                with open(path, 'r') as f:
-                    trainingInfoDictionary = json.loads(f.read())
-                assert trainingInfoDictionary is not None
-                resultClasses = [Result(trainingInfoDictionary, modelName, path)]
-                singleModelEval = True
-                break
-
-                # TODO merge dict here too
-            if os.path.exists(path):
-                with open(path, 'r') as f:
-                    trainingInfoDictionary = json.loads(f.read())
-                assert trainingInfoDictionary is not None
-                helper.append(Result(trainingInfoDictionary, modelName, path))
-            else:
-                print(f"Path '{path}' doesnt exist!")
-                # raise Exception(f"Path '{logFilePath}' doesnt exist!")
-        if singleModelEval:
+            fullLogfilePaths[-1][0].append(path + jsonFile)
+        seededExperimentsDirs = (next(os.walk(path)))[1]
+        for seededExperiment in seededExperimentsDirs:
+            path = evalDirBasePath + os.sep + model + os.sep + seededExperiment + os.sep
+            jsonFIlesHelper = [f for f in os.listdir(path) if f == statusJson]
+            for jsonFile2 in jsonFIlesHelper:
+                fullLogfilePaths[-1][0].append(path + jsonFile2)
+        if model == args.model:
+            specificModelList = fullLogfilePaths[-1][0]
             break
 
-        snapshotDistr = helper[0].snapshotEnvDistribution
-        avgBestCurricDistr = helper[0].bestCurriculaEnvDistribution
-        avgAllCurricDistr = helper[0].allCurricDistribution
-        snapshotScores = helper[0].snapShotScores
-        bestCurricScores = helper[0].bestCurricScore
-        avgEpochRewards = helper[0].avgEpochRewards
-        print(helper[0].modelName)
+    if args.model is not None:
+        scoreDf, distrDf = getSpecificModel(specificModelList, args.model)
+    else:
+        scoreDf, distrDf = getAllModels(fullLogfilePaths)
 
-        snapshots = []
-        for h in helper:
-            snapshots.append(h.snapshotEnvDistribution)
-            if h == helper[0]:
-                continue
-            for k in snapshotDistr.keys():
-                snapshotDistr[k] += h.snapshotEnvDistribution[k]
-                avgBestCurricDistr[k] += h.bestCurriculaEnvDistribution[k]
-                avgAllCurricDistr[k] += h.allCurricDistribution[k]
-            for idx in range(len(snapshotScores)):
-                snapshotScores[idx] += h.snapShotScores[idx]
-                bestCurricScores[idx] += h.bestCurricScore[idx]
-                avgEpochRewards[idx] += h.avgEpochRewards[idx]
-            # TODO get average of all distributions (prolly need std dev too)
-        objects = []
-        for h in helper:
-            print(h.snapshotEnvDistribution)
-            print(h.snapShotScores)
-            objects.append({'snapshotScore': h.snapShotScores, "snapshotDistribution": h.snapshotEnvDistribution})
-        df = pd.DataFrame(objects)
-        dataFrames.append(df)
-        print(df)
-        helper[0].finishAggregation(snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr,
-                                    avgBestCurricDistr, avgAllCurricDistr, len(helper))
-        resultClasses.append(helper[0])
-        break
+    models = scoreDf["id"].unique()
+    filteredDf = []
+    sns.set_theme(style="dark")
+    if args.model is None and not args.skip:
+        modelsEntered = 0
+        print("Available models\n", models)
+        while modelsEntered < comparisons:
+            val = input("Enter model\n")
+            if val in models:
+                print("added:", val)
+                modelsEntered += 1
+                filteredDf.append(scoreDf[scoreDf["id"] == val])
+            else:
+                print("Model doesnt exist. Enter again\n")
+        for df in filteredDf:
+            sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"])
+        plt.show()
+    if args.model is not None and not args.skip:
+        filteredDf = scoreDf[scoreDf["id"] == args.model]
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredDf, label=args.model)
+        plt.show()
+    if args.skip:
+        print("starting evaluation. . .")
+        for m in models:
+            modelDf = scoreDf[scoreDf["id"] == m]
+            filteredIterDf = modelDf[iterationSteps]
+            firstIterVal = filteredIterDf[0]
+            occur = len(filteredIterDf[filteredIterDf == firstIterVal])
+            print(f"{occur} experiments done with {m}")
+            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
+            plt.legend()
+            plt.show()
 
-    print(dataFrames)
-    sns.set_theme(style="darkgrid")
-    # TODO ID ...
 
-    sns.lineplot(x="timepoint", y="signal",
-                 hue="region", style="event",
-                 data=dataFrames[0])
-    plt.show()
-    exit()
-    modelNamesList = [res.modelName for res in resultClasses]
+    # filepath = Path('./out.csv') # TODO save as csv
+    # filepath.parent.mkdir(parents=True, exist_ok=True)
+    # scoreDf.to_csv(filepath, index=False)
 
-    plotSnapshotPerformance(resultClasses, "First Step Performance per Epoch", modelNamesList)
-    # plotDifficulty(resultClasses, "Overview of Difficulty List", modelNamesList)
-    plotSnapshotEnvDistribution(resultClasses, "First Step Env Distribution")
 
-    plotBestCurriculumResults(resultClasses, "Reward of Best Curriculum per Epoch", modelNamesList)
-    plotDistributionOfBestCurric(resultClasses, "Best Curricula Env Distribution")
-
-    plotEpochAvgCurricReward(resultClasses, "Average Curriculum Reward of all Generations in an epoch", modelNamesList)
-    plotDistributionOfAllCurric(resultClasses, "Occurence of all curricula of all epochs and generations")
-
-    # TODO this should not have a shared x-axis; or at least still use epochs and not scale ???
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
+    parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
+    parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    args = parser.parse_args()
+    main(args.comparisons)

@@ -28,9 +28,9 @@ class Result:
         self.trainingTimeSum = evaluationDictionary[sumTrainingTime]
         self.modelName = modelName
         self.iterationsPerEnv = self.getIterationsPerEnv(evaluationDictionary, self.loadedArgsDict)
+        self.iterationsPerEnv = int(self.loadedArgsDict["iterPerEnv"])
         self.logFilepath = logfilePath
 
-        self.epochDict = self.getEpochDict(self.rewardsDict)
         self.snapShotScores = self.getSnapshotScores(evaluationDictionary, self.modelPerformance)
 
         bestCurricScores = []
@@ -39,6 +39,7 @@ class Result:
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
 
         if self.loadedArgsDict[trainEvolutionary]:  # TODO to method
+            self.epochDict = self.getEpochDict(self.rewardsDict)  # TODO THIS SEEMS BUGGED ??? / why does it only show g1,g2,g3
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
             self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
             for epochKey in self.rewardsDict:
@@ -53,7 +54,7 @@ class Result:
                                                                                      usedEnvEnumeration)
 
         elif self.loadedArgsDict[trainAllParalell]:
-            print("AllPara detected")
+            # print("AllPara detected")
             self.allCurricDistribution = []
             bestCurricScores = self.snapShotScores
             avgEpochRewards = self.snapShotScores
@@ -62,7 +63,6 @@ class Result:
                 self.snapshotEnvDistribution[env] = self.epochsTrained
             self.bestCurriculaEnvDistribution = self.snapshotEnvDistribution
             self.allCurricDistribution = self.snapshotEnvDistribution
-            print(self.snapshotEnvDistribution)
             # TODO there is still the differentiation between adjusting the envs used and using all 4 at the same time
         elif self.loadedArgsDict[trainBiasedRandomRH]:
             print("biased random rh detected")
@@ -71,16 +71,27 @@ class Result:
             # TODO can probably copy some stuff from the trainevolutioanry thigns above
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
+        self.iterationsList = []
+        for i in range(1, len(self.snapShotScores)+1):
+            self.iterationsList.append(self.iterationsPerEnv * i)
+
+        # print("modelname:", self.modelName)
+        errorPrefix = f"model: {self.modelName}_s{self.loadedArgsDict[seedKey]}:"
         assert self.bestCurricScore != []
         assert self.avgEpochRewards != []
+        assert len(self.iterationsList) == len(self.snapShotScores), \
+            f"{errorPrefix} {len(self.iterationsList)} and {len(self.snapShotScores)} "
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys()) or not self.loadedArgsDict[trainEvolutionary]
         assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.logFilepath}"
         assert sum(self.snapshotEnvDistribution.values()) > 0
         assert sum(self.bestCurriculaEnvDistribution.values()) > 0
+        assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards),\
+            f"{errorPrefix} {len(self.snapShotScores)}, {len(self.bestCurricScore)}, {len(self.avgEpochRewards)}"
 
     @staticmethod
     def getTrainEvolutionary(param):
+        # this is because of bad conversion from an args object that is stored in a txt file
         if param == "True)":
             return True
         elif param == "False)":
@@ -168,6 +179,7 @@ class Result:
     def finishAggregation(self, snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr, avgBestCurricDistr,
                           avgAllCurricDistr, amountOfTrainingRuns: int) -> None:
         # # TODO (Maybe aggregate difficulty too)
+        # TODO is this still needed ?
         assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards)
 
         self.snapShotScores = np.divide(snapshotScores, amountOfTrainingRuns)
