@@ -1,0 +1,140 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris3
+srun: cpus-per-task       : 3
+srun: jobid               : 1093723
+srun: job-name            : c_25_2_4_4
+srun: mem                 : 10G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1093723: nodes(1):`paris3', cpu counts: 4(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1093723.0 on host paris3, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris3, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+Creating model. . .
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=7, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Created model NSGA_25k_2step_4gen_4curric_s2330/epoch_0
+Copied Agent! NSGA_25k_2step_4gen_4curric_s2330/epoch_0 ---> NSGA_25k_2step_4gen_4curric_s2330/epoch_1
+
+The training will go on for 201 epochs
+
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=7, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Created model NSGA_25k_2step_4gen_4curric_s2330/epoch_0
+
+--------------------------------------------------------------
+                     START EPOCH 1
+--------------------------------------------------------------
+
+Copied Agent! NSGA_25k_2step_4gen_4curric_s2330/epoch_1 ---> NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1
+	Algorithm loaded in 0.74 sec
+	['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 | curF 12288 | U 1 | AllF 0012288 | FPS 1364 | D 9 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.91 | V -0.0007 | pL -0.0015 | vL 0.0172 | g 0.0870
+	['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 | curF 24576 | U 2 | AllF 0024576 | FPS 1048 | D 21 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.90 | V 0.0130 | pL 0.0005 | vL 0.0009 | g 0.0276
+	['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 | curF 36864 | U 3 | AllF 0036864 | FPS 0950 | D 34 | rR:msmM 0.008 0.08 0.00 0.77 | F:msmM 3.9 38.0 0.0 374.0 | H 1.92 | V 0.0131 | pL 0.0011 | vL 0.0003 | g 0.0085
+
+	Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 for 36864 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 : F 34105.0 | FPS 1099 | duration 31.041969776153564 | R:msmM 0.02 0.10 0.00 0.85 | F:msmM 355.3 32.0 61.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 : F 61151.0 | FPS 1099 | duration 55.6557400226593 | R:msmM 0.01 0.04 0.00 0.31 | F:msmM 637.0 20.6 492.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 : F 95739.0 | FPS 1210 | duration 79.09075236320496 | R:msmM 0.00 0.03 0.00 0.33 | F:msmM 997.3 26.5 739.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 : F 138239.0 | FPS 1121 | duration 123.37092399597168 | R:msmM 0.00 0.01 0.00 0.10 | F:msmM 1440.0 0.1 1439.0 1440.0
+Evaluation of NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 succeeded
+Evaluate agent TEST 0.19409114681184292
+Copied Agent! NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 ---> NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1_CANDIDATE
+	Trained iteration j=0 of curriculum NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1. Iterations done 36864
+	Reward for curriculum NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 = [0.19409115 0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.00539142 0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.62 sec
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 | curF 12288 | U 4 | AllF 0049152 | FPS 0979 | D 13 | rR:msmM 0.009 0.09 0.00 0.85 | F:msmM 0.6 6.2 0.0 61.0 | H 1.94 | V 0.0154 | pL 0.0017 | vL 0.0005 | g 0.0131
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 | curF 24576 | U 5 | AllF 0061440 | FPS 0997 | D 25 | rR:msmM 0.014 0.10 0.00 0.85 | F:msmM 2.6 20.4 0.0 192.0 | H 1.94 | V 0.0150 | pL 0.0018 | vL 0.0002 | g 0.0059
+	['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 | curF 36864 | U 6 | AllF 0073728 | FPS 0991 | D 37 | rR:msmM 0.020 0.11 0.00 0.85 | F:msmM 174.0 177.5 0.0 360.0 | H 1.94 | V 0.0123 | pL 0.0024 | vL 0.0001 | g 0.0049
+
+	Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 for 36864 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 : F 33513.0 | FPS 1123 | duration 29.853974103927612 | R:msmM 0.05 0.14 0.00 0.64 | F:msmM 345.5 44.2 143.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 : F 60667.0 | FPS 1122 | duration 54.053818225860596 | R:msmM 0.02 0.08 0.00 0.63 | F:msmM 631.9 46.3 260.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 : F 94997.0 | FPS 1111 | duration 85.49154615402222 | R:msmM 0.01 0.08 0.00 0.66 | F:msmM 989.6 73.5 383.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 : F 137354.0 | FPS 1111 | duration 123.61894226074219 | R:msmM 0.01 0.07 0.00 0.65 | F:msmM 1430.8 90.0 554.0 1440.0
+Evaluation of NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 succeeded
+Evaluate agent TEST 0.6123067247665317
+	Trained iteration j=1 of curriculum NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1. Iterations done 73728
+	Reward for curriculum NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric0_gen1 = [0.19409115 0.55107605] (1 entry = 1 curric step)
+	Reward-%-Performance [0.00599047 0.01700852]
+
+
+-------------------------------
+
+===curriculum 0 done===
+
+Copied Agent! NSGA_25k_2step_4gen_4curric_s2330/epoch_1 ---> NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1
+	Algorithm loaded in 0.65 sec
+	['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 | curF 12288 | U 1 | AllF 0012288 | FPS 0976 | D 13 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.91 | V 0.0020 | pL -0.0035 | vL 0.0175 | g 0.0891
+	['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 | curF 24576 | U 2 | AllF 0024576 | FPS 0937 | D 26 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.91 | V 0.0101 | pL -0.0003 | vL 0.0008 | g 0.0240
+	['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 | curF 36864 | U 3 | AllF 0036864 | FPS 0982 | D 38 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.93 | V 0.0086 | pL 0.0018 | vL 0.0001 | g 0.0057
+
+	Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 for 36864 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 : F 34089.0 | FPS 1126 | duration 30.281210899353027 | R:msmM 0.02 0.08 0.00 0.52 | F:msmM 355.1 25.2 192.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 : F 60697.0 | FPS 1128 | duration 53.78657269477844 | R:msmM 0.01 0.09 0.00 0.67 | F:msmM 632.3 49.4 232.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 : F 95984.0 | FPS 1130 | duration 84.91526937484741 | R:msmM 0.00 0.01 0.00 0.11 | F:msmM 999.8 1.6 984.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 : F 137583.0 | FPS 1119 | duration 122.9950635433197 | R:msmM 0.01 0.05 0.00 0.44 | F:msmM 1433.2 56.1 898.0 1440.0
+Evaluation of NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 succeeded
+Evaluate agent TEST 0.30515885151301825
+Copied Agent! NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 ---> NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1_CANDIDATE
+	Trained iteration j=0 of curriculum NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1. Iterations done 36864
+	Reward for curriculum NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 = [0.30515885 0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.00847663 0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.58 sec
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 | curF 12288 | U 4 | AllF 0049152 | FPS 1000 | D 12 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.94 | V 0.0084 | pL 0.0012 | vL 0.0000 | g 0.0038
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 | curF 24576 | U 5 | AllF 0061440 | FPS 0955 | D 25 | rR:msmM 0.008 0.07 0.00 0.72 | F:msmM 2.1 20.2 0.0 199.0 | H 1.94 | V 0.0087 | pL 0.0002 | vL 0.0003 | g 0.0091
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 | curF 36864 | U 6 | AllF 0073728 | FPS 0993 | D 38 | rR:msmM 0.012 0.08 0.00 0.72 | F:msmM 180.9 178.1 0.0 360.0 | H 1.94 | V 0.0066 | pL 0.0010 | vL 0.0001 | g 0.0040
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 for 36864 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 : F 33624.0 | FPS 1106 | duration 30.39155149459839 | R:msmM 0.03 0.13 0.00 0.78 | F:msmM 350.2 41.7 88.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 : F 61199.0 | FPS 1121 | duration 54.5767388343811 | R:msmM 0.01 0.04 0.00 0.28 | F:msmM 637.5 17.2 515.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with NSGA_25k_2step_4gen_4curric_s2330/epoch_1_curric1_gen1 : F 96000.0 | FPS 1127 | duration 85.17065191268921 | R:msmM 0.00 0.00 0.00 0.00 | F:msmM 1000.0 0.0 1000.0 1000.0
