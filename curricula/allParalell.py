@@ -55,8 +55,8 @@ class allParalell:
 
     def trainEachCurriculum(self, startEpoch: int, totalEpochs: int, iterationsDone: int, initialEnvNames: list):
         envNames = initialEnvNames
-        print("training will go on until", totalEpochs * 5)
-        for epoch in range(startEpoch, totalEpochs * 5):
+        print("training will go on until", totalEpochs)
+        for epoch in range(startEpoch, totalEpochs):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
             if epoch == 0:
