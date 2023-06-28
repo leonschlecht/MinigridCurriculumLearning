@@ -1,11 +1,22 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 General Qs
-- Trainigszeiten limitieren sinnvoll?
+- Trainigszeiten limitieren sinnvoll? (zB 96h)
+
 
 
 Fragen zur MA
 - Benutzen von "we"?
+- Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleichen
+
+
+
+Random Notes:
+- optimize training times: early stopping / depending on threshold; or use a timelimit --> other methods
+
+Irgendwann Recherche:
+- Wo performt hard-to-easy besser als CL und warum? Was ist die Idee dahinter überhaupt?
+
 
 
 Tasks:
@@ -16,6 +27,7 @@ Tasks:
 - 2.2 EvolAlg
 - 2.3 RH & RHEA
 ----> - 3. RW
+    - First Application shorten
 - 4. Methodology
 - 5. Experimenal Setup
 - 6.1 Results
@@ -30,6 +42,13 @@ Tasks:
     x-Achse ist shit
     evtl eine --model filter option
     Option für mehrere Models gleichzeitig vergleichen (vllt kleine kommandozeilen anwendung; mit zahlen zum eingeben
+- Baselines für SPL
+- Daten für No-Baseline approach (also nur PPO ?)
+- Ausprobieren mit 8 Envs oder so (zB mit den Empties)
+- Ggf den Eval so umändern, dass man sich auf aktuellen Skill fokussiert (also zB nur 8x8 für alle "ähnlichen" vs immer alles durch; gerade bei > 4 envs wird es auch schwer.
+    ; ggf auch iwi past in betracht ziehen
+    Man könnte wahrscheinlich auch besser paralelisieren (wenn args.procs > args.episodes ist)
+
 
 Mi
 - RW weiter
