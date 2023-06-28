@@ -184,7 +184,7 @@ iterationSteps = "iterationSteps"
 
 
 def getSpecificModel(specificModelList: list, modelName: str):
-    assert specificModelList != [], "Model List must not be empty"
+    assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
     results = []
     for logPath in specificModelList:
         with open(logPath, 'r') as f:
