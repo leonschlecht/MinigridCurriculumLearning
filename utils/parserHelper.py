@@ -8,6 +8,8 @@ def initializeArgParser():
     """
     parser = argparse.ArgumentParser()
     # General parameters
+    parser.add_argument("--useNSGA", default=False, action="store_true",
+                        help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainAdaptive", default=False, action="store_true",
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainAllParalell", default=False, action="store_true",

@@ -25,6 +25,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.objectives = 1
         self.inequalityConstr = 0
         self.xupper = len(ENV_NAMES.ALL_ENVS) - 1
+        self.useNSGA: bool = args.useNSGA
 
         # debug variable
         self.resX = None
@@ -45,12 +46,20 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         return genNrStr, listIdx
 
     def executeOneEpoch(self, epoch: int):
-        algorithm = NSGA2(pop_size=self.numCurric,
-                          sampling=IntegerRandomSampling(),
-                          crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                          mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                          eliminate_duplicates=True,
-                          )
+        if self.useNSGA:
+            algorithm = NSGA2(pop_size=self.numCurric,
+                              sampling=IntegerRandomSampling(),
+                              crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                              mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                              eliminate_duplicates=True,
+                              )
+        else:
+            algorithm = GA(pop_size=self.numCurric,
+                           sampling=IntegerRandomSampling(),
+                           crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                           mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                           eliminate_duplicaets=True,
+                           )
 
         # NSGA2 Default: # sampling: FloatRandomSampling = FloatRandomSampling(),
         # selection: TournamentSelection = TournamentSelection(func_comp=binary_tournament),
@@ -58,12 +67,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         # mutation: PM = PM(eta=20),
         curricProblem = CurriculumProblem(self.curricula, self.objectives, self.inequalityConstr, self.xupper,
                                           self.paraEnvs, self)
-        # algorithm = GA(pop_size=self.numCurric,
-        #              sampling=IntegerRandomSampling(),
-        #              crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-        #             mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-        #            eliminate_duplicaets=True,
-        #           )
+
         res = minimize(curricProblem,
                        algorithm,
                        termination=('n_gen', self.nGen),
