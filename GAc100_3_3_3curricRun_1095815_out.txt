@@ -1,0 +1,53 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris2
+srun: cpus-per-task       : 6
+srun: jobid               : 1095815
+srun: job-name            : c100_3_3_3
+srun: mem                 : 30G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1095815: nodes(1):`paris2', cpu counts: 6(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1095815.0 on host paris2, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris2, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 95, in <module>
+    main()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 39, in main
+    e.startCurriculumTraining()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 63, in startCurriculumTraining
+    startEpoch, rewards = self.initializeTrainingVariables(self.modelExists)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 182, in initializeTrainingVariables
+    shutil.rmtree(path + os.sep + directory)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/shutil.py", line 731, in rmtree
+    onerror(os.rmdir, path, sys.exc_info())
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/shutil.py", line 729, in rmtree
+    os.rmdir(path)
+OSError: [Errno 39] Directory not empty: '/home/schlecht/nobackup/MinigridCurriculumLearning/storage/100k_3step_3gen_3curric_s2330//epoch_35_curric0_gen3'
+deleted: ./ epoch_35_curric0_gen1
+deleted: ./ epoch_35_curric0_gen1_CANDIDATE
+deleted: ./ epoch_35_curric1_gen1
+deleted: ./ epoch_35_curric1_gen1_CANDIDATE
+deleted: ./ epoch_35_curric2_gen1
+deleted: ./ epoch_35_curric2_gen1_CANDIDATE
+deleted: ./ epoch_35_curric0_gen2
+deleted: ./ epoch_35_curric0_gen2_CANDIDATE
+deleted: ./ epoch_35_curric1_gen2
+deleted: ./ epoch_35_curric1_gen2_CANDIDATE
+deleted: ./ epoch_35_curric2_gen2
+deleted: ./ epoch_35_curric2_gen2_CANDIDATE
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1095815.0 (status=0x0100).
+srun: error: paris2: task 0: Exited with exit code 1
+---------- Cluster Job End ---------------------
