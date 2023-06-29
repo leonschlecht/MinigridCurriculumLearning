@@ -8,11 +8,25 @@ General Qs
 Fragen zur MA
 - Benutzen von "we"?
 - Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleichen
+- Experimente
+    - Andere viewsize probieren? (kann ich ja ggf 1 variante nehmen und für beide machen (dann auch für GA UND NSGA)
+    - Mit evol parametern rumspielen
+    - Mit Problemdefinition rumspielen ---> zB auf Multiobjective gehen
+    - Andere Minigrid Envs?
+    - Anderer Trainingsalgorithmus (vllt so wie mit der viewsize als validierung einfach für 2-3 sachen *2 dann machen)
+    - Ganz andere Envs?
+- Wie kann man das erklären mit dem "ja durch 10x10 trainieren wurde er im 12x12 besser; aber immer beim 12x12 trainieren hat er alles verlernt"
+- Von welchem Wissensstand gehe ich für die Basics aus / was ist die Zielgruppe?
+- TSCL ist doch relativ similar zu unserem Ansatz?
+- Was für "cherry on top gibt es denn noch"?
 
 
-
-Random Notes:
+Random Notes / Ideas:
 - optimize training times: early stopping / depending on threshold; or use a timelimit --> other methods
+- Ggf nicht immer 1. Schritt übernehmen des RHEA (ggf dynamisch machen), dynamische iterationLenghts
+- Ggf penalize, dass man immer gleiche envs nimmt ? Iwi encouragen dass er auch neue / sschwierige sachen ausprobiert (--> ggfh ängt das auch mit RH length zusammen)
+- Ein automatischer Difficulty measurer wäre gut. Vllt kombinieren mit einem pre-trained model (dafür gabs iwo ein Paper)
+-
 
 Irgendwann Recherche:
 - Wo performt hard-to-easy besser als CL und warum? Was ist die Idee dahinter überhaupt?
@@ -50,6 +64,7 @@ Tasks:
     Man könnte wahrscheinlich auch besser paralelisieren (wenn args.procs > args.episodes ist)
 - max y eingeben für die experimente (dann aber auch iwi loggen dass mehr anzeigbar wäre)
 
+
 Mi
 - RW weiter
 - Genug experimente Queuen
@@ -57,104 +72,39 @@ Mi
 
 
 Do
--
--
+- RW progress
+- Methodology anfangen
 -
 
 
 
 Fr
-
+- Intro fertig
+- Basics fertig
 
 
 Sa
+- Auswertung
 
 
+So:
+- Auswertung zu ende machen
+-
 
-- Teacherstudent Teil in RW fertig (also das 1 Paper durch & schon mit sätzen formuliert; 2. paper anfangen zu lesen und stichpunkte machen)
-- Types of CL Teacherstudent hinzufügen & 1 andere methode
-- CL Types Kapitel (Fokussiere dich auf 5-6 Paper)
+
 - 2 Grafiken einbinden (smoothing Nr1, und vllt die data driven / model driven #2)
-
-
---
 - Ich brauche eine Self paced baseline & evtl ein teacher-student
 - Baseline trainieren ohne CL (random order der samples) --> Quasi 1 epoch mit 4 batches
-
 - think about how to plot the curriculum progressions
-
-
-
-
-==============
-
-
-GA RUNS
-100k 3 3 3 -> 3.25kk noch
-- sieht stabil aus, aber muss noch abwarten auf diff increase
-100k 3 4gen 3 -> 3.5kk noch
-- sehr stabil, aber noch auf diff increase warten
-100k 4s 3 3 -> 3,5kk noch
-- sehr jumpy?
-150k 3 3 3
-- sehr stabil
-25k 3 3 3
-- stabil aber noch viel zu wenig
-50k 3 3 3
-- sehr stabil, noch viel zu wenig
-75k 3 3 3
-- stabil, aber noch viel zu wenig
-AllPara
-- scheint schwach zu sein, aber konstant (evtl noch zu früh den absprung gehabt mit den difficulties)
-AllPara const diff
-- 1 Experiment erst; und nur 2kk iter
-25k 7s 4g 3c
-- sehr schneller anstieg, aber erst 400k und 1x
-
-
-=================================================
-- Why are some of the seed=1 runs having differnet snapshotscore length compared with the other runs ?
-- should eval distr. also be normalized? Because it looks distorted otherwise
-- Warum geht das mit dem snapshotscore bei manchen nicht( Bzw 1 unterschied? 75k 3 3 3 s1; oder 100k 4s 3g 3c_s1 ---> ggf wenn DONE ?
-
-envDistribution aufteilen in einzelne spalten
+- a normalized env distr (and keep other one too)
 stackedBarplot: heatmap: zeile curricula, spalte environments; Rot markeiren was oft ist und weiß was weniger
-
-
-
-
-Themen:
-- 4W 1. Draft
-- Gliederung besprechen
-- Bis nächstes mal: NSGA Experimente; Eval: was vorzeigen; Kapitel 1 & 2 schreiben
-- models behalten oder löschen
-
-NEXT W:
-- anderen trainigsalgorithmus
-- andere Envs?
-- welche parameter alles testen?
-- clusterjobs optimieren?
-
-
----------------------------------------------------
-
-
--normalize env distr (and keep other one too)
-
 
 
 
 =============================================================
 
 # TODO the plotDistributionOfAllCurric should not have a shared x-axis; or at least still use epochs and not scale ???
-
-
-
-- Brauchen wir nicht einen anderen trainingsalgortihmus? Wie kann man das erklären mit dem "ja durch 10x10 trainieren wurde er im 12x12 besser; aber immer beim 12x12 trainieren hat er alles verlernt"
-
-
-
- # TODO plot progression of curricula against one another
+# TODO plot progression of curricula against one another
 # TODO plot showing differences between earlier and later generations
 # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
 
