@@ -71,7 +71,7 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
-
+    duration = 0
     while currentFramesDone < framesToTrain:
         update_start_time = time.time()
 
@@ -125,7 +125,8 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             utils.save_status(status, model_dir)
             # txt_logger.info("\t\tStatus saved")
 
-    txt_logger.info(f'\n\tTrained on {envList} using model {model} for {framesWithThisEnv} frames')
+    txt_logger.info(f'\nTrained on {envList} using model {model} for {framesWithThisEnv} frames. Duration {time.time()-start_time}. Fps: ??')
+
     algo.env.end()
     algo.env.close()
     tb_writer.close()
