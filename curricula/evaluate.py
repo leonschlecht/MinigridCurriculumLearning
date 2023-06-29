@@ -63,7 +63,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
     formatted = "\tEVAL: {} with {} : F {} | FPS {:.0f} | duration {} | R:msmM {:.2f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {}".format(
         evalEnv, model, num_frames, fps, evalTime, *return_per_episode.values(), *num_frames_per_episode.values())
-    txtLogger.info(formatted)
+    # txtLogger.info(formatted)
 
     evaluationResult = {
         "meanRet": return_per_episode["mean"],
@@ -85,7 +85,7 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
     with open('storage/' + model + '/' + 'evaluation.json', 'w') as f:  # TODO use utils/storage file
         f.write(json.dumps(results, indent=4))
         # TODO check if this is even useful anymore and not already covered by other logfile
-    txtLogger.info(f"Evaluation of {model} succeeded")
+    # txtLogger.info(f"Evaluation of {model} succeeded")
     return results
 
 

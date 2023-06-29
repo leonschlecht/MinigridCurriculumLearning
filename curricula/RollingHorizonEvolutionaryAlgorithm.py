@@ -75,7 +75,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
                        save_history=True,
                        verbose=False)
         self.resX = res.X
-        self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
+        # self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
 
     def updateSpecificInfo(self, epoch):
         self.trainingInfoJson["resX"] = self.resX
@@ -108,15 +108,15 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
             rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
             snapshotReward[i] = rewardI[0]
             rewards[i] = np.sum(rewardI)
-            self.txtLogger.info(f"\n===curriculum {i} done===\n")
+            # self.txtLogger.info(f"\n===curriculum {i} done===\n")
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula
-        self.txtLogger.info("\n")
-        self.txtLogger.info(f"currentRewards after {genKey}: {self.currentRewardsDict}")
-        self.txtLogger.info(f"snapshot Rewards after {genKey}: {self.currentSnapshotRewards}")
-        self.txtLogger.info(f"currentEnvDetails for {genKey}: {self.curriculaEnvDetails[genKey]}")
-        self.txtLogger.info(f"\n\n===       Generation {genNr} done      ===\n")
+        # self.txtLogger.info("\n")
+        #self.txtLogger.info(f"currentRewards after {genKey}: {self.currentRewardsDict}")
+        #self.txtLogger.info(f"snapshot Rewards after {genKey}: {self.currentSnapshotRewards}")
+        #self.txtLogger.info(f"currentEnvDetails for {genKey}: {self.curriculaEnvDetails[genKey]}")
+        #self.txtLogger.info(f"\n\n===       Generation {genNr} done      ===\n")
         return rewards
 
     def evolXToCurriculum(self, x):

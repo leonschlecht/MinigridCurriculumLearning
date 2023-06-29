@@ -53,7 +53,6 @@ class RollingHorizon(ABC):
             self.ITERATIONS_PER_ENV = exactIterationsPerEnv - 1
         utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
             nameOfCurriculumI), txtLogger=self.txtLogger)  # save TEST_e1_curric0 -> + _CANDIDATE
-        # self.txtLogger.info(f"ITERATIONS PER ENV = {self.ITERATIONS_PER_ENV}")
         self.trainingInfoJson[iterationsPerEnvKey] = self.ITERATIONS_PER_ENV
 
     def startCurriculumTraining(self):
@@ -117,12 +116,12 @@ class RollingHorizon(ABC):
         return reward
 
     def logInfoAfterCurriculum(self, nameOfCurriculumI, iterationsDone, rewardList, j):
-        self.txtLogger.info(
-            f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}. Iterations done {iterationsDone}")
-        self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {rewardList} (1 entry = 1 curric step)")
+        #self.txtLogger.info(
+         #   f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}. Iterations done {iterationsDone}")
+        # self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {rewardList} (1 entry = 1 curric step)")
         currentMax = (self.gamma ** j) * self.stepMaxReward  # TODO fix
-        self.txtLogger.info(f"\tReward-%-Performance {rewardList / currentMax}\n\n")
-        self.txtLogger.info("-------------------------------")
+        #self.txtLogger.info(f"\tReward-%-Performance {rewardList / currentMax}\n\n")
+        #self.txtLogger.info("-------------------------------")
 
     def resetEpochVariables(self) -> None:
         self.currentRewardsDict = {}
@@ -361,6 +360,6 @@ class RollingHorizon(ABC):
         pass
 
     def updateModelName(self, epoch: int) -> None:
-        self.txtLogger.info(
-            f"\n--------------------------------------------------------------\n                     START EPOCH {epoch}\n--------------------------------------------------------------\n")
+        #self.txtLogger.info(
+         #   f"\n--------------------------------------------------------------\n                     START EPOCH {epoch}\n--------------------------------------------------------------\n")
         self.selectedModel = utils.getEpochModelName(self.model, epoch)

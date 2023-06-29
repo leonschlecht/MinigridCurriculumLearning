@@ -119,7 +119,7 @@ def copyAgent(src, dest, txtLogger) -> None:
         raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
     else:
         shutil.copytree(fullSrcPath, fullDestPath)
-        txtLogger.info(f'Copied Agent! {src} ---> {dest}')
+        # txtLogger.info(f'Copied Agent! {src} ---> {dest}')
 
 
 def deleteModelIfExists(directory) -> bool:
