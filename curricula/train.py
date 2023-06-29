@@ -67,7 +67,7 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
                      args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
                      args.optim_eps, args.clip_eps, args.epochs, args.batch_size, preprocess_obss)
 
-    txt_logger.info(f"\tAlgorithm loaded in {round(-start_time + time.time(), 2)} sec")
+    # txt_logger.info(f"\tAlgorithm loaded in {round(-start_time + time.time(), 2)} sec")
 
     if "optimizer_state" in status:
         algo.optimizer.load_state_dict(status["optimizer_state"])
@@ -102,9 +102,9 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             header += ["entropy", "value", "policy_loss", "value_loss", "grad_norm"]
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
 
-            txt_logger.info(
-                "\t{} | {} | curF {} | U {} | AllF {:07} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
-                .format(envList, model, framesWithThisEnv, *data))
+            #txt_logger.info(
+            #    "\t{} | {} | curF {} | U {} | AllF {:07} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
+             #   .format(envList, model, framesWithThisEnv, *data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
             data += return_per_episode.values()
