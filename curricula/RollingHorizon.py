@@ -36,6 +36,8 @@ class RollingHorizon(ABC):
         self.selectedModel = utils.getEpochModelName(self.model, 0)
         self.totalEpochs = 5000000 // self.ITERATIONS_PER_ENV + 1  # TODO remove args.trainEpochs
         self.trainingTime = 0
+        print("total:",self.totalEpochs)
+        exit()
 
         self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
