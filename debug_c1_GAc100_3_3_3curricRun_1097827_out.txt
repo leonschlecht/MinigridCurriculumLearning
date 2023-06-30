@@ -1,0 +1,110 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris4
+srun: cpus-per-task       : 4
+srun: jobid               : 1097827
+srun: job-name            : c100_3_3_3TEST
+srun: mem                 : 30G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1097827: nodes(1):`paris4', cpu counts: 4(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1097827.0 on host paris4, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris4, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+Creating model. . .
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=7, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Created model debug_100k_3step_3gen_3curric_s9523/epoch_0
+Copied Agent! debug_100k_3step_3gen_3curric_s9523/epoch_0 ---> debug_100k_3step_3gen_3curric_s9523/epoch_1
+
+The training will go on for 51 epochs
+
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=7, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Created model debug_100k_3step_3gen_3curric_s9523/epoch_0
+
+--------------------------------------------------------------
+                     START EPOCH 1
+--------------------------------------------------------------
+
+Copied Agent! debug_100k_3step_3gen_3curric_s9523/epoch_1 ---> debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1
+	Algorithm loaded in 0.66 sec
+	['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 16384 | U 1 | AllF 0016384 | FPS 1150 | D 14 | rR:msmM 0.006 0.06 0.00 0.72 | F:msmM 0.9 9.8 0.0 111.0 | H 1.85 | V -0.4884 | pL -0.0804 | vL 0.0134 | g 0.1602
+	['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 32768 | U 2 | AllF 0032768 | FPS 1079 | D 30 | rR:msmM 0.006 0.06 0.00 0.72 | F:msmM 0.9 9.8 0.0 111.0 | H 1.86 | V -0.3969 | pL -0.0729 | vL 0.0025 | g 0.0645
+	['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 49152 | U 3 | AllF 0049152 | FPS 1088 | D 45 | rR:msmM 0.008 0.07 0.00 0.72 | F:msmM 177.6 179.0 0.0 360.0 | H 1.86 | V -0.3004 | pL -0.0819 | vL 0.0049 | g 0.0681
+	['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 65536 | U 4 | AllF 0065536 | FPS 1064 | D 60 | rR:msmM 0.008 0.07 0.00 0.72 | F:msmM 180.4 179.0 0.0 360.0 | H 1.88 | V -0.2545 | pL -0.0452 | vL 0.0005 | g 0.0282
+	['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 81920 | U 5 | AllF 0081920 | FPS 1066 | D 75 | rR:msmM 0.019 0.10 0.00 0.72 | F:msmM 185.3 176.9 0.0 360.0 | H 1.90 | V -0.2139 | pL -0.0399 | vL 0.0008 | g 0.0276
+	['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 98304 | U 6 | AllF 0098304 | FPS 1022 | D 91 | rR:msmM 0.021 0.10 0.00 0.72 | F:msmM 353.6 32.3 111.0 360.0 | H 1.90 | V -0.1712 | pL -0.0444 | vL 0.0013 | g 0.0315
+	['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 114688 | U 7 | AllF 0114688 | FPS 1023 | D 108 | rR:msmM 0.015 0.08 0.00 0.51 | F:msmM 355.5 24.2 194.0 360.0 | H 1.93 | V -0.1478 | pL -0.0270 | vL 0.0002 | g 0.0145
+
+	Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 for 114688 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 : F 44712.0 | FPS 1151 | duration 38.854076862335205 | R:msmM 0.04 0.13 0.00 0.79 | F:msmM 349.3 42.8 84.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 : F 80157.0 | FPS 1107 | duration 72.38255667686462 | R:msmM 0.02 0.11 0.00 0.65 | F:msmM 626.2 62.5 251.0 640.0
+	EVAL: MiniGrid-DoorKey-10x10-custom-diff1.0 with debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 : F 127569.0 | FPS 1108 | duration 115.16661167144775 | R:msmM 0.00 0.04 0.00 0.43 | F:msmM 996.6 33.1 628.0 1000.0
+	EVAL: MiniGrid-DoorKey-12x12-custom-diff1.0 with debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 : F 182933.0 | FPS 1096 | duration 166.8623390197754 | R:msmM 0.01 0.07 0.00 0.60 | F:msmM 1429.2 87.0 642.0 1440.0
+Evaluation of debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 succeeded
+Evaluate agent TEST 0.5612128833308816
+Copied Agent! debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 ---> debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1_CANDIDATE
+	Trained iteration j=0 of curriculum debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1. Iterations done 114688
+	Reward for curriculum debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 = [0.56121288 0.         0.        ] (1 entry = 1 curric step)
+	Reward-%-Performance [0.01558925 0.         0.        ]
+
+
+-------------------------------
+	Algorithm loaded in 0.69 sec
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 16384 | U 8 | AllF 0131072 | FPS 0966 | D 17 | rR:msmM 0.000 0.00 0.00 0.00 | F:msmM 0.0 0.0 0 0 | H 1.93 | V -0.1276 | pL -0.0225 | vL 0.0001 | g 0.0094
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 32768 | U 9 | AllF 0147456 | FPS 0963 | D 34 | rR:msmM 0.005 0.06 0.00 0.69 | F:msmM 1.7 19.4 0.0 220.0 | H 1.94 | V -0.1094 | pL -0.0202 | vL 0.0002 | g 0.0111
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 49152 | U 10 | AllF 0163840 | FPS 0998 | D 51 | rR:msmM 0.005 0.06 0.00 0.69 | F:msmM 1.7 19.4 0.0 220.0 | H 1.94 | V -0.0939 | pL -0.0165 | vL 0.0000 | g 0.0060
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 65536 | U 11 | AllF 0180224 | FPS 1002 | D 67 | rR:msmM 0.012 0.08 0.00 0.69 | F:msmM 8.1 54.1 0.0 422.0 | H 1.94 | V -0.0788 | pL -0.0147 | vL 0.0001 | g 0.0077
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 81920 | U 12 | AllF 0196608 | FPS 0997 | D 83 | rR:msmM 0.014 0.08 0.00 0.69 | F:msmM 632.3 47.3 220.0 640.0 | H 1.94 | V -0.0571 | pL -0.0213 | vL 0.0002 | g 0.0085
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 98304 | U 13 | AllF 0212992 | FPS 1009 | D 100 | rR:msmM 0.014 0.08 0.00 0.69 | F:msmM 632.3 47.3 220.0 640.0 | H 1.94 | V -0.0489 | pL -0.0087 | vL 0.0000 | g 0.0030
+	['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] | debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 | curF 114688 | U 14 | AllF 0229376 | FPS 1007 | D 116 | rR:msmM 0.009 0.06 0.00 0.44 | F:msmM 635.6 30.0 395.0 640.0 | H 1.94 | V -0.0414 | pL -0.0072 | vL 0.0000 | g 0.0027
+
+	Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 for 114688 frames
+	EVAL: MiniGrid-DoorKey-6x6-custom-diff1.0 with debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 : F 44555.0 | FPS 1127 | duration 39.539210081100464 | R:msmM 0.04 0.13 0.00 0.75 | F:msmM 348.1 42.8 99.0 360.0
+	EVAL: MiniGrid-DoorKey-8x8-custom-diff1.0 with debug_100k_3step_3gen_3curric_s9523/epoch_1_curric0_gen1 : F 80982.0 | FPS 1150 | duration 70.4465982913971 | R:msmM 0.01 0.08 0.00 0.72 | F:msmM 632.7 46.9 199.0 640.0
+srun: Complete StepId=1097827.0+0 received
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+slurmstepd: error: *** JOB 1097827 ON paris4 CANCELLED AT 2023-06-29T17:38:30 DUE TO TIME LIMIT ***
+slurmstepd: error: *** STEP 1097827.0 ON paris4 CANCELLED AT 2023-06-29T17:38:30 DUE TO TIME LIMIT ***
