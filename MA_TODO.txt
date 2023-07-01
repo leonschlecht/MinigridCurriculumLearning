@@ -2,9 +2,14 @@ eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 Neue Experimente
 - episoden pro eval verringern ( ziel schneller evaluieren)
+- Mit evol parametern rumspielen
 - andere envGrößen
-- andere viewsize
-- 
+- andere viewsize (kann ich ja ggf 1 variante nehmen und für beide machen (dann auch für GA UND NSGA)
+- Mit Problemdefinition rumspielen ---> zB auf Multiobjective gehen
+- Andere Minigrid Envs?
+- Anderer Trainingsalgorithmus (vllt so wie mit der viewsize als validierung einfach für 2-3 sachen *2 dann machen)
+- Ganz andere Envs?
+
 
 
 General Qs
@@ -16,17 +21,11 @@ Fragen zur MA
 - Schreibstil, wie sehr den leser involvieren? "Now we are looking at ...", "As you can imagine ..."
 - BEngl vs AEngl
 - Benutzen von "we"?
-- Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleichen
-- Experimente
-    - Andere viewsize probieren? (kann ich ja ggf 1 variante nehmen und für beide machen (dann auch für GA UND NSGA)
-    - Mit evol parametern rumspielen
-    - Mit Problemdefinition rumspielen ---> zB auf Multiobjective gehen
-    - Andere Minigrid Envs?
-    - Anderer Trainingsalgorithmus (vllt so wie mit der viewsize als validierung einfach für 2-3 sachen *2 dann machen)
-    - Ganz andere Envs?
+- Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleiche
+
 - Wie kann man das erklären mit dem "ja durch 10x10 trainieren wurde er im 12x12 besser; aber immer beim 12x12 trainieren hat er alles verlernt"
 - Von welchem Wissensstand gehe ich für die Basics aus / was ist die Zielgruppe?
-- TSCL ist doch relativ similar zu unserem Ansatz?
+- TSCL ist doch relativ similar zu unserem Ansatz oder?
 - Was für "cherry on top gibt es denn noch"?
 
 
@@ -60,20 +59,6 @@ Tasks:
 - 7. Outlook
 
 
-- Curriculum Progressions visualisieren ;
-- Ggf auch mal die verschiedenen Tensboards anschauen, um den Trainingsreward der Snapshots zu visualisieren
-- Bessere Grafiken:
-    x-Achse ist shit
-    evtl eine --model filter option
-    Option für mehrere Models gleichzeitig vergleichen (vllt kleine kommandozeilen anwendung; mit zahlen zum eingeben
-- Baselines für SPL
-- Daten für No-Baseline approach (also nur PPO ?)
-- Ausprobieren mit 8 Envs oder so (zB mit den Empties)
-- Ggf den Eval so umändern, dass man sich auf aktuellen Skill fokussiert (also zB nur 8x8 für alle "ähnlichen" vs immer alles durch; gerade bei > 4 envs wird es auch schwer.
-    ; ggf auch iwi past in betracht ziehen
-    Man könnte wahrscheinlich auch besser paralelisieren (wenn args.procs > args.episodes ist)
-- max y eingeben für die experimente (dann aber auch iwi loggen dass mehr anzeigbar wäre)
-
 
 Mi
 - RW weiter
@@ -96,6 +81,20 @@ Sa
 - 2 Grafiken für Auswertung einbinden
 - Auswertung
 - Ich brauche eine Self paced baseline & evtl ein teacher-student
+
+ Curriculum Progressions visualisieren ;
+- Ggf auch mal die verschiedenen Tensboards anschauen, um den Trainingsreward der Snapshots zu visualisieren
+- Bessere Grafiken:
+    x-Achse ist shit
+    evtl eine --model filter option
+    Option für mehrere Models gleichzeitig vergleichen (vllt kleine kommandozeilen anwendung; mit zahlen zum eingeben
+- Baselines für SPL
+- Daten für No-Baseline approach (also nur PPO ?)
+- Ausprobieren mit 8 Envs oder so (zB mit den Empties)
+- Ggf den Eval so umändern, dass man sich auf aktuellen Skill fokussiert (also zB nur 8x8 für alle "ähnlichen" vs immer alles durch; gerade bei > 4 envs wird es auch schwer.
+    ; ggf auch iwi past in betracht ziehen
+    Man könnte wahrscheinlich auch besser paralelisieren (wenn args.procs > args.episodes ist)
+- max y eingeben für die experimente (dann aber auch iwi loggen dass mehr anzeigbar wäre)
 
 
 

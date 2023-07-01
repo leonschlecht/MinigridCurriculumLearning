@@ -43,7 +43,7 @@ class allParalell:
         if self.allEnvsSimultaneous:
             self.initialEnvNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
         else:
-            self.initialEnvNames = self.initializeEnvNames()
+            self.initialEnvNames = self.initializeEnvNames(self.envDifficulty)
 
         if self.modelExists:
             self.loadTrainingInfo()
@@ -57,6 +57,7 @@ class allParalell:
         envNames = initialEnvNames
         print("training will go on until", totalEpochs)
         for epoch in range(startEpoch, totalEpochs):
+            self.txtLogger.info(f"Envs: {envNames }")
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
             if epoch == 0:
@@ -84,8 +85,7 @@ class allParalell:
         :return:
         """
         currentEpoch = "epoch_" + str(epoch)
-        txtLogger.info(
-            f"Current rewards after {currentEpoch}: {reward}")
+        txtLogger.info(f"Current rewards after {currentEpoch}: {reward}")
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
     @staticmethod
@@ -97,14 +97,14 @@ class allParalell:
         return envNames
 
     @staticmethod
-    def initializeEnvNames() -> list:
+    def initializeEnvNames(startDifficulty=1.0) -> list:
         envNames = []
         for j in range(len(ENV_NAMES.ALL_ENVS)):
             if j < 2:
                 index = 0
             else:
                 index = 1
-            envNames.append(getEnvFromDifficulty(index, 0))
+            envNames.append(getEnvFromDifficulty(index, startDifficulty))
         return envNames
 
     @staticmethod
