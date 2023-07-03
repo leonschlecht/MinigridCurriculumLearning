@@ -8,5 +8,9 @@
 #SBATCH --mem=20G
 #SBATCH --verbose
 echo "----------Starting RRH--------"
-srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --iterPerEnv 50000 --model rrh_50k_5step --stepsPerCurric 5 --trainRandomRH --seed 9152
+srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --iterPerEnv 250000 --model rrh_250k_3step --stepsPerCurric 3 --trainRandomRH --seed 2529
+srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --iterPerEnv 250000 --model rrh_250k_3step --stepsPerCurric 3 --trainRandomRH --seed 8258
+srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --iterPerEnv 250000 --model rrh_250k_3step --stepsPerCurric 3 --trainRandomRH --seed 1517
+srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --iterPerEnv 250000 --model rrh_250k_3step --stepsPerCurric 3 --trainRandomRH --seed 185
+srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --iterPerEnv 250000 --model rrh_250k_3step --stepsPerCurric 3 --trainRandomRH --seed 3053
 echo "END run"
