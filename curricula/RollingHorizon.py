@@ -34,10 +34,10 @@ class RollingHorizon(ABC):
         self.txtLogger = txtLogger
         self.model = args.model + "_s" + str(self.seed)
         self.selectedModel = utils.getEpochModelName(self.model, 0)
-        self.totalEpochs = 5000000 // self.ITERATIONS_PER_ENV + 1  # TODO remove args.trainEpochs
+        self.totalEpochs = 4000000 // self.ITERATIONS_PER_ENV + 1  # TODO remove args.trainEpochs
+        # TODO calculate totalEpochs based on another args parameter (4kk vs 5kk etc)
+        # TODO remove --model param and let it be created automatically (or optional for debug)
         self.trainingTime = 0
-        print("total:",self.totalEpochs)
-        exit()
 
         self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
