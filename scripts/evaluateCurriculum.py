@@ -203,15 +203,15 @@ def getSpecificModel(specificModelList: list, modelName: str):
         # Create DF1 for scores etc
         for i in range(len(result.snapShotScores)):
             scoreHelper.append({"snapshotScore": result.snapShotScores[i],
-                            "bestCurricScore": result.bestCurricScore[i],
-                            "avgEpochRewards": result.avgEpochRewards[i],
-                            "id": modelName,
-                            iterationSteps: result.iterationsList[i]})
+                                "bestCurricScore": result.bestCurricScore[i],
+                                "avgEpochRewards": result.avgEpochRewards[i],
+                                "id": modelName,
+                                iterationSteps: result.iterationsList[i]})
 
         distributionHelper.append({"snapshotDistribution": result.snapshotEnvDistribution,
-                        "bestCurricDistribution": result.bestCurriculaEnvDistribution,
-                        "allCurricDistribution": result.allCurricDistribution,
-                        "id": modelName})
+                                   "bestCurricDistribution": result.bestCurriculaEnvDistribution,
+                                   "allCurricDistribution": result.allCurricDistribution,
+                                   "id": modelName})
     rewardScoreDf = pd.DataFrame(scoreHelper)
     # print("median", medianLen, "; ", max(medianLen))
     medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
@@ -232,19 +232,40 @@ def getAllModels(logfilePaths: list[list]):
     return scoreDf, distrDf
 
 
+def filterDf(val, scoreDf, models):
+    """
+    Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
+    :param val: the prefix to be filtered. E.g. "RndRH"
+    :param scoreDf: the main dataframe
+    :param models: a list of all model names (unique values in id column of the df)
+    :return:
+    """
+    filteredDf = []
+    for m in models:
+        if val in m and "C_" not in m:
+            if val == "GA" and "NSGA" in m:
+                continue
+            filteredDf.append(scoreDf[scoreDf["id"] == m])
+    return filteredDf
+
+
 def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf):
     modelsEntered: int = 0
     usedModels = []
     filteredDf = []
     for i in range(len(models)):
         print(f"{i}: {models[i]}")
+    print("filter options: NSGA, GA, RndRH, allParalell")
     while modelsEntered < comparisons:
-        val = int(input(f"Enter model number ({modelsEntered}/{comparisons}): "))
-        if val < len(models) and val not in usedModels:
+        val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
+        if val.isdigit() and int(val) < len(models) and val not in usedModels:
             modelsEntered += 1
             usedModels.append(val)
-            filteredDf.append(scoreDf[scoreDf["id"] == models[val]])
+            filteredDf.append(scoreDf[scoreDf["id"] == models[int(val)]])
         else:
+            if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
+                filteredDf = filterDf(val, scoreDf, models)
+                break
             print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
     return filteredDf
@@ -256,9 +277,11 @@ def plotMultipleLineplots(filteredDf):
     for df in filteredDf:
         sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax)
     ax.set_ylabel("evaluation reward")
-    ax.set_xlabel("iterations done")
-    ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
-    ax.set_ylim(bottom=0.6)
+    ax.set_xlabel("iterations")
+    # ax.set_ylim(bottom=0.6)
+    plt.tight_layout()  # Add this line to adjust the layout and prevent legend cutoff
+    # plt.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
+    plt.legend()
     plt.show()
 
 
@@ -316,7 +339,6 @@ def main(comparisons: int):
             sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
             plt.legend()
             plt.show()
-
 
     # filepath = Path('./out.csv') # TODO DF save as csv
     # filepath.parent.mkdir(parents=True, exist_ok=True)
