@@ -233,7 +233,7 @@ def getAllModels(logfilePaths: list[list]):
 
 
 def main(comparisons):
-    evalDirBasePath = storage.getLogFilePath(["storage", "save", "evaluate"])
+    evalDirBasePath = storage.getLogFilePath(["storage", "evaluate"])
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
     statusJson = "status.json"
