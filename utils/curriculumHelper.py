@@ -62,10 +62,7 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     Prints the last logs, after the training is done
     """
     txtLogger.info("\n\n\n----TRAINING END-----")
-    txtLogger.info(f"Best Curricula {trainingInfoJson[bestCurriculas]}")
-    txtLogger.info(f"Trained in Envs {trainingInfoJson[selectedEnvs]}")
-    txtLogger.info(f"Rewards: {trainingInfoJson[rewardsKey]}")
-
+    txtLogger.info(f"Num Frames {trainingInfoJson[numFrames]}")
     now = datetime.now()
     txtLogger.info(f"Time ended at {now} , total training time: {trainingInfoJson[sumTrainingTime]}")
     txtLogger.info("-------------------\n\n")
