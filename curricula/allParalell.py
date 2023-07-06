@@ -56,6 +56,7 @@ class allParalell:
     def trainEachCurriculum(self, startEpoch: int, totalEpochs: int, iterationsDone: int, initialEnvNames: list):
         envNames = initialEnvNames
         print("training will go on until", totalEpochs)
+        lastReward = 1
         for epoch in range(startEpoch, totalEpochs):
             self.txtLogger.info(f"Envs: {envNames }")
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
@@ -66,6 +67,12 @@ class allParalell:
             reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
             # TODO can probably speedup by re-using envs(in static mode at least)
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
+            if reward > self.MAX_REWARD * .75:
+                nextStep = "goUp"
+            elif reward > self.MAX_REWARD * .5:
+                nextStep = "stay"
+            else:
+                nextStep = "goDown"
             if self.allEnvsSimultaneous:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
             else:
@@ -125,7 +132,8 @@ class allParalell:
         envNames = currentEnvNames
         print("DIFF=", newDifficulty)
         print("Before=", currentEnvNames)
-
+        # TODO get the value of the models progress (maybe last 3 runs, and then decide if you should go up or not)
+        # WHERE IS THE REWARD ???
         np.random.seed(seed)
         randomIndexSample = np.random.choice(range(len(ENV_NAMES.ALL_ENVS)), size=self.paraEnvs, replace=False)
         print(randomIndexSample)
