@@ -233,7 +233,7 @@ def getAllModels(logfilePaths: list[list]):
 
 
 def main(comparisons):
-    evalDirBasePath = storage.getLogFilePath(["storage", "evaluate"])
+    evalDirBasePath = storage.getLogFilePath(["storage", "_evaluate"])
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
     statusJson = "status.json"
@@ -277,6 +277,7 @@ def main(comparisons):
                 print("Model doesnt exist. Enter again\n")
         for df in filteredDf:
             sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"])
+        plt.ylim(bottom=0.7)
         plt.show()
     if args.model is not None and not args.skip:
         filteredDf = scoreDf[scoreDf["id"] == args.model]
@@ -285,6 +286,8 @@ def main(comparisons):
     if args.skip:
         print("starting evaluation. . .")
         for m in models:
+            if "C_" in m and not args.showCanceled:
+                continue
             modelDf = scoreDf[scoreDf["id"] == m]
             filteredIterDf = modelDf[iterationSteps]
             firstIterVal = filteredIterDf[0]
@@ -305,5 +308,6 @@ if __name__ == "__main__":
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--showCanceled", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     args = parser.parse_args()
     main(args.comparisons)
