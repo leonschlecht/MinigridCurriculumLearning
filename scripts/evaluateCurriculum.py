@@ -232,7 +232,37 @@ def getAllModels(logfilePaths: list[list]):
     return scoreDf, distrDf
 
 
-def main(comparisons):
+def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf):
+    modelsEntered: int = 0
+    usedModels = []
+    filteredDf = []
+    for i in range(len(models)):
+        print(f"{i}: {models[i]}")
+    while modelsEntered < comparisons:
+        val = int(input(f"Enter model number ({modelsEntered}/{comparisons}): "))
+        if val < len(models) and val not in usedModels:
+            modelsEntered += 1
+            usedModels.append(val)
+            filteredDf.append(scoreDf[scoreDf["id"] == models[val]])
+        else:
+            print("Model doesnt exist or was chosen already. Enter again")
+    print("Models entered. Beginning visualization process")
+    return filteredDf
+
+
+def plotMultipleLineplots(filteredDf):
+    sns.set_theme(style="darkgrid")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for df in filteredDf:
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax)
+    ax.set_ylabel("evaluation reward")
+    ax.set_xlabel("iterations done")
+    ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
+    ax.set_ylim(bottom=0.6)
+    plt.show()
+
+
+def main(comparisons: int):
     evalDirBasePath = storage.getLogFilePath(["storage", "_evaluate"])
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
@@ -262,23 +292,13 @@ def main(comparisons):
         scoreDf, distrDf = getAllModels(fullLogfilePaths)
 
     models = scoreDf["id"].unique()
-    filteredDf = []
     sns.set_theme(style="dark")
+    # TODO ask for comparison nrs if not given by --comparisons
+    print("------------------\n\n\n")
     if args.model is None and not args.skip:
-        modelsEntered = 0
-        print("Available models\n", models)
-        while modelsEntered < comparisons:
-            val = input("Enter model\n")
-            if val in models:
-                print("added:", val)
-                modelsEntered += 1
-                filteredDf.append(scoreDf[scoreDf["id"] == val])
-            else:
-                print("Model doesnt exist. Enter again\n")
-        for df in filteredDf:
-            sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"])
-        plt.ylim(bottom=0.7)
-        plt.show()
+        filteredDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf)
+        plotMultipleLineplots(filteredDf)
+
     if args.model is not None and not args.skip:
         filteredDf = scoreDf[scoreDf["id"] == args.model]
         sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredDf, label=args.model)
@@ -298,7 +318,7 @@ def main(comparisons):
             plt.show()
 
 
-    # filepath = Path('./out.csv') # TODO save as csv
+    # filepath = Path('./out.csv') # TODO DF save as csv
     # filepath.parent.mkdir(parents=True, exist_ok=True)
     # scoreDf.to_csv(filepath, index=False)
 
@@ -310,4 +330,4 @@ if __name__ == "__main__":
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     args = parser.parse_args()
-    main(args.comparisons)
+    main(int(args.comparisons))
