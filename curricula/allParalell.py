@@ -26,9 +26,6 @@ class allParalell:
         self.model = args.model + "_s" + str(self.seed)
         self.isSPLCL = not args.allSimultaneous
 
-        if self.isSPLCL:
-            self.model += "_splcl"
-
         self.selectedModel = self.model + os.sep + "model"
 
         self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
