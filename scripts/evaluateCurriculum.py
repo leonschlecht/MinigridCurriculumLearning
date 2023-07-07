@@ -229,8 +229,10 @@ def getAllModels(logfilePaths: list[list]):
     distrDf = pd.DataFrame()
     for logfilePath in logfilePaths:
         tmpScoreDf, tmpDistrDf = getSpecificModel(logfilePath[0], logfilePath[1])
-        scoreDf = scoreDf.append(tmpScoreDf)
-        distrDf = distrDf.append(tmpDistrDf)
+        # scoreDf = scoreDf.append(tmpScoreDf)
+        scoreDf = pd.concat([scoreDf, tmpScoreDf], ignore_index=True)
+        # distrDf = distrDf.append(tmpDistrDf)
+        distrDf = pd.concat([distrDf, tmpDistrDf], ignore_index=True)
     return scoreDf, distrDf
 
 
@@ -297,7 +299,7 @@ def plotAggrgatedBarplot(filteredDf: list):
     fig, ax = plt.subplots(figsize=(10, 6))
     aggregatedDf = pd.DataFrame()
     for df in filteredDf:
-        aggregatedDf = aggregatedDf.append(pd.DataFrame(df))
+        aggregatedDf = pd.concat([aggregatedDf, df], ignore_index=True)
 
     sns.barplot(x="id", y=sumTrainingTime, data=aggregatedDf, ax=ax)
     plt.xlabel('Index')
