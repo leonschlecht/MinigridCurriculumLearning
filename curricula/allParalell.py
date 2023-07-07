@@ -43,7 +43,7 @@ class allParalell:
             self.initialEnvNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
         else:
             print("SPLCL")
-            self.initialEnvNames = self.initializeEnvNames(self.envDifficulty)
+            self.initialEnvNames = self.initializeEnvNames(self.envDifficulty) # todo just initialize with easiest
         if self.modelExists:
             self.loadTrainingInfo()
         else:
@@ -123,9 +123,8 @@ class allParalell:
 
     def updateEnvNamesDynamically(self, currentEnvNames: list, newDifficulty: float, seed: int, reward: float) -> list:
         envNames = currentEnvNames
-        print("Before=", currentEnvNames)
+        print("Before=", currentEnvNames, "newDiff", newDifficulty)
         # TODO get the value of the models progress (maybe last 3 runs, and then decide if you should go up or not)
-        # WHERE IS THE REWARD ???
         np.random.seed(seed)
         randomIndexSample = np.random.choice(range(len(ENV_NAMES.ALL_ENVS)), size=self.paraEnvs, replace=False)
         if reward > self.stepMaxReward * .75:
