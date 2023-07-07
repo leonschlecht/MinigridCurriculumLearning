@@ -208,24 +208,38 @@ def getSpecificModel(specificModelList: list, modelName: str):
 
         # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
         tmp = result.snapshotEnvDistribution.keys()
-        helper = [[] for _ in tmp]
+        snapshotHelper = [[] for _ in tmp]
+        allCurricHelper = [[] for _ in tmp]
+        bestCurricHelper = [[] for _ in tmp]
         for k in tmp:
             if "6x6" in k:
-                helper[0] = (result.snapshotEnvDistribution[k])
+                snapshotHelper[0] = (result.snapshotEnvDistribution[k])
+                allCurricHelper[0] = (result.allCurricDistribution[k])
+                bestCurricHelper[0] = (result.bestCurriculaEnvDistribution[k])
             elif "8x8" in k:
-                helper[1] = (result.snapshotEnvDistribution[k])
+                snapshotHelper[1] = (result.snapshotEnvDistribution[k])
+                allCurricHelper[1] = (result.allCurricDistribution[k])
+                bestCurricHelper[1] = (result.bestCurriculaEnvDistribution[k])
             elif "10x10" in k:
-                helper[2] = (result.snapshotEnvDistribution[k])
+                snapshotHelper[2] = (result.snapshotEnvDistribution[k])
+                allCurricHelper[2] = (result.allCurricDistribution[k])
+                bestCurricHelper[2] = (result.bestCurriculaEnvDistribution[k])
             else:
-                helper[3] = (result.snapshotEnvDistribution[k])
+                snapshotHelper[3] = (result.snapshotEnvDistribution[k])
+                allCurricHelper[3] = (result.allCurricDistribution[k])
+                bestCurricHelper[3] = (result.bestCurriculaEnvDistribution[k])
         distributionHelper.append({
-                                   "6x6": helper[0],
-                                   "8x8": helper[1],
-                                   "10x10": helper[2],
-                                   "12x12": helper[3],
-                                   seedKey: result.seed,
-                                   sumTrainingTime: result.trainingTimeSum,
-                                   "id": modelName})
+            "6x6s": snapshotHelper[0],
+            "8x8s": snapshotHelper[1],
+            "10x10s": snapshotHelper[2],
+            "12x12s": snapshotHelper[3],
+            "6x6c": bestCurricHelper[0],
+            "8x8c": bestCurricHelper[1],
+            "10x10c": bestCurricHelper[2],
+            "12x12c": bestCurricHelper[3],
+            seedKey: result.seed,
+            sumTrainingTime: result.trainingTimeSum,
+            "id": modelName})
     rewardScoreDf = pd.DataFrame(scoreHelper)
     medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
     rewardScoreDf = rewardScoreDf[rewardScoreDf[iterationSteps] <= results[0].iterationsPerEnv * medianLen]
@@ -327,7 +341,7 @@ def removeExperimentPrefix(dictDf):
     if filteredWord == "GA" or filteredWord == "NSGA" or filteredWord == "RndRH":
         iterations = words[1] + "_"
         steps = words[2].split("tep")[0] + "_"  # cut "3step" to 3s
-    else: # TODO probably not needed
+    else:  # TODO probably not needed
         iterations = ""
         steps = ""
 
@@ -346,41 +360,45 @@ def removeExperimentPrefix(dictDf):
     return iterations + steps + gen + curric
 
 
+def showDistrVisualization(aggregatedDf, columnsToVisualize):
+    # Group the dataframe by the 'id' column and calculate the mean and standard deviation of the selected columns
+    grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
+    # Reset the index to make 'id' a regular column
+    grouped_df = grouped_df.reset_index()
+    # Melt the dataframe to convert the columns into rows for easier plotting
+    melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
+    sns.barplot(data=melted_df, x='id', y='Value', hue='Column')
+    plt.xlabel('id')
+    plt.ylabel('Value')
+    plt.show()
+
+
 def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame]):
     assert len(filteredDf) > 0, "filteredDf empty"
 
     # TODO generic remover when not using a filter
 
     sns.set_theme(style="darkgrid")
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(12, 6))
     aggregatedDf = pd.DataFrame()
     for df in filteredDf:
         df["id"] = removeExperimentPrefix(df)
         aggregatedDf = pd.concat([aggregatedDf, df], ignore_index=True)
-    # print(aggregatedDf["id"])
 
-    sns.barplot(x="id", y=sumTrainingTime, data=aggregatedDf, ax=ax)
+    if args.trainingTime:
+        sns.barplot(x="id", y=sumTrainingTime, data=aggregatedDf, ax=ax)
+        plt.ylabel('training time (hours)')
+        plt.title("Training Time")
+        plt.show()
 
-    """
-    # Select the specific columns you want to visualize
-    columns_to_visualize = ['6x6', '8x8', '10x10', '12x12', 'id']
-    # Group the dataframe by the 'id' column and calculate the mean of the selected columns
-    grouped_df = aggregatedDf[columns_to_visualize].groupby('id').mean()
-    # Reset the index to make 'id' a regular column
-    grouped_df = grouped_df.reset_index()
-    # Melt the dataframe to convert the columns into rows for easier plotting
-    melted_df = grouped_df.melt(id_vars='id', var_name='Column', value_name='Value')
-    # Plot the data using seaborn
-    # sns.barplot(data=melted_df, x='id', y='Value', hue='Column')
-    # plt.xticks(range(len(grouped_df)), grouped_df['id'], rotation=0)
-
-    # Set the plot title and axis labels
-    plt.title('Visualization of Specific Columns Grouped by id')
-    plt.xlabel('id')
-    plt.ylabel('Value')
-    """
-
-    plt.show()
+    if args.snapshotDistr:
+        columns_to_visualize = ['6x6s', '8x8s', '10x10s', '12x12s', 'id']
+        showDistrVisualization(aggregatedDf, columns_to_visualize)
+    if args.curricDistr:
+        columns_to_visualize = ['6x6c', '8x8c', '10x10c', '12x12c', 'id']
+        showDistrVisualization(aggregatedDf, columns_to_visualize)
+    if args.allDistr:
+        pass
 
 
 def main(comparisons: int):
@@ -453,5 +471,9 @@ if __name__ == "__main__":
     parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--trainingTime", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--curricDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--allDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     args = parser.parse_args()
     main(int(args.comparisons))
