@@ -251,7 +251,7 @@ def filterDf(val, scoreDf, models):
     return filteredDf
 
 
-def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf):
+def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, distrDf):
     modelsEntered: int = 0
     usedModels = []
     filteredScoreDf = []
@@ -265,9 +265,11 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf):
             modelsEntered += 1
             usedModels.append(val)
             filteredScoreDf.append(scoreDf[scoreDf["id"] == models[int(val)]])
+            filteredDistrDf.append(distrDf[distrDf["id"] == models[int(val)]])
         else:
             if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
                 filteredScoreDf = filterDf(val, scoreDf, models)
+                filteredDistrDf = filterDf(val, distrDf, models)
                 break
             print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
@@ -288,20 +290,19 @@ def plotMultipleLineplots(filteredDf):
     plt.show()
 
 
-def plotAggrgatedBarplot(filteredDf):
+def plotAggrgatedBarplot(filteredDf: list):
+    print(filteredDf)
+    assert len(filteredDf) > 0, "filteredDf empty"
     sns.set_theme(style="darkgrid")
     fig, ax = plt.subplots(figsize=(10, 6))
+    aggregatedDf = pd.DataFrame()
     for df in filteredDf:
-        sns.barplot(x="id", y=sumTrainingTime, data=df, ax=ax)
-        # sns.barplot(x=df.index, y='sumTrainingTime', data=df)
-    plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
-    plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
-    plt.title('Barplot of sumTrainingTime')  # Replace 'Barplot of sumTrainingTime' with the appropriate title for your plot
-    plt.show()
-    # ax.set_ylim(bottom=0.6)
-    # plt.tight_layout()  # Add this line to adjust the layout and prevent legend cutoff
-    # plt.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
-    plt.legend()
+        aggregatedDf = aggregatedDf.append(pd.DataFrame(df))
+
+    sns.barplot(x="id", y=sumTrainingTime, data=aggregatedDf, ax=ax)
+    plt.xlabel('Index')
+    plt.ylabel('sumTrainingTime')
+    plt.title('Barplot of sumTrainingTime')
     plt.show()
 
 def main(comparisons: int):
@@ -338,12 +339,13 @@ def main(comparisons: int):
     # TODO ask for comparison nrs if not given by --comparisons
     print("------------------\n\n\n")
     if args.model is None and not args.skip:
-        filteredDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf)
+        filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
         # plotMultipleLineplots(filteredDf)
+        plotAggrgatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
-        filteredDf = scoreDf[scoreDf["id"] == args.model]
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredDf, label=args.model)
+        filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model)
         plt.show()
     if args.skip:
         print("starting evaluation. . .")
