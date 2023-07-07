@@ -189,4 +189,4 @@ class allParalell:
         self.startEpoch = self.trainingInfoJson[epochsDone]
         if len(self.trainingInfoJson[snapshotScoreKey]) > 0:
             self.latestReward = self.trainingInfoJson[snapshotScoreKey][-1]
-        self.txtLogger.info(f'Reloading state\nContinuing from epoch {self.startEpoch}')
+        self.txtLogger.info(f'Reloading state\nContinuing from epoch {self.startEpoch}, seed: {self.seed}')

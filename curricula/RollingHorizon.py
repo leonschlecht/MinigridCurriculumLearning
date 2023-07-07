@@ -183,7 +183,7 @@ class RollingHorizon(ABC):
                     shutil.rmtree(path + os.sep + directory)
                     print("deleted: ./", directory)
 
-            self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}]")
+            self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}], seed: {self.seed}")
         else:
             self.txtLogger.info("Creating model. . .")
             train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
@@ -193,7 +193,7 @@ class RollingHorizon(ABC):
             startEpoch = 1
             utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, startEpoch),
                             txtLogger=self.txtLogger)  # copy epoch0 -> epoch1
-            self.txtLogger.info(f"\nThe training will go on for {self.totalEpochs} epochs\n")
+            self.txtLogger.info(f"\nThe training will go on for {self.totalEpochs} epochs, seed: {self.seed}\n")
             rewardsDict = {}
 
             self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
