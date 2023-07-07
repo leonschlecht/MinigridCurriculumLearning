@@ -211,6 +211,8 @@ def getSpecificModel(specificModelList: list, modelName: str):
         distributionHelper.append({"snapshotDistribution": result.snapshotEnvDistribution,
                                    "bestCurricDistribution": result.bestCurriculaEnvDistribution,
                                    "allCurricDistribution": result.allCurricDistribution,
+                                   "seed": result.seed,
+                                   sumTrainingTime: result.trainingTimeSum,
                                    "id": modelName})
     rewardScoreDf = pd.DataFrame(scoreHelper)
     # print("median", medianLen, "; ", max(medianLen))
@@ -252,7 +254,8 @@ def filterDf(val, scoreDf, models):
 def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf):
     modelsEntered: int = 0
     usedModels = []
-    filteredDf = []
+    filteredScoreDf = []
+    filteredDistrDf = [] # TODO
     for i in range(len(models)):
         print(f"{i}: {models[i]}")
     print("filter options: NSGA, GA, RndRH, allParalell")
@@ -261,14 +264,14 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf):
         if val.isdigit() and int(val) < len(models) and val not in usedModels:
             modelsEntered += 1
             usedModels.append(val)
-            filteredDf.append(scoreDf[scoreDf["id"] == models[int(val)]])
+            filteredScoreDf.append(scoreDf[scoreDf["id"] == models[int(val)]])
         else:
             if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
-                filteredDf = filterDf(val, scoreDf, models)
+                filteredScoreDf = filterDf(val, scoreDf, models)
                 break
             print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
-    return filteredDf
+    return filteredScoreDf, filteredDistrDf
 
 
 def plotMultipleLineplots(filteredDf):
@@ -276,14 +279,30 @@ def plotMultipleLineplots(filteredDf):
     fig, ax = plt.subplots(figsize=(10, 6))
     for df in filteredDf:
         sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax)
-    ax.set_ylabel("evaluation reward")
-    ax.set_xlabel("iterations")
+    ax.set_ylabel("evaluation reward .")
+    ax.set_xlabel("iterations .")
     # ax.set_ylim(bottom=0.6)
     plt.tight_layout()  # Add this line to adjust the layout and prevent legend cutoff
     # plt.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
     plt.legend()
     plt.show()
 
+
+def plotAggrgatedBarplot(filteredDf):
+    sns.set_theme(style="darkgrid")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for df in filteredDf:
+        sns.barplot(x="id", y=sumTrainingTime, data=df, ax=ax)
+        # sns.barplot(x=df.index, y='sumTrainingTime', data=df)
+    plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
+    plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
+    plt.title('Barplot of sumTrainingTime')  # Replace 'Barplot of sumTrainingTime' with the appropriate title for your plot
+    plt.show()
+    # ax.set_ylim(bottom=0.6)
+    # plt.tight_layout()  # Add this line to adjust the layout and prevent legend cutoff
+    # plt.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
+    plt.legend()
+    plt.show()
 
 def main(comparisons: int):
     evalDirBasePath = storage.getLogFilePath(["storage", "_evaluate"])
@@ -320,7 +339,7 @@ def main(comparisons: int):
     print("------------------\n\n\n")
     if args.model is None and not args.skip:
         filteredDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf)
-        plotMultipleLineplots(filteredDf)
+        # plotMultipleLineplots(filteredDf)
 
     if args.model is not None and not args.skip:
         filteredDf = scoreDf[scoreDf["id"] == args.model]
@@ -337,6 +356,9 @@ def main(comparisons: int):
             occur = len(filteredIterDf[filteredIterDf == firstIterVal])
             print(f"{occur} experiments done with {m}")
             sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
+            plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
+            plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
+            plt.title('Barplot of sumTrainingTime')  # Replace 'Barplot of sumTrainingTime' with the appropriate title for your plot
             plt.legend()
             plt.show()
 

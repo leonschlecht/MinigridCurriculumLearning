@@ -13,6 +13,7 @@ class Result:
                                      [pair.split('=') for pair in argsString.split(', ')]}
         self.loadedArgsDict[trainEvolutionary] = self.getTrainEvolutionary(self.loadedArgsDict[trainEvolutionary])
         self.modelName = self.loadedArgsDict[modelKey]
+        self.seed = self.loadedArgsDict[seedKey]
         self.selectedEnvList = evaluationDictionary[selectedEnvs]
         self.epochsTrained = evaluationDictionary[epochsDone] - 1
         self.framesTrained = evaluationDictionary[numFrames]
