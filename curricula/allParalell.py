@@ -26,6 +26,10 @@ class allParalell:
         self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
         self.trainingTime = 0
         self.model = args.model + "_s" + str(self.seed)
+        self.isSPLCL = args.allSimultaneous
+
+        if self.isSPLCL:
+            self.model += "_splcl"
 
         self.selectedModel = self.model + os.sep + "model"
 
@@ -36,15 +40,15 @@ class allParalell:
 
         self.curriculaEnvDetails = {}
         self.modelExists = os.path.exists(self.logFilePath)
-        self.allEnvsSimultaneous = args.allSimultaneous
         self.latestReward = 0
         self.startEpoch = 1
 
-        if self.allEnvsSimultaneous:
+        if self.isSPLCL:
+            print("AllPara")
             self.initialEnvNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
         else:
+            print("SPLCL")
             self.initialEnvNames = self.initializeEnvNames(self.envDifficulty)
-
         if self.modelExists:
             self.loadTrainingInfo()
         else:
@@ -73,7 +77,7 @@ class allParalell:
                 nextStep = "stay"
             else:
                 nextStep = "goDown"
-            if self.allEnvsSimultaneous:
+            if self.isSPLCL:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
             else:
                 envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty, self.seed + epoch)
