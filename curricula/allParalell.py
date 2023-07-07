@@ -43,7 +43,7 @@ class allParalell:
             self.initialEnvNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
         else:
             print("SPLCL")
-            self.initialEnvNames = self.initializeEnvNames(self.envDifficulty) # todo just initialize with easiest
+            self.initialEnvNames = self.initializeEnvNames(self.envDifficulty)
         if self.modelExists:
             self.loadTrainingInfo()
         else:
@@ -98,13 +98,14 @@ class allParalell:
 
     @staticmethod
     def initializeEnvNames(startDifficulty=1.0) -> list:
+        """
+        Initialize an env list for the training with the easiest index
+        :param startDifficulty:
+        :return:
+        """
         envNames = []
         for j in range(len(ENV_NAMES.ALL_ENVS)):
-            if j < 2:
-                index = 0
-            else:
-                index = 1
-            envNames.append(getEnvFromDifficulty(index, startDifficulty))
+            envNames.append(getEnvFromDifficulty(0, startDifficulty))
         return envNames
 
     @staticmethod
