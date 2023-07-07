@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=ga50_3_3_3
+#SBATCH --job-name=GA_50_3_3_3
 #SBATCH --output=GA_50_3_3_3curricRun_%j_out.txt
 #SBATCH --time=47:59:00
 #SBATCH --partition=cpu_long_stud
