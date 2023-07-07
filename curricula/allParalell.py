@@ -143,10 +143,8 @@ class allParalell:
                 cutEnv = envNames[i].split("-custom")[0]
                 if nextStep == "goDown":
                     nextEnv = self.getEasierEnv(cutEnv)
-                    print("Made envs easier")
                 elif newDifficulty == "goUp":
                     nextEnv = self.getHarderEnv(cutEnv)
-                    print("made envs harder")
                 else:
                     raise Exception("Invalid new difficulty")
                 envNames[i] = nextEnv + ENV_NAMES.CUSTOM_POSTFIX + str(newDifficulty)
@@ -154,7 +152,6 @@ class allParalell:
             cutEnv = envNames[i].split("-custom")[0]
             envNames[i] = cutEnv + ENV_NAMES.CUSTOM_POSTFIX + str(newDifficulty)
         print("env names after = ", envNames)
-        exit()
         return envNames
 
     def updateTrainingInfo(self, trainingInfoJson, epoch, envNames, reward, difficulty, framesDone):
