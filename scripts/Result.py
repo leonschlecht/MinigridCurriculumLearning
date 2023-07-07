@@ -26,7 +26,7 @@ class Result:
         self.fullEnvDict = evaluationDictionary[curriculaEnvDetailsKey]
         self.difficultyList = evaluationDictionary[difficultyKey]
         self.trainingTimeList = evaluationDictionary[epochTrainingTime]
-        self.trainingTimeSum = evaluationDictionary[sumTrainingTime]
+        self.trainingTimeSum = evaluationDictionary[sumTrainingTime] / 60 / 60
         self.modelName = modelName
         self.iterationsPerEnv = self.getIterationsPerEnv(evaluationDictionary, self.loadedArgsDict)
         self.iterationsPerEnv = int(self.loadedArgsDict["iterPerEnv"])

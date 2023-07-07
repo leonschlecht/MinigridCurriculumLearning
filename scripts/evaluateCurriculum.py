@@ -215,7 +215,6 @@ def getSpecificModel(specificModelList: list, modelName: str):
                                    sumTrainingTime: result.trainingTimeSum,
                                    "id": modelName})
     rewardScoreDf = pd.DataFrame(scoreHelper)
-    # print("median", medianLen, "; ", max(medianLen))
     medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
     rewardScoreDf = rewardScoreDf[rewardScoreDf[iterationSteps] <= results[0].iterationsPerEnv * medianLen]
 
@@ -257,10 +256,11 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     modelsEntered: int = 0
     usedModels = []
     filteredScoreDf = []
-    filteredDistrDf = [] # TODO
+    filteredDistrDf = []  # TODO
     for i in range(len(models)):
         print(f"{i}: {models[i]}")
     print("filter options: NSGA, GA, RndRH, allParalell")
+    val = None
     while modelsEntered < comparisons:
         val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
         if val.isdigit() and int(val) < len(models) and val not in usedModels:
@@ -275,7 +275,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
                 break
             print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
-    return filteredScoreDf, filteredDistrDf
+    return filteredScoreDf, filteredDistrDf, val
 
 
 def plotMultipleLineplots(filteredDf):
@@ -292,9 +292,20 @@ def plotMultipleLineplots(filteredDf):
     plt.show()
 
 
-def plotAggrgatedBarplot(filteredDf: list):
-    print(filteredDf)
+def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame], filterWord):
     assert len(filteredDf) > 0, "filteredDf empty"
+    if filterWord is not None:
+        for dictDf in filteredDf:
+            split = dictDf["id"].values
+            experiment = split[0]
+            print(experiment)
+            words = experiment.split("_")
+            steps = words[2].split("tep")[0]
+            gen = words[3].split("en")[0]
+            curric = words[4].split("urric")[0]
+            newId = words[1] + "_" + steps + "_" + gen + "_" + curric
+            dictDf["id"] = newId
+
     sns.set_theme(style="darkgrid")
     fig, ax = plt.subplots(figsize=(10, 6))
     aggregatedDf = pd.DataFrame()
@@ -302,10 +313,10 @@ def plotAggrgatedBarplot(filteredDf: list):
         aggregatedDf = pd.concat([aggregatedDf, df], ignore_index=True)
 
     sns.barplot(x="id", y=sumTrainingTime, data=aggregatedDf, ax=ax)
-    plt.xlabel('Index')
-    plt.ylabel('sumTrainingTime')
-    plt.title('Barplot of sumTrainingTime')
+    plt.ylabel('training time (hours)')
+    plt.title(f'Training time for {filterWord}')
     plt.show()
+
 
 def main(comparisons: int):
     evalDirBasePath = storage.getLogFilePath(["storage", "_evaluate"])
@@ -341,9 +352,9 @@ def main(comparisons: int):
     # TODO ask for comparison nrs if not given by --comparisons
     print("------------------\n\n\n")
     if args.model is None and not args.skip:
-        filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
+        filteredScoreDf, filteredDistrDf, filterWord = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
         # plotMultipleLineplots(filteredDf)
-        plotAggrgatedBarplot(filteredDistrDf)
+        plotAggrgatedBarplot(filteredDistrDf, filterWord)
 
     if args.model is not None and not args.skip:
         filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
