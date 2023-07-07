@@ -48,6 +48,11 @@ numCurricKey = "numCurric"
 usedEnvEnumerationKey = "usedEnvEnumeration"
 modelKey = "model"
 
+# Evaluation Keys
+snapshotDistributionKey = "snapshotDistribution"
+bestCurricDistributionKey = "bestCurricDistribution"
+allCurricDistributoinKey = "allCurricDistribution"
+
 # Used for all Paralell training
 NEXT_ENVS = "NextEnvs"
 

@@ -1,6 +1,5 @@
 import argparse
 import os
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -92,7 +91,6 @@ def plotSnapshotEnvDistribution(resultClassesList: list[Result], titleInfo: str)
     Plots the distributions of the envs used for 1st step of curricula
     :param resultClassesList:
     :param titleInfo:
-    :param modelNamesList:
     :return:
     """
     snapshotDistributions = [[res.snapshotEnvDistribution, res.modelName] for res in resultClassesList]
@@ -208,10 +206,24 @@ def getSpecificModel(specificModelList: list, modelName: str):
                                 "id": modelName,
                                 iterationSteps: result.iterationsList[i]})
 
-        distributionHelper.append({"snapshotDistribution": result.snapshotEnvDistribution,
-                                   "bestCurricDistribution": result.bestCurriculaEnvDistribution,
-                                   "allCurricDistribution": result.allCurricDistribution,
-                                   "seed": result.seed,
+        # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
+        tmp = result.snapshotEnvDistribution.keys()
+        helper = [[] for _ in tmp]
+        for k in tmp:
+            if "6x6" in k:
+                helper[0] = (result.snapshotEnvDistribution[k])
+            elif "8x8" in k:
+                helper[1] = (result.snapshotEnvDistribution[k])
+            elif "10x10" in k:
+                helper[2] = (result.snapshotEnvDistribution[k])
+            else:
+                helper[3] = (result.snapshotEnvDistribution[k])
+        distributionHelper.append({
+                                   "6x6": helper[0],
+                                   "8x8": helper[1],
+                                   "10x10": helper[2],
+                                   "12x12": helper[3],
+                                   seedKey: result.seed,
                                    sumTrainingTime: result.trainingTimeSum,
                                    "id": modelName})
     rewardScoreDf = pd.DataFrame(scoreHelper)
@@ -235,11 +247,11 @@ def getAllModels(logfilePaths: list[list]):
     return scoreDf, distrDf
 
 
-def filterDf(val, scoreDf, models):
+def filterDf(val, dataFrame, models):
     """
     Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
     :param val: the prefix to be filtered. E.g. "RndRH"
-    :param scoreDf: the main dataframe
+    :param dataFrame: the main dataframe
     :param models: a list of all model names (unique values in id column of the df)
     :return:
     """
@@ -248,7 +260,8 @@ def filterDf(val, scoreDf, models):
         if val in m and "C_" not in m:
             if val == "GA" and "NSGA" in m:
                 continue
-            filteredDf.append(scoreDf[scoreDf["id"] == m])
+            filteredDf.append(dataFrame[dataFrame["id"] == m])
+
     return filteredDf
 
 
@@ -260,7 +273,6 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     for i in range(len(models)):
         print(f"{i}: {models[i]}")
     print("filter options: NSGA, GA, RndRH, allParalell")
-    val = None
     while modelsEntered < comparisons:
         val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
         if val.isdigit() and int(val) < len(models) and val not in usedModels:
@@ -275,7 +287,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
                 break
             print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
-    return filteredScoreDf, filteredDistrDf, val
+    return filteredScoreDf, filteredDistrDf
 
 
 def plotMultipleLineplots(filteredDf):
@@ -292,29 +304,82 @@ def plotMultipleLineplots(filteredDf):
     plt.show()
 
 
-def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame], filterWord):
+def removeExperimentPrefix(dictDf):
+    """
+    Removes the "GA_" prefix in the id column (or whichever variant was used like NSGA or RRH)
+    :param dictDf:
+    :return:
+    """
+    split = dictDf["id"].values
+    experiment = split[0]
+    if "GA" in experiment and not "NSGA" in experiment:
+        filteredWord = "GA"
+    elif "NSGA" in experiment:
+        filteredWord = "NSGA"
+    elif "RndRH" in experiment:
+        filteredWord = "RndRH"
+    elif "allParalell" in experiment:
+        return experiment
+    else:
+        raise Exception("Something went wrong with the experiment name")
+    words = experiment.split("_")
+
+    if filteredWord == "GA" or filteredWord == "NSGA" or filteredWord == "RndRH":
+        iterations = words[1] + "_"
+        steps = words[2].split("tep")[0] + "_"  # cut "3step" to 3s
+    else: # TODO probably not needed
+        iterations = ""
+        steps = ""
+
+    if filteredWord == "GA" or filteredWord == "NSGA":
+        gen = words[3].split("en")[0] + "_"  # cut "3gen" to 3g
+    else:
+        gen = ""
+
+    if filteredWord == "GA" or filteredWord == "NSGA":
+        curric = words[4].split("urric")[0]  # cut "3curric" to 3c
+    elif filteredWord == "RndRH":
+        curric = words[3].split("urric")[0]
+        assert curric != ""
+    else:
+        curric = ""
+    return iterations + steps + gen + curric
+
+
+def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame]):
     assert len(filteredDf) > 0, "filteredDf empty"
-    if filterWord is not None:
-        for dictDf in filteredDf:
-            split = dictDf["id"].values
-            experiment = split[0]
-            print(experiment)
-            words = experiment.split("_")
-            steps = words[2].split("tep")[0]
-            gen = words[3].split("en")[0]
-            curric = words[4].split("urric")[0]
-            newId = words[1] + "_" + steps + "_" + gen + "_" + curric
-            dictDf["id"] = newId
+
+    # TODO generic remover when not using a filter
 
     sns.set_theme(style="darkgrid")
     fig, ax = plt.subplots(figsize=(10, 6))
     aggregatedDf = pd.DataFrame()
     for df in filteredDf:
+        df["id"] = removeExperimentPrefix(df)
         aggregatedDf = pd.concat([aggregatedDf, df], ignore_index=True)
+    # print(aggregatedDf["id"])
 
     sns.barplot(x="id", y=sumTrainingTime, data=aggregatedDf, ax=ax)
-    plt.ylabel('training time (hours)')
-    plt.title(f'Training time for {filterWord}')
+
+    """
+    # Select the specific columns you want to visualize
+    columns_to_visualize = ['6x6', '8x8', '10x10', '12x12', 'id']
+    # Group the dataframe by the 'id' column and calculate the mean of the selected columns
+    grouped_df = aggregatedDf[columns_to_visualize].groupby('id').mean()
+    # Reset the index to make 'id' a regular column
+    grouped_df = grouped_df.reset_index()
+    # Melt the dataframe to convert the columns into rows for easier plotting
+    melted_df = grouped_df.melt(id_vars='id', var_name='Column', value_name='Value')
+    # Plot the data using seaborn
+    # sns.barplot(data=melted_df, x='id', y='Value', hue='Column')
+    # plt.xticks(range(len(grouped_df)), grouped_df['id'], rotation=0)
+
+    # Set the plot title and axis labels
+    plt.title('Visualization of Specific Columns Grouped by id')
+    plt.xlabel('id')
+    plt.ylabel('Value')
+    """
+
     plt.show()
 
 
@@ -352,9 +417,9 @@ def main(comparisons: int):
     # TODO ask for comparison nrs if not given by --comparisons
     print("------------------\n\n\n")
     if args.model is None and not args.skip:
-        filteredScoreDf, filteredDistrDf, filterWord = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
+        filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
         # plotMultipleLineplots(filteredDf)
-        plotAggrgatedBarplot(filteredDistrDf, filterWord)
+        plotAggrgatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
         filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
