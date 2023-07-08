@@ -128,7 +128,7 @@ class allParalell:
         # TODO get the value of the models progress (maybe last 3 runs, and then decide if you should go up or not)
         np.random.seed(seed)
         randomIndexSample = np.random.choice(range(len(ENV_NAMES.ALL_ENVS)), size=self.paraEnvs, replace=False)
-        if reward > self.stepMaxReward * .75:
+        if reward > self.stepMaxReward * .85:
             nextStep = "goUp"
         elif reward > self.stepMaxReward * .5:
             nextStep = "stay"
@@ -164,6 +164,7 @@ class allParalell:
         trainingInfoJson[snapshotScoreKey].append(reward)
 
         trainingInfoJson[curriculaEnvDetailsKey][currentEpoch] = envNames
+        print("envDetails",trainingInfoJson[curriculaEnvDetailsKey])
         trainingInfoJson[difficultyKey].append(difficulty)
         now = datetime.now()
         timeSinceLastEpoch = (now - self.lastEpochStartTime).total_seconds()
