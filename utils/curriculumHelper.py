@@ -110,6 +110,7 @@ def calculateEnvDifficulty(iterationsDone, difficultyStepsize) -> float:
     value = max(value, 0.15)
 
     assert value <= 1
+    if value < 1:
     register(
         id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
         entry_point="minigrid.envs:DoorKeyEnv",
