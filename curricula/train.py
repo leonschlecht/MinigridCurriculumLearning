@@ -1,3 +1,4 @@
+import os
 import time
 import tensorboardX
 
@@ -57,6 +58,10 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     framesWithThisEnv = 0
 
     if framesToTrain == 0:
+        if not os.path.isdir(model_dir):
+            os.mkdir(model_dir)
+        else:
+            raise Exception("Path exists when trying to create epoch0 folder")
         txt_logger.info(f'{acmodel}')
         txt_logger.info(f'Created model {model}')
         return 0
