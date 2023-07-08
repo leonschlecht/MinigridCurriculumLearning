@@ -180,8 +180,11 @@ class RollingHorizon(ABC):
             dirs = (os.listdir(path))
             for directory in dirs:
                 if prefix in directory:
-                    shutil.rmtree(path + os.sep + directory)
-                    print("deleted: ./", directory)
+                    try:
+                        shutil.rmtree(path + os.sep + directory)
+                        print("deleted: ./", directory)
+                    except Exception as e:
+                        print("Exception while deleting:", e)
 
             self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}], seed: {self.seed}")
         else:

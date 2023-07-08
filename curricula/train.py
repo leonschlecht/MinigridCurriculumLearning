@@ -125,10 +125,12 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             utils.save_status(status, model_dir)
             # txt_logger.info("\t\tStatus saved")
 
-    txt_logger.info(f'\nTrained on {envList} using model {model} for {framesWithThisEnv} frames. Duration {time.time()-start_time}. Fps: ??')
+    txt_logger.info(f'\nTrained on {envList} using model {model} for {framesWithThisEnv} frames. '
+                    f'Duration {time.time()-start_time}. Fps: ??. totalF {status["num_frames"]}')
 
     algo.env.end()
     algo.env.close()
     tb_writer.close()
     csv_file.close()
+    time.sleep(1)
     return status["num_frames"]
