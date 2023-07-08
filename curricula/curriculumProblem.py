@@ -34,7 +34,6 @@ class CurriculumProblem(Problem):
         rewards = self.rheaObj.trainEveryCurriculum(x, self.gen)
         # rewards = self.dummyRewards(curricula)
         out["F"] = -1 * np.array(rewards)
-        print("EVALUATE PYMOO DONE. Generation", self.gen)
 
     def dummyRewards(self, curricula):
         rewards = []

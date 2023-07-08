@@ -198,8 +198,6 @@ class RollingHorizon(ABC):
 
             self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
                                                               self.paraEnvs, self.seed)
-            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
-                                self.txtLogger)
         return startEpoch, rewardsDict
 
     @staticmethod
@@ -254,8 +252,8 @@ class RollingHorizon(ABC):
         txtLogger.info(
             f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
         envDetails = trainingInfoJson[curriculaEnvDetailsKey][currentEpoch]
-        txtLogger.info(
-            f"CurriculaEnvDetails {envDetails}; selectedEnv: {selectedEnv}")
+        #txtLogger.info(
+         #   f"CurriculaEnvDetails {envDetails}; selectedEnv: {selectedEnv}")
         txtLogger.info(f"Raw Reward of best curriculum: {bestReward}. \
             Snapshot Reward {snapshotReward}. That is {round(snapshotReward / stepMaxReward, 3)} of maxReward")
 
