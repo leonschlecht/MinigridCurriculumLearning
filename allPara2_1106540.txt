@@ -1,0 +1,1334 @@
+Start2
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : helena2
+srun: cpus-per-task       : 1
+srun: jobid               : 1106540
+srun: job-name            : allPara2
+srun: mem                 : 48G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1106540: nodes(1):`helena2', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1106540.0 on host helena2, 2 tasks: [0-1]
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node helena2, 2 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+AllPara
+Reloading state
+Continuing from epoch 4, seed: 8515
+AllPara
+Reloading state
+Continuing from epoch 4, seed: 8515
+training will go on until 66
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0']
+training will go on until 66
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model AllPara_s8515/model for 151552 frames. Duration 230.29861450195312. Fps: ??
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 95, in <module>
+    main()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 49, in main
+    e = allParalell(txtLogger, startTime, cmdLineString, args)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/allParalell.py", line 53, in __init__
+    self.trainEachCurriculum(self.startEpoch, self.totalEpochs, self.iterationsDone, self.initialEnvNames)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/allParalell.py", line 66, in trainEachCurriculum
+    reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 104, in evaluateAgent
+    evaluationResult = evaluateAll(model, envs, args, txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 84, in evaluateAll
+    results[evaluationEnv] = startEvaluationInOneEnv(args, model, evaluationEnv, txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 16, in startEvaluationInOneEnv
+    env = utils.make_env(evalEnv, args.seed + 10000 * i)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/env.py", line 7, in make_env
+    env = gym.make(env_key, render_mode=render_mode)  # max_episode_steps ?? ; can potentially call kwargs
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 740, in make
+    env_spec = _find_spec(id)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 537, in _find_spec
+    _check_version_exists(ns, name, version)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 403, in _check_version_exists
+    _check_name_exists(ns, name)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 380, in _check_name_exists
+    raise error.NameNotFound(
+gymnasium.error.NameNotFound: Environment `MiniGrid-DoorKey-6x6-custom-diff1` doesn't exist. Did you mean: `MiniGrid-DoorKey-6x6-custom-diff1.0`?
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1106540.0 (status=0x0100).
+srun: error: helena2: task 1: Exited with exit code 1
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model AllPara_s8515/model for 151552 frames. Duration 232.41223859786987. Fps: ??
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 95, in <module>
+    main()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 49, in main
+    e = allParalell(txtLogger, startTime, cmdLineString, args)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/allParalell.py", line 53, in __init__
+    self.trainEachCurriculum(self.startEpoch, self.totalEpochs, self.iterationsDone, self.initialEnvNames)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/allParalell.py", line 66, in trainEachCurriculum
+    reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 104, in evaluateAgent
+    evaluationResult = evaluateAll(model, envs, args, txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 84, in evaluateAll
+    results[evaluationEnv] = startEvaluationInOneEnv(args, model, evaluationEnv, txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 16, in startEvaluationInOneEnv
+    env = utils.make_env(evalEnv, args.seed + 10000 * i)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/env.py", line 7, in make_env
+    env = gym.make(env_key, render_mode=render_mode)  # max_episode_steps ?? ; can potentially call kwargs
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 740, in make
+    env_spec = _find_spec(id)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 537, in _find_spec
+    _check_version_exists(ns, name, version)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 403, in _check_version_exists
+    _check_name_exists(ns, name)
+B  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 380, in _check_name_exists
+    raise error.NameNotFound(
+gymnasium.error.NameNotFound: Environment `MiniGrid-DoorKey-6x6-custom-diff1` doesn't exist. Did you mean: `MiniGrid-DoorKey-6x6-custom-diff1.0`?
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1106540.0 (status=0x0100).
+srun: error: helena2: task 0: Exited with exit code 1
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : helena2
+srun: cpus-per-task       : 1
+srun: jobid               : 1106540
+srun: job-name            : allPara2
+srun: mem                 : 48G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1106540: nodes(1):`helena2', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1106540.1 on host helena2, 2 tasks: [0-1]
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node helena2, 2 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+AllPara
+training will go on until 66
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0']
+AllPara
+training will go on until 66
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model AllPara_s9152/model for 151552 frames. Duration 228.56443214416504. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model AllPara_s9152/model for 151552 frames. Duration 229.0350546836853. Fps: ??
+Evaluate agent TEST 0.6045624925754964
+Current rewards after epoch_1: 0.6045624925754964
+
+EPOCH: 1 SUCCESS (total: 66)
+ 
+reward 0.6045624925754964
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1']
+Evaluate agent TEST 0.6045624925754964
+Current rewards after epoch_1: 0.6045624925754964
+
+EPOCH: 1 SUCCESS (total: 66)
+ 
+reward 0.6045624925754964
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1'] using model AllPara_s9152/model for 151552 frames. Duration 230.1439881324768. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1'] using model AllPara_s9152/model for 151552 frames. Duration 230.50591373443604. Fps: ??
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-12x12-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-10x10-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-8x8-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-6x6-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+Evaluate agent TEST 7.964250372124441
+Current rewards after epoch_2: 7.964250372124441
+
+EPOCH: 2 SUCCESS (total: 66)
+ 
+reward 7.964250372124441
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1']
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-12x12-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-10x10-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-8x8-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-6x6-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+Evaluate agent TEST 7.964250372124441
+Current rewards after epoch_2: 7.964250372124441
+
+EPOCH: 2 SUCCESS (total: 66)
+ 
+reward 7.964250372124441
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1'] using model AllPara_s9152/model for 151552 frames. Duration 231.79033517837524. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1'] using model AllPara_s9152/model for 151552 frames. Duration 231.7732436656952. Fps: ??
+Evaluate agent TEST 29.95099995613098
+Current rewards after epoch_3: 29.95099995613098
+
+EPOCH: 3 SUCCESS (total: 66)
+ 
+reward 29.95099995613098
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1']
+Evaluate agent TEST 29.95099995613098
+Current rewards after epoch_3: 29.95099995613098
+
+EPOCH: 3 SUCCESS (total: 66)
+ 
+reward 29.95099995613098
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1'] using model AllPara_s9152/model for 151552 frames. Duration 233.21696186065674. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-12x12-custom-diff1'] using model AllPara_s9152/model for 151552 frames. Duration 235.53693413734436. Fps: ??
+Evaluate agent TEST 34.78197505143972
+Current rewards after epoch_4: 34.78197505143972
+
+EPOCH: 4 SUCCESS (total: 66)
+ 
+reward 34.78197505143972
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.946896', 'MiniGrid-DoorKey-8x8-custom-diff0.946896', 'MiniGrid-DoorKey-10x10-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896']
+Evaluate agent TEST 34.78197505143972
+Current rewards after epoch_4: 34.78197505143972
+
+EPOCH: 4 SUCCESS (total: 66)
+ 
+reward 34.78197505143972
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.946896', 'MiniGrid-DoorKey-8x8-custom-diff0.946896', 'MiniGrid-DoorKey-10x10-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.946896', 'MiniGrid-DoorKey-8x8-custom-diff0.946896', 'MiniGrid-DoorKey-10x10-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896'] using model AllPara_s9152/model for 151552 frames. Duration 232.66737985610962. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.946896', 'MiniGrid-DoorKey-8x8-custom-diff0.946896', 'MiniGrid-DoorKey-10x10-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896'] using model AllPara_s9152/model for 151552 frames. Duration 234.27831888198853. Fps: ??
+Evaluate agent TEST 34.76382586552547
+Current rewards after epoch_5: 34.76382586552547
+
+EPOCH: 5 SUCCESS (total: 66)
+ 
+reward 34.76382586552547
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.87112', 'MiniGrid-DoorKey-8x8-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-12x12-custom-diff0.87112']
+Evaluate agent TEST 34.8390928877317
+Current rewards after epoch_5: 34.8390928877317
+
+EPOCH: 5 SUCCESS (total: 66)
+ 
+reward 34.8390928877317
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.87112', 'MiniGrid-DoorKey-8x8-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-12x12-custom-diff0.87112']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.87112', 'MiniGrid-DoorKey-8x8-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-12x12-custom-diff0.87112'] using model AllPara_s9152/model for 151552 frames. Duration 234.18054604530334. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.87112', 'MiniGrid-DoorKey-8x8-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-12x12-custom-diff0.87112'] using model AllPara_s9152/model for 151552 frames. Duration 233.83255624771118. Fps: ??
+Evaluate agent TEST 34.702204657701344
+Current rewards after epoch_6: 34.702204657701344
+
+EPOCH: 6 SUCCESS (total: 66)
+ 
+reward 34.702204657701344
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-10x10-custom-diff0.795344', 'MiniGrid-DoorKey-12x12-custom-diff0.795344']
+Evaluate agent TEST 34.702204657701344
+Current rewards after epoch_6: 34.702204657701344
+
+EPOCH: 6 SUCCESS (total: 66)
+ 
+reward 34.702204657701344
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-10x10-custom-diff0.795344', 'MiniGrid-DoorKey-12x12-custom-diff0.795344']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-10x10-custom-diff0.795344', 'MiniGrid-DoorKey-12x12-custom-diff0.795344'] using model AllPara_s9152/model for 151552 frames. Duration 232.67740774154663. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-10x10-custom-diff0.795344', 'MiniGrid-DoorKey-12x12-custom-diff0.795344'] using model AllPara_s9152/model for 151552 frames. Duration 233.84920835494995. Fps: ??
+Evaluate agent TEST 34.52830732822419
+Current rewards after epoch_7: 34.52830732822419
+
+EPOCH: 7 SUCCESS (total: 66)
+ 
+reward 34.52830732822419
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-8x8-custom-diff0.719568', 'MiniGrid-DoorKey-10x10-custom-diff0.719568', 'MiniGrid-DoorKey-12x12-custom-diff0.719568']
+Evaluate agent TEST 34.44756680011749
+Current rewards after epoch_7: 34.44756680011749
+
+EPOCH: 7 SUCCESS (total: 66)
+ 
+reward 34.44756680011749
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-8x8-custom-diff0.719568', 'MiniGrid-DoorKey-10x10-custom-diff0.719568', 'MiniGrid-DoorKey-12x12-custom-diff0.719568']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-8x8-custom-diff0.719568', 'MiniGrid-DoorKey-10x10-custom-diff0.719568', 'MiniGrid-DoorKey-12x12-custom-diff0.719568'] using model AllPara_s9152/model for 151552 frames. Duration 233.8587908744812. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-8x8-custom-diff0.719568', 'MiniGrid-DoorKey-10x10-custom-diff0.719568', 'MiniGrid-DoorKey-12x12-custom-diff0.719568'] using model AllPara_s9152/model for 151552 frames. Duration 233.9196937084198. Fps: ??
+Evaluate agent TEST 34.4440773153305
+Current rewards after epoch_8: 34.4440773153305
+
+EPOCH: 8 SUCCESS (total: 66)
+ 
+reward 34.4440773153305
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-10x10-custom-diff0.643792', 'MiniGrid-DoorKey-12x12-custom-diff0.643792']
+Evaluate agent TEST 34.367559862136844
+Current rewards after epoch_8: 34.367559862136844
+
+EPOCH: 8 SUCCESS (total: 66)
+ 
+reward 34.367559862136844
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-10x10-custom-diff0.643792', 'MiniGrid-DoorKey-12x12-custom-diff0.643792']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-10x10-custom-diff0.643792', 'MiniGrid-DoorKey-12x12-custom-diff0.643792'] using model AllPara_s9152/model for 151552 frames. Duration 233.80463433265686. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-10x10-custom-diff0.643792', 'MiniGrid-DoorKey-12x12-custom-diff0.643792'] using model AllPara_s9152/model for 151552 frames. Duration 233.46435689926147. Fps: ??
+Evaluate agent TEST 34.31743685245514
+Current rewards after epoch_9: 34.31743685245514
+
+EPOCH: 9 SUCCESS (total: 66)
+ 
+reward 34.31743685245514
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.568016', 'MiniGrid-DoorKey-8x8-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-12x12-custom-diff0.568016']
+Evaluate agent TEST 34.075919346809386
+Current rewards after epoch_9: 34.075919346809386
+
+EPOCH: 9 SUCCESS (total: 66)
+ 
+reward 34.075919346809386
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.568016', 'MiniGrid-DoorKey-8x8-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-12x12-custom-diff0.568016']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.568016', 'MiniGrid-DoorKey-8x8-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-12x12-custom-diff0.568016'] using model AllPara_s9152/model for 151552 frames. Duration 233.7527141571045. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.568016', 'MiniGrid-DoorKey-8x8-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-12x12-custom-diff0.568016'] using model AllPara_s9152/model for 151552 frames. Duration 234.86501288414001. Fps: ??
+Evaluate agent TEST 34.08058747768402
+Current rewards after epoch_10: 34.08058747768402
+
+EPOCH: 10 SUCCESS (total: 66)
+ 
+reward 34.08058747768402
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.49224', 'MiniGrid-DoorKey-8x8-custom-diff0.49224', 'MiniGrid-DoorKey-10x10-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224']
+Evaluate agent TEST 34.04625175641133
+Current rewards after epoch_10: 34.04625175641133
+
+EPOCH: 10 SUCCESS (total: 66)
+ 
+reward 34.04625175641133
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.49224', 'MiniGrid-DoorKey-8x8-custom-diff0.49224', 'MiniGrid-DoorKey-10x10-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.49224', 'MiniGrid-DoorKey-8x8-custom-diff0.49224', 'MiniGrid-DoorKey-10x10-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224'] using model AllPara_s9152/model for 151552 frames. Duration 234.31485104560852. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.49224', 'MiniGrid-DoorKey-8x8-custom-diff0.49224', 'MiniGrid-DoorKey-10x10-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224'] using model AllPara_s9152/model for 151552 frames. Duration 234.4825119972229. Fps: ??
+Evaluate agent TEST 33.745588002571694
+Current rewards after epoch_11: 33.745588002571694
+
+EPOCH: 11 SUCCESS (total: 66)
+ 
+reward 33.745588002571694
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-8x8-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-12x12-custom-diff0.41646400000000006']
+Evaluate agent TEST 33.781474539683416
+Current rewards after epoch_11: 33.781474539683416
+
+EPOCH: 11 SUCCESS (total: 66)
+ 
+reward 33.781474539683416
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-8x8-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-12x12-custom-diff0.41646400000000006']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-8x8-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-12x12-custom-diff0.41646400000000006'] using model AllPara_s9152/model for 151552 frames. Duration 234.4115126132965. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-8x8-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-12x12-custom-diff0.41646400000000006'] using model AllPara_s9152/model for 151552 frames. Duration 234.7953155040741. Fps: ??
+Evaluate agent TEST 33.28671791553497
+Current rewards after epoch_12: 33.28671791553497
+
+EPOCH: 12 SUCCESS (total: 66)
+ 
+reward 33.28671791553497
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-10x10-custom-diff0.340688', 'MiniGrid-DoorKey-12x12-custom-diff0.340688']
+Evaluate agent TEST 33.21901747813592
+Current rewards after epoch_12: 33.21901747813592
+
+EPOCH: 12 SUCCESS (total: 66)
+ 
+reward 33.21901747813592
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-10x10-custom-diff0.340688', 'MiniGrid-DoorKey-12x12-custom-diff0.340688']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-10x10-custom-diff0.340688', 'MiniGrid-DoorKey-12x12-custom-diff0.340688'] using model AllPara_s9152/model for 151552 frames. Duration 234.42786478996277. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-10x10-custom-diff0.340688', 'MiniGrid-DoorKey-12x12-custom-diff0.340688'] using model AllPara_s9152/model for 151552 frames. Duration 234.56871795654297. Fps: ??
+Evaluate agent TEST 32.69284893035889
+Current rewards after epoch_13: 32.69284893035889
+
+EPOCH: 13 SUCCESS (total: 66)
+ 
+reward 32.69284893035889
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-8x8-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-12x12-custom-diff0.26491200000000004']
+Evaluate agent TEST 32.78747752556434
+Current rewards after epoch_13: 32.78747752556434
+
+EPOCH: 13 SUCCESS (total: 66)
+ 
+reward 32.78747752556434
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-8x8-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-12x12-custom-diff0.26491200000000004']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-8x8-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-12x12-custom-diff0.26491200000000004'] using model AllPara_s9152/model for 151552 frames. Duration 232.3151936531067. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-8x8-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-12x12-custom-diff0.26491200000000004'] using model AllPara_s9152/model for 151552 frames. Duration 235.40212774276733. Fps: ??
+Evaluate agent TEST 31.667214943262245
+Current rewards after epoch_14: 31.667214943262245
+
+EPOCH: 14 SUCCESS (total: 66)
+ 
+reward 31.667214943262245
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-8x8-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-10x10-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008']
+Evaluate agent TEST 31.63831622197078
+Current rewards after epoch_14: 31.63831622197078
+
+EPOCH: 14 SUCCESS (total: 66)
+ 
+reward 31.63831622197078
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-8x8-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-10x10-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-8x8-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-10x10-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008'] using model AllPara_s9152/model for 151552 frames. Duration 233.53739881515503. Fps: ??
+Evaluate agent TEST 29.487441272735595
+Current rewards after epoch_15: 29.487441272735595
+
+EPOCH: 15 SUCCESS (total: 66)
+ 
+reward 29.487441272735595
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-8x8-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-10x10-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008'] using model AllPara_s9152/model for 151552 frames. Duration 235.35178327560425. Fps: ??
+Evaluate agent TEST 29.714823436737056
+Current rewards after epoch_15: 29.714823436737056
+
+EPOCH: 15 SUCCESS (total: 66)
+ 
+reward 29.714823436737056
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.407240152359. Fps: ??
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-12x12-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-10x10-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-8x8-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-6x6-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+Evaluate agent TEST 28.49807697901359
+Current rewards after epoch_16: 28.49807697901359
+
+EPOCH: 16 SUCCESS (total: 66)
+ 
+reward 28.49807697901359
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.23924016952515. Fps: ??
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-12x12-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-10x10-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-8x8-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-6x6-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+Evaluate agent TEST 28.58629498261672
+Current rewards after epoch_16: 28.58629498261672
+
+EPOCH: 16 SUCCESS (total: 66)
+ 
+reward 28.58629498261672
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.43407011032104. Fps: ??
+Evaluate agent TEST 27.994564132690428
+Current rewards after epoch_17: 27.994564132690428
+
+EPOCH: 17 SUCCESS (total: 66)
+ 
+reward 27.994564132690428
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.9862561225891. Fps: ??
+Evaluate agent TEST 28.26919231231396
+Current rewards after epoch_17: 28.26919231231396
+
+EPOCH: 17 SUCCESS (total: 66)
+ 
+reward 28.26919231231396
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.5306785106659. Fps: ??
+Evaluate agent TEST 28.811333456039428
+Current rewards after epoch_18: 28.811333456039428
+
+EPOCH: 18 SUCCESS (total: 66)
+ 
+reward 28.811333456039428
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.427392244339. Fps: ??
+Evaluate agent TEST 28.426333312988277
+Current rewards after epoch_18: 28.426333312988277
+
+EPOCH: 18 SUCCESS (total: 66)
+ 
+reward 28.426333312988277
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.10317087173462. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.69848895072937. Fps: ??
+Evaluate agent TEST 27.975653726321
+Current rewards after epoch_19: 27.975653726321
+
+EPOCH: 19 SUCCESS (total: 66)
+ 
+reward 27.975653726321
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+Evaluate agent TEST 28.72800000667572
+Current rewards after epoch_19: 28.72800000667572
+
+EPOCH: 19 SUCCESS (total: 66)
+ 
+reward 28.72800000667572
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 233.43790316581726. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.24430441856384. Fps: ??
+Evaluate agent TEST 28.668871808969058
+Current rewards after epoch_20: 28.668871808969058
+
+EPOCH: 20 SUCCESS (total: 66)
+ 
+reward 28.668871808969058
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+Evaluate agent TEST 29.488051258600677
+Current rewards after epoch_20: 29.488051258600677
+
+EPOCH: 20 SUCCESS (total: 66)
+ 
+reward 29.488051258600677
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.3105092048645. Fps: ??
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.14402055740356. Fps: ??
+Evaluate agent TEST 28.598179569977983
+Current rewards after epoch_21: 28.598179569977983
+
+EPOCH: 21 SUCCESS (total: 66)
+ 
+reward 28.598179569977983
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+Evaluate agent TEST 29.31179487338433
+Current rewards after epoch_21: 29.31179487338433
+
+EPOCH: 21 SUCCESS (total: 66)
+ 
+reward 29.31179487338433
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 233.0451123714447. Fps: ??
+Evaluate agent TEST 28.595282028271598
+Current rewards after epoch_22: 28.595282028271598
+
+EPOCH: 22 SUCCESS (total: 66)
+ 
+reward 28.595282028271598
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.71451020240784. Fps: ??
+Evaluate agent TEST 28.949064025695506
+Current rewards after epoch_22: 28.949064025695506
+
+EPOCH: 22 SUCCESS (total: 66)
+ 
+reward 28.949064025695506
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.96336555480957. Fps: ??
+Evaluate agent TEST 28.019538390819843
+Current rewards after epoch_23: 28.019538390819843
+
+EPOCH: 23 SUCCESS (total: 66)
+ 
+reward 28.019538390819843
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.0992889404297. Fps: ??
+Evaluate agent TEST 27.28633342266083
+Current rewards after epoch_23: 27.28633342266083
+
+EPOCH: 23 SUCCESS (total: 66)
+ 
+reward 27.28633342266083
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 233.77405190467834. Fps: ??
+Evaluate agent TEST 28.88055114856133
+Current rewards after epoch_24: 28.88055114856133
+
+EPOCH: 24 SUCCESS (total: 66)
+ 
+reward 28.88055114856133
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.88457584381104. Fps: ??
+Evaluate agent TEST 27.99866669654846
+Current rewards after epoch_24: 27.99866669654846
+
+EPOCH: 24 SUCCESS (total: 66)
+ 
+reward 27.99866669654846
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.9403636455536. Fps: ??
+Evaluate agent TEST 28.60223082652459
+Current rewards after epoch_25: 28.60223082652459
+
+EPOCH: 25 SUCCESS (total: 66)
+ 
+reward 28.60223082652459
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.5238013267517. Fps: ??
+Evaluate agent TEST 29.500999927520752
+Current rewards after epoch_25: 29.500999927520752
+
+EPOCH: 25 SUCCESS (total: 66)
+ 
+reward 29.500999927520752
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.20745277404785. Fps: ??
+Evaluate agent TEST 27.72345872463324
+Current rewards after epoch_26: 27.72345872463324
+
+EPOCH: 26 SUCCESS (total: 66)
+ 
+reward 27.72345872463324
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.95858359336853. Fps: ??
+Evaluate agent TEST 28.483102695941923
+Current rewards after epoch_26: 28.483102695941923
+
+EPOCH: 26 SUCCESS (total: 66)
+ 
+reward 28.483102695941923
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.21836948394775. Fps: ??
+Evaluate agent TEST 28.501271628694994
+Current rewards after epoch_27: 28.501271628694994
+
+EPOCH: 27 SUCCESS (total: 66)
+ 
+reward 28.501271628694994
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.24079489707947. Fps: ??
+Evaluate agent TEST 28.521871832334078
+Current rewards after epoch_27: 28.521871832334078
+
+EPOCH: 27 SUCCESS (total: 66)
+ 
+reward 28.521871832334078
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 233.65266752243042. Fps: ??
+Evaluate agent TEST 28.320000095367433
+Current rewards after epoch_28: 28.320000095367433
+
+EPOCH: 28 SUCCESS (total: 66)
+ 
+reward 28.320000095367433
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.65487551689148. Fps: ??
+Evaluate agent TEST 28.25052574854631
+Current rewards after epoch_28: 28.25052574854631
+
+EPOCH: 28 SUCCESS (total: 66)
+ 
+reward 28.25052574854631
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.1947522163391. Fps: ??
+Evaluate agent TEST 26.90092306834001
+Current rewards after epoch_29: 26.90092306834001
+
+EPOCH: 29 SUCCESS (total: 66)
+ 
+reward 26.90092306834001
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.50993633270264. Fps: ??
+Evaluate agent TEST 27.596999993324278
+Current rewards after epoch_29: 27.596999993324278
+
+EPOCH: 29 SUCCESS (total: 66)
+ 
+reward 27.596999993324278
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.50068378448486. Fps: ??
+Evaluate agent TEST 28.053230816034173
+Current rewards after epoch_30: 28.053230816034173
+
+EPOCH: 30 SUCCESS (total: 66)
+ 
+reward 28.053230816034173
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.39256405830383. Fps: ??
+Evaluate agent TEST 28.684333295822142
+Current rewards after epoch_30: 28.684333295822142
+
+EPOCH: 30 SUCCESS (total: 66)
+ 
+reward 28.684333295822142
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 233.84013104438782. Fps: ??
+Evaluate agent TEST 28.392512970704296
+Current rewards after epoch_31: 28.392512970704296
+
+EPOCH: 31 SUCCESS (total: 66)
+ 
+reward 28.392512970704296
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.70758485794067. Fps: ??
+Evaluate agent TEST 29.381666679382324
+Current rewards after epoch_31: 29.381666679382324
+
+EPOCH: 31 SUCCESS (total: 66)
+ 
+reward 29.381666679382324
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.62362098693848. Fps: ??
+Evaluate agent TEST 28.428064040220704
+Current rewards after epoch_32: 28.428064040220704
+
+EPOCH: 32 SUCCESS (total: 66)
+ 
+reward 28.428064040220704
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.8367156982422. Fps: ??
+Evaluate agent TEST 28.08235901245704
+Current rewards after epoch_32: 28.08235901245704
+
+EPOCH: 32 SUCCESS (total: 66)
+ 
+reward 28.08235901245704
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.78299927711487. Fps: ??
+Evaluate agent TEST 27.58954603896182
+Current rewards after epoch_33: 27.58954603896182
+
+EPOCH: 33 SUCCESS (total: 66)
+ 
+reward 27.58954603896182
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.56771206855774. Fps: ??
+Evaluate agent TEST 28.015705142571377
+Current rewards after epoch_33: 28.015705142571377
+
+EPOCH: 33 SUCCESS (total: 66)
+ 
+reward 28.015705142571377
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.01455640792847. Fps: ??
+Evaluate agent TEST 28.849269128029164
+Current rewards after epoch_34: 28.849269128029164
+
+EPOCH: 34 SUCCESS (total: 66)
+ 
+reward 28.849269128029164
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.20886898040771. Fps: ??
+Evaluate agent TEST 27.594115337408503
+Current rewards after epoch_34: 27.594115337408503
+
+EPOCH: 34 SUCCESS (total: 66)
+ 
+reward 27.594115337408503
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.19084572792053. Fps: ??
+Evaluate agent TEST 28.523269165295822
+Current rewards after epoch_35: 28.523269165295822
+
+EPOCH: 35 SUCCESS (total: 66)
+ 
+reward 28.523269165295822
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.96236562728882. Fps: ??
+Evaluate agent TEST 28.431000003814695
+Current rewards after epoch_35: 28.431000003814695
+
+EPOCH: 35 SUCCESS (total: 66)
+ 
+reward 28.431000003814695
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.65994834899902. Fps: ??
+Evaluate agent TEST 29.040333309173583
+Current rewards after epoch_36: 29.040333309173583
+
+EPOCH: 36 SUCCESS (total: 66)
+ 
+reward 29.040333309173583
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.7796504497528. Fps: ??
+Evaluate agent TEST 29.125602591771347
+Current rewards after epoch_36: 29.125602591771347
+
+EPOCH: 36 SUCCESS (total: 66)
+ 
+reward 29.125602591771347
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.665776014328. Fps: ??
+Evaluate agent TEST 28.612359007505273
+Current rewards after epoch_37: 28.612359007505273
+
+EPOCH: 37 SUCCESS (total: 66)
+ 
+reward 28.612359007505273
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.43418788909912. Fps: ??
+Evaluate agent TEST 28.658794891284067
+Current rewards after epoch_37: 28.658794891284067
+
+EPOCH: 37 SUCCESS (total: 66)
+ 
+reward 28.658794891284067
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.70757627487183. Fps: ??
+Evaluate agent TEST 28.320901192735743
+Current rewards after epoch_38: 28.320901192735743
+
+EPOCH: 38 SUCCESS (total: 66)
+ 
+reward 28.320901192735743
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.0792155265808. Fps: ??
+Evaluate agent TEST 27.83433332443237
+Current rewards after epoch_38: 27.83433332443237
+
+EPOCH: 38 SUCCESS (total: 66)
+ 
+reward 27.83433332443237
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.34962964057922. Fps: ??
+Evaluate agent TEST 28.88028207045335
+Current rewards after epoch_39: 28.88028207045335
+
+EPOCH: 39 SUCCESS (total: 66)
+ 
+reward 28.88028207045335
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.61919474601746. Fps: ??
+Evaluate agent TEST 28.19659262445238
+Current rewards after epoch_39: 28.19659262445238
+
+EPOCH: 39 SUCCESS (total: 66)
+ 
+reward 28.19659262445238
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.54011797904968. Fps: ??
+Evaluate agent TEST 28.260333371162417
+Current rewards after epoch_40: 28.260333371162417
+
+EPOCH: 40 SUCCESS (total: 66)
+ 
+reward 28.260333371162417
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.95441722869873. Fps: ??
+Evaluate agent TEST 27.330666680335998
+Current rewards after epoch_40: 27.330666680335998
+
+EPOCH: 40 SUCCESS (total: 66)
+ 
+reward 27.330666680335998
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.63397026062012. Fps: ??
+Evaluate agent TEST 29.24855127297915
+Current rewards after epoch_41: 29.24855127297915
+
+EPOCH: 41 SUCCESS (total: 66)
+ 
+reward 29.24855127297915
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.4152991771698. Fps: ??
+Evaluate agent TEST 29.640000052452088
+Current rewards after epoch_41: 29.640000052452088
+
+EPOCH: 41 SUCCESS (total: 66)
+ 
+reward 29.640000052452088
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.2100145816803. Fps: ??
+Evaluate agent TEST 28.875615410254554
+Current rewards after epoch_42: 28.875615410254554
+
+EPOCH: 42 SUCCESS (total: 66)
+ 
+reward 28.875615410254554
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.30010414123535. Fps: ??
+Evaluate agent TEST 28.241410318154553
+Current rewards after epoch_42: 28.241410318154553
+
+EPOCH: 42 SUCCESS (total: 66)
+ 
+reward 28.241410318154553
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.28214597702026. Fps: ??
+Evaluate agent TEST 28.758256379274222
+Current rewards after epoch_43: 28.758256379274222
+
+EPOCH: 43 SUCCESS (total: 66)
+ 
+reward 28.758256379274222
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.63365077972412. Fps: ??
+Evaluate agent TEST 29.084333362579347
+Current rewards after epoch_43: 29.084333362579347
+
+EPOCH: 43 SUCCESS (total: 66)
+ 
+reward 29.084333362579347
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.86815857887268. Fps: ??
+Evaluate agent TEST 28.59562817775286
+Current rewards after epoch_44: 28.59562817775286
+
+EPOCH: 44 SUCCESS (total: 66)
+ 
+reward 28.59562817775286
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.85245823860168. Fps: ??
+Evaluate agent TEST 28.57700007915497
+Current rewards after epoch_44: 28.57700007915497
+
+EPOCH: 44 SUCCESS (total: 66)
+ 
+reward 28.57700007915497
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.2712209224701. Fps: ??
+Evaluate agent TEST 28.111345791463496
+Current rewards after epoch_45: 28.111345791463496
+
+EPOCH: 45 SUCCESS (total: 66)
+ 
+reward 28.111345791463496
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.2289047241211. Fps: ??
+Evaluate agent TEST 28.468115430611828
+Current rewards after epoch_45: 28.468115430611828
+
+EPOCH: 45 SUCCESS (total: 66)
+ 
+reward 28.468115430611828
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.50513982772827. Fps: ??
+Evaluate agent TEST 29.140589696627398
+Current rewards after epoch_46: 29.140589696627398
+
+EPOCH: 46 SUCCESS (total: 66)
+ 
+reward 29.140589696627398
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.69416403770447. Fps: ??
+Evaluate agent TEST 29.291666684150695
+Current rewards after epoch_46: 29.291666684150695
+
+EPOCH: 46 SUCCESS (total: 66)
+ 
+reward 29.291666684150695
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.53579664230347. Fps: ??
+Evaluate agent TEST 28.835333247184753
+Current rewards after epoch_47: 28.835333247184753
+
+EPOCH: 47 SUCCESS (total: 66)
+ 
+reward 28.835333247184753
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.89071702957153. Fps: ??
+Evaluate agent TEST 29.0761879550222
+Current rewards after epoch_47: 29.0761879550222
+
+EPOCH: 47 SUCCESS (total: 66)
+ 
+reward 29.0761879550222
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.36956191062927. Fps: ??
+Evaluate agent TEST 28.938807701881114
+Current rewards after epoch_48: 28.938807701881114
+
+EPOCH: 48 SUCCESS (total: 66)
+ 
+reward 28.938807701881114
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.18723678588867. Fps: ??
+Evaluate agent TEST 28.40546157323397
+Current rewards after epoch_48: 28.40546157323397
+
+EPOCH: 48 SUCCESS (total: 66)
+ 
+reward 28.40546157323397
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.16608810424805. Fps: ??
+Evaluate agent TEST 29.74646161006047
+Current rewards after epoch_49: 29.74646161006047
+
+EPOCH: 49 SUCCESS (total: 66)
+ 
+reward 29.74646161006047
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.2514452934265. Fps: ??
+Evaluate agent TEST 28.672782056698434
+Current rewards after epoch_49: 28.672782056698434
+
+EPOCH: 49 SUCCESS (total: 66)
+ 
+reward 28.672782056698434
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.14055943489075. Fps: ??
+Evaluate agent TEST 28.49017953432523
+Current rewards after epoch_50: 28.49017953432523
+
+EPOCH: 50 SUCCESS (total: 66)
+ 
+reward 28.49017953432523
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.72586011886597. Fps: ??
+Evaluate agent TEST 29.081512839977556
+Current rewards after epoch_50: 29.081512839977556
+
+EPOCH: 50 SUCCESS (total: 66)
+ 
+reward 29.081512839977556
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.3907344341278. Fps: ??
+Evaluate agent TEST 27.800333495140073
+Current rewards after epoch_51: 27.800333495140073
+
+EPOCH: 51 SUCCESS (total: 66)
+ 
+reward 27.800333495140073
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.28385734558105. Fps: ??
+Evaluate agent TEST 28.870205082159774
+Current rewards after epoch_51: 28.870205082159774
+
+EPOCH: 51 SUCCESS (total: 66)
+ 
+reward 28.870205082159774
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.21754336357117. Fps: ??
+Evaluate agent TEST 28.395730859866507
+Current rewards after epoch_52: 28.395730859866507
+
+EPOCH: 52 SUCCESS (total: 66)
+ 
+reward 28.395730859866507
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.57194256782532. Fps: ??
+Evaluate agent TEST 27.86733331203461
+Current rewards after epoch_52: 27.86733331203461
+
+EPOCH: 52 SUCCESS (total: 66)
+ 
+reward 27.86733331203461
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.47705149650574. Fps: ??
+Evaluate agent TEST 29.751666836738586
+Current rewards after epoch_53: 29.751666836738586
+
+EPOCH: 53 SUCCESS (total: 66)
+ 
+reward 29.751666836738586
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.312246799469. Fps: ??
+Evaluate agent TEST 23.67266670942307
+Current rewards after epoch_53: 23.67266670942307
+
+EPOCH: 53 SUCCESS (total: 66)
+ 
+reward 23.67266670942307
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 234.70525860786438. Fps: ??
+Evaluate agent TEST 28.554512775861298
+Current rewards after epoch_54: 28.554512775861298
+
+EPOCH: 54 SUCCESS (total: 66)
+ 
+reward 28.554512775861298
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.9179458618164. Fps: ??
+Evaluate agent TEST 28.09497439641219
+Current rewards after epoch_54: 28.09497439641219
+
+EPOCH: 54 SUCCESS (total: 66)
+ 
+reward 28.09497439641219
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.130211353302. Fps: ??
+Evaluate agent TEST 28.922666783332826
+Current rewards after epoch_55: 28.922666783332826
+
+EPOCH: 55 SUCCESS (total: 66)
+ 
+reward 28.922666783332826
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.1462483406067. Fps: ??
+Evaluate agent TEST 28.576075477749534
+Current rewards after epoch_55: 28.576075477749534
+
+EPOCH: 55 SUCCESS (total: 66)
+ 
+reward 28.576075477749534
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.40449166297913. Fps: ??
+Evaluate agent TEST 28.71033338546753
+Current rewards after epoch_56: 28.71033338546753
+
+EPOCH: 56 SUCCESS (total: 66)
+ 
+reward 28.71033338546753
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.58212566375732. Fps: ??
+Evaluate agent TEST 28.565012773183675
+Current rewards after epoch_56: 28.565012773183675
+
+EPOCH: 56 SUCCESS (total: 66)
+ 
+reward 28.565012773183675
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.30819487571716. Fps: ??
+Evaluate agent TEST 29.44618520365821
+Current rewards after epoch_57: 29.44618520365821
+
+EPOCH: 57 SUCCESS (total: 66)
+ 
+reward 29.44618520365821
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.74160289764404. Fps: ??
+Evaluate agent TEST 27.690150262300786
+Current rewards after epoch_57: 27.690150262300786
+
+EPOCH: 57 SUCCESS (total: 66)
+ 
+reward 27.690150262300786
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.8518328666687. Fps: ??
+Evaluate agent TEST 28.88705120673546
+Current rewards after epoch_58: 28.88705120673546
+
+EPOCH: 58 SUCCESS (total: 66)
+ 
+reward 28.88705120673546
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.87361788749695. Fps: ??
+Evaluate agent TEST 29.013896564038053
+Current rewards after epoch_58: 29.013896564038053
+
+EPOCH: 58 SUCCESS (total: 66)
+ 
+reward 29.013896564038053
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.67551279067993. Fps: ??
+Evaluate agent TEST 28.23966661930084
+Current rewards after epoch_59: 28.23966661930084
+
+EPOCH: 59 SUCCESS (total: 66)
+ 
+reward 28.23966661930084
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.75747394561768. Fps: ??
+Evaluate agent TEST 28.666282132772302
+Current rewards after epoch_59: 28.666282132772302
+
+EPOCH: 59 SUCCESS (total: 66)
+ 
+reward 28.666282132772302
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.24229168891907. Fps: ??
+Evaluate agent TEST 29.222888979381985
+Current rewards after epoch_60: 29.222888979381985
+
+EPOCH: 60 SUCCESS (total: 66)
+ 
+reward 29.222888979381985
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.47422575950623. Fps: ??
+Evaluate agent TEST 28.902866060346625
+Current rewards after epoch_60: 28.902866060346625
+
+EPOCH: 60 SUCCESS (total: 66)
+ 
+reward 28.902866060346625
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.63426303863525. Fps: ??
+Evaluate agent TEST 28.612884550461402
+Current rewards after epoch_61: 28.612884550461402
+
+EPOCH: 61 SUCCESS (total: 66)
+ 
+reward 28.612884550461402
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 238.72792267799377. Fps: ??
+Evaluate agent TEST 28.604730791311997
+Current rewards after epoch_61: 28.604730791311997
+
+EPOCH: 61 SUCCESS (total: 66)
+ 
+reward 28.604730791311997
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.7971158027649. Fps: ??
+Evaluate agent TEST 28.519230813429907
+Current rewards after epoch_62: 28.519230813429907
+
+EPOCH: 62 SUCCESS (total: 66)
+ 
+reward 28.519230813429907
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 237.0852918624878. Fps: ??
+Evaluate agent TEST 28.867333388328554
+Current rewards after epoch_62: 28.867333388328554
+
+EPOCH: 62 SUCCESS (total: 66)
+ 
+reward 28.867333388328554
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 238.32778525352478. Fps: ??
+Evaluate agent TEST 28.50033329486847
+Current rewards after epoch_63: 28.50033329486847
+
+EPOCH: 63 SUCCESS (total: 66)
+ 
+reward 28.50033329486847
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.38696837425232. Fps: ??
+Evaluate agent TEST 29.455230844204245
+Current rewards after epoch_63: 29.455230844204245
+
+EPOCH: 63 SUCCESS (total: 66)
+ 
+reward 29.455230844204245
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.10139274597168. Fps: ??
+Evaluate agent TEST 28.475410250517037
+Current rewards after epoch_64: 28.475410250517037
+
+EPOCH: 64 SUCCESS (total: 66)
+ 
+reward 28.475410250517037
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 236.59420108795166. Fps: ??
+Evaluate agent TEST 28.549000000953676
+Current rewards after epoch_64: 28.549000000953676
+
+EPOCH: 64 SUCCESS (total: 66)
+ 
+reward 28.549000000953676
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 235.9646737575531. Fps: ??
+Evaluate agent TEST 27.892000060081482
+Current rewards after epoch_65: 27.892000060081482
+
+EPOCH: 65 SUCCESS (total: 66)
+ 
+reward 27.892000060081482
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1106540.1 (status=0x0000).
+srun: launch/slurm: _task_finish: helena2: task 0: Completed
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model AllPara_s9152/model for 151552 frames. Duration 215.73757600784302. Fps: ??
+Evaluate agent TEST 27.890910247656016
+Current rewards after epoch_65: 27.890910247656016
+
+EPOCH: 65 SUCCESS (total: 66)
+ 
+reward 27.890910247656016
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1106540.1 (status=0x0000).
+srun: launch/slurm: _task_finish: helena2: task 1: Completed
+END run

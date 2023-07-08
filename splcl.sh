@@ -1,12 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=SPLCL
-#SBATCH --output=SPLCL2_%j.txt
-#SBATCH --time=23:59:00
-#SBATCH --partition=cpu_normal_stud,cpu_long_stud
+#SBATCH --job-name=SPLCL2
+#SBATCH --output=SPLCL3_%j.txt
+#SBATCH --time=11:59:00
+#SBATCH --partition=cadpool_stud
 #SBATCH --exclude=cp2019-11,cc1l01
-#SBATCH --cpus-per-task=5
-#SBATCH --mem=48G
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=16G
 #SBATCH --verbose
 echo "Start2"
-srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --trainAllParalell --allSimultaneous --seed 2 --model AllPara
+srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --trainAllParalell --allSimultaneous --model SPLCL --seed 1214
 echo "END run"
