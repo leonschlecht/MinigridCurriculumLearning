@@ -20,7 +20,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     # TODo split this into multiple methods maybe
     model_name = model
     model_dir = utils.get_model_dir(model_name)
-    tb_writer = tensorboardX.SummaryWriter(model_dir)
 
     utils.seed(args.seed)
     # Load environments
@@ -60,7 +59,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     if framesToTrain == 0:
         txt_logger.info(f'{acmodel}')
         txt_logger.info(f'Created model {model}')
-        tb_writer.close()
         return 0
     algo = MyPPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                      args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
@@ -108,8 +106,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             header += ["return_" + key for key in return_per_episode.keys()]
             data += return_per_episode.values()
 
-            for field, value in zip(header, data):
-                tb_writer.add_scalar(field, value, currentFramesDone)
 
         # Save status
         if update % args.save_interval == 0 or currentFramesDone >= framesToTrain:
@@ -125,6 +121,5 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
 
     algo.env.end()
     algo.env.close()
-    tb_writer.close()
     time.sleep(1)
     return status["num_frames"]
