@@ -1,0 +1,76 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris4
+srun: cpus-per-task       : 2
+srun: jobid               : 1107138
+srun: job-name            : n150_32g4c
+srun: mem                 : 24G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1107138: nodes(1):`paris4', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1107138.0 on host paris4, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris4, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-12x12-custom-diff1.0 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-10x10-custom-diff1.0 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-8x8-custom-diff1.0 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-6x6-custom-diff1.0 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+deleted: ./ epoch_1_curric0_gen1
+Continung training from epoch 1... [total epochs: 34], seed: 9152
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_s9152/epoch_1_curric0_gen1 for 150528 frames. Duration 152.811509847641. Fps: ??. totalF 150528
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 95, in <module>
+    main()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 39, in main
+    e.startCurriculumTraining()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 68, in startCurriculumTraining
+    self.executeOneEpoch(epoch)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizonEvolutionaryAlgorithm.py", line 71, in executeOneEpoch
+    res = minimize(curricProblem,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/optimize.py", line 67, in minimize
+    res = algorithm.run()
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/algorithm.py", line 141, in run
+    self.next()
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/algorithm.py", line 161, in next
+    self.evaluator.eval(self.problem, infills, algorithm=self)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/evaluator.py", line 69, in eval
+    self._eval(problem, pop[I], evaluate_values_of, **kwargs)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/evaluator.py", line 90, in _eval
+    out = problem.evaluate(X, return_values_of=evaluate_values_of, return_as_dictionary=True, **kwargs)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 187, in evaluate
+    _out = self.do(X, return_values_of, *args, **kwargs)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 229, in do
+    self._evaluate_vectorized(X, out, *args, **kwargs)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 237, in _evaluate_vectorized
+    self._evaluate(X, out, *args, **kwargs)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/curriculumProblem.py", line 34, in _evaluate
+    rewards = self.rheaObj.trainEveryCurriculum(x, self.gen)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizonEvolutionaryAlgorithm.py", line 108, in trainEveryCurriculum
+    rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 116, in trainACurriculum
+    self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 56, in saveFirstStepOfModel
+    utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/storage.py", line 119, in copyAgent
+    raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
+Exception: Path exists at /home/schlecht/nobackup/MinigridCurriculumLearning/storage/150k_3step_4gen_2curric_s9152/epoch_1_curric0_gen1_CANDIDATE! Copying agent failed
+Evaluate agent TEST 2.495455355984824
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1107138.0 (status=0x0100).
+srun: error: paris4: task 0: Exited with exit code 1
+---------- Cluster Job End ---------------------
