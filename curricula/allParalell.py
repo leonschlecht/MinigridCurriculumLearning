@@ -164,7 +164,6 @@ class allParalell:
         trainingInfoJson[snapshotScoreKey].append(reward)
 
         trainingInfoJson[curriculaEnvDetailsKey][currentEpoch] = envNames
-        print("envDetails",trainingInfoJson[curriculaEnvDetailsKey])
         trainingInfoJson[difficultyKey].append(difficulty)
         now = datetime.now()
         timeSinceLastEpoch = (now - self.lastEpochStartTime).total_seconds()
