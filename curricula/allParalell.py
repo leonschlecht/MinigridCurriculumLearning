@@ -134,6 +134,7 @@ class allParalell:
             nextStep = "stay"
         else:
             nextStep = "goDown"
+        print("nextStep:", nextStep)
         if nextStep == "stay":
             for i in range(len(envNames)):
                 cutEnv = envNames[i].split("-custom")[0]
@@ -143,7 +144,7 @@ class allParalell:
                 cutEnv = envNames[i].split("-custom")[0]
                 if nextStep == "goDown":
                     nextEnv = self.getEasierEnv(cutEnv)
-                elif newDifficulty == "goUp":
+                elif nextStep == "goUp":
                     nextEnv = self.getHarderEnv(cutEnv)
                 else:
                     raise Exception("Invalid new difficulty")

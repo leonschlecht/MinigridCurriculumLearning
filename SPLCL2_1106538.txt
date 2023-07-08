@@ -1,0 +1,841 @@
+Start2
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : helena1
+srun: cpus-per-task       : 1
+srun: jobid               : 1106538
+srun: job-name            : SPLCL
+srun: mem                 : 16G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1106538: nodes(1):`helena1', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1106538.0 on host helena1, 2 tasks: [0-1]
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node helena1, 2 tasks started
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 95, in <module>
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+    main()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 26, in main
+    txtLogger = utils.get_txt_logger(utils.get_model_dir(model))
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/storage.py", line 54, in get_txt_logger
+    utils.create_folders_if_necessary(path)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/storage.py", line 16, in create_folders_if_necessary
+    os.makedirs(dirname)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/os.py", line 225, in makedirs
+SPLCL
+training will go on until 66
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0']
+    mkdir(name, mode)
+FileExistsError: [Errno 17] File exists: 'storage/SPLCL_s1'
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1106538.0 (status=0x0100).
+srun: error: helena1: task 0: Exited with exit code 1
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model SPLCL_s1/model for 151552 frames. Duration 128.4661350250244. Fps: ??
+Evaluate agent TEST 3.0084904204463045
+Before= ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] newDiff 1
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1']
+Current rewards after epoch_1: 3.0084904204463045
+
+EPOCH: 1 SUCCESS (total: 66)
+ 
+reward 3.0084904204463045
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1'] using model SPLCL_s1/model for 151552 frames. Duration 129.46474170684814. Fps: ??
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-12x12-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-10x10-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-8x8-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-6x6-custom-diff1 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+Evaluate agent TEST 34.07295011520386
+Before= ['MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1', 'MiniGrid-DoorKey-6x6-custom-diff1'] newDiff 1
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1']
+Current rewards after epoch_2: 34.07295011520386
+
+EPOCH: 2 SUCCESS (total: 66)
+ 
+reward 34.07295011520386
+Envs: ['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1']
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1'] using model SPLCL_s1/model for 151552 frames. Duration 131.42345261573792. Fps: ??
+Evaluate agent TEST 34.85980004310608
+Before= ['MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1', 'MiniGrid-DoorKey-8x8-custom-diff1'] newDiff 1
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1']
+Current rewards after epoch_3: 34.85980004310608
+
+EPOCH: 3 SUCCESS (total: 66)
+ 
+reward 34.85980004310608
+Envs: ['MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1']
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1'] using model SPLCL_s1/model for 151552 frames. Duration 136.33091163635254. Fps: ??
+Evaluate agent TEST 34.78864998340606
+Before= ['MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1', 'MiniGrid-DoorKey-10x10-custom-diff1'] newDiff 0.946896
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896']
+Current rewards after epoch_4: 34.78864998340606
+
+EPOCH: 4 SUCCESS (total: 66)
+ 
+reward 34.78864998340606
+Envs: ['MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896']
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896'] using model SPLCL_s1/model for 151552 frames. Duration 142.2873342037201. Fps: ??
+Evaluate agent TEST 6.478524197638034
+Before= ['MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896', 'MiniGrid-DoorKey-12x12-custom-diff0.946896'] newDiff 0.87112
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112']
+Current rewards after epoch_5: 6.478524197638034
+
+EPOCH: 5 SUCCESS (total: 66)
+ 
+reward 6.478524197638034
+Envs: ['MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112']
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112'] using model SPLCL_s1/model for 151552 frames. Duration 139.37699484825134. Fps: ??
+Evaluate agent TEST 2.703979580878065
+Before= ['MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112', 'MiniGrid-DoorKey-10x10-custom-diff0.87112'] newDiff 0.795344
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344']
+Current rewards after epoch_6: 2.703979580878065
+
+EPOCH: 6 SUCCESS (total: 66)
+ 
+reward 2.703979580878065
+Envs: ['MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344']
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344'] using model SPLCL_s1/model for 151552 frames. Duration 138.346773147583. Fps: ??
+Evaluate agent TEST 2.7594650462269783
+Before= ['MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344', 'MiniGrid-DoorKey-8x8-custom-diff0.795344'] newDiff 0.719568
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568']
+Current rewards after epoch_7: 2.7594650462269783
+
+EPOCH: 7 SUCCESS (total: 66)
+ 
+reward 2.7594650462269783
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568'] using model SPLCL_s1/model for 151552 frames. Duration 138.90270686149597. Fps: ??
+Evaluate agent TEST 33.530177672704056
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568', 'MiniGrid-DoorKey-6x6-custom-diff0.719568'] newDiff 0.643792
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792']
+Current rewards after epoch_8: 33.530177672704056
+
+EPOCH: 8 SUCCESS (total: 66)
+ 
+reward 33.530177672704056
+Envs: ['MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792']
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792'] using model SPLCL_s1/model for 151552 frames. Duration 141.11168313026428. Fps: ??
+Evaluate agent TEST 34.25910688877106
+Before= ['MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792', 'MiniGrid-DoorKey-8x8-custom-diff0.643792'] newDiff 0.568016
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016']
+Current rewards after epoch_9: 34.25910688877106
+
+EPOCH: 9 SUCCESS (total: 66)
+ 
+reward 34.25910688877106
+Envs: ['MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016']
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016'] using model SPLCL_s1/model for 151552 frames. Duration 142.9290521144867. Fps: ??
+Evaluate agent TEST 33.90880031989171
+Before= ['MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016', 'MiniGrid-DoorKey-10x10-custom-diff0.568016'] newDiff 0.49224
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224']
+Current rewards after epoch_10: 33.90880031989171
+
+EPOCH: 10 SUCCESS (total: 66)
+ 
+reward 33.90880031989171
+Envs: ['MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224']
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224'] using model SPLCL_s1/model for 151552 frames. Duration 143.57560920715332. Fps: ??
+Evaluate agent TEST 5.9693905995063705
+Before= ['MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224', 'MiniGrid-DoorKey-12x12-custom-diff0.49224'] newDiff 0.41646400000000006
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006']
+Current rewards after epoch_11: 5.9693905995063705
+
+EPOCH: 11 SUCCESS (total: 66)
+ 
+reward 5.9693905995063705
+Envs: ['MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006']
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006'] using model SPLCL_s1/model for 151552 frames. Duration 141.56692552566528. Fps: ??
+Evaluate agent TEST 3.1565961465239525
+Before= ['MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006', 'MiniGrid-DoorKey-10x10-custom-diff0.41646400000000006'] newDiff 0.340688
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688']
+Current rewards after epoch_12: 3.1565961465239525
+
+EPOCH: 12 SUCCESS (total: 66)
+ 
+reward 3.1565961465239525
+Envs: ['MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688']
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688'] using model SPLCL_s1/model for 151552 frames. Duration 141.1163773536682. Fps: ??
+Evaluate agent TEST 32.686530647277834
+Before= ['MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688', 'MiniGrid-DoorKey-8x8-custom-diff0.340688'] newDiff 0.26491200000000004
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004']
+Current rewards after epoch_13: 32.686530647277834
+
+EPOCH: 13 SUCCESS (total: 66)
+ 
+reward 32.686530647277834
+Envs: ['MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004']
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004'] using model SPLCL_s1/model for 151552 frames. Duration 142.6611156463623. Fps: ??
+Evaluate agent TEST 31.519449975490566
+Before= ['MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004', 'MiniGrid-DoorKey-10x10-custom-diff0.26491200000000004'] newDiff 0.18913600000000008
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008']
+Current rewards after epoch_14: 31.519449975490566
+
+EPOCH: 14 SUCCESS (total: 66)
+ 
+reward 31.519449975490566
+Envs: ['MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008']
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008'] using model SPLCL_s1/model for 151552 frames. Duration 143.30809879302979. Fps: ??
+Evaluate agent TEST 0.8733455892652273
+Before= ['MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008', 'MiniGrid-DoorKey-12x12-custom-diff0.18913600000000008'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15']
+Current rewards after epoch_15: 0.8733455892652273
+
+EPOCH: 15 SUCCESS (total: 66)
+ 
+reward 0.8733455892652273
+Envs: ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 141.9769937992096. Fps: ??
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-12x12-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-10x10-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-8x8-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-DoorKey-6x6-custom-diff0.15 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+Evaluate agent TEST 0.6526041645556688
+Before= ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15']
+Current rewards after epoch_16: 0.6526041645556688
+
+EPOCH: 16 SUCCESS (total: 66)
+ 
+reward 0.6526041645556688
+Envs: ['MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 140.2147285938263. Fps: ??
+Evaluate agent TEST 29.725565822268585
+Before= ['MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15'] newDiff 0.15
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15']
+Current rewards after epoch_17: 29.725565822268585
+
+EPOCH: 17 SUCCESS (total: 66)
+ 
+reward 29.725565822268585
+Envs: ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 143.26680541038513. Fps: ??
+Evaluate agent TEST 28.257538468287542
+Before= ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15'] newDiff 0.15
+nextStep: goUp
+env names after =  ['MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+Current rewards after epoch_18: 28.257538468287542
+
+EPOCH: 18 SUCCESS (total: 66)
+ 
+reward 28.257538468287542
+Envs: ['MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 143.6407539844513. Fps: ??
+Evaluate agent TEST 0.35546875186264515
+Before= ['MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15', 'MiniGrid-DoorKey-12x12-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15']
+Current rewards after epoch_19: 0.35546875186264515
+
+EPOCH: 19 SUCCESS (total: 66)
+ 
+reward 0.35546875186264515
+Envs: ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 141.5288758277893. Fps: ??
+Evaluate agent TEST 0.8802083395421505
+Before= ['MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15', 'MiniGrid-DoorKey-10x10-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15']
+Current rewards after epoch_20: 0.8802083395421505
+
+EPOCH: 20 SUCCESS (total: 66)
+ 
+reward 0.8802083395421505
+Envs: ['MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 140.6403329372406. Fps: ??
+Evaluate agent TEST 0.4531250037252903
+Before= ['MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15', 'MiniGrid-DoorKey-8x8-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_21: 0.4531250037252903
+
+EPOCH: 21 SUCCESS (total: 66)
+ 
+reward 0.4531250037252903
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 138.78476333618164. Fps: ??
+Evaluate agent TEST 17.74755681354891
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_22: 17.74755681354891
+
+EPOCH: 22 SUCCESS (total: 66)
+ 
+reward 17.74755681354891
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 139.80696988105774. Fps: ??
+Evaluate agent TEST 19.731878822283313
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_23: 19.731878822283313
+
+EPOCH: 23 SUCCESS (total: 66)
+ 
+reward 19.731878822283313
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 140.04761624336243. Fps: ??
+Evaluate agent TEST 22.454090890884398
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_24: 22.454090890884398
+
+EPOCH: 24 SUCCESS (total: 66)
+ 
+reward 22.454090890884398
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 139.81858325004578. Fps: ??
+Evaluate agent TEST 20.2232797222621
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_25: 20.2232797222621
+
+EPOCH: 25 SUCCESS (total: 66)
+ 
+reward 20.2232797222621
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 138.90782594680786. Fps: ??
+Evaluate agent TEST 21.349749971218408
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_26: 21.349749971218408
+
+EPOCH: 26 SUCCESS (total: 66)
+ 
+reward 21.349749971218408
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 145.14311480522156. Fps: ??
+Evaluate agent TEST 20.93910416767001
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_27: 20.93910416767001
+
+EPOCH: 27 SUCCESS (total: 66)
+ 
+reward 20.93910416767001
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.30324387550354. Fps: ??
+Evaluate agent TEST 21.787529400832515
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_28: 21.787529400832515
+
+EPOCH: 28 SUCCESS (total: 66)
+ 
+reward 21.787529400832515
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.56276416778564. Fps: ??
+Evaluate agent TEST 18.1622133616195
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_29: 18.1622133616195
+
+EPOCH: 29 SUCCESS (total: 66)
+ 
+reward 18.1622133616195
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.1851134300232. Fps: ??
+Evaluate agent TEST 23.24129099456091
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_30: 23.24129099456091
+
+EPOCH: 30 SUCCESS (total: 66)
+ 
+reward 23.24129099456091
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.317200422287. Fps: ??
+Evaluate agent TEST 24.02544454197089
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_31: 24.02544454197089
+
+EPOCH: 31 SUCCESS (total: 66)
+ 
+reward 24.02544454197089
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.4395101070404. Fps: ??
+Evaluate agent TEST 21.16438094343458
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_32: 21.16438094343458
+
+EPOCH: 32 SUCCESS (total: 66)
+ 
+reward 21.16438094343458
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.7438268661499. Fps: ??
+Evaluate agent TEST 20.83743752874434
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_33: 20.83743752874434
+
+EPOCH: 33 SUCCESS (total: 66)
+ 
+reward 20.83743752874434
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.63387656211853. Fps: ??
+Evaluate agent TEST 21.734476116044178
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_34: 21.734476116044178
+
+EPOCH: 34 SUCCESS (total: 66)
+ 
+reward 21.734476116044178
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.83289980888367. Fps: ??
+Evaluate agent TEST 19.685729134355025
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_35: 19.685729134355025
+
+EPOCH: 35 SUCCESS (total: 66)
+ 
+reward 19.685729134355025
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.71673464775085. Fps: ??
+Evaluate agent TEST 22.59564579267055
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_36: 22.59564579267055
+
+EPOCH: 36 SUCCESS (total: 66)
+ 
+reward 22.59564579267055
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.0414526462555. Fps: ??
+Evaluate agent TEST 17.50379609625179
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_37: 17.50379609625179
+
+EPOCH: 37 SUCCESS (total: 66)
+ 
+reward 17.50379609625179
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.7674481868744. Fps: ??
+Evaluate agent TEST 17.45197646410176
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_38: 17.45197646410176
+
+EPOCH: 38 SUCCESS (total: 66)
+ 
+reward 17.45197646410176
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.59359049797058. Fps: ??
+Evaluate agent TEST 17.136334173061805
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_39: 17.136334173061805
+
+EPOCH: 39 SUCCESS (total: 66)
+ 
+reward 17.136334173061805
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.3969714641571. Fps: ??
+Evaluate agent TEST 19.05285414550167
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_40: 19.05285414550167
+
+EPOCH: 40 SUCCESS (total: 66)
+ 
+reward 19.05285414550167
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.8171901702881. Fps: ??
+Evaluate agent TEST 17.873859720841835
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_41: 17.873859720841835
+
+EPOCH: 41 SUCCESS (total: 66)
+ 
+reward 17.873859720841835
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.6224172115326. Fps: ??
+Evaluate agent TEST 22.92517336373955
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_42: 22.92517336373955
+
+EPOCH: 42 SUCCESS (total: 66)
+ 
+reward 22.92517336373955
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.93520092964172. Fps: ??
+Evaluate agent TEST 20.858333278954603
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_43: 20.858333278954603
+
+EPOCH: 43 SUCCESS (total: 66)
+ 
+reward 20.858333278954603
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.10898685455322. Fps: ??
+Evaluate agent TEST 20.98296081195859
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_44: 20.98296081195859
+
+EPOCH: 44 SUCCESS (total: 66)
+ 
+reward 20.98296081195859
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.0039758682251. Fps: ??
+Evaluate agent TEST 20.594395807273685
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_45: 20.594395807273685
+
+EPOCH: 45 SUCCESS (total: 66)
+ 
+reward 20.594395807273685
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 146.73559021949768. Fps: ??
+Evaluate agent TEST 21.83647059174145
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_46: 21.83647059174145
+
+EPOCH: 46 SUCCESS (total: 66)
+ 
+reward 21.83647059174145
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.01254034042358. Fps: ??
+Evaluate agent TEST 20.06121951007786
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_47: 20.06121951007786
+
+EPOCH: 47 SUCCESS (total: 66)
+ 
+reward 20.06121951007786
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.7199354171753. Fps: ??
+Evaluate agent TEST 21.030990396990227
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_48: 21.030990396990227
+
+EPOCH: 48 SUCCESS (total: 66)
+ 
+reward 21.030990396990227
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.32470989227295. Fps: ??
+Evaluate agent TEST 20.2040119372734
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_49: 20.2040119372734
+
+EPOCH: 49 SUCCESS (total: 66)
+ 
+reward 20.2040119372734
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.22397351264954. Fps: ??
+Evaluate agent TEST 21.295939421003517
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_50: 21.295939421003517
+
+EPOCH: 50 SUCCESS (total: 66)
+ 
+reward 21.295939421003517
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.14432501792908. Fps: ??
+Evaluate agent TEST 21.747476225921083
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_51: 21.747476225921083
+
+EPOCH: 51 SUCCESS (total: 66)
+ 
+reward 21.747476225921083
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.51841044425964. Fps: ??
+Evaluate agent TEST 23.400897486186942
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_52: 23.400897486186942
+
+EPOCH: 52 SUCCESS (total: 66)
+ 
+reward 23.400897486186942
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.6538302898407. Fps: ??
+Evaluate agent TEST 20.91056053862705
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_53: 20.91056053862705
+
+EPOCH: 53 SUCCESS (total: 66)
+ 
+reward 20.91056053862705
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.26187992095947. Fps: ??
+Evaluate agent TEST 20.867272762602028
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_54: 20.867272762602028
+
+EPOCH: 54 SUCCESS (total: 66)
+ 
+reward 20.867272762602028
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.23736381530762. Fps: ??
+Evaluate agent TEST 20.97345454801213
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_55: 20.97345454801213
+
+EPOCH: 55 SUCCESS (total: 66)
+ 
+reward 20.97345454801213
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.5206561088562. Fps: ??
+Evaluate agent TEST 22.49670175357869
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_56: 22.49670175357869
+
+EPOCH: 56 SUCCESS (total: 66)
+ 
+reward 22.49670175357869
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.32665705680847. Fps: ??
+Evaluate agent TEST 20.703104204684493
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_57: 20.703104204684493
+
+EPOCH: 57 SUCCESS (total: 66)
+ 
+reward 20.703104204684493
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.24963235855103. Fps: ??
+Evaluate agent TEST 20.633818120522932
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_58: 20.633818120522932
+
+EPOCH: 58 SUCCESS (total: 66)
+ 
+reward 20.633818120522932
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.46867060661316. Fps: ??
+Evaluate agent TEST 17.241005822018934
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_59: 17.241005822018934
+
+EPOCH: 59 SUCCESS (total: 66)
+ 
+reward 17.241005822018934
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.6606035232544. Fps: ??
+Evaluate agent TEST 20.687472533767043
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_60: 20.687472533767043
+
+EPOCH: 60 SUCCESS (total: 66)
+ 
+reward 20.687472533767043
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.41617131233215. Fps: ??
+Evaluate agent TEST 16.988068494852364
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_61: 16.988068494852364
+
+EPOCH: 61 SUCCESS (total: 66)
+ 
+reward 16.988068494852364
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.26705741882324. Fps: ??
+Evaluate agent TEST 21.513928177199432
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_62: 21.513928177199432
+
+EPOCH: 62 SUCCESS (total: 66)
+ 
+reward 21.513928177199432
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.31501293182373. Fps: ??
+Evaluate agent TEST 21.635704030907235
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_63: 21.635704030907235
+
+EPOCH: 63 SUCCESS (total: 66)
+ 
+reward 21.635704030907235
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.2463080883026. Fps: ??
+Evaluate agent TEST 16.993290569708947
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: goDown
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_64: 16.993290569708947
+
+EPOCH: 64 SUCCESS (total: 66)
+ 
+reward 16.993290569708947
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] using model SPLCL_s1/model for 151552 frames. Duration 147.20275568962097. Fps: ??
+Evaluate agent TEST 22.26546703476172
+Before= ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15'] newDiff 0.15
+nextStep: stay
+env names after =  ['MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15', 'MiniGrid-DoorKey-6x6-custom-diff0.15']
+Current rewards after epoch_65: 22.26546703476172
+
+EPOCH: 65 SUCCESS (total: 66)
+ 
+reward 22.26546703476172
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1106538.0 (status=0x0000).
+srun: launch/slurm: _task_finish: helena1: task 1: Completed
+END run
