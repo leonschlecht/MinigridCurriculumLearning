@@ -104,7 +104,7 @@ def getRewardMultiplier(evalEnv):
 def calculateEnvDifficulty(iterationsDone, difficultyStepsize) -> float:
     startDecreaseNum = 500000
     if iterationsDone <= startDecreaseNum:
-        value = 1
+        value: float = 1.0
     else:
         value = 1 - ((iterationsDone - startDecreaseNum) / difficultyStepsize / 20)
     value = max(value, 0.15)
