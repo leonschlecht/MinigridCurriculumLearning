@@ -6,6 +6,7 @@ from training.PPO import MyPPOAlgo
 from utils import device
 from model import ACModel
 
+
 def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: list, args, txt_logger) -> int:
     """
     :param currentFramesDone:
@@ -19,7 +20,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
     # TODo split this into multiple methods maybe
     model_name = model
     model_dir = utils.get_model_dir(model_name)
-    csv_file, csv_logger = utils.get_csv_logger(model_dir)
     tb_writer = tensorboardX.SummaryWriter(model_dir)
 
     utils.seed(args.seed)
@@ -61,7 +61,6 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
         txt_logger.info(f'{acmodel}')
         txt_logger.info(f'Created model {model}')
         tb_writer.close()
-        csv_file.close()
         return 0
     algo = MyPPOAlgo(envs, acmodel, device, args.frames_per_proc, args.discount, args.lr, args.gae_lambda,
                      args.entropy_coef, args.value_loss_coef, args.max_grad_norm, args.recurrence,
@@ -102,17 +101,13 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             header += ["entropy", "value", "policy_loss", "value_loss", "grad_norm"]
             data += [logs["entropy"], logs["value"], logs["policy_loss"], logs["value_loss"], logs["grad_norm"]]
 
-            #txt_logger.info(
+            # txt_logger.info(
             #    "\t{} | {} | curF {} | U {} | AllF {:07} | FPS {:04.0f} | D {} | rR:msmM {:.3f} {:.2f} {:.2f} {:.2f} | F:msmM {:.1f} {:.1f} {} {} | H {:.2f} | V {:.4f} | pL {:.4f} | vL {:.4f} | g {:.4f}"
-             #   .format(envList, model, framesWithThisEnv, *data))
+            #   .format(envList, model, framesWithThisEnv, *data))
 
             header += ["return_" + key for key in return_per_episode.keys()]
             data += return_per_episode.values()
 
-            if status["num_frames"] == 0:
-                csv_logger.writerow(header)
-            csv_logger.writerow(data)
-            csv_file.flush()
             for field, value in zip(header, data):
                 tb_writer.add_scalar(field, value, currentFramesDone)
 
@@ -126,11 +121,10 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
             # txt_logger.info("\t\tStatus saved")
 
     txt_logger.info(f'\nTrained on {envList} using model {model} for {framesWithThisEnv} frames. '
-                    f'Duration {time.time()-start_time}. Fps: ??. totalF {status["num_frames"]}')
+                    f'Duration {time.time() - start_time}. Fps: ??. totalF {status["num_frames"]}')
 
     algo.env.end()
     algo.env.close()
     tb_writer.close()
-    csv_file.close()
     time.sleep(1)
     return status["num_frames"]
