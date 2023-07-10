@@ -26,6 +26,10 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.inequalityConstr = 0
         self.xupper = len(ENV_NAMES.ALL_ENVS) - 1
         self.useNSGA: bool = args.useNSGA
+        self.crossoverProb = args.crossoverProb
+        self.mutationProb = args.mutationProb
+        self.crossoverEta = args.crossoverEta
+        self.mutationEta = args.mutationEta
 
         # debug variable
         self.resX = None
@@ -46,19 +50,22 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         return genNrStr, listIdx
 
     def executeOneEpoch(self, epoch: int):
+        sampling = IntegerRandomSampling()
+        crossover = SBX(prob=self.crossoverProb, eta=self.crossoverEta, vtype=float, repair=RoundingRepair())
+        mutation = PM(prob=self.mutationProb, eta=self.mutationEta, vtype=float, repair=RoundingRepair())
         if self.useNSGA:
             algorithm = NSGA2(pop_size=self.numCurric,
-                              sampling=IntegerRandomSampling(),
-                              crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                              mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                              sampling=sampling,
+                              crossover=crossover,
+                              mutation=mutation,
                               eliminate_duplicates=True,
                               )
         else:
             algorithm = GA(pop_size=self.numCurric,
-                           sampling=IntegerRandomSampling(),
-                           crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                           mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                           eliminate_duplicaets=True,
+                           sampling=sampling,
+                           crossover=crossover,
+                           mutation=mutation,
+                           eliminate_duplicates=True,
                            )
 
         # NSGA2 Default: # sampling: FloatRandomSampling = FloatRandomSampling(),

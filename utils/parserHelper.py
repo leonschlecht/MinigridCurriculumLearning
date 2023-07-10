@@ -75,6 +75,12 @@ def initializeArgParser():
     parser.add_argument("--worst-episodes-to-show", type=int, default=10, help="how many worst episodes to show")
     parser.add_argument("--memory", action="store_true", default=False, help="add a LSTM to the model")
 
+    # EA PAram
+    parser.add_argument("--crossoverProb", type=float, default=1.0, help="Crossover Probability of the RHEA CL")
+    parser.add_argument("--mutationProb", type=float, default=1.0, help="Mutation Probability of the RHEA CL")
+    parser.add_argument("--crossoverEta", type=float, default=3.0, help="Crossover ETA of the RHEA CL")
+    parser.add_argument("--mutationEta", type=float, default=3.0, help="Mutation ETA of the RHEA CL")
+
     args = parser.parse_args()
     args.mem = args.recurrence > 1
     args.trainEvolutionary = not (
