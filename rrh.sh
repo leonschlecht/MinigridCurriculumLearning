@@ -4,7 +4,7 @@
 #SBATCH --time=23:59:00
 #SBATCH --partition=cpu_normal_stud,cpu_long_stud
 #SBATCH --exclude=cp2019-11,cc1l01
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=2
 #SBATCH --mem=20G
 #SBATCH --verbose
 echo "----------Starting RRH--------"
