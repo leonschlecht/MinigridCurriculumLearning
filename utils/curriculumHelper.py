@@ -48,6 +48,11 @@ numCurricKey = "numCurric"
 usedEnvEnumerationKey = "usedEnvEnumeration"
 modelKey = "model"
 
+# Evaluation Keys
+snapshotDistributionKey = "snapshotDistribution"
+bestCurricDistributionKey = "bestCurricDistribution"
+allCurricDistributoinKey = "allCurricDistribution"
+
 # Used for all Paralell training
 NEXT_ENVS = "NextEnvs"
 
@@ -61,13 +66,10 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     """
     Prints the last logs, after the training is done
     """
-    txtLogger.info("----TRAINING END-----")
-    txtLogger.info(f"Best Curricula {trainingInfoJson[bestCurriculas]}")
-    txtLogger.info(f"Trained in Envs {trainingInfoJson[selectedEnvs]}")
-    txtLogger.info(f"Rewards: {trainingInfoJson[rewardsKey]}")
-
+    txtLogger.info("\n\n\n----TRAINING END-----")
+    txtLogger.info(f"Num Frames {trainingInfoJson[numFrames]}")
     now = datetime.now()
-    txtLogger.info(f"Time ended at {now} , total training time: _") # TODO
+    txtLogger.info(f"Time ended at {now} , total training time: {trainingInfoJson[sumTrainingTime]}")
     txtLogger.info("-------------------\n\n")
 
 
@@ -102,34 +104,35 @@ def getRewardMultiplier(evalEnv):
 def calculateEnvDifficulty(iterationsDone, difficultyStepsize) -> float:
     startDecreaseNum = 500000
     if iterationsDone <= startDecreaseNum:
-        value = 1
+        value: float = 1.0
     else:
         value = 1 - ((iterationsDone - startDecreaseNum) / difficultyStepsize / 20)
     value = max(value, 0.15)
 
     assert value <= 1
-    register(
-        id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
-        entry_point="minigrid.envs:DoorKeyEnv",
-        kwargs={"size": 12, "max_steps": int(maxStepsEnv4 * value)},
-    )
-    register(
-        id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
-        entry_point="minigrid.envs:DoorKeyEnv",
-        kwargs={"size": 10, "max_steps": int(maxStepsEnv4 * value)},
-    )
+    if value < 1:
+        register(
+            id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
+            entry_point="minigrid.envs:DoorKeyEnv",
+            kwargs={"size": 12, "max_steps": int(maxStepsEnv4 * value)},
+        )
+        register(
+            id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
+            entry_point="minigrid.envs:DoorKeyEnv",
+            kwargs={"size": 10, "max_steps": int(maxStepsEnv4 * value)},
+        )
 
-    register(
-        id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
-        entry_point="minigrid.envs:DoorKeyEnv",
-        kwargs={"size": 8, "max_steps": int(maxStepsEnv4 * value)},
-    )
+        register(
+            id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
+            entry_point="minigrid.envs:DoorKeyEnv",
+            kwargs={"size": 8, "max_steps": int(maxStepsEnv4 * value)},
+        )
 
-    register(
-        id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
-        entry_point="minigrid.envs:DoorKeyEnv",
-        kwargs={"size": 6, "max_steps": int(maxStepsEnv4 * value)},
-    )
+        register(
+            id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
+            entry_point="minigrid.envs:DoorKeyEnv",
+            kwargs={"size": 6, "max_steps": int(maxStepsEnv4 * value)},
+        )
     return value
 
 

@@ -1,0 +1,60 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris2
+srun: cpus-per-task       : 2
+srun: jobid               : 1107128
+srun: job-name            : SPLCL2
+srun: mem                 : 16G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1107128: nodes(1):`paris2', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1107128.0 on host paris2, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris2, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+SPLCL
+Reloading state
+Continuing from epoch 66, seed: 1
+training will go on until 400
+Envs: ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0']
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model SPLCL_s1/model for 26624 frames. Duration 28.213501930236816. Fps: ??. totalF 9877504
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 95, in <module>
+    main()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 49, in main
+    e = allParalell(txtLogger, startTime, cmdLineString, args)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/allParalell.py", line 53, in __init__
+    self.trainEachCurriculum(self.startEpoch, self.totalEpochs, self.iterationsDone, self.initialEnvNames)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/allParalell.py", line 66, in trainEachCurriculum
+    reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 104, in evaluateAgent
+    evaluationResult = evaluateAll(model, envs, args, txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 84, in evaluateAll
+    results[evaluationEnv] = startEvaluationInOneEnv(args, model, evaluationEnv, txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/evaluate.py", line 16, in startEvaluationInOneEnv
+    env = utils.make_env(evalEnv, args.seed + 10000 * i)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/env.py", line 7, in make_env
+    env = gym.make(env_key, render_mode=render_mode)  # max_episode_steps ?? ; can potentially call kwargs
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 740, in make
+    env_spec = _find_spec(id)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 537, in _find_spec
+    _check_version_exists(ns, name, version)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 403, in _check_version_exists
+    _check_name_exists(ns, name)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py", line 380, in _check_name_exists
+    raise error.NameNotFound(
+gymnasium.error.NameNotFound: Environment `MiniGrid-DoorKey-6x6-custom-diff0.15` doesn't exist. Did you mean: `MiniGrid-DoorKey-6x6-custom-diff1.0`?
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1107128.0 (status=0x0100).
+srun: error: paris2: task 0: Exited with exit code 1
+---------- Cluster Job End ---------------------

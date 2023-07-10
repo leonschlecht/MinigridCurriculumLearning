@@ -25,6 +25,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.objectives = 1
         self.inequalityConstr = 0
         self.xupper = len(ENV_NAMES.ALL_ENVS) - 1
+        self.useNSGA: bool = args.useNSGA
 
         # debug variable
         self.resX = None
@@ -43,27 +44,30 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         genNrStr = list(currentRewards.keys())[keyIndexPairOfMaxReward[0]][len(GEN_PREFIX):]
         listIdx = int(keyIndexPairOfMaxReward[1])
         return genNrStr, listIdx
-        # TODO this returns something like ('3', 0); should probably return (3, 0)
 
     def executeOneEpoch(self, epoch: int):
-        nsga = NSGA2(pop_size=self.numCurric,
-                     sampling=IntegerRandomSampling(),
-                     crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                     mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                     eliminate_duplicates=True,
-                     )
+        if self.useNSGA:
+            algorithm = NSGA2(pop_size=self.numCurric,
+                              sampling=IntegerRandomSampling(),
+                              crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                              mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                              eliminate_duplicates=True,
+                              )
+        else:
+            algorithm = GA(pop_size=self.numCurric,
+                           sampling=IntegerRandomSampling(),
+                           crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                           mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
+                           eliminate_duplicaets=True,
+                           )
+
         # NSGA2 Default: # sampling: FloatRandomSampling = FloatRandomSampling(),
         # selection: TournamentSelection = TournamentSelection(func_comp=binary_tournament),
         # crossover: SBX = SBX(eta=15, prob=0.9),
         # mutation: PM = PM(eta=20),
         curricProblem = CurriculumProblem(self.curricula, self.objectives, self.inequalityConstr, self.xupper,
                                           self.paraEnvs, self)
-        algorithm = GA(pop_size=self.numCurric,
-                       sampling=IntegerRandomSampling(),
-                       crossover=SBX(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                       mutation=PM(prob=1.0, eta=3.0, vtype=float, repair=RoundingRepair()),
-                       eliminate_duplicaets=True,
-                       )
+
         res = minimize(curricProblem,
                        algorithm,
                        termination=('n_gen', self.nGen),
@@ -71,7 +75,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
                        save_history=True,
                        verbose=False)
         self.resX = res.X
-        self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
+        # self.txtLogger.info(f"resX = {res.X} resF = {res.F}")
 
     def updateSpecificInfo(self, epoch):
         self.trainingInfoJson["resX"] = self.resX
@@ -104,15 +108,15 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
             rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
             snapshotReward[i] = rewardI[0]
             rewards[i] = np.sum(rewardI)
-            self.txtLogger.info(f"\n===curriculum {i} done===\n")
+            # self.txtLogger.info(f"\n===curriculum {i} done===\n")
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula
-        self.txtLogger.info("\n")
-        self.txtLogger.info(f"currentRewards after {genKey}: {self.currentRewardsDict}")
-        self.txtLogger.info(f"snapshot Rewards after {genKey}: {self.currentSnapshotRewards}")
-        self.txtLogger.info(f"currentEnvDetails for {genKey}: {self.curriculaEnvDetails[genKey]}")
-        self.txtLogger.info(f"\n\n===       Generation {genNr} done      ===\n")
+        # self.txtLogger.info("\n")
+        #self.txtLogger.info(f"currentRewards after {genKey}: {self.currentRewardsDict}")
+        #self.txtLogger.info(f"snapshot Rewards after {genKey}: {self.currentSnapshotRewards}")
+        #self.txtLogger.info(f"currentEnvDetails for {genKey}: {self.curriculaEnvDetails[genKey]}")
+        #self.txtLogger.info(f"\n\n===       Generation {genNr} done      ===\n")
         return rewards
 
     def evolXToCurriculum(self, x):

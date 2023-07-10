@@ -1,0 +1,110 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris3
+srun: cpus-per-task       : 1
+srun: jobid               : 1107883
+srun: job-name            : moGA_50_3_3_3
+srun: mem                 : 16G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1107883: nodes(1):`paris3', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1107883.0 on host paris3, 2 tasks: [0-1]
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris3, 2 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+Exception while deleting: [Errno 2] No such file or directory: 'log.csv'
+deleted: ./ epoch_27_curric0_gen1_CANDIDATE
+deleted: ./ epoch_27_curric1_gen1
+Exception while deleting: [Errno 2] No such file or directory: 'log.csv'
+deleted: ./ epoch_27_curric2_gen1
+deleted: ./ epoch_27_curric2_gen1_CANDIDATE
+Continung training from epoch 27... [total epochs: 101], seed: 9152
+deleted: ./ epoch_27_curric0_gen1
+Exception while deleting: [Errno 2] No such file or directory: '/home/schlecht/nobackup/MinigridCurriculumLearning/storage/50k_3step_3gen_3curric_s9152//epoch_27_curric0_gen1_CANDIDATE'
+Exception while deleting: [Errno 2] No such file or directory: 'log.csv'
+deleted: ./ epoch_27_curric1_gen1_CANDIDATE
+Exception while deleting: [Errno 2] No such file or directory: '/home/schlecht/nobackup/MinigridCurriculumLearning/storage/50k_3step_3gen_3curric_s9152//epoch_27_curric2_gen1'
+Exception while deleting: [Errno 2] No such file or directory: '/home/schlecht/nobackup/MinigridCurriculumLearning/storage/50k_3step_3gen_3curric_s9152//epoch_27_curric2_gen1_CANDIDATE'
+Continung training from epoch 27... [total epochs: 101], seed: 9152
+Traceback (most recent call last):
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 95, in <module>
+    main()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/scripts/trainCurriculum.py", line 39, in main
+    e.startCurriculumTraining()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 68, in startCurriculumTraining
+    self.executeOneEpoch(epoch)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizonEvolutionaryAlgorithm.py", line 71, in executeOneEpoch
+    res = minimize(curricProblem,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/optimize.py", line 67, in minimize
+    res = algorithm.run()
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/algorithm.py", line 141, in run
+    self.next()
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/algorithm.py", line 161, in next
+    self.evaluator.eval(self.problem, infills, algorithm=self)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/evaluator.py", line 69, in eval
+    self._eval(problem, pop[I], evaluate_values_of, **kwargs)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/evaluator.py", line 90, in _eval
+    out = problem.evaluate(X, return_values_of=evaluate_values_of, return_as_dictionary=True, **kwargs)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 187, in evaluate
+    _out = self.do(X, return_values_of, *args, **kwargs)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 229, in do
+    self._evaluate_vectorized(X, out, *args, **kwargs)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/pymoo/core/problem.py", line 237, in _evaluate_vectorized
+    self._evaluate(X, out, *args, **kwargs)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/curriculumProblem.py", line 34, in _evaluate
+    rewards = self.rheaObj.trainEveryCurriculum(x, self.gen)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizonEvolutionaryAlgorithm.py", line 108, in trainEveryCurriculum
+    rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 107, in trainACurriculum
+    utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/storage.py", line 121, in copyAgent
+    shutil.copytree(fullSrcPath, fullDestPath)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/shutil.py", line 559, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/shutil.py", line 457, in _copytree
+    os.makedirs(dst, exist_ok=dirs_exist_ok)
+  File "/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/os.py", line 225, in makedirs
+    mkdir(name, mode)
+FileExistsError: [Errno 17] File exists: '/home/schlecht/nobackup/MinigridCurriculumLearning/storage/50k_3step_3gen_3curric_s9152/epoch_27_curric0_gen1'
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1107883.0 (status=0x0100).
+srun: error: paris3: task 0: Exited with exit code 1
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.531165', 'MiniGrid-DoorKey-8x8-custom-diff0.531165'] using model 50k_3step_3gen_3curric_s9152/epoch_27_curric0_gen1 for 57344 frames. Duration 42.43824601173401. Fps: ??. totalF 1495014
+Evaluate agent TEST 33.65170679569245
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.531165', 'MiniGrid-DoorKey-12x12-custom-diff0.531165'] using model 50k_3step_3gen_3curric_s9152/epoch_27_curric0_gen1 for 57344 frames. Duration 42.925509452819824. Fps: ??. totalF 1552358
+Evaluate agent TEST 33.66935064616027
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.531165', 'MiniGrid-DoorKey-8x8-custom-diff0.531165'] using model 50k_3step_3gen_3curric_s9152/epoch_27_curric0_gen1 for 57344 frames. Duration 42.694448471069336. Fps: ??. totalF 1609702
+Evaluate agent TEST 34.14473501370503
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.531165', 'MiniGrid-DoorKey-12x12-custom-diff0.531165'] using model 50k_3step_3gen_3curric_s9152/epoch_27_curric1_gen1 for 57344 frames. Duration 42.93010401725769. Fps: ??. totalF 1495014
+Evaluate agent TEST 32.85940605677091
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.531165', 'MiniGrid-DoorKey-8x8-custom-diff0.531165'] using model 50k_3step_3gen_3curric_s9152/epoch_27_curric1_gen1 for 57344 frames. Duration 42.753376960754395. Fps: ??. totalF 1552358
+Evaluate agent TEST 33.96507933653318
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.531165', 'MiniGrid-DoorKey-8x8-custom-diff0.531165'] using model 50k_3step_3gen_3curric_s9152/epoch_27_curric1_gen1 for 57344 frames. Duration 42.713504791259766. Fps: ??. totalF 1609702
+Evaluate agent TEST 34.16546431504763
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.531165', 'MiniGrid-DoorKey-10x10-custom-diff0.531165'] using model 50k_3step_3gen_3curric_s9152/epoch_27_curric2_gen1 for 57344 frames. Duration 42.40387225151062. Fps: ??. totalF 1495014
+Evaluate agent TEST 34.01858636379242
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff0.531165', 'MiniGrid-DoorKey-10x10-custom-diff0.531165'] using model 50k_3step_3gen_3curric_s9152/epoch_27_curric2_gen1 for 57344 frames. Duration 43.12605571746826. Fps: ??. totalF 1552358
+srun: Complete StepId=1107883.0+0 received
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.
+slurmstepd: error: *** JOB 1107883 ON paris3 CANCELLED AT 2023-07-10T17:38:47 ***
+slurmstepd: error: *** STEP 1107883.0 ON paris3 CANCELLED AT 2023-07-10T17:38:47 ***
