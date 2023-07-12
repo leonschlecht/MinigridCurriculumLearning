@@ -237,6 +237,10 @@ def getSpecificModel(specificModelList: list, modelName: str):
             "8x8c": bestCurricHelper[1],
             "10x10c": bestCurricHelper[2],
             "12x12c": bestCurricHelper[3],
+            "6x6a": allCurricHelper[0],
+            "8x8a": allCurricHelper[1],
+            "10x10a": allCurricHelper[2],
+            "12x12a": allCurricHelper[3],
             seedKey: result.seed,
             sumTrainingTime: result.trainingTimeSum,
             "id": modelName})
@@ -398,7 +402,27 @@ def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame]):
         columns_to_visualize = ['6x6c', '8x8c', '10x10c', '12x12c', 'id']
         showDistrVisualization(aggregatedDf, columns_to_visualize)
     if args.allDistr:
+        columns_to_visualize = ['6x6a', '8x8a', '10x10a', '12x12a', 'id']
+        showDistrVisualization(aggregatedDf, columns_to_visualize)
+
+
+    if args.iter:
+        # get all runs with different iterationNrs
+        print(aggregatedDf)
+        exit()
         pass
+    if args.steps:
+        # get all NSGA, GA and RRH runs (or make differnetaion here too ?)
+        pass
+    if args.gen:
+        # get ALL NSGA or GA runs
+        # plot them
+        print()
+    if args.curric:
+        # get all NSGA, GA, RRH runs
+        pass
+
+    print("---- Done ----")
 
 
 def main(comparisons: int):
@@ -435,8 +459,14 @@ def main(comparisons: int):
     # TODO ask for comparison nrs if not given by --comparisons
     print("------------------\n\n\n")
     if args.model is None and not args.skip:
-        filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        # plotMultipleLineplots(filteredDf)
+        if args.filter:
+            filteredDistrDf = distrDf
+            filteredScoreDf = scoreDf
+        else:
+            filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
+        print(scoreDf["id"])
+        exit()
+        plotMultipleLineplots(filteredScoreDf)
         plotAggrgatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
@@ -471,9 +501,16 @@ if __name__ == "__main__":
     parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+
     parser.add_argument("--trainingTime", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--curricDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--allDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+
+    parser.add_argument("--iter", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--steps", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--gen", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--curric", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--filter", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     args = parser.parse_args()
     main(int(args.comparisons))

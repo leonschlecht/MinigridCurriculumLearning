@@ -81,6 +81,8 @@ def initializeArgParser():
     parser.add_argument("--crossoverEta", type=float, default=3.0, help="Crossover ETA of the RHEA CL")
     parser.add_argument("--mutationEta", type=float, default=3.0, help="Mutation ETA of the RHEA CL")
 
+    parser.add_argument("--noRewardShaping", action="store_true", default=False,
+                        help="Whether or not to use rewardshaping for RHEA CL")
     args = parser.parse_args()
     args.mem = args.recurrence > 1
     args.trainEvolutionary = not (

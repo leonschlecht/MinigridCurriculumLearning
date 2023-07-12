@@ -39,7 +39,7 @@ class RollingHorizon(ABC):
         # TODO remove --model param and let it be created automatically (or optional for debug)
         self.trainingTime = 0
 
-        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
+        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS, args.noRewardShaping)
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
         self.trainingInfoJson = {}
         self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])

@@ -103,7 +103,7 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     envs = getEnvListThroughDifficulty(difficulty)
     evaluationResult = evaluateAll(model, envs, args, txtLogger)
     for evalEnv in envs:
-        currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv)
+        currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv, args.noRewardShaping)
         rewardSum += currentReward
     print("Evaluate agent TEST", rewardSum)
     return rewardSum
