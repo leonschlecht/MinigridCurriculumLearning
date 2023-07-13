@@ -7,27 +7,40 @@ Experimente:
 -- alte models automatisch löschen (ic hglaube das könnte schon ziemlich viel zeit sparen, damit git schneller ist und vllta uf dem cluster weniger schiefläuft. Aber ich weiß nicht genau, ob das blöd ist, wenn im Cluster immer so viel hin und hergeschrieben wird)
 md
 
+
+Q:
+- [1][2], oder [1,2]
+
+
 Mi:
-...
+- Etwas von den Verbesserungen eingearbetiet
+- SAC RL versucht gangbar zu machen
+
+
+Do
+- Experimente rüberkopieren, fertige sachen löschen
+- Neue Experimente mit anderen Crossover / Mutationsraten starten
+- SAC RL weiterprobieren ( 3-4h)
+- 1-2h pur fürs schreiben investieren
+
+
+Fr:
+- SPLCL runs rüberkopieren
+- Grafiken zu SPLCL runs erstellen
+- Time investieren in Groupbarchart
+- Verbessern der benutzen grafiken für die MA (--> vorher überlegen, welche ich eigentlihc brauche bzw. welche ich generieren kann und was für aussagen ich treffen möchte)
+
 
 
 ------
 Themen
-- Probleme mit Cluster
-- Bisschen mehr auswertungsfilter gemacht
-- Trainingsalgorithmus neu
 - (Multiobjective)
 - Pool der available curricula verändern (schrieben aufgefallen)
-    [reward anpassen]
 - ggf auf ersten 1kk mal fokussieren
-# sobol sampling ( sklearn (0 bis 1) wären die mutations & crossover raten
-
 rotation=45, ha='right'
+
 https://medium.com/@antoine_savine/sobol-sequence-explained-188f422b246b
-from scipy.stats import qmc
-#set up sampler
-sampler = qmc.Sobol(d=2, seed=42)
-samples = sampler.random_base2(m=num_samples)
+
 
 
 - wie schnell lernt es (1 grafik pro veränderter parameter)
@@ -38,7 +51,6 @@ samples = sampler.random_base2(m=num_samples)
 
 
 Jetzt:
-- Neue Experimente mit Crossover / Mutationsraten
 - Mehr Text zu den Grafiken schreiben
 - (SPLCL) bisschen rumprobieren wegen Parametern
 - ((fix skip evaluation)
