@@ -28,7 +28,7 @@ class allParalell:
 
         self.selectedModel = self.model + os.sep + "model"
 
-        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
+        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS, args.noRewardShaping)
 
         self.trainingInfoJson = {}
         self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])
