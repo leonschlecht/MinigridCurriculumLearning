@@ -2,6 +2,7 @@ import argparse
 import os
 
 import matplotlib.pyplot as plt
+import pandas
 import pandas as pd
 import seaborn as sns
 
@@ -265,76 +266,88 @@ def getAllModels(logfilePaths: list[list]):
     return scoreDf, distrDf
 
 
-def filterDf(val, dataFrame, models):
+def filterDf(filters: list[str], dataFrame, models, showCanceled=False):
     """
     Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
-    :param val: the prefix to be filtered. E.g. "RndRH"
+    :param filters:
+    :param rheaFilter:
+    :param showCanceled:
     :param dataFrame: the main dataframe
     :param models: a list of all model names (unique values in id column of the df)
     :return:
     """
     filteredDf = []
     for m in models:
-        if val in m and "C_" not in m:
-            if val == "GA" and "NSGA" in m:
+        append = True
+        for filterOption in filters:
+            if filterOption not in m or \
+                    (filterOption == "50k" and "150k" in m) or \
+                    (filterOption == "50k" and "250k" in m):
+                append = False
+                break
+        if append:
+            if "C_" in m and not showCanceled:
                 continue
             filteredDf.append(dataFrame[dataFrame["id"] == m])
 
     return filteredDf
 
-def filterIterDf(val:str, dataFrame, models):
-    """
-    Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
-    :param val: the prefix to be filtered. E.g. "RndRH"
-    :param dataFrame: the main dataframe
-    :param models: a list of all model names (unique values in id column of the df)
-    :return:
-    """
-    filteredDf = []
-    for m in models:
-        if val in m:
-            if (val == "50k" and "150k" in m) or (val == "50k" and "250k" in m):
-                continue
-            filteredDf.append(dataFrame[dataFrame["id"] == m])
-    return filteredDf
 
-
-def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, distrDf):
+def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, distrDf) -> tuple:
     modelsEntered: int = 0
     usedModels = []
-    filteredScoreDf = []
-    filteredDistrDf = []  # TODO
+    filteredScoreDfList = []
+    filteredDistrDfList = []  # TODO
     for i in range(len(models)):
         print(f"{i}: {models[i]}")
     print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
-    while modelsEntered < comparisons:
-        val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
-        if val.isdigit() and int(val) < len(models) and val not in usedModels:
-            modelsEntered += 1
-            usedModels.append(val)
-            filteredScoreDf.append(scoreDf[scoreDf["id"] == models[int(val)]])
-            filteredDistrDf.append(distrDf[distrDf["id"] == models[int(val)]])
-        else:
-            if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
-                filteredScoreDf = filterDf(val, scoreDf, models)
-                filteredDistrDf = filterDf(val, distrDf, models)
-                break
-            if "iter" in val:
-                filteredScoreDf = filterIterDf(val.strip("iter"), scoreDf, models)
-                # filteredDistrDf = filterDf(val, distrDf, models) # not needed for iter
-                break
-            print("Model doesnt exist or was chosen already. Enter again")
+    if args.filter:
+        filters = []
+        if args.rhea:
+            filters.append("GA")
+        if args.rrh:
+            filters.append("RRH")
+        if args.iter != 0:
+            filters.append(str(args.iter) + "k")
+        if args.steps:
+            # get all NSGA, GA and RRH runs (or make differnetaion here too ?)
+            pass
+        if args.gen:
+            # get ALL NSGA or GA runs
+            # plot them
+            print()
+        if args.curric:
+            # get all NSGA, GA, RRH runs
+            pass
+        filteredScoreDfList = filterDf(filters, scoreDf, models, showCanceled=args.showCanceled)
+        filteredDistrDfList = filterDf(filters, distrDf, models, showCanceled=args.showCanceled)
+    else:
+        while modelsEntered < comparisons:
+            val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
+            if val.isdigit() and int(val) < len(models) and val not in usedModels:
+                modelsEntered += 1
+                usedModels.append(val)
+                filteredScoreDfList.append(scoreDf[scoreDf["id"] == models[int(val)]])
+                filteredDistrDfList.append(distrDf[distrDf["id"] == models[int(val)]])
+            else:
+                if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
+                    val = [val]
+                    filteredScoreDfList = filterDf(val, scoreDf, models)
+                    filteredDistrDfList = filterDf(val, distrDf, models)
+                    break
+                print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
-    return filteredScoreDf, filteredDistrDf
+    return filteredScoreDfList, filteredDistrDfList
 
 
-def plotMultipleLineplots(filteredDf):
+def plotMultipleLineplots(filteredDf: pandas.DataFrame):
     sns.set_theme(style="darkgrid")
     fig, ax = plt.subplots(figsize=(10, 6))
     for df in filteredDf:
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax)
-    ax.set_ylabel("evaluation reward .")
-    ax.set_xlabel("iterations .")
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar=None)
+    ax.set_ylabel("evaluation reward")
+    ax.set_xlabel("iterations")
+    plt.title("mean performance of the first 1kk iterations")
     # ax.set_ylim(bottom=0.6)
     plt.tight_layout()  # Add this line to adjust the layout and prevent legend cutoff
     # plt.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
@@ -425,22 +438,6 @@ def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame]):
         columns_to_visualize = ['6x6a', '8x8a', '10x10a', '12x12a', 'id']
         showDistrVisualization(aggregatedDf, columns_to_visualize)
 
-
-    if args.iter:
-        # get all runs with different iterationNrs
-        print(aggregatedDf)
-        pass
-    if args.steps:
-        # get all NSGA, GA and RRH runs (or make differnetaion here too ?)
-        pass
-    if args.gen:
-        # get ALL NSGA or GA runs
-        # plot them
-        print()
-    if args.curric:
-        # get all NSGA, GA, RRH runs
-        pass
-
     print("---- Done ----")
 
 
@@ -472,25 +469,20 @@ def main(comparisons: int):
         scoreDf, distrDf = getSpecificModel(specificModelList, args.model)
     else:
         scoreDf, distrDf = getAllModels(fullLogfilePaths)
-    scoreDf = scoreDf[scoreDf[iterationSteps] < 1100000]
+    scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations]
     # scoreDf = scoreDf[scoreDf[iterationSteps] < 1000000]
     models = scoreDf["id"].unique()
     sns.set_theme(style="dark")
     # TODO ask for comparison nrs if not given by --comparisons
     print("------------------\n\n\n")
     if args.model is None and not args.skip:
-        if args.filter:
-            filteredDistrDf = distrDf
-            filteredScoreDf = scoreDf
-        else:
-            filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        print(filteredScoreDf)
+        filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
         plotMultipleLineplots(filteredScoreDf)
         plotAggrgatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
         filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model, ci=None, errorbar=None)
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model)
         plt.show()
     if args.skip:
         print("starting evaluation. . .")
@@ -505,8 +497,8 @@ def main(comparisons: int):
                 continue
             occur = len(filteredIterDf[filteredIterDf == firstIterVal])
             print(f"{occur} experiments done with {m}")
-            modelDf = modelDf[modelDf[iterationSteps] < 1000000]
-            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m, errorbar=None, ci=None)
+            modelDf = modelDf[modelDf[iterationSteps] < args.xIter]
+            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
             plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
             plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
             plt.title('Barplot of sumTrainingTime')  # Replace 'Barplot of sumTrainingTime' with the appropriate title for your plot
@@ -523,18 +515,19 @@ if __name__ == "__main__":
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--showCanceled", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
 
     parser.add_argument("--trainingTime", action="store_true", default=False, help="Show training time plots")
     parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Show first step distribution plots")
     parser.add_argument("--curricDistr", action="store_true", default=False, help="show all best curricula distributions plots")
     parser.add_argument("--allDistr", action="store_true", default=False, help="Show all distribution plots")
 
-    parser.add_argument("--iter", action="store_true", default=False, help="filter for iterations")
+    parser.add_argument("--iter", default=0, type=int, help="filter for iterations")
+    parser.add_argument("--xIterations", default=1100000, type=int, help="#of iterations to show on the xaxis")
     parser.add_argument("--steps", action="store_true", default=False, help="filter for #curricSteps")
     parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
     parser.add_argument("--curric", action="store_true", default=False, help="whether to filter for #curricula")
-    parser.add_argument("--25k", action="store_true", default=False, help="Filtering all 25k curricLength runs")
+    parser.add_argument("--rhea", action="store_true", default=False, help="Only using rhea runs")
+    parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     args = parser.parse_args()
     args.filter = args.iter or args.steps or args.gen or args.curric
     main(int(args.comparisons))
