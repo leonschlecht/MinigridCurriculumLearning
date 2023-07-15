@@ -305,8 +305,10 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
         filters = []
         if args.rhea:
             filters.append("GA")
-        if args.rrh:
-            filters.append("RRH")
+            if args.rrh:
+                filters.append("RRH") # todo ???
+        if args.rrhOnly:
+            filters.append("RndRH")
         if args.iter != 0:
             filters.append(str(args.iter) + "k")
         if args.steps:
@@ -347,7 +349,7 @@ def plotMultipleLineplots(filteredDf: pandas.DataFrame):
         sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar=None)
     ax.set_ylabel("evaluation reward")
     ax.set_xlabel("iterations")
-    plt.title("mean performance of the first 1kk iterations")
+    plt.title("mean performance")
     # ax.set_ylim(bottom=0.6)
     plt.tight_layout()  # Add this line to adjust the layout and prevent legend cutoff
     # plt.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
@@ -527,7 +529,9 @@ if __name__ == "__main__":
     parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
     parser.add_argument("--curric", action="store_true", default=False, help="whether to filter for #curricula")
     parser.add_argument("--rhea", action="store_true", default=False, help="Only using rhea runs")
+    parser.add_argument("--rrh", action="store_true", default=False, help="Include RRH runs, even if --rhea was speicifed")
+    parser.add_argument("--rrhOnly", action="store_true", default=False, help="Only RRH runs")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     args = parser.parse_args()
-    args.filter = args.iter or args.steps or args.gen or args.curric
+    args.filter = args.iter or args.steps or args.gen or args.curric or args.rrhOnly
     main(int(args.comparisons))
