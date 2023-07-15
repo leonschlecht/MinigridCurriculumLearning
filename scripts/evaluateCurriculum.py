@@ -282,6 +282,22 @@ def filterDf(val, dataFrame, models):
 
     return filteredDf
 
+def filterIterDf(val:str, dataFrame, models):
+    """
+    Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
+    :param val: the prefix to be filtered. E.g. "RndRH"
+    :param dataFrame: the main dataframe
+    :param models: a list of all model names (unique values in id column of the df)
+    :return:
+    """
+    filteredDf = []
+    for m in models:
+        if val in m:
+            if (val == "50k" and "150k" in m) or (val == "50k" and "250k" in m):
+                continue
+            filteredDf.append(dataFrame[dataFrame["id"] == m])
+    return filteredDf
+
 
 def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, distrDf):
     modelsEntered: int = 0
@@ -290,7 +306,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     filteredDistrDf = []  # TODO
     for i in range(len(models)):
         print(f"{i}: {models[i]}")
-    print("filter options: NSGA, GA, RndRH, allParalell")
+    print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
     while modelsEntered < comparisons:
         val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
         if val.isdigit() and int(val) < len(models) and val not in usedModels:
@@ -302,6 +318,10 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
                 filteredScoreDf = filterDf(val, scoreDf, models)
                 filteredDistrDf = filterDf(val, distrDf, models)
+                break
+            if "iter" in val:
+                filteredScoreDf = filterIterDf(val.strip("iter"), scoreDf, models)
+                # filteredDistrDf = filterDf(val, distrDf, models) # not needed for iter
                 break
             print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
@@ -409,7 +429,6 @@ def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame]):
     if args.iter:
         # get all runs with different iterationNrs
         print(aggregatedDf)
-        exit()
         pass
     if args.steps:
         # get all NSGA, GA and RRH runs (or make differnetaion here too ?)
@@ -453,7 +472,8 @@ def main(comparisons: int):
         scoreDf, distrDf = getSpecificModel(specificModelList, args.model)
     else:
         scoreDf, distrDf = getAllModels(fullLogfilePaths)
-
+    scoreDf = scoreDf[scoreDf[iterationSteps] < 1100000]
+    # scoreDf = scoreDf[scoreDf[iterationSteps] < 1000000]
     models = scoreDf["id"].unique()
     sns.set_theme(style="dark")
     # TODO ask for comparison nrs if not given by --comparisons
@@ -464,14 +484,13 @@ def main(comparisons: int):
             filteredScoreDf = scoreDf
         else:
             filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        print(scoreDf["id"])
-        exit()
+        print(filteredScoreDf)
         plotMultipleLineplots(filteredScoreDf)
         plotAggrgatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
         filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model)
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model, ci=None, errorbar=None)
         plt.show()
     if args.skip:
         print("starting evaluation. . .")
@@ -480,10 +499,14 @@ def main(comparisons: int):
                 continue
             modelDf = scoreDf[scoreDf["id"] == m]
             filteredIterDf = modelDf[iterationSteps]
-            firstIterVal = filteredIterDf[0]
+            try:
+                firstIterVal = filteredIterDf[0]
+            except:
+                continue
             occur = len(filteredIterDf[filteredIterDf == firstIterVal])
             print(f"{occur} experiments done with {m}")
-            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
+            modelDf = modelDf[modelDf[iterationSteps] < 1000000]
+            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m, errorbar=None, ci=None)
             plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
             plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
             plt.title('Barplot of sumTrainingTime')  # Replace 'Barplot of sumTrainingTime' with the appropriate title for your plot
@@ -502,15 +525,16 @@ if __name__ == "__main__":
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
 
-    parser.add_argument("--trainingTime", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--curricDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--allDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--trainingTime", action="store_true", default=False, help="Show training time plots")
+    parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Show first step distribution plots")
+    parser.add_argument("--curricDistr", action="store_true", default=False, help="show all best curricula distributions plots")
+    parser.add_argument("--allDistr", action="store_true", default=False, help="Show all distribution plots")
 
-    parser.add_argument("--iter", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--steps", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--gen", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--curric", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--filter", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--iter", action="store_true", default=False, help="filter for iterations")
+    parser.add_argument("--steps", action="store_true", default=False, help="filter for #curricSteps")
+    parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
+    parser.add_argument("--curric", action="store_true", default=False, help="whether to filter for #curricula")
+    parser.add_argument("--25k", action="store_true", default=False, help="Filtering all 25k curricLength runs")
     args = parser.parse_args()
+    args.filter = args.iter or args.steps or args.gen or args.curric
     main(int(args.comparisons))
