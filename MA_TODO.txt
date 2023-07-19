@@ -1,17 +1,28 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 
+RRH mit 6 numCurric oder so machen
+- interneal / external validation ?
+
+Other question is, how can you maximize the spike pre 1kk iterations?
+Stackedbarplot performance (NSGA vs GA vs RRH vs AP vs SPLCL)
 
 Experimente:
-- mit anderen Mutation / Crossover rates DONE
-- Reward auf 1 setzen (gleichzeitig DONE)
 - mit anderem ALgorithmus ( SAC / TD3 )
 - mit anderen Gamma raten
+- mit / ohne Rewardshaping vergleichen
 - mit anderen curricLengths (--stepsPerCurric)
+
+Experiment Ideen:
+- episoden pro eval verringern ( ziel schneller evaluieren)
+- andere envGrößen
+- andere Viewsize
+- Andere Minigrid Envs?
+- Ganz andere Envs?
+
 
 
 -- alte models automatisch löschen (ic hglaube das könnte schon ziemlich viel zeit sparen, damit git schneller ist und vllta uf dem cluster weniger schiefläuft. Aber ich weiß nicht genau, ob das blöd ist, wenn im Cluster immer so viel hin und hergeschrieben wird)
-md
 
 
 Mi:
@@ -39,7 +50,6 @@ d - Mail an alex (was kommt jetzt genau in welches kapitel und wie unterscheiden
 
 
 Sa:
-- ggf was von gestern noch gucken
 - SAC weitermachen
 - eval wieder ausführbar (und ggf kleine doc schreiben dmait es consistent ist und ich nicht jedes mal in iwelche probelem laufe)
 - 5.1 rq1 schreiben,
@@ -47,58 +57,52 @@ Sa:
 
 
 Todos:
-- ggf auf ersten 1kk mal fokussieren (Analyse: wer peakt schneller?)
 - scatterplot evtl für training time (NSGA, ..)
 - Groupbarchart für alle 50k ; alle 100k .... )
 - xtick 45 grad & ---> verschieben ha=right (- rotation=45, ha='right')
 - filter nach Methode (zB 100k, oder alle 3Gen, ...)
 
-- 150k RRH auf 5kk cutten damit es cleaner aussieht
-- Wenn man mit allPara vergleicht vllt auf 5kk beschränken, weil das sonst komisch aussieht
-
 
 - I could use difficult for the pool of available curricula as well (to better adjust to the models performacne); so it would have more to choose from, but then the evol optim would take a lot longer
 -Plot: time of 2 curric vs 3 curric vs 4 curric
-Plot: Env distribution of NSGA vs GA (vs random)
-(Plot: comparing GA with NSGA best run: etwas redundant, weil es eig schon in dem allPara plot mit drin ist)
+Plot: Env distribution of NSGA vs GA (vs random rh vs splcl)
 (plot: promising experiments that were cut due to training time)
 
 - env distributions anschuaen,
 - env distribution normalisieren
 
 
-Neue Experimente
-- episoden pro eval verringern ( ziel schneller evaluieren)
-- andere envGrößen
-- andere Viewsize
-- Andere Minigrid Envs?
-- Ganz andere Envs?
-
-
-
-
 
 
 ---------------------------
 Low Prio
-- (Multiobjective für NSGA)
+- (Multiobjective für NSGA machen)
 
 -------------------- FRAGEN ZUR MA -------------------
 General Q:
-Wie umgeht man dass der plot nicht im falschen kapitel landet ? (und auch balance zwischen Plotgröße und Lesbarkeit)
+- anderer termin ok
+- etwas burnt out
+- plots auf falscher seite (Tipps?)
+- Benutzen von "we"?
+- Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleiche
+- SAC / ...  (wie am besten einbetten; erst mit minigrid gangbar machen -> dann ?)
+- Was für "cherry on top gibt es denn noch"?
+- [1][2], oder [1,2]
+- Wie umgeht man dass der plot nicht im falschen kapitel landet ? (und auch balance zwischen Plotgröße und Lesbarkeit)
+
+
+================
+
 - Pool der available curricula verändern (schrieben aufgefallen)
 
 Fragen zur MA
 - Schreibstil, wie sehr den leser involvieren? "Now we are looking at ...", "As you can imagine ..."
 - BEngl vs AEngl
-- Benutzen von "we"?
-- Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleiche
 
 - Wie kann man das erklären mit dem "ja durch 10x10 trainieren wurde er im 12x12 besser; aber immer beim 12x12 trainieren hat er alles verlernt"
 - Von welchem Wissensstand gehe ich für die Basics aus / was ist die Zielgruppe?
 - TSCL ist doch relativ similar zu unserem Ansatz oder?
-- Was für "cherry on top gibt es denn noch"?
-- [1][2], oder [1,2]
+
 
 
 
@@ -106,7 +110,6 @@ Fragen zur MA
 
 Finde heraus wie weit alle experimente gekommen sind. --> Dann entscheide ggf mit 4kk
 
-- algo als param in der status json (evtl auch viewSize)
 - automatische model-benennung statt model param
 - alte modelnamen löschen (also die obvious debug waren bzw abgebrochen, damit ich merh üebrsicht im ls habe)
 
