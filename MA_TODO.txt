@@ -2,14 +2,33 @@ eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 pc tmp datei rüberschieben
 
+RRH mit 6 numCurric oder so machen
+- interneal / external validation ?
+
+Other question is, how can you maximize the spike pre 1kk iterations?
+Stackedbarplot performance (NSGA vs GA vs RRH vs AP vs SPLCL)
 
 Neue Fragen
 - Feste begriffe einführen, wie ich zB die hyperparameter nenne. zB curricStep statt "for every step of a curriculum"
+Experimente:
+- mit anderem ALgorithmus ( SAC / TD3 )
+- mit anderen Gamma raten
+- mit / ohne Rewardshaping vergleichen
+- mit anderen curricLengths (--stepsPerCurric)
+
+Experiment Ideen:
+- episoden pro eval verringern ( ziel schneller evaluieren)
+- andere envGrößen
+- andere Viewsize
+- Andere Minigrid Envs?
+- Ganz andere Envs?
+
 
 
 
 - ggf neue experimente queuen, die den stepSize etwas rumprobieren (oderz umidnst schuaen wasi chs chonp robiert hatte und warum ich das nicht weiterverfolgt hatte usw)
 - evtl mehr expeirmente mit norewardshasping machen
+-- alte models automatisch löschen (ic hglaube das könnte schon ziemlich viel zeit sparen, damit git schneller ist und vllta uf dem cluster weniger schiefläuft. Aber ich weiß nicht genau, ob das blöd ist, wenn im Cluster immer so viel hin und hergeschrieben wird)
 
 
 Heute:
@@ -54,15 +73,21 @@ Andere Todos:
 - Kapitel 4 schreiben
 - Kapitel 5 schreiben
 - Kapitel 6 schreiben
+
+
+Todos:
 - scatterplot evtl für training time (NSGA, ..)
 - xtick 45 grad & ---> verschieben ha=right (- rotation=45, ha='right')
 - filter nach Methode (zB 100k, oder alle 3Gen, ...) --> schauen was ich noch nicht alles implemetneirt habe und wonach ich noch filtern önnte
 - Idee vom RHEA CL Plot machen (kannst ja eigene daten erstellen dafür)
     - auch ein mal actual progression visualisieren (wie sich etwas in 1 epoche entwickelt hat)
 !! Baselines mal genauer aufschlüsseln und schaune was ich schon habe, bzw was ich noch leicht implementieren könnte
+- filter nach Methode (zB 100k, oder alle 3Gen, ...)
+
+
+- I could use difficult for the pool of available curricula as well (to better adjust to the models performacne); so it would have more to choose from, but then the evol optim would take a lot longer
 -Plot: time of 2 curric vs 3 curric vs 4 curric
-Plot: Env distribution of NSGA vs GA (vs random)
-(Plot: comparing GA with NSGA best run: etwas redundant, weil es eig schon in dem allPara plot mit drin ist)
+Plot: Env distribution of NSGA vs GA (vs random rh vs splcl)
 (plot: promising experiments that were cut due to training time)
 
 - env distributions anschuaen,
@@ -74,11 +99,27 @@ stackedBarplot: heatmap: zeile curricula, spalte environments; Rot markeiren was
 
 
 
+---------------------------
 Low Prio
-- (Multiobjective für NSGA)
+- (Multiobjective für NSGA machen)
 
 
 Ideen
+-------------------- FRAGEN ZUR MA -------------------
+General Q:
+- anderer termin ok
+- etwas burnt out
+- plots auf falscher seite (Tipps?)
+- Benutzen von "we"?
+- Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleiche
+- SAC / ...  (wie am besten einbetten; erst mit minigrid gangbar machen -> dann ?)
+- Was für "cherry on top gibt es denn noch"?
+- [1][2], oder [1,2]
+- Wie umgeht man dass der plot nicht im falschen kapitel landet ? (und auch balance zwischen Plotgröße und Lesbarkeit)
+
+
+================
+
 - Pool der available curricula verändern (schrieben aufgefallen)
 
 -------------------- FRAGEN ZUR MA -------------------
@@ -90,9 +131,14 @@ Fragen zur MA
 - [1][2], oder [1,2]
 - Std dev oder 95 CI ?
 - appraoch vs algorithm
+- Von welchem Wissensstand gehe ich für die Basics aus / was ist die Zielgruppe?
+
+
 
 
 ---------------------------------
+
+Finde heraus wie weit alle experimente gekommen sind. --> Dann entscheide ggf mit 4kk
 
 - automatische model-benennung statt model param
 - alte modelnamen löschen (also die obvious debug waren bzw abgebrochen, damit ich merh üebrsicht im ls habe)

@@ -2,7 +2,7 @@
 #SBATCH --job-name=moGA250_333
 #SBATCH --output=GA_250_333_%j_out.txt
 #SBATCH --time=47:59:00
-#SBATCH --partition=cpu_long_stud
+#SBATCH --partition=cpu_normal_stud
 #SBATCH --exclude=cp2019-11,cc1l01
 #SBATCH --cpus-per-task=2
 #SBATCH --mem=24G
