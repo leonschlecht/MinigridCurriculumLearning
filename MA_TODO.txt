@@ -1,63 +1,65 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
+pc tmp datei rüberschieben
 
 
-Experimente:
-- mit anderen Mutation / Crossover rates DONE
-- Reward auf 1 setzen (gleichzeitig DONE)
-- mit anderem ALgorithmus ( SAC / TD3 )
-- mit anderen Gamma raten
-- mit anderen curricLengths (--stepsPerCurric)
+Neue Fragen
+- Feste begriffe einführen, wie ich zB die hyperparameter nenne. zB curricStep statt "for every step of a curriculum"
 
 
--- alte models automatisch löschen (ic hglaube das könnte schon ziemlich viel zeit sparen, damit git schneller ist und vllta uf dem cluster weniger schiefläuft. Aber ich weiß nicht genau, ob das blöd ist, wenn im Cluster immer so viel hin und hergeschrieben wird)
-md
+
+- ggf neue experimente queuen, die den stepSize etwas rumprobieren (oderz umidnst schuaen wasi chs chonp robiert hatte und warum ich das nicht weiterverfolgt hatte usw)
+- evtl mehr expeirmente mit norewardshasping machen
 
 
-Mi:
-- Etwas von den Verbesserungen eingearbetiet
-- SAC RL versucht gangbar zu machen
+Heute:
+- Kapitel 4 V1 fertig
+- überlegen, welche Grafiken in Kapitel 4 passen könnten
+- mit dem SAC weiterprobieren
 
+- Grafik mit SPLCL Runs (bzw allen)
+- 6 8 10 12 switch baseline (welches CL ist das? Gibt es iwi eine Literatur, die das vorschlägt)
 
-Do
-- Experimente rüberkopieren, fertige sachen löschen
-- Neue Experimente mit anderen Crossover / Mutationsraten starten
-- SAC RL weiterprobieren ( 3-4h)
-- 1-2h pur fürs schreiben investieren
-
+Morgen:
+- überlegen, wie ich alle 1kk env distribution oder so hinbekomme ( AUFGABENSTELLUNG !!!)
+- Kapitel 4 fertig;
+- Kapitel 5 etwas verfeinert
+- Überlegen, welche runs noch fehlen (und die dann starten)
 
 Fr:
+- Kapitel 5 fertig
+- Kapitel 6 etwas verfeinert
+- Runs alle rüberkopiert, crMu Run5050 nach -> 54 56
+
+Sa: Kapitel 6 fertig
+
+So:
+Proofreading K4,5,6 & abschicken
+
+
+Andere Todos:
+- Experimente:
+-   - Mehr Runs ohne Rewrad Shaping
+    - mit anderem algorithmus
+    - mit anderen Gamma raten (evtl kombinieren mit curric Längen)
+     mit anderen curricLengths (--stepsPerCurric)
+     - weniger episoden pro eval
+     - andere EnvGrößen & viewsize
+     - andere minigrid envs?
 - SPLCL runs rüberkopieren
 - Grafiken zu SPLCL runs erstellen
-- Time investieren in Groupbarchart
+- Time investieren in Groupbarchart (brauch generell für eig alles ist das useful)
 - Verbessern der benutzen grafiken für die MA (--> vorher überlegen, welche ich eigentlihc brauche bzw. welche ich generieren kann und was für aussagen ich treffen möchte)
-
-updated Fr.
-d - SAC weiterprobieren
-d - 2x 50min schreiben --> ggf noch Grafiken aufräumen oder leichte eval anpassungen machen, so dass ich es einfacher habe bzw die richtigen benutzen kann.
-d - Mail an alex (was kommt jetzt genau in welches kapitel und wie unterscheiden sich methodology & experimental setup voneinander ?)
-
-
-Sa:
-- ggf was von gestern noch gucken
-- SAC weitermachen
-- eval wieder ausführbar (und ggf kleine doc schreiben dmait es consistent ist und ich nicht jedes mal in iwelche probelem laufe)
-- 5.1 rq1 schreiben,
-- 5.1 rq3 schreiben
-
-
-Todos:
-- ggf auf ersten 1kk mal fokussieren (Analyse: wer peakt schneller?)
+- eval README(und ggf kleine doc schreiben dmait es consistent ist und ich nicht jedes mal in iwelche probelem laufe)
+- Kapitel 4 schreiben
+- Kapitel 5 schreiben
+- Kapitel 6 schreiben
 - scatterplot evtl für training time (NSGA, ..)
-- Groupbarchart für alle 50k ; alle 100k .... )
 - xtick 45 grad & ---> verschieben ha=right (- rotation=45, ha='right')
-- filter nach Methode (zB 100k, oder alle 3Gen, ...)
-
-- 150k RRH auf 5kk cutten damit es cleaner aussieht
-- Wenn man mit allPara vergleicht vllt auf 5kk beschränken, weil das sonst komisch aussieht
-
-
-- I could use difficult for the pool of available curricula as well (to better adjust to the models performacne); so it would have more to choose from, but then the evol optim would take a lot longer
+- filter nach Methode (zB 100k, oder alle 3Gen, ...) --> schauen was ich noch nicht alles implemetneirt habe und wonach ich noch filtern önnte
+- Idee vom RHEA CL Plot machen (kannst ja eigene daten erstellen dafür)
+    - auch ein mal actual progression visualisieren (wie sich etwas in 1 epoche entwickelt hat)
+!! Baselines mal genauer aufschlüsseln und schaune was ich schon habe, bzw was ich noch leicht implementieren könnte
 -Plot: time of 2 curric vs 3 curric vs 4 curric
 Plot: Env distribution of NSGA vs GA (vs random)
 (Plot: comparing GA with NSGA best run: etwas redundant, weil es eig schon in dem allPara plot mit drin ist)
@@ -65,48 +67,33 @@ Plot: Env distribution of NSGA vs GA (vs random)
 
 - env distributions anschuaen,
 - env distribution normalisieren
-
-
-Neue Experimente
-- episoden pro eval verringern ( ziel schneller evaluieren)
-- andere envGrößen
-- andere Viewsize
-- Andere Minigrid Envs?
-- Ganz andere Envs?
+- 2 Grafiken einbinden (objetive function smoothing Nr1, und vllt die data driven / model driven #2)
+- Baseline trainieren ohne CL (random order der samples) --> Quasi 1 epoch mit 4 batches ( --> frag alex dazu)
+stackedBarplot: heatmap: zeile curricula, spalte environments; Rot markeiren was oft ist und weiß was weniger
 
 
 
 
-
-
----------------------------
 Low Prio
 - (Multiobjective für NSGA)
 
--------------------- FRAGEN ZUR MA -------------------
-General Q:
-Wie umgeht man dass der plot nicht im falschen kapitel landet ? (und auch balance zwischen Plotgröße und Lesbarkeit)
+
+Ideen
 - Pool der available curricula verändern (schrieben aufgefallen)
 
+-------------------- FRAGEN ZUR MA -------------------
 Fragen zur MA
 - Schreibstil, wie sehr den leser involvieren? "Now we are looking at ...", "As you can imagine ..."
-- BEngl vs AEngl
-- Benutzen von "we"?
 - Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleiche
-
-- Wie kann man das erklären mit dem "ja durch 10x10 trainieren wurde er im 12x12 besser; aber immer beim 12x12 trainieren hat er alles verlernt"
 - Von welchem Wissensstand gehe ich für die Basics aus / was ist die Zielgruppe?
-- TSCL ist doch relativ similar zu unserem Ansatz oder?
 - Was für "cherry on top gibt es denn noch"?
 - [1][2], oder [1,2]
-
+- Std dev oder 95 CI ?
+- appraoch vs algorithm
 
 
 ---------------------------------
 
-Finde heraus wie weit alle experimente gekommen sind. --> Dann entscheide ggf mit 4kk
-
-- algo als param in der status json (evtl auch viewSize)
 - automatische model-benennung statt model param
 - alte modelnamen löschen (also die obvious debug waren bzw abgebrochen, damit ich merh üebrsicht im ls habe)
 
@@ -114,19 +101,19 @@ Finde heraus wie weit alle experimente gekommen sind. --> Dann entscheide ggf mi
 
 
 Random Notes / Ideas:
-- optimize training times: early stopping / depending on threshold; or use a timelimit --> other methods
+- optimize training times: early stopping / depending on threshold; or use a timelimit --> then combine w other methods (but probably bad since bad information to the EA)
 - Ggf nicht immer 1. Schritt übernehmen des RHEA (ggf dynamisch machen), dynamische iterationLenghts1
 - Ggf penalize, dass man immer gleiche envs nimmt ? Iwi encouragen dass er auch neue / sschwierige sachen ausprobiert (--> ggfh ängt das auch mit RH length zusammen)
 - Ein automatischer Difficulty measurer wäre gut. Vllt kombinieren mit einem pre-trained model (dafür gabs iwo ein Paper)
+- I could use difficult for the pool of available curricula as well (to better adjust to the models performacne); so it would have more to choose from, but then the evol optim would take a lot longer
+- Überlegen wie man eine TSCL baseline machen könnte (bzw warum ich das nicht tue)
+
 
 Irgendwann Recherche:
 - Wo performt hard-to-easy besser als CL und warum? Was ist die Idee dahinter überhaupt?
 
 
 
-- Überlegen wie man eine TSCL baseline machen könnte (bzw warum ich das nicht tue)
-!! Baselines mal genauer aufschlüsseln und schaune was ich schon habe, bzw was ich noch leicht implementieren könnte
-- Curriculum Progressions visualisieren --> zumindest mal, um die Idee klarer zu machen (Ggf auch mal die verschiedenen Tensboards anschauen, um den Trainingsreward der Snapshots zu visualisieren)
 
 - Ausprobieren mit 8 Envs oder so (zB mit den Empties)
 - Ggf den Eval so umändern, dass man sich auf aktuellen Skill fokussiert (also zB nur 8x8 für alle "ähnlichen" vs immer alles durch; gerade bei > 4 envs wird es auch schwer.
@@ -135,30 +122,14 @@ Irgendwann Recherche:
 
 
 
-- 2 Grafiken einbinden (objetive function smoothing Nr1, und vllt die data driven / model driven #2)
-- Baseline trainieren ohne CL (random order der samples) --> Quasi 1 epoch mit 4 batches ( --> frag alex dazu)
-stackedBarplot: heatmap: zeile curricula, spalte environments; Rot markeiren was oft ist und weiß was weniger
-
-
-
-
 
 =============================================================
 
 # TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
-- Gamma anpassung experimente (schauen was wie viel bringt usw)
-
-
 Random Gedanken
 - Das Unlearning Problem: wie genau funktionieren die updates überhaupt (2560 update schritte, oder 1x pro level)
 - RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist & die Iterationen pro Env noch niedriger sind
 - minimize ersetzen auf das .hasNext() und dann abbrechen bei konvergenz (falls man später viele Gens machen will) --> could save time with EA
-
-
-=========================================================================
-MA Notizen
-
-Vektor -> Matrix benennen (bzw. ggf 3d für die Repräsentation damit es übersichtlicher ist)
 
 ===========================================================================================
 

@@ -36,6 +36,12 @@ class CurriculumProblem(Problem):
         out["F"] = -1 * np.array(rewards)
 
     def dummyRewards(self, curricula):
+        """
+        Deprecated. Do not use anymore
+        Old helper method that was used to test PYMOO and seeing if the dimensions for each parameter etc were set correctly
+        :param curricula:
+        :return:
+        """
         rewards = []
         for i in range(len(curricula)):
             reward = 0

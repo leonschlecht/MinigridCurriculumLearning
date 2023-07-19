@@ -12,6 +12,8 @@ from utils.curriculumHelper import *
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 
+OFFSET = 10000
+
 
 def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
                     modelNames: list[str], limitX=False):
@@ -346,7 +348,7 @@ def plotMultipleLineplots(filteredDf: pandas.DataFrame):
     sns.set_theme(style="darkgrid")
     fig, ax = plt.subplots(figsize=(10, 6))
     for df in filteredDf:
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar=None)
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar='ci')
     ax.set_ylabel("evaluation reward")
     ax.set_xlabel("iterations")
     plt.title("mean performance")
@@ -471,7 +473,7 @@ def main(comparisons: int):
         scoreDf, distrDf = getSpecificModel(specificModelList, args.model)
     else:
         scoreDf, distrDf = getAllModels(fullLogfilePaths)
-    scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations]
+    scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations + OFFSET]
     # scoreDf = scoreDf[scoreDf[iterationSteps] < 1000000]
     models = scoreDf["id"].unique()
     sns.set_theme(style="dark")
@@ -499,7 +501,7 @@ def main(comparisons: int):
                 continue
             occur = len(filteredIterDf[filteredIterDf == firstIterVal])
             print(f"{occur} experiments done with {m}")
-            modelDf = modelDf[modelDf[iterationSteps] < args.xIter]
+            modelDf = modelDf[modelDf[iterationSteps] < args.xIterations + OFFSET]
             sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
             plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
             plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
