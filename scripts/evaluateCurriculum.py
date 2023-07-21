@@ -308,7 +308,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
         if args.rhea:
             filters.append("GA")
             if args.rrh:
-                filters.append("RRH") # todo ???
+                filters.append("RRH")  # todo ???
         if args.rrhOnly:
             filters.append("RndRH")
         if args.iter != 0:
@@ -348,7 +348,7 @@ def plotMultipleLineplots(filteredDf: pandas.DataFrame):
     sns.set_theme(style="darkgrid")
     fig, ax = plt.subplots(figsize=(10, 6))
     for df in filteredDf:
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar='ci')
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar=args.errorbar)
     ax.set_ylabel("evaluation reward")
     ax.set_xlabel("iterations")
     plt.title("mean performance")
@@ -452,7 +452,7 @@ def main(comparisons: int):
     statusJson = "status.json"
     specificModelList = []
     for model in evalDirectories:
-        if model == "old":
+        if model == "old" or "SOBOL" in model:
             continue
         path = evalDirBasePath + os.sep + model + os.sep
         json_files = [f for f in os.listdir(path) if f == statusJson]
@@ -486,7 +486,7 @@ def main(comparisons: int):
 
     if args.model is not None and not args.skip:
         filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model)
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model, errorbar=args.errorbar)
         plt.show()
     if args.skip:
         print("starting evaluation. . .")
@@ -502,7 +502,7 @@ def main(comparisons: int):
             occur = len(filteredIterDf[filteredIterDf == firstIterVal])
             print(f"{occur} experiments done with {m}")
             modelDf = modelDf[modelDf[iterationSteps] < args.xIterations + OFFSET]
-            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
+            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m, errorbar=args.errorbar)
             plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
             plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
             plt.title('Barplot of sumTrainingTime')  # Replace 'Barplot of sumTrainingTime' with the appropriate title for your plot
@@ -534,6 +534,7 @@ if __name__ == "__main__":
     parser.add_argument("--rrh", action="store_true", default=False, help="Include RRH runs, even if --rhea was speicifed")
     parser.add_argument("--rrhOnly", action="store_true", default=False, help="Only RRH runs")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
+    parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     args = parser.parse_args()
     args.filter = args.iter or args.steps or args.gen or args.curric or args.rrhOnly
     main(int(args.comparisons))

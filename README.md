@@ -9,3 +9,11 @@
 - can visualize with scripts.evaluateCurriculum
 - train a model with scripts.trainCurriuclum
 
+-------------------
+
+Evaluation:
+Filter for rhea runs only:
+python -m scripts.evaluateCurriculum --rhea 
+
+
+xIterations: how many iterations to show on the x axis

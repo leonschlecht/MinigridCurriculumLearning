@@ -38,6 +38,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
     def getGenAndIdxOfBestIndividual(currentRewards):
         """
         Given the dict of currentRewards of the form {"gen1": [reward1, reward2, ...], "gen2": [reward1, reward2, ...], ... }
+        Careful: if there is a "6.3e-2" instead of the full number in the string, then this will break
         return the generation Number (without the "gen" part) and the index in that list
         :param currentRewards:
         :return:
