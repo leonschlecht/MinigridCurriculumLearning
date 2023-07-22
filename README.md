@@ -17,3 +17,4 @@ python -m scripts.evaluateCurriculum --rhea
 
 
 xIterations: how many iterations to show on the x axis
+errorbar: ci | sd | None (default)

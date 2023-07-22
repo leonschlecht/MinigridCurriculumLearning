@@ -284,7 +284,8 @@ def filterDf(filters: list[str], dataFrame, models, showCanceled=False):
         for filterOption in filters:
             if filterOption not in m or \
                     (filterOption == "50k" and "150k" in m) or \
-                    (filterOption == "50k" and "250k" in m):
+                    (filterOption == "50k" and "250k" in m) or \
+                    (filterOption == "GA" and "NSGA" in m): # TODO find way not having to do this manually every time
                 append = False
                 break
         if append:
@@ -315,13 +316,16 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             filters.append(str(args.iter) + "k")
         if args.steps:
             # get all NSGA, GA and RRH runs (or make differnetaion here too ?)
+            # TODO
             pass
         if args.gen:
             # get ALL NSGA or GA runs
             # plot them
+            # TODO
             print()
         if args.curric:
             # get all NSGA, GA, RRH runs
+            # TODO
             pass
         filteredScoreDfList = filterDf(filters, scoreDf, models, showCanceled=args.showCanceled)
         filteredDistrDfList = filterDf(filters, distrDf, models, showCanceled=args.showCanceled)
@@ -345,17 +349,23 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
 
 
 def plotMultipleLineplots(filteredDf: pandas.DataFrame):
+    print("Plot Multiple lineplots ...")
     sns.set_theme(style="darkgrid")
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
     for df in filteredDf:
         sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar=args.errorbar)
     ax.set_ylabel("evaluation reward")
     ax.set_xlabel("iterations")
+    ax.set_ylim(0, 1)
+    ax.set_xlim(0, args.xIterations + OFFSET)
+
+
+    box = ax.get_position()
+    # Edit this line out to move the legend out of the plot
+    # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    # Put a legend to the right of the current axis
+    # ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
     plt.title("mean performance")
-    # ax.set_ylim(bottom=0.6)
-    plt.tight_layout()  # Add this line to adjust the layout and prevent legend cutoff
-    # plt.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
-    plt.legend()
     plt.show()
 
 
