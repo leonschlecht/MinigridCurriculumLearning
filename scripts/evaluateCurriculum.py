@@ -207,7 +207,8 @@ def getSpecificModel(specificModelList: list, modelName: str):
                                 "bestCurricScore": result.bestCurricScore[i],
                                 "avgEpochRewards": result.avgEpochRewards[i],
                                 "id": modelName,
-                                iterationSteps: result.iterationsList[i]})
+                                "group": result.iterationsPerEnv,
+                                iterationSteps: result.iterationsList[i]}) #
 
         # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
         tmp = result.snapshotEnvDistribution.keys()
@@ -245,6 +246,8 @@ def getSpecificModel(specificModelList: list, modelName: str):
             "10x10a": allCurricHelper[2],
             "12x12a": allCurricHelper[3],
             seedKey: result.seed,
+            "group": result.iterationsPerEnv,
+            iterationSteps: result.iterationsList[0],
             sumTrainingTime: result.trainingTimeSum,
             "id": modelName})
     rewardScoreDf = pd.DataFrame(scoreHelper)
@@ -303,7 +306,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     filteredDistrDfList = []  # TODO
     for i in range(len(models)):
         print(f"{i}: {models[i]}")
-    print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
+    print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]", args.filter)
     if args.filter:
         filters = []
         if args.rhea:
@@ -348,17 +351,23 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     return filteredScoreDfList, filteredDistrDfList
 
 
-def plotMultipleLineplots(filteredDf: pandas.DataFrame):
-    print("Plot Multiple lineplots ...")
-    sns.set_theme(style="darkgrid")
+def plotMultipleLineplots(filteredDfList):
+    # Concatenate all dataframes in the list into a single dataframe
+    # Add a 'DataFrame' column to identify the original dataframe a record comes from
+    df = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
+
     fig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
-    for df in filteredDf:
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar=args.errorbar)
+    sns.set_theme(style="darkgrid")
+
+    # Now you can plot each 'DataFrame' group separately
+    group_col = "group" if "group" in df.columns else "DataFrame"
+    grouped = df.groupby(group_col)
+
+    for name, group in grouped:
+        sns.lineplot(x='iterationSteps', y='snapshotScore', data=group, label=str(name), ax=ax)
+
     ax.set_ylabel("evaluation reward")
     ax.set_xlabel("iterations")
-    ax.set_ylim(0, 1)
-    ax.set_xlim(0, args.xIterations + OFFSET)
-
 
     box = ax.get_position()
     # Edit this line out to move the legend out of the plot
@@ -412,6 +421,8 @@ def removeExperimentPrefix(dictDf):
 
 def showDistrVisualization(aggregatedDf, columnsToVisualize):
     # Group the dataframe by the 'id' column and calculate the mean and standard deviation of the selected columns
+    raise Exception("Probably called the wrong method")
+    """
     grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
     # Reset the index to make 'id' a regular column
     grouped_df = grouped_df.reset_index()
@@ -420,26 +431,35 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize):
     sns.barplot(data=melted_df, x='id', y='Value', hue='Column')
     plt.xlabel('id')
     plt.ylabel('Value')
+    plt.title("not this one")
     plt.show()
+    """
 
 
-def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame]):
-    assert len(filteredDf) > 0, "filteredDf empty"
-
-    # TODO generic remover when not using a filter
+def plotAggregatedBarplot(filteredDfList):
+    assert len(filteredDfList) > 0, "filteredDfList empty"
 
     sns.set_theme(style="darkgrid")
     fig, ax = plt.subplots(figsize=(12, 6))
-    aggregatedDf = pd.DataFrame()
-    for df in filteredDf:
-        df["id"] = removeExperimentPrefix(df)
-        aggregatedDf = pd.concat([aggregatedDf, df], ignore_index=True)
 
-    if args.trainingTime:
-        sns.barplot(x="id", y=sumTrainingTime, data=aggregatedDf, ax=ax)
-        plt.ylabel('training time (hours)')
-        plt.title("Training Time")
-        plt.show()
+    # Concatenate all dataframes in the list into a single dataframe
+    aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
+
+    # Get unique groups, which will form the x-axis labels
+    unique_groups = sorted(aggregatedDf['group'].unique())
+
+    # Iterate over each group and plot bars
+    for idx, group in enumerate(unique_groups):
+        group_data = aggregatedDf[aggregatedDf['group'] == group]
+        ax.bar(idx, group_data['sumTrainingTime'].mean(), yerr=group_data['sumTrainingTime'].std())
+
+    # Set x-axis labels and rotation
+    ax.set_xticks(np.arange(len(unique_groups)))  # set x-ticks at the positions of groups
+    ax.set_xticklabels(unique_groups) #, rotation=-45, ha='left')
+
+    plt.ylabel('training time (hours)')
+    plt.title("Training Time")
+    plt.show()
 
     if args.snapshotDistr:
         columns_to_visualize = ['6x6s', '8x8s', '10x10s', '12x12s', 'id']
@@ -452,6 +472,7 @@ def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame]):
         showDistrVisualization(aggregatedDf, columns_to_visualize)
 
     print("---- Done ----")
+
 
 
 def main(comparisons: int):
@@ -491,7 +512,7 @@ def main(comparisons: int):
     if args.model is None and not args.skip:
         filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
         plotMultipleLineplots(filteredScoreDf)
-        plotAggrgatedBarplot(filteredDistrDf)
+        plotAggregatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
         filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
@@ -545,5 +566,5 @@ if __name__ == "__main__":
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     args = parser.parse_args()
-    args.filter = args.iter or args.steps or args.gen or args.curric or args.rrhOnly
+    args.filter = args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea
     main(int(args.comparisons))
