@@ -363,7 +363,6 @@ def plotMultipleLineplots(filteredDf: pandas.DataFrame):
     box = ax.get_position()
     # Edit this line out to move the legend out of the plot
     # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-    # Put a legend to the right of the current axis
     # ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
     plt.title("mean performance")
     plt.show()
