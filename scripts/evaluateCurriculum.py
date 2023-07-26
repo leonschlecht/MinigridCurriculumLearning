@@ -313,6 +313,10 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             filters.append("GA_")  # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
             if args.rrh:
                 filters.append("RRH")  # todo ???
+        if args.ga:
+            filters.append("GA")
+        if args.nsga:
+            filters.append("NSGA")
         if args.rrhOnly:
             filters.append("RndRH")
         if args.iter != 0:
@@ -352,19 +356,19 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
 
 
 def plotMultipleLineplots(filteredDfList):
-    # Concatenate all dataframes in the list into a single dataframe
-    # Add a 'DataFrame' column to identify the original dataframe a record comes from
-    df = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
 
     fig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
     sns.set_theme(style="darkgrid")
+    for df in filteredDfList:
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar=args.errorbar)    # Now you can plot each 'DataFrame' group separately
+    # TODO somehow make other variant accessible too where you need grouping
+    # df = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
 
-    # Now you can plot each 'DataFrame' group separately
-    group_col = "group" if "group" in df.columns else "DataFrame"
-    grouped = df.groupby(group_col)
-
-    for name, group in grouped:
-        sns.lineplot(x='iterationSteps', y='snapshotScore', data=group, label=str(name), ax=ax)
+    # group_col = "group" if "group" in df.columns else "DataFrame"
+    # grouped = df.groupby(group_col)
+    #
+    # for name, group in grouped:
+    #     #sns.lineplot(x='iterationSteps', y='snapshotScore', data=group, label=str(name), ax=ax)
 
     ax.set_ylabel("evaluation reward")
     ax.set_xlabel("iterations")
@@ -421,33 +425,33 @@ def removeExperimentPrefix(dictDf):
 
 def showDistrVisualization(aggregatedDf, columnsToVisualize):
     # Group the dataframe by the 'id' column and calculate the mean and standard deviation of the selected columns
-    raise Exception("Probably called the wrong method")
-    """
+
     grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
     # Reset the index to make 'id' a regular column
     grouped_df = grouped_df.reset_index()
     # Melt the dataframe to convert the columns into rows for easier plotting
     melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
     sns.barplot(data=melted_df, x='id', y='Value', hue='Column')
-    plt.xlabel('id')
     plt.ylabel('Value')
-    plt.title("not this one")
+    plt.title("Env Distribution")
+    plt.ylabel('training time (hours)')
+    plt.xlabel('')
+    plt.xticks(rotation=-45, ha='left', fontsize=9)
+    plt.subplots_adjust(bottom=0.2)
     plt.show()
-    """
 
 
 def plotAggregatedBarplot(filteredDfList):
     assert len(filteredDfList) > 0, "filteredDfList empty"
+
+    sns.set_theme(style="darkgrid")
+    fig, ax = plt.subplots(figsize=(12, 8))
     for f in filteredDfList:
         for fullModelName in f["id"]:
             expParams = fullModelName.split("_")
             noModelName = "_".join(expParams[1:])
             break
         f["id"] = noModelName + "_" + expParams[0]
-
-    sns.set_theme(style="darkgrid")
-    fig, ax = plt.subplots(figsize=(12, 8))
-
     aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
     group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
     aggregatedDf = aggregatedDf.sort_values(by=['id', group_col])  # TODO this too
@@ -491,13 +495,17 @@ def plotAggregatedBarplot(filteredDfList):
 
 
 def main(comparisons: int):
-    evalDirBasePath = storage.getLogFilePath(["storage", "_evaluate"])
+    pathList = ["storage", "_evaluate"]
+    useCrossoverMutationPath = args.crossoverMutation
+    if useCrossoverMutationPath:
+        pathList.append("SOBOL_GA_75_3_3_3")
+    evalDirBasePath = storage.getLogFilePath(pathList)
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
     statusJson = "status.json"
     specificModelList = []
     for model in evalDirectories:
-        if model == "old" or "SOBOL" in model:
+        if model == "old" or (not args.crossoverMutation and "SOBOL" in model):
             continue
         path = evalDirBasePath + os.sep + model + os.sep
         json_files = [f for f in os.listdir(path) if f == statusJson]
@@ -519,14 +527,13 @@ def main(comparisons: int):
     else:
         scoreDf, distrDf = getAllModels(fullLogfilePaths)
     scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations + OFFSET]
-    # scoreDf = scoreDf[scoreDf[iterationSteps] < 1000000]
     models = scoreDf["id"].unique()
     sns.set_theme(style="dark")
-    # TODO ask for comparison nrs if not given by --comparisons
     print("------------------\n\n\n")
+
     if args.model is None and not args.skip:
         filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        if False:
+        if True: # TODO args option for args.useScore <= snapshotScores, ucrricScores, idk what else there was
             plotMultipleLineplots(filteredScoreDf)
         plotAggregatedBarplot(filteredDistrDf)
 
@@ -565,6 +572,7 @@ if __name__ == "__main__":
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--crossoverMutation", action="store_true", default=False, help="Select the crossovermutation varied experiments")
 
     parser.add_argument("--trainingTime", action="store_true", default=False, help="Show training time plots")
     parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Show first step distribution plots")
@@ -577,10 +585,12 @@ if __name__ == "__main__":
     parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
     parser.add_argument("--curric", action="store_true", default=False, help="whether to filter for #curricula")
     parser.add_argument("--rhea", action="store_true", default=False, help="Only using rhea runs")
+    parser.add_argument("--nsga", action="store_true", default=False, help="Only using GA runs")
+    parser.add_argument("--ga", action="store_true", default=False, help="Only using NSGA runs")
     parser.add_argument("--rrh", action="store_true", default=False, help="Include RRH runs, even if --rhea was speicifed")
     parser.add_argument("--rrhOnly", action="store_true", default=False, help="Only RRH runs")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     args = parser.parse_args()
-    args.filter = args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea
+    args.filter = args.comparisons == 2 and (args.crossoverMutation or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
     main(int(args.comparisons))
