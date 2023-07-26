@@ -208,7 +208,7 @@ def getSpecificModel(specificModelList: list, modelName: str):
                                 "avgEpochRewards": result.avgEpochRewards[i],
                                 "id": modelName,
                                 "group": result.iterationsPerEnv,
-                                iterationSteps: result.iterationsList[i]}) #
+                                iterationSteps: result.iterationsList[i]})  #
 
         # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
         tmp = result.snapshotEnvDistribution.keys()
@@ -288,7 +288,7 @@ def filterDf(filters: list[str], dataFrame, models, showCanceled=False):
             if filterOption not in m or \
                     (filterOption == "50k" and "150k" in m) or \
                     (filterOption == "50k" and "250k" in m) or \
-                    (filterOption == "GA" and "NSGA" in m): # TODO find way not having to do this manually every time
+                    (filterOption == "GA" and "NSGA" in m):  # TODO find way not having to do this manually every time
                 append = False
                 break
         if append:
@@ -310,7 +310,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     if args.filter:
         filters = []
         if args.rhea:
-            filters.append("GA")
+            filters.append("GA_")  # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
             if args.rrh:
                 filters.append("RRH")  # todo ???
         if args.rrhOnly:
@@ -438,30 +438,43 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize):
 
 def plotAggregatedBarplot(filteredDfList):
     assert len(filteredDfList) > 0, "filteredDfList empty"
+    for f in filteredDfList:
+        for fullModelName in f["id"]:
+            expParams = fullModelName.split("_")
+            noModelName = "_".join(expParams[1:])
+            break
+        f["id"] = noModelName + "_" + expParams[0]
 
     sns.set_theme(style="darkgrid")
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(12, 8))
 
-    # Concatenate all dataframes in the list into a single dataframe
-    # Add a 'DataFrame' column to identify the original dataframe a record comes from
     aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
+    group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
+    aggregatedDf = aggregatedDf.sort_values(by=['id', group_col])  # TODO this too
 
-    # Use 'group' column to aggregate data if it exists in the dataframe, otherwise use 'DataFrame'
-    group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
+    if args.trainingTime:
+        sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
+        plt.ylabel('training time (hours)')
+        plt.xlabel('')
+        plt.title("RHEA CL Training Time")
+        plt.xticks(rotation=-45, ha='left', fontsize=9)
+        plt.subplots_adjust(bottom=0.2)
 
-    # Plot each 'DataFrame' group separately
-    sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
+        # TODO the legend part might be specific to some of the settings and not universal
+        legend = ax.legend()
+        labels = [int(item.get_text()) for item in legend.get_texts()]
+        labels = [f"{label // 1000}k steps" for label in labels]
+        for label, text in zip(legend.texts, labels):
+            label.set_text(text)
 
-    # Align labels
-    # ax.set_xticklabels(ax.get_xticklabels(), rotation=0)
-    plt.xticks(rotation=45, ha='right')
+        labels = [item.get_text() for item in ax.get_xticklabels()]
+        for i in range(len(labels)):
+            labelI = labels[i]
+            labelI = "_".join(labelI.split("_")[1:])
+            labels[i] = labelI
+        ax.set_xticklabels(labels)
 
-
-    ax.legend(loc='upper right')
-    plt.ylabel('training time (hours)')
-    plt.title("Training Time")
-    plt.show()
-
+        plt.show()
 
     ##########
     if args.snapshotDistr:
@@ -475,7 +488,6 @@ def plotAggregatedBarplot(filteredDfList):
         showDistrVisualization(aggregatedDf, columns_to_visualize)
 
     print("---- Done ----")
-
 
 
 def main(comparisons: int):
