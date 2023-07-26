@@ -443,24 +443,27 @@ def plotAggregatedBarplot(filteredDfList):
     fig, ax = plt.subplots(figsize=(12, 6))
 
     # Concatenate all dataframes in the list into a single dataframe
+    # Add a 'DataFrame' column to identify the original dataframe a record comes from
     aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
 
-    # Get unique groups, which will form the x-axis labels
-    unique_groups = sorted(aggregatedDf['group'].unique())
+    # Use 'group' column to aggregate data if it exists in the dataframe, otherwise use 'DataFrame'
+    group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
 
-    # Iterate over each group and plot bars
-    for idx, group in enumerate(unique_groups):
-        group_data = aggregatedDf[aggregatedDf['group'] == group]
-        ax.bar(idx, group_data['sumTrainingTime'].mean(), yerr=group_data['sumTrainingTime'].std())
+    # Plot each 'DataFrame' group separately
+    sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
 
-    # Set x-axis labels and rotation
-    ax.set_xticks(np.arange(len(unique_groups)))  # set x-ticks at the positions of groups
-    ax.set_xticklabels(unique_groups) #, rotation=-45, ha='left')
+    # Align labels
+    # ax.set_xticklabels(ax.get_xticklabels(), rotation=0)
+    plt.xticks(rotation=45, ha='right')
 
+
+    ax.legend(loc='upper right')
     plt.ylabel('training time (hours)')
     plt.title("Training Time")
     plt.show()
 
+
+    ##########
     if args.snapshotDistr:
         columns_to_visualize = ['6x6s', '8x8s', '10x10s', '12x12s', 'id']
         showDistrVisualization(aggregatedDf, columns_to_visualize)
@@ -511,7 +514,8 @@ def main(comparisons: int):
     print("------------------\n\n\n")
     if args.model is None and not args.skip:
         filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        plotMultipleLineplots(filteredScoreDf)
+        if False:
+            plotMultipleLineplots(filteredScoreDf)
         plotAggregatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
