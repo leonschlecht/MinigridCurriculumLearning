@@ -207,7 +207,7 @@ def getSpecificModel(specificModelList: list, modelName: str):
                                 "bestCurricScore": result.bestCurricScore[i],
                                 "avgEpochRewards": result.avgEpochRewards[i],
                                 "id": modelName,
-                                "group": result.iterationsPerEnv,
+                                "group": result.iterationsPerEnv, # TODO refactor this
                                 iterationSteps: result.iterationsList[i]})  #
 
         # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
@@ -356,20 +356,19 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     return filteredScoreDfList, filteredDistrDfList
 
 
-def plotMultipleLineplots(filteredDfList):
+def plotMultipleLineplots(filteredDfList, yColumns: list[str]):
     fig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
     sns.set_theme(style="darkgrid")
     for df in filteredDfList:
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax,
-                     errorbar=args.errorbar)  # Now you can plot each 'DataFrame' group separately
+        for yStr in yColumns:
+            sns.lineplot(x=iterationSteps, y=yStr, data=df, label=df.head(1)["id"].item() + "_" + yStr, ax=ax,
+                     errorbar=args.errorbar)
     # TODO somehow make other variant accessible too where you need grouping
     # df = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
-
     # group_col = "group" if "group" in df.columns else "DataFrame"
     # grouped = df.groupby(group_col)
-    #
     # for name, group in grouped:
-    #     #sns.lineplot(x='iterationSteps', y='snapshotScore', data=group, label=str(name), ax=ax)
+    #     sns.lineplot(x='iterationSteps', y='snapshotScore', data=group, label=str(name), ax=ax)
 
     ax.set_ylabel("evaluation reward")
     ax.set_xlabel("iterations")
@@ -576,15 +575,24 @@ def main(comparisons: int):
 
     if args.model is None and not args.skip:
         filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        if args.plotScores:  # TODO args option for args.useScore <= snapshotScores, ucrricScores, idk what else there was
-            plotMultipleLineplots(filteredScoreDf)
+        if args.scores is not None:
+            if args.scores == "both":
+                yColumns = ["snapshotScore", "bestCurricScore"]
+            elif args.scores == "curric":
+                yColumns = ["bestCurricScore"]
+            else:
+                yColumns = ["snapshotScore"]
+            # avgEpochRewards is not useful
+            plotMultipleLineplots(filteredScoreDf, yColumns)
         plotAggregatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
         filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
         sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model, errorbar=args.errorbar)
+        # TODO this part is probably never called
         plt.show()
     if args.skip:
+        # TODO this has become deprecated
         print("starting evaluation. . .")
         for m in models:
             if "C_" in m and not args.showCanceled:
@@ -614,7 +622,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
     parser.add_argument("--title", default=None, type=str, help="Title of the distribution plots")
-    parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
+    parser.add_argument("--comparisons", default=-1, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--crossoverMutation", action="store_true", default=False, help="Select the crossovermutation varied experiments")
 
@@ -622,7 +630,7 @@ if __name__ == "__main__":
     parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Show first step distribution plots")
     parser.add_argument("--curricDistr", action="store_true", default=False, help="show all best curricula distributions plots")
     parser.add_argument("--allDistr", action="store_true", default=False, help="Show all distribution plots")
-    parser.add_argument("--plotScores", action="store_true", default=False, help="Plots the score")
+    parser.add_argument("--scores", default=None, help="Whether to plot snapshot, curric or both scores")
     parser.add_argument("--normalize", action="store_true", default=False, help="Whether or not to normlaize the env distributions")
 
     parser.add_argument("--iter", default=0, type=int, help="filter for iterations")
@@ -638,6 +646,6 @@ if __name__ == "__main__":
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     args = parser.parse_args()
-    args.filter = args.comparisons == 2 and (
+    args.filter = args.comparisons == -1 and (
             args.crossoverMutation or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
     main(int(args.comparisons))
