@@ -352,6 +352,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
                     break
                 print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
+    print(filteredDistrDfList)
     return filteredScoreDfList, filteredDistrDfList
 
 
@@ -426,23 +427,30 @@ def removeExperimentPrefix(dictDf):
 
 
 def showDistrVisualization(aggregatedDf, columnsToVisualize):
-    # Group the dataframe by the 'id' column and calculate the mean and standard deviation of the selected columns
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
+    aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+    aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
+    aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
+
     grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
-    # Reset the index to make 'id' a regular column
     grouped_df = grouped_df.reset_index()
-    # Melt the dataframe to convert the columns into rows for easier plotting
     melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
+
+    # Sort and convert to categorical
+    melted_df['id'] = pd.Categorical(melted_df['id'], categories=aggregatedDf['id'].unique(), ordered=True)
+
     sns.barplot(data=melted_df, x='id', y='Value', hue='Column', errorbar=args.errorbar)
     plt.ylabel('Value')
-    plt.title("Env Distribution")
-    plt.ylabel('Count')
+    plt.title("Environment Distribution")
+    plt.ylabel('distribution')
     plt.xlabel('')
     plt.xticks(rotation=-45, ha='left', fontsize=9)
     plt.subplots_adjust(bottom=0.2)
     if args.normalize:
         plt.ylim((0, .55))
     plt.show()
-
 
 def includeNormalizedColumns(aggregatedDf, prefix):
     """
@@ -469,13 +477,14 @@ def includeNormalizedColumns(aggregatedDf, prefix):
 def showTrainingTimePlot(aggregatedDf):
     fig, ax = plt.subplots(figsize=(12, 8))
     group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
+    if args.rhea:
+        aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+        aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
+        aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
+        sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
+    else:
+        sns.barplot(x='id', y='sumTrainingTime', data=aggregatedDf, ax=ax)
 
-    aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
-    aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
-    aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
-
-
-    sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
     plt.ylabel('training time (hours)')
     plt.xlabel('')
     title = "Training Time"
@@ -486,18 +495,18 @@ def showTrainingTimePlot(aggregatedDf):
     plt.subplots_adjust(bottom=0.2)
 
     # TODO the legend part might be specific to some of the settings and not universal
-    legend = ax.legend()
-    labels = [int(item.get_text()) for item in legend.get_texts()]
-    labels = [f"{label // 1000}k steps" for label in labels]
-    for label, text in zip(legend.texts, labels):
-        label.set_text(text)
-
-    labels = [item.get_text() for item in ax.get_xticklabels()]
-    for i in range(len(labels)):
-        labelI = labels[i]
-        labelI = "_".join(labelI.split("_")[1:])
-        labels[i] = labelI
-    ax.set_xticklabels(labels)
+    if args.rhea:
+        legend = ax.legend()
+        labels = [int(item.get_text()) for item in legend.get_texts()]
+        labels = [f"{label // 1000}k steps" for label in labels]
+        for label, text in zip(legend.texts, labels):
+            label.set_text(text)
+        labels = [item.get_text() for item in ax.get_xticklabels()]
+        for i in range(len(labels)):
+            labelI = labels[i]
+            labelI = "_".join(labelI.split("_")[1:])
+            labels[i] = labelI
+        ax.set_xticklabels(labels)
     ax.set_ylim((0, 96))
     plt.show()
 
