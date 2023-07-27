@@ -52,8 +52,8 @@ def initializeArgParser():
     # EA PAram
     parser.add_argument("--useNSGA", default=False, action="store_true",
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
-    parser.add_argument("--crossoverProb", type=float, default=0.9, help="Crossover Probability of the RHEA CL")
-    parser.add_argument("--mutationProb", type=float, default=0.9, help="Mutation Probability of the RHEA CL")
+    parser.add_argument("--crossoverProb", type=float, default=0.8, help="Crossover Probability of the RHEA CL")
+    parser.add_argument("--mutationProb", type=float, default=0.8, help="Mutation Probability of the RHEA CL")
     parser.add_argument("--crossoverEta", type=float, default=3.0, help="Crossover ETA of the RHEA CL")
     parser.add_argument("--mutationEta", type=float, default=3.0, help="Mutation ETA of the RHEA CL")
 

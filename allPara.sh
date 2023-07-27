@@ -8,6 +8,5 @@
 #SBATCH --mem=32G
 #SBATCH --verbose
 echo "Start2"
-srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --trainAllParalell --seed 8515 --model AllPara
-srun -c 1 -v python3 -m scripts.trainCurriculum --procs 32 --trainAllParalell --seed 9152 --model AllPara
+srun -c 2 -v python3 -m scripts.trainCurriculum --procs 32 --trainAllParalell --seed 8515 --model AllPara
 echo "END run"
