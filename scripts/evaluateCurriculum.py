@@ -377,6 +377,8 @@ def plotMultipleLineplots(filteredDfList):
     # Edit this line out to move the legend out of the plot
     # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     # ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+    ax.set_xlim((0, args.xIterations))
+    ax.set_ylim((0, 1))
     plt.title("mean performance")
     plt.show()
 
@@ -425,16 +427,15 @@ def removeExperimentPrefix(dictDf):
 
 def showDistrVisualization(aggregatedDf, columnsToVisualize):
     # Group the dataframe by the 'id' column and calculate the mean and standard deviation of the selected columns
-
     grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
     # Reset the index to make 'id' a regular column
     grouped_df = grouped_df.reset_index()
     # Melt the dataframe to convert the columns into rows for easier plotting
     melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
-    sns.barplot(data=melted_df, x='id', y='Value', hue='Column')
+    sns.barplot(data=melted_df, x='id', y='Value', hue='Column', errorbar=args.errorbar)
     plt.ylabel('Value')
     plt.title("Env Distribution")
-    plt.ylabel('training time (hours)')
+    plt.ylabel('Count')
     plt.xlabel('')
     plt.xticks(rotation=-45, ha='left', fontsize=9)
     plt.subplots_adjust(bottom=0.2)
@@ -443,8 +444,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize):
 
 def plotAggregatedBarplot(filteredDfList):
     assert len(filteredDfList) > 0, "filteredDfList empty"
-
-    sns.set_theme(style="darkgrid")
+    # --- SORTING
     fig, ax = plt.subplots(figsize=(12, 8))
     for f in filteredDfList:
         for fullModelName in f["id"]:
@@ -454,13 +454,19 @@ def plotAggregatedBarplot(filteredDfList):
         f["id"] = noModelName + "_" + expParams[0]
     aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
     group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
-    aggregatedDf = aggregatedDf.sort_values(by=['id', group_col])  # TODO this too
+
+    aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+    aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
+    aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
 
     if args.trainingTime:
         sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
         plt.ylabel('training time (hours)')
         plt.xlabel('')
-        plt.title("RHEA CL Training Time")
+        title = "Training Time"
+        if args.title:
+            title = args.title
+        plt.title(title)
         plt.xticks(rotation=-45, ha='left', fontsize=9)
         plt.subplots_adjust(bottom=0.2)
 
@@ -477,6 +483,7 @@ def plotAggregatedBarplot(filteredDfList):
             labelI = "_".join(labelI.split("_")[1:])
             labels[i] = labelI
         ax.set_xticklabels(labels)
+        ax.set_ylim((0, 96))
 
         plt.show()
 
@@ -528,12 +535,12 @@ def main(comparisons: int):
         scoreDf, distrDf = getAllModels(fullLogfilePaths)
     scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations + OFFSET]
     models = scoreDf["id"].unique()
-    sns.set_theme(style="dark")
+    sns.set_theme(style="darkgrid")
     print("------------------\n\n\n")
 
     if args.model is None and not args.skip:
         filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        if True: # TODO args option for args.useScore <= snapshotScores, ucrricScores, idk what else there was
+        if args.plotScores: # TODO args option for args.useScore <= snapshotScores, ucrricScores, idk what else there was
             plotMultipleLineplots(filteredScoreDf)
         plotAggregatedBarplot(filteredDistrDf)
 
@@ -556,9 +563,9 @@ def main(comparisons: int):
             print(f"{occur} experiments done with {m}")
             modelDf = modelDf[modelDf[iterationSteps] < args.xIterations + OFFSET]
             sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m, errorbar=args.errorbar)
-            plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
-            plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
-            plt.title('Barplot of sumTrainingTime')  # Replace 'Barplot of sumTrainingTime' with the appropriate title for your plot
+            plt.xlabel('Index..')
+            plt.ylabel('training time (hours)')
+            plt.title(args.title)
             plt.legend()
             plt.show()
 
@@ -570,6 +577,7 @@ def main(comparisons: int):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
+    parser.add_argument("--title", default=None, type=str, help="Title of the distribution plots")
     parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
     parser.add_argument("--crossoverMutation", action="store_true", default=False, help="Select the crossovermutation varied experiments")
@@ -578,6 +586,7 @@ if __name__ == "__main__":
     parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Show first step distribution plots")
     parser.add_argument("--curricDistr", action="store_true", default=False, help="show all best curricula distributions plots")
     parser.add_argument("--allDistr", action="store_true", default=False, help="Show all distribution plots")
+    parser.add_argument("--plotScores", action="store_true", default=False, help="Plots the score")
 
     parser.add_argument("--iter", default=0, type=int, help="filter for iterations")
     parser.add_argument("--xIterations", default=1100000, type=int, help="#of iterations to show on the xaxis")
