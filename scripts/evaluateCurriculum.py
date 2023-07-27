@@ -356,11 +356,11 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
 
 
 def plotMultipleLineplots(filteredDfList):
-
     fig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
     sns.set_theme(style="darkgrid")
     for df in filteredDfList:
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax, errorbar=args.errorbar)    # Now you can plot each 'DataFrame' group separately
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax,
+                     errorbar=args.errorbar)  # Now you can plot each 'DataFrame' group separately
     # TODO somehow make other variant accessible too where you need grouping
     # df = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
 
@@ -439,13 +439,71 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize):
     plt.xlabel('')
     plt.xticks(rotation=-45, ha='left', fontsize=9)
     plt.subplots_adjust(bottom=0.2)
+    if args.normalize:
+        plt.ylim((0, .55))
+    plt.show()
+
+
+def includeNormalizedColumns(aggregatedDf, prefix):
+    """
+    Updates the df to include the normalized columns of the environment distributions
+    :param aggregatedDf: DataFrame to update
+    :param prefix: prefix to use for column names
+    :return: updated DataFrame
+    """
+    envSizes = ['6x6', '8x8', '10x10', '12x12']
+    normalizedDistributions = {size: [] for size in envSizes}
+
+    for i, row in aggregatedDf.iterrows():
+        totalEnvs = sum(row[f"{size}{prefix}"] for size in envSizes)
+        for size in envSizes:
+            normalizedDistributions[size].append(1.0 * row[f"{size}{prefix}"] / totalEnvs)
+
+    for size in envSizes:
+        column_name = f"{size}n"
+        aggregatedDf[column_name] = normalizedDistributions[size]
+
+    return aggregatedDf
+
+
+def showTrainingTimePlot(aggregatedDf):
+    fig, ax = plt.subplots(figsize=(12, 8))
+    group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
+
+    aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+    aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
+    aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
+
+
+    sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
+    plt.ylabel('training time (hours)')
+    plt.xlabel('')
+    title = "Training Time"
+    if args.title:
+        title = args.title
+    plt.title(title)
+    plt.xticks(rotation=-45, ha='left', fontsize=9)
+    plt.subplots_adjust(bottom=0.2)
+
+    # TODO the legend part might be specific to some of the settings and not universal
+    legend = ax.legend()
+    labels = [int(item.get_text()) for item in legend.get_texts()]
+    labels = [f"{label // 1000}k steps" for label in labels]
+    for label, text in zip(legend.texts, labels):
+        label.set_text(text)
+
+    labels = [item.get_text() for item in ax.get_xticklabels()]
+    for i in range(len(labels)):
+        labelI = labels[i]
+        labelI = "_".join(labelI.split("_")[1:])
+        labels[i] = labelI
+    ax.set_xticklabels(labels)
+    ax.set_ylim((0, 96))
     plt.show()
 
 
 def plotAggregatedBarplot(filteredDfList):
     assert len(filteredDfList) > 0, "filteredDfList empty"
-    # --- SORTING
-    fig, ax = plt.subplots(figsize=(12, 8))
     for f in filteredDfList:
         for fullModelName in f["id"]:
             expParams = fullModelName.split("_")
@@ -453,50 +511,19 @@ def plotAggregatedBarplot(filteredDfList):
             break
         f["id"] = noModelName + "_" + expParams[0]
     aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
-    group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
-
-    aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
-    aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
-    aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
 
     if args.trainingTime:
-        sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
-        plt.ylabel('training time (hours)')
-        plt.xlabel('')
-        title = "Training Time"
-        if args.title:
-            title = args.title
-        plt.title(title)
-        plt.xticks(rotation=-45, ha='left', fontsize=9)
-        plt.subplots_adjust(bottom=0.2)
+        showTrainingTimePlot(aggregatedDf)
 
-        # TODO the legend part might be specific to some of the settings and not universal
-        legend = ax.legend()
-        labels = [int(item.get_text()) for item in legend.get_texts()]
-        labels = [f"{label // 1000}k steps" for label in labels]
-        for label, text in zip(legend.texts, labels):
-            label.set_text(text)
-
-        labels = [item.get_text() for item in ax.get_xticklabels()]
-        for i in range(len(labels)):
-            labelI = labels[i]
-            labelI = "_".join(labelI.split("_")[1:])
-            labels[i] = labelI
-        ax.set_xticklabels(labels)
-        ax.set_ylim((0, 96))
-
-        plt.show()
-
-    ##########
-    if args.snapshotDistr:
-        columns_to_visualize = ['6x6s', '8x8s', '10x10s', '12x12s', 'id']
-        showDistrVisualization(aggregatedDf, columns_to_visualize)
-    if args.curricDistr:
-        columns_to_visualize = ['6x6c', '8x8c', '10x10c', '12x12c', 'id']
-        showDistrVisualization(aggregatedDf, columns_to_visualize)
-    if args.allDistr:
-        columns_to_visualize = ['6x6a', '8x8a', '10x10a', '12x12a', 'id']
-        showDistrVisualization(aggregatedDf, columns_to_visualize)
+    column_prefixes = {'snapshotDistr': 's', 'curricDistr': 'c', 'allDistr': 'a'}
+    for arg, prefix in column_prefixes.items():
+        if getattr(args, arg):
+            if args.normalize:
+                aggregatedDf = includeNormalizedColumns(aggregatedDf, prefix)
+                columns_to_visualize = [f'6x6n', f'8x8n', f'10x10n', f'12x12n', 'id']
+            else:
+                columns_to_visualize = [f'6x6{prefix}', f'8x8{prefix}', f'10x10{prefix}', f'12x12{prefix}', 'id']
+            showDistrVisualization(aggregatedDf, columns_to_visualize)
 
     print("---- Done ----")
 
@@ -540,7 +567,7 @@ def main(comparisons: int):
 
     if args.model is None and not args.skip:
         filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        if args.plotScores: # TODO args option for args.useScore <= snapshotScores, ucrricScores, idk what else there was
+        if args.plotScores:  # TODO args option for args.useScore <= snapshotScores, ucrricScores, idk what else there was
             plotMultipleLineplots(filteredScoreDf)
         plotAggregatedBarplot(filteredDistrDf)
 
@@ -587,6 +614,7 @@ if __name__ == "__main__":
     parser.add_argument("--curricDistr", action="store_true", default=False, help="show all best curricula distributions plots")
     parser.add_argument("--allDistr", action="store_true", default=False, help="Show all distribution plots")
     parser.add_argument("--plotScores", action="store_true", default=False, help="Plots the score")
+    parser.add_argument("--normalize", action="store_true", default=False, help="Whether or not to normlaize the env distributions")
 
     parser.add_argument("--iter", default=0, type=int, help="filter for iterations")
     parser.add_argument("--xIterations", default=1100000, type=int, help="#of iterations to show on the xaxis")
@@ -601,5 +629,6 @@ if __name__ == "__main__":
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     args = parser.parse_args()
-    args.filter = args.comparisons == 2 and (args.crossoverMutation or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
+    args.filter = args.comparisons == 2 and (
+            args.crossoverMutation or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
     main(int(args.comparisons))
