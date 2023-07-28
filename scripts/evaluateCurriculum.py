@@ -443,14 +443,19 @@ def removeExperimentPrefix(dictDf):
 def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
     fig, ax = plt.subplots(figsize=(12, 8))
     if isSplit:
-        print(aggregatedDf)
+        # TODO only works with 1 experiment unfortunately
         df = aggregatedDf
-        df_melted = df.melt(id_vars=['trained until', 'id'], var_name='variable', value_name='value')
-
-        sns.barplot(x='trained until', y='value', hue='variable', data=df_melted)
+        print(aggregatedDf)
+        df = df.melt(id_vars=['trained until', 'id'],
+                     value_vars=['MiniGrid-DoorKey-6x6', 'MiniGrid-DoorKey-8x8', 'MiniGrid-DoorKey-10x10', 'MiniGrid-DoorKey-12x12'],
+                     var_name='Environment',
+                     value_name='Value')
+        sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
         plt.show()
     else:
+        print(aggregatedDf)
         group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
+        # sort by the numerical values of the string (50k, 75k, ...)
         aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
         aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
         aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
@@ -458,10 +463,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
         grouped_df = grouped_df.reset_index()
         melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
-
-        # Sort and convert to categorical
         melted_df['id'] = pd.Categorical(melted_df['id'], categories=aggregatedDf['id'].unique(), ordered=True)
-
         sns.barplot(data=melted_df, x='id', y='Value', hue='Column', errorbar=args.errorbar)
         plt.ylabel('Value')
         plt.title("Environment Distribution")
@@ -559,7 +561,6 @@ def plotAggregatedBarplot(filteredDfList):
         toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10", "MiniGrid-DoorKey-12x12"]
         showDistrVisualization(aggregatedDf, toVisualize, True)
 
-        print(":)")
 
     print("---- Done ----")
 
