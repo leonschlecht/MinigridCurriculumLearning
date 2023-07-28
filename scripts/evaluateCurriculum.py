@@ -12,6 +12,7 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 OFFSET = 10000
+xAndYFontSize = 20
 
 
 def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
@@ -172,7 +173,7 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
         x = np.arange(len(envs))
         x = [xi + x_offset + distrIndex * bar_width for xi in x]
         ax.bar(x, envOccurrences, width=bar_width, label=modelNames[distrIndex])
-    ax.set_ylabel('Occurrence')  # TODO only for index == 0?
+    ax.set_ylabel('Occurrence', fontsize=xAndYFontSize)  # TODO only for index == 0?
     ax.set_xticks(np.arange(len(envs)))
     ax.set_xticklabels(envs)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2))
@@ -385,8 +386,8 @@ def plotMultipleLineplots(filteredDfList, yColumns: list[str]):
     # for name, group in grouped:
     #     sns.lineplot(x='iterationSteps', y='snapshotScore', data=group, label=str(name), ax=ax)
 
-    ax.set_ylabel("evaluation reward")
-    ax.set_xlabel("iterations")
+    ax.set_ylabel("evaluation reward", fontsize=xAndYFontSize)
+    ax.set_xlabel("iterations", fontsize=xAndYFontSize)
 
     box = ax.get_position()
     # Edit this line out to move the legend out of the plot
@@ -394,7 +395,7 @@ def plotMultipleLineplots(filteredDfList, yColumns: list[str]):
     # ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
     ax.set_xlim((0, args.xIterations))
     ax.set_ylim((0, 1))
-    plt.title("mean performance")
+    plt.title("mean performance", fontsize=xAndYFontSize)
     plt.show()
 
 
@@ -465,9 +466,8 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
         melted_df['id'] = pd.Categorical(melted_df['id'], categories=aggregatedDf['id'].unique(), ordered=True)
         sns.barplot(data=melted_df, x='id', y='Value', hue='Column', errorbar=args.errorbar)
-        plt.ylabel('Value')
-        plt.title("Environment Distribution")
-        plt.ylabel('distribution')
+        plt.ylabel('Value', fontsize=xAndYFontSize)
+        plt.title("Environment Distribution", fontsize=xAndYFontSize)
         plt.xlabel('')
         plt.xticks(rotation=-45, ha='left', fontsize=9)
         plt.subplots_adjust(bottom=0.2)
@@ -514,7 +514,7 @@ def showTrainingTimePlot(aggregatedDf):
     title = "Training Time"
     if args.title:
         title = args.title
-    plt.title(title)
+    plt.title(title, fontsize=xAndYFontSize)
     plt.xticks(rotation=-45, ha='left', fontsize=9)
     plt.subplots_adjust(bottom=0.2)
 
@@ -560,7 +560,6 @@ def plotAggregatedBarplot(filteredDfList):
     if args.splitDistr:
         toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10", "MiniGrid-DoorKey-12x12"]
         showDistrVisualization(aggregatedDf, toVisualize, True)
-
 
     print("---- Done ----")
 
@@ -616,7 +615,7 @@ def main(comparisons: int):
             plotMultipleLineplots(filteredScoreDf, yColumns)
         if args.splitDistr:
             plotAggregatedBarplot(filteredSplitDistrDf)
-        else: # TODO
+        else:  # TODO
             plotAggregatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
@@ -640,9 +639,9 @@ def main(comparisons: int):
             print(f"{occur} experiments done with {m}")
             modelDf = modelDf[modelDf[iterationSteps] < args.xIterations + OFFSET]
             sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m, errorbar=args.errorbar)
-            plt.xlabel('Index..')
-            plt.ylabel('training time (hours)')
-            plt.title(args.title)
+            plt.xlabel('Index', fontsize=xAndYFontSize)
+            plt.ylabel('training time (hours)', fontsize=xAndYFontSize)
+            plt.title(args.title, fontsize=xAndYFontSize)
             plt.legend()
             plt.show()
 
