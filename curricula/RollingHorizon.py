@@ -111,19 +111,20 @@ class RollingHorizon(ABC):
                                                  nameOfCurriculumI, curricula[i][j],
                                                  self.args, self.txtLogger)
             reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
-                                                                    self.txtLogger))
+                                                                  self.txtLogger))
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
             self.logInfoAfterCurriculum(nameOfCurriculumI, iterationsDone, reward, j)
+        print("Pre transform reward", reward)
         return reward
 
     def logInfoAfterCurriculum(self, nameOfCurriculumI, iterationsDone, rewardList, j):
-        #self.txtLogger.info(
-         #   f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}. Iterations done {iterationsDone}")
+        # self.txtLogger.info(
+        #   f"\tTrained iteration j={j} of curriculum {nameOfCurriculumI}. Iterations done {iterationsDone}")
         # self.txtLogger.info(f"\tReward for curriculum {nameOfCurriculumI} = {rewardList} (1 entry = 1 curric step)")
         currentMax = (self.gamma ** j) * self.stepMaxReward  # TODO fix
-        #self.txtLogger.info(f"\tReward-%-Performance {rewardList / currentMax}\n\n")
-        #self.txtLogger.info("-------------------------------")
+        # self.txtLogger.info(f"\tReward-%-Performance {rewardList / currentMax}\n\n")
+        # self.txtLogger.info("-------------------------------")
 
     def resetEpochVariables(self) -> None:
         self.currentRewardsDict = {}
@@ -255,8 +256,8 @@ class RollingHorizon(ABC):
         txtLogger.info(
             f"Best results in epoch {epoch} came from curriculum {currentBestCurriculum}")
         envDetails = trainingInfoJson[curriculaEnvDetailsKey][currentEpoch]
-        #txtLogger.info(
-         #   f"CurriculaEnvDetails {envDetails}; selectedEnv: {selectedEnv}")
+        # txtLogger.info(
+        #   f"CurriculaEnvDetails {envDetails}; selectedEnv: {selectedEnv}")
         txtLogger.info(f"Raw Reward of best curriculum: {bestReward}. \
             Snapshot Reward {snapshotReward}. That is {round(snapshotReward / stepMaxReward, 3)} of maxReward")
 
@@ -362,6 +363,6 @@ class RollingHorizon(ABC):
         pass
 
     def updateModelName(self, epoch: int) -> None:
-        #self.txtLogger.info(
-         #   f"\n--------------------------------------------------------------\n                     START EPOCH {epoch}\n--------------------------------------------------------------\n")
+        # self.txtLogger.info(
+        #   f"\n--------------------------------------------------------------\n                     START EPOCH {epoch}\n--------------------------------------------------------------\n")
         self.selectedModel = utils.getEpochModelName(self.model, epoch)

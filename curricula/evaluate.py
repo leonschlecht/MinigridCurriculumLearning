@@ -103,11 +103,11 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> int:
     :param args: the command line arugments
     :return: the average reward
     """
-    rewardSum = 0
+    rewards = []
     envs = getEnvListThroughDifficulty(difficulty)
     evaluationResult = evaluateAll(model, envs, args, txtLogger)
     for evalEnv in envs:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv, args.noRewardShaping)
-        rewardSum += currentReward
-    print("Evaluate agent TEST", rewardSum)
-    return rewardSum
+        rewards.append(currentReward)
+    print("Evaluate agent TEST", rewards)
+    return rewards
