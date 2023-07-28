@@ -12,7 +12,11 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     # TODO decide if using args.argmax or not for evaluation
     # Load environments
     envs = []
-    for i in range(args.procs):
+    if args.procs > args.episodes:
+        envsToLoad = args.episodes
+    else:
+        envsToLoad = args.procs
+    for i in range(envsToLoad):
         env = utils.make_env(evalEnv, args.seed + 10000 * i)
         envs.append(env)
     env = MyParallelEnv(envs)
