@@ -9,6 +9,7 @@ class Result:
         # NOTE: the modelName is the name of the directory; not the name of the --model command when the training was performed
         # This is due to naming convenience / overview in the evaluation
         argsString: str = evaluationDictionary[fullArgs]
+        self.canceled = modelName[0] == "C" and modelName[1] == "_"
         self.loadedArgsDict: dict = {k.replace('Namespace(', ''): v for k, v in
                                      [pair.split('=') for pair in argsString.split(', ')]}
         self.loadedArgsDict[trainEvolutionary] = self.getTrainEvolutionary(self.loadedArgsDict[trainEvolutionary])
@@ -33,6 +34,9 @@ class Result:
         self.logFilepath = logfilePath
 
         self.snapShotScores = self.getSnapshotScores(evaluationDictionary, self.modelPerformance)
+        self.iterationsList = []
+        for i in range(1, len(self.snapShotScores) + 1):
+            self.iterationsList.append(self.iterationsPerEnv * i)
 
         bestCurricScores = []
         avgEpochRewards = []
@@ -51,8 +55,8 @@ class Result:
                 avgEpochRewards.append(np.sum(epochRewardsList) / self.maxCurricAvgReward)
             self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
             self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
-            self.bestCurriculaEnvDistribution = self.getBestCurriculaEnvDistribution(self.bestCurriculaDict,
-                                                                                     usedEnvEnumeration)
+            self.bestCurriculaEnvDistribution, self.splitDistrBestCurric = \
+                self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
 
         elif self.loadedArgsDict[trainAllParalell]:
             # print("AllPara detected")
@@ -72,9 +76,6 @@ class Result:
             # TODO can probably copy some stuff from the trainevolutioanry thigns above
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
-        self.iterationsList = []
-        for i in range(1, len(self.snapShotScores)+1):
-            self.iterationsList.append(self.iterationsPerEnv * i)
 
         # print("modelname:", self.modelName)
         errorPrefix = f"model: {self.modelName}_s{self.loadedArgsDict[seedKey]}:"
@@ -87,7 +88,7 @@ class Result:
         assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.logFilepath}"
         assert sum(self.snapshotEnvDistribution.values()) > 0
         assert sum(self.bestCurriculaEnvDistribution.values()) > 0
-        assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards),\
+        assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards), \
             f"{errorPrefix} {len(self.snapShotScores)}, {len(self.bestCurricScore)}, {len(self.avgEpochRewards)}"
 
     @staticmethod
@@ -131,6 +132,24 @@ class Result:
         return epochDict
 
     def getBestCurriculaEnvDistribution(self, bestCurriculaDict, usedEnvEnumeration):
+        splitDistributions = []
+        if self.iterationsList[-1] * self.iterationsPerEnv > 5000000 and self.loadedArgsDict[trainEvolutionary]:
+            i = 0
+            splitDistributions = []
+            bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
+            for epochList in bestCurriculaDict:
+                curriculum = self.getListOrDictEntry(bestCurriculaDict, epochList)
+                epochNr = int(epochList.split("_")[1])
+                if epochNr * self.iterationsPerEnv > 1000000 * (i+1):
+                    splitDistributions.append(bestCurriculaEnvDistribution)
+                    bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
+                    i += 1
+                for curricStep in curriculum:
+                    for env in curricStep:
+                        envStrRaw = env.split("-custom")[0]
+                        bestCurriculaEnvDistribution[envStrRaw] += 1
+            splitDistributions.append(bestCurriculaEnvDistribution)
+
         bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
         for epochList in bestCurriculaDict:
             curriculum = self.getListOrDictEntry(bestCurriculaDict, epochList)
@@ -138,7 +157,12 @@ class Result:
                 for env in curricStep:
                     envStrRaw = env.split("-custom")[0]
                     bestCurriculaEnvDistribution[envStrRaw] += 1
-        return bestCurriculaEnvDistribution
+        if splitDistributions is not []:
+            splitDistrSum = 0
+            for split in splitDistributions:
+                splitDistrSum += sum(split.values())
+            assert sum(bestCurriculaEnvDistribution.values()) == splitDistrSum, "Splitting the env distribution went wrong"
+        return bestCurriculaEnvDistribution, splitDistributions
 
     def getListOrDictEntry(self, selectedEnvList, entry):
         if type(selectedEnvList) == list:
