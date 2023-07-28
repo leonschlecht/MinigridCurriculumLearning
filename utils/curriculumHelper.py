@@ -73,10 +73,10 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
     txtLogger.info("-------------------\n\n")
 
 
-def calculateCurricStepMaxReward(allEnvs: list) -> float:
+def calculateCurricStepMaxReward(allEnvs: list, noRewardShaping: bool) -> float:
     reward = 0
     for env in allEnvs:
-        reward += getRewardMultiplier(env)
+        reward += getRewardMultiplier(env, noRewardShaping)
     maxReward: float = reward * MAX_REWARD_PER_ENV
     return maxReward
 
@@ -88,12 +88,15 @@ def calculateCurricMaxReward(curricLength, stepMaxReward, gamma) -> float:
     return maxReward
 
 
-def getRewardMultiplier(evalEnv):
+def getRewardMultiplier(evalEnv, noRewardShaping: bool):
     """
 
     :param evalEnv:
+    :param noRewardShaping: whether or not to use rewardshaping (reward depend on env size or not)
     :return:
     """
+    if noRewardShaping:
+        return 1
     pattern = r'\d+'
     match = re.search(pattern, evalEnv)
     if match:

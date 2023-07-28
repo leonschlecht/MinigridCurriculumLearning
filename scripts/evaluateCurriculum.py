@@ -11,6 +11,8 @@ from utils.curriculumHelper import *
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 
+OFFSET = 10000
+
 
 def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
                     modelNames: list[str], limitX=False):
@@ -196,6 +198,7 @@ def getSpecificModel(specificModelList: list, modelName: str):
     scoreHelper = []
     distributionHelper = []
     medianLen = []
+    splitDistrDf = None
     for result in results:
         medianLen.append(result.epochsTrained)
         # Create DF1 for scores etc
@@ -204,7 +207,8 @@ def getSpecificModel(specificModelList: list, modelName: str):
                                 "bestCurricScore": result.bestCurricScore[i],
                                 "avgEpochRewards": result.avgEpochRewards[i],
                                 "id": modelName,
-                                iterationSteps: result.iterationsList[i]})
+                                "group": result.iterationsPerEnv,  # TODO refactor this
+                                iterationSteps: result.iterationsList[i]})  #
 
         # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
         tmp = result.snapshotEnvDistribution.keys()
@@ -237,84 +241,160 @@ def getSpecificModel(specificModelList: list, modelName: str):
             "8x8c": bestCurricHelper[1],
             "10x10c": bestCurricHelper[2],
             "12x12c": bestCurricHelper[3],
+            "6x6a": allCurricHelper[0],
+            "8x8a": allCurricHelper[1],
+            "10x10a": allCurricHelper[2],
+            "12x12a": allCurricHelper[3],
             seedKey: result.seed,
+            "group": result.iterationsPerEnv,
+            iterationSteps: result.iterationsList[0],
             sumTrainingTime: result.trainingTimeSum,
             "id": modelName})
+        if result.loadedArgsDict[trainEvolutionary] and not result.canceled:
+            keys = ['MiniGrid-DoorKey-6x6', 'MiniGrid-DoorKey-8x8', 'MiniGrid-DoorKey-10x10', 'MiniGrid-DoorKey-12x12']
+            data = []
+
+            for i in range(5):  # Loops 5 times for 5 'kk' values
+                split_value = f"{i + 1}kk"  # Forming the 'split' value
+                row = {"trained until": split_value, "id": result.modelName}  # Starting dictionary for this row
+                for key in keys:
+                    row[key] = result.splitDistrBestCurric[i][key]  # Adding value from result.splitDistrBestCurric
+                data.append(row)  # Appending this row to data
+
+            splitDistrDf = pd.DataFrame(data)
     rewardScoreDf = pd.DataFrame(scoreHelper)
     medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
     rewardScoreDf = rewardScoreDf[rewardScoreDf[iterationSteps] <= results[0].iterationsPerEnv * medianLen]
 
     # TODO assert all iterPerEnv are equal ?
     distributionDf = pd.DataFrame(distributionHelper)
-    return rewardScoreDf, distributionDf
+    return rewardScoreDf, distributionDf, splitDistrDf
 
 
 def getAllModels(logfilePaths: list[list]):
     scoreDf = pd.DataFrame()
-    distrDf = pd.DataFrame()
+    fullDistrDf = pd.DataFrame()
+    splitDistrDf = pd.DataFrame()
+
     for logfilePath in logfilePaths:
-        tmpScoreDf, tmpDistrDf = getSpecificModel(logfilePath[0], logfilePath[1])
-        # scoreDf = scoreDf.append(tmpScoreDf)
+        tmpScoreDf, tmpDistrDf, tmpSplitDf = getSpecificModel(logfilePath[0], logfilePath[1])
         scoreDf = pd.concat([scoreDf, tmpScoreDf], ignore_index=True)
-        # distrDf = distrDf.append(tmpDistrDf)
-        distrDf = pd.concat([distrDf, tmpDistrDf], ignore_index=True)
-    return scoreDf, distrDf
+        fullDistrDf = pd.concat([fullDistrDf, tmpDistrDf], ignore_index=True)
+        splitDistrDf = pd.concat([splitDistrDf, tmpSplitDf], ignore_index=True)
+    return scoreDf, fullDistrDf, splitDistrDf
 
 
-def filterDf(val, dataFrame, models):
+def filterDf(filters: list[str], dataFrame, models, showCanceled=False):
     """
     Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
-    :param val: the prefix to be filtered. E.g. "RndRH"
+    :param filters:
+    :param showCanceled:
     :param dataFrame: the main dataframe
     :param models: a list of all model names (unique values in id column of the df)
     :return:
     """
     filteredDf = []
     for m in models:
-        if val in m and "C_" not in m:
-            if val == "GA" and "NSGA" in m:
+        append = True
+        for filterOption in filters:
+            if filterOption not in m or \
+                    (filterOption == "50k" and "150k" in m) or \
+                    (filterOption == "50k" and "250k" in m) or \
+                    (filterOption == "GA" and "NSGA" in m):  # TODO find way not having to do this manually every time
+                append = False
+                break
+        if append:
+            if "C_" in m and not showCanceled:
                 continue
             filteredDf.append(dataFrame[dataFrame["id"] == m])
 
     return filteredDf
 
 
-def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, distrDf):
+def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, distrDf, splitDistrDf) -> tuple:
     modelsEntered: int = 0
     usedModels = []
-    filteredScoreDf = []
-    filteredDistrDf = []  # TODO
+    filteredScoreDfList = []
+    filteredDistrDfList = []
+    filteredSplitDistrDfList = []
     for i in range(len(models)):
         print(f"{i}: {models[i]}")
-    print("filter options: NSGA, GA, RndRH, allParalell")
-    while modelsEntered < comparisons:
-        val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
-        if val.isdigit() and int(val) < len(models) and val not in usedModels:
-            modelsEntered += 1
-            usedModels.append(val)
-            filteredScoreDf.append(scoreDf[scoreDf["id"] == models[int(val)]])
-            filteredDistrDf.append(distrDf[distrDf["id"] == models[int(val)]])
-        else:
-            if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
-                filteredScoreDf = filterDf(val, scoreDf, models)
-                filteredDistrDf = filterDf(val, distrDf, models)
-                break
-            print("Model doesnt exist or was chosen already. Enter again")
+    print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
+    if args.filter:
+        filters = []
+        if args.rhea:
+            filters.append("GA_")  # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
+            if args.rrh:
+                filters.append("RRH")  # todo ???
+        if args.ga:
+            filters.append("GA")
+        if args.nsga:
+            filters.append("NSGA")
+        if args.rrhOnly:
+            filters.append("RndRH")
+        if args.iter != 0:
+            filters.append(str(args.iter) + "k")
+        if args.steps:
+            # get all NSGA, GA and RRH runs (or make differnetaion here too ?)
+            # TODO
+            pass
+        if args.gen:
+            # get ALL NSGA or GA runs
+            # plot them
+            # TODO
+            print()
+        if args.curric:
+            # get all NSGA, GA, RRH runs
+            # TODO
+            pass
+        filteredScoreDfList = filterDf(filters, scoreDf, models, showCanceled=args.showCanceled)
+        filteredDistrDfList = filterDf(filters, distrDf, models, showCanceled=args.showCanceled)
+        filteredSplitDistrDfList = filterDf(filters, distrDf, models, showCanceled=args.showCanceled)
+    else:
+        while modelsEntered < comparisons:
+            val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
+            if val.isdigit() and int(val) < len(models) and val not in usedModels:
+                modelsEntered += 1
+                usedModels.append(val)
+                filteredScoreDfList.append(scoreDf[scoreDf["id"] == models[int(val)]])
+                filteredDistrDfList.append(distrDf[distrDf["id"] == models[int(val)]])
+                filteredSplitDistrDfList.append(splitDistrDf[splitDistrDf["id"] == models[int(val)]])
+            else:
+                if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
+                    val = [val]
+                    filteredScoreDfList = filterDf(val, scoreDf, models)
+                    filteredDistrDfList = filterDf(val, distrDf, models)
+                    break
+                print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
-    return filteredScoreDf, filteredDistrDf
+    print(filteredSplitDistrDfList)
+    return filteredScoreDfList, filteredDistrDfList, filteredSplitDistrDfList
 
 
-def plotMultipleLineplots(filteredDf):
+def plotMultipleLineplots(filteredDfList, yColumns: list[str]):
+    fig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
     sns.set_theme(style="darkgrid")
-    fig, ax = plt.subplots(figsize=(10, 6))
-    for df in filteredDf:
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=df, label=df.head(1)["id"].item(), ax=ax)
-    ax.set_ylabel("evaluation reward .")
-    ax.set_xlabel("iterations .")
-    # ax.set_ylim(bottom=0.6)
-    plt.tight_layout()  # Add this line to adjust the layout and prevent legend cutoff
-    # plt.legend(loc='upper left', bbox_to_anchor=(1.02, 1), borderaxespad=0)
-    plt.legend()
+    for df in filteredDfList:
+        for yStr in yColumns:
+            sns.lineplot(x=iterationSteps, y=yStr, data=df, label=df.head(1)["id"].item() + "_" + yStr, ax=ax,
+                         errorbar=args.errorbar)
+    # TODO somehow make other variant accessible too where you need grouping
+    # df = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
+    # group_col = "group" if "group" in df.columns else "DataFrame"
+    # grouped = df.groupby(group_col)
+    # for name, group in grouped:
+    #     sns.lineplot(x='iterationSteps', y='snapshotScore', data=group, label=str(name), ax=ax)
+
+    ax.set_ylabel("evaluation reward")
+    ax.set_xlabel("iterations")
+
+    box = ax.get_position()
+    # Edit this line out to move the legend out of the plot
+    # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    # ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
+    ax.set_xlim((0, args.xIterations))
+    ax.set_ylim((0, 1))
+    plt.title("mean performance")
     plt.show()
 
 
@@ -360,55 +440,143 @@ def removeExperimentPrefix(dictDf):
     return iterations + steps + gen + curric
 
 
-def showDistrVisualization(aggregatedDf, columnsToVisualize):
-    # Group the dataframe by the 'id' column and calculate the mean and standard deviation of the selected columns
-    grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
-    # Reset the index to make 'id' a regular column
-    grouped_df = grouped_df.reset_index()
-    # Melt the dataframe to convert the columns into rows for easier plotting
-    melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
-    sns.barplot(data=melted_df, x='id', y='Value', hue='Column')
-    plt.xlabel('id')
-    plt.ylabel('Value')
+def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
+    fig, ax = plt.subplots(figsize=(12, 8))
+    if isSplit:
+        # TODO only works with 1 experiment unfortunately
+        df = aggregatedDf
+        print(aggregatedDf)
+        df = df.melt(id_vars=['trained until', 'id'],
+                     value_vars=['MiniGrid-DoorKey-6x6', 'MiniGrid-DoorKey-8x8', 'MiniGrid-DoorKey-10x10', 'MiniGrid-DoorKey-12x12'],
+                     var_name='Environment',
+                     value_name='Value')
+        sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
+        plt.show()
+    else:
+        print(aggregatedDf)
+        group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
+        # sort by the numerical values of the string (50k, 75k, ...)
+        aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+        aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
+        aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
+
+        grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
+        grouped_df = grouped_df.reset_index()
+        melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
+        melted_df['id'] = pd.Categorical(melted_df['id'], categories=aggregatedDf['id'].unique(), ordered=True)
+        sns.barplot(data=melted_df, x='id', y='Value', hue='Column', errorbar=args.errorbar)
+        plt.ylabel('Value')
+        plt.title("Environment Distribution")
+        plt.ylabel('distribution')
+        plt.xlabel('')
+        plt.xticks(rotation=-45, ha='left', fontsize=9)
+        plt.subplots_adjust(bottom=0.2)
+        if args.normalize:
+            plt.ylim((0, .55))
+        plt.show()
+
+
+def includeNormalizedColumns(aggregatedDf, prefix):
+    """
+    Updates the df to include the normalized columns of the environment distributions
+    :param aggregatedDf: DataFrame to update
+    :param prefix: prefix to use for column names
+    :return: updated DataFrame
+    """
+    envSizes = ['6x6', '8x8', '10x10', '12x12']
+    normalizedDistributions = {size: [] for size in envSizes}
+
+    for i, row in aggregatedDf.iterrows():
+        totalEnvs = sum(row[f"{size}{prefix}"] for size in envSizes)
+        for size in envSizes:
+            normalizedDistributions[size].append(1.0 * row[f"{size}{prefix}"] / totalEnvs)
+
+    for size in envSizes:
+        column_name = f"{size}n"
+        aggregatedDf[column_name] = normalizedDistributions[size]
+
+    return aggregatedDf
+
+
+def showTrainingTimePlot(aggregatedDf):
+    fig, ax = plt.subplots(figsize=(12, 8))
+    group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
+    if args.rhea:
+        aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+        aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
+        aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
+        sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
+    else:
+        sns.barplot(x='id', y='sumTrainingTime', data=aggregatedDf, ax=ax)
+
+    plt.ylabel('training time (hours)')
+    plt.xlabel('')
+    title = "Training Time"
+    if args.title:
+        title = args.title
+    plt.title(title)
+    plt.xticks(rotation=-45, ha='left', fontsize=9)
+    plt.subplots_adjust(bottom=0.2)
+
+    # TODO the legend part might be specific to some of the settings and not universal
+    if args.rhea:
+        legend = ax.legend()
+        labels = [int(item.get_text()) for item in legend.get_texts()]
+        labels = [f"{label // 1000}k steps" for label in labels]
+        for label, text in zip(legend.texts, labels):
+            label.set_text(text)
+        labels = [item.get_text() for item in ax.get_xticklabels()]
+        for i in range(len(labels)):
+            labelI = labels[i]
+            labelI = "_".join(labelI.split("_")[1:])
+            labels[i] = labelI
+        ax.set_xticklabels(labels)
+    ax.set_ylim((0, 96))
     plt.show()
 
 
-def plotAggrgatedBarplot(filteredDf: list[pd.DataFrame]):
-    assert len(filteredDf) > 0, "filteredDf empty"
-
-    # TODO generic remover when not using a filter
-
-    sns.set_theme(style="darkgrid")
-    fig, ax = plt.subplots(figsize=(12, 6))
-    aggregatedDf = pd.DataFrame()
-    for df in filteredDf:
-        df["id"] = removeExperimentPrefix(df)
-        aggregatedDf = pd.concat([aggregatedDf, df], ignore_index=True)
+def plotAggregatedBarplot(filteredDfList):
+    assert len(filteredDfList) > 0, "filteredDfList empty"
+    for f in filteredDfList:
+        for fullModelName in f["id"]:
+            expParams = fullModelName.split("_")
+            noModelName = "_".join(expParams[1:])
+            break
+        f["id"] = noModelName + "_" + expParams[0]
+    aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
 
     if args.trainingTime:
-        sns.barplot(x="id", y=sumTrainingTime, data=aggregatedDf, ax=ax)
-        plt.ylabel('training time (hours)')
-        plt.title("Training Time")
-        plt.show()
+        showTrainingTimePlot(aggregatedDf)
 
-    if args.snapshotDistr:
-        columns_to_visualize = ['6x6s', '8x8s', '10x10s', '12x12s', 'id']
-        showDistrVisualization(aggregatedDf, columns_to_visualize)
-    if args.curricDistr:
-        columns_to_visualize = ['6x6c', '8x8c', '10x10c', '12x12c', 'id']
-        showDistrVisualization(aggregatedDf, columns_to_visualize)
-    if args.allDistr:
-        pass
+    column_prefixes = {'snapshotDistr': 's', 'curricDistr': 'c', 'allDistr': 'a'}
+    for arg, prefix in column_prefixes.items():
+        if getattr(args, arg):
+            if args.normalize:
+                aggregatedDf = includeNormalizedColumns(aggregatedDf, prefix)
+                columns_to_visualize = [f'6x6n', f'8x8n', f'10x10n', f'12x12n', 'id']
+            else:
+                columns_to_visualize = [f'6x6{prefix}', f'8x8{prefix}', f'10x10{prefix}', f'12x12{prefix}', 'id']
+            showDistrVisualization(aggregatedDf, columns_to_visualize)
+    if args.splitDistr:
+        toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10", "MiniGrid-DoorKey-12x12"]
+        showDistrVisualization(aggregatedDf, toVisualize, True)
+
+
+    print("---- Done ----")
 
 
 def main(comparisons: int):
-    evalDirBasePath = storage.getLogFilePath(["storage", "_evaluate"])
+    pathList = ["storage", "_evaluate"]
+    useCrossoverMutationPath = args.crossoverMutation
+    if useCrossoverMutationPath:
+        pathList.append("SOBOL_GA_75_3_3_3")
+    evalDirBasePath = storage.getLogFilePath(pathList)
     fullLogfilePaths = []
     evalDirectories = next(os.walk(evalDirBasePath))[1]
     statusJson = "status.json"
     specificModelList = []
     for model in evalDirectories:
-        if model == "old":
+        if model == "old" or (not args.crossoverMutation and "SOBOL" in model):
             continue
         path = evalDirBasePath + os.sep + model + os.sep
         json_files = [f for f in os.listdir(path) if f == statusJson]
@@ -426,37 +594,55 @@ def main(comparisons: int):
             break
 
     if args.model is not None:
-        scoreDf, distrDf = getSpecificModel(specificModelList, args.model)
+        scoreDf, distrDf, splitDistrDf = getSpecificModel(specificModelList, args.model)
     else:
-        scoreDf, distrDf = getAllModels(fullLogfilePaths)
-
+        scoreDf, distrDf, splitDistrDf = getAllModels(fullLogfilePaths)
+    scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations + OFFSET]
     models = scoreDf["id"].unique()
-    sns.set_theme(style="dark")
-    # TODO ask for comparison nrs if not given by --comparisons
+    sns.set_theme(style="darkgrid")
     print("------------------\n\n\n")
+
     if args.model is None and not args.skip:
-        filteredScoreDf, filteredDistrDf = getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf)
-        # plotMultipleLineplots(filteredDf)
-        plotAggrgatedBarplot(filteredDistrDf)
+        filteredScoreDf, filteredDistrDf, filteredSplitDistrDf = \
+            getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf, splitDistrDf)
+        if args.scores is not None:
+            if args.scores == "both":
+                yColumns = ["snapshotScore", "bestCurricScore"]
+            elif args.scores == "curric":
+                yColumns = ["bestCurricScore"]
+            else:
+                yColumns = ["snapshotScore"]
+            # avgEpochRewards is not useful
+            plotMultipleLineplots(filteredScoreDf, yColumns)
+        if args.splitDistr:
+            plotAggregatedBarplot(filteredSplitDistrDf)
+        else: # TODO
+            plotAggregatedBarplot(filteredDistrDf)
 
     if args.model is not None and not args.skip:
         filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model)
+        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model, errorbar=args.errorbar)
+        # TODO this part is probably never called
         plt.show()
     if args.skip:
+        # TODO this has become deprecated
         print("starting evaluation. . .")
         for m in models:
             if "C_" in m and not args.showCanceled:
                 continue
             modelDf = scoreDf[scoreDf["id"] == m]
             filteredIterDf = modelDf[iterationSteps]
-            firstIterVal = filteredIterDf[0]
+            try:
+                firstIterVal = filteredIterDf[0]
+            except:
+                continue
             occur = len(filteredIterDf[filteredIterDf == firstIterVal])
             print(f"{occur} experiments done with {m}")
-            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m)
-            plt.xlabel('Index')  # Replace 'Index' with the appropriate x-axis label
-            plt.ylabel('sumTrainingTime')  # Replace 'sumTrainingTime' with the appropriate y-axis label
-            plt.title('Barplot of sumTrainingTime')  # Replace 'Barplot of sumTrainingTime' with the appropriate title for your plot
+            modelDf = modelDf[modelDf[iterationSteps] < args.xIterations + OFFSET]
+            sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m, errorbar=args.errorbar)
+            plt.xlabel('Index..')
+            plt.ylabel('training time (hours)')
+            plt.title(args.title)
             plt.legend()
             plt.show()
 
@@ -468,12 +654,32 @@ def main(comparisons: int):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
-    parser.add_argument("--comparisons", default=2, help="Choose how many models you want to compare")
+    parser.add_argument("--title", default=None, type=str, help="Title of the distribution plots")
+    parser.add_argument("--comparisons", default=-1, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--showCanceled", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--trainingTime", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--curricDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
-    parser.add_argument("--allDistr", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
+    parser.add_argument("--crossoverMutation", action="store_true", default=False, help="Select the crossovermutation varied experiments")
+    parser.add_argument("--splitDistr", action="store_true", default=False, help="Whether to show the split distribution (in 1kk steps)")
+
+    parser.add_argument("--trainingTime", action="store_true", default=False, help="Show training time plots")
+    parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Show first step distribution plots")
+    parser.add_argument("--curricDistr", action="store_true", default=False, help="show all best curricula distributions plots")
+    parser.add_argument("--allDistr", action="store_true", default=False, help="Show all distribution plots")
+    parser.add_argument("--scores", default=None, help="Whether to plot snapshot, curric or both scores")
+    parser.add_argument("--normalize", action="store_true", default=False, help="Whether or not to normlaize the env distributions")
+
+    parser.add_argument("--iter", default=0, type=int, help="filter for iterations")
+    parser.add_argument("--xIterations", default=1100000, type=int, help="#of iterations to show on the xaxis")
+    parser.add_argument("--steps", action="store_true", default=False, help="filter for #curricSteps")
+    parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
+    parser.add_argument("--curric", action="store_true", default=False, help="whether to filter for #curricula")
+    parser.add_argument("--rhea", action="store_true", default=False, help="Only using rhea runs")
+    parser.add_argument("--nsga", action="store_true", default=False, help="Only using GA runs")
+    parser.add_argument("--ga", action="store_true", default=False, help="Only using NSGA runs")
+    parser.add_argument("--rrh", action="store_true", default=False, help="Include RRH runs, even if --rhea was speicifed")
+    parser.add_argument("--rrhOnly", action="store_true", default=False, help="Only RRH runs")
+    parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
+    parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     args = parser.parse_args()
+    args.filter = args.comparisons == -1 and (
+            args.crossoverMutation or args.splitDistr or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
     main(int(args.comparisons))

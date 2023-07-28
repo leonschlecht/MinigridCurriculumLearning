@@ -28,7 +28,7 @@ class allParalell:
 
         self.selectedModel = self.model + os.sep + "model"
 
-        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS)
+        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS, args.noRewardShaping)
 
         self.trainingInfoJson = {}
         self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])
@@ -65,12 +65,12 @@ class allParalell:
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
             reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
-
+            oldEnvNames = envNames.copy()
             if not self.isSPLCL:
                 envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
             else:
                 envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty, self.seed + epoch, reward)
-            self.updateTrainingInfo(self.trainingInfoJson, epoch, envNames, reward, self.envDifficulty, iterationsDone)
+            self.updateTrainingInfo(self.trainingInfoJson, epoch, oldEnvNames, reward, self.envDifficulty, iterationsDone)
             self.logInfoAfterEpoch(epoch, reward, self.txtLogger, totalEpochs)
             self.txtLogger.info(f"reward {reward}")
 
@@ -124,7 +124,6 @@ class allParalell:
 
     def updateEnvNamesDynamically(self, currentEnvNames: list, newDifficulty: float, seed: int, reward: float) -> list:
         envNames = currentEnvNames
-        print("Before=", currentEnvNames, "newDiff", newDifficulty)
         # TODO get the value of the models progress (maybe last 3 runs, and then decide if you should go up or not)
         np.random.seed(seed)
         randomIndexSample = np.random.choice(range(len(ENV_NAMES.ALL_ENVS)), size=self.paraEnvs, replace=False)
@@ -134,7 +133,6 @@ class allParalell:
             nextStep = "stay"
         else:
             nextStep = "goDown"
-        print("nextStep:", nextStep)
         if nextStep == "stay":
             for i in range(len(envNames)):
                 cutEnv = envNames[i].split("-custom")[0]
@@ -152,20 +150,18 @@ class allParalell:
         for i in range(len(envNames)):
             cutEnv = envNames[i].split("-custom")[0]
             envNames[i] = cutEnv + ENV_NAMES.CUSTOM_POSTFIX + str(newDifficulty)
-        print("env names after = ", envNames)
         return envNames
 
     def updateTrainingInfo(self, trainingInfoJson, epoch, envNames, reward, difficulty, framesDone):
-
         currentEpoch = "epoch_" + str(epoch)
 
         trainingInfoJson[epochsDone] = epoch + 1
         trainingInfoJson[numFrames] = framesDone
         trainingInfoJson[snapshotScoreKey].append(reward)
-
         trainingInfoJson[curriculaEnvDetailsKey][currentEpoch] = envNames
         trainingInfoJson[difficultyKey].append(difficulty)
         now = datetime.now()
+
         timeSinceLastEpoch = (now - self.lastEpochStartTime).total_seconds()
         trainingInfoJson[epochTrainingTime].append(timeSinceLastEpoch)
         trainingInfoJson[sumTrainingTime] += timeSinceLastEpoch

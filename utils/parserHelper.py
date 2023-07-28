@@ -8,8 +8,6 @@ def initializeArgParser():
     """
     parser = argparse.ArgumentParser()
     # General parameters
-    parser.add_argument("--useNSGA", default=False, action="store_true",
-                        help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainAdaptive", default=False, action="store_true",
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainAllParalell", default=False, action="store_true",
@@ -23,6 +21,7 @@ def initializeArgParser():
     parser.add_argument("--trainRandomRH", default=False, action="store_true",
                         help="Decides what training method will be used. If set, Full Random RH will be used")
 
+    # RHEA CL Hyperparameters
     parser.add_argument("--iterPerEnv", default=150000, type=int,
                         help="Determines the amount of iterations per environment during training")
     parser.add_argument("--paraEnv", default=2, type=int,
@@ -32,20 +31,31 @@ def initializeArgParser():
     parser.add_argument("--numCurric", default=3, type=int,
                         help="Determines the amount of curricula that are used for training")
     parser.add_argument("--difficultyStepsize", default=100000, type=int,
-                        help="Determines when the difficulty will be adjusted. Default 100k -> -.1 decrease every 100k")
-    parser.add_argument("--trainEpochs", default=50, type=int, help="Tells the algorithm how long to train for.")
+                        help="Determines when the difficulty will be adjusted. Default 100k -> -.1 decrease every 100k") # TODO add starting @500k param too
+    parser.add_argument("--trainEpochs", default=50, type=int, help="Tells the algorithm how long to train for.") # TODO change this since its calculated
     parser.add_argument("--nGen", default=3, type=int,
                         help="The amount of generations per RHEA iteration")
     parser.add_argument("--gamma", default=0.9, type=float,
                         help="The dampening factor for the curricula RH. Later steps will be weighed less if gamma is high")
 
-    parser.add_argument("--algo", default="ppo", help="algorithm to use: a2c | ppo ")
+    parser.add_argument("--algo", default="ppo", help="algorithm to use: a2c | ppo ")  # TODO remove ?
     parser.add_argument("--model", default=None, required=True, help="name of the model (REQUIRED)")
     parser.add_argument("--seed", type=int, default=1, help="random seed (default: 1)")
-    parser.add_argument("--log-interval", type=int, default=1, help="number of updates between two logs (default: 1)")
+    parser.add_argument("--log-interval", type=int, default=1,
+                        help="number of updates between two logs (default: 1)")  # TODO remove
     parser.add_argument("--save-interval", type=int, default=2,
-                        help="number of updates between two saves (default: 2, 0 means no saving)")
+                        help="number of updates between two saves (default: 2, 0 means no saving)")  # TODO remove (??)
     parser.add_argument("--procs", type=int, default=32, help="number of processes (default: 32)")
+    parser.add_argument("--noRewardShaping", action="store_true", default=False,
+                        help="Whether or not to use rewardshaping for RHEA CL")
+
+    # EA PAram
+    parser.add_argument("--useNSGA", default=False, action="store_true",
+                        help="Decides what training method will be used. If set, adaptive curriculum will be used")
+    parser.add_argument("--crossoverProb", type=float, default=0.8, help="Crossover Probability of the RHEA CL")
+    parser.add_argument("--mutationProb", type=float, default=0.8, help="Mutation Probability of the RHEA CL")
+    parser.add_argument("--crossoverEta", type=float, default=3.0, help="Crossover ETA of the RHEA CL")
+    parser.add_argument("--mutationEta", type=float, default=3.0, help="Mutation ETA of the RHEA CL")
 
     # Parameters for underlying training algorithm
     parser.add_argument("--epochs", type=int, default=4, help="number of epochs for PPO (default: 4)")
@@ -69,7 +79,8 @@ def initializeArgParser():
                         help="add a GRU to the model to handle text input")
 
     # Evaluation Arguments
-    parser.add_argument("--episodes", type=int, default=25, help="number of episodes of evaluation (default: 15)")
+    parser.add_argument("--episodes", type=int, default=15,
+                        help="number of episodes of evaluation per environment (default: 15)")
     parser.add_argument("--argmax", action="store_true", default=False,
                         help="action with highest probability is selected")
     parser.add_argument("--worst-episodes-to-show", type=int, default=10, help="how many worst episodes to show")
