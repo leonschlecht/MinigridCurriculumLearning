@@ -1,11 +1,128 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-pc tmp datei rüberschieben
+structure:
+- 5kk
+    - RHEA CL (GA dann NSGA)
+        - beide vseinander
+        - einzelne params vergleichen (und ggf 1-3 plots noch dazu packen --> welcher param zu low = schlecht;
+            welcher param höher wirkt vielversprechend?
+1230 @rrh --> begriffe vereinhetilichen kurz satz erwähnen
 
-RRH mit 6 numCurric oder so machen
+Next week wichtig:
+- SAC hinbekommen ODER anderen Algo (Oder es sein lassen)
+- Env Distributions genug text geschrieben(-> verstehen und erklären was wann passierti m algo)
+- bonus: aus welcher gen kam das selektierte curriculum
+- Mergen von dem Results chapter fertig
+
+- evtl die Legend bei den plots umbenennen (damit es einheitlich ist mit denn namen die ich bnenutze in meiner arbeit)
+-
+
+pc tmp datei rüberschieben
+Random notes:
+- diesen dip versuchen auszubalancieren, der durch die maxSteps entstanden ist wurde mal probiert
+- vllt mal die todos im code bearbeiten
+- Constraints einfügen für bessere balance (zb Relationship zwischen den einzelnen env-rewards --> Multi obj wäre besser) ; oder threshold rewards (ggf punishen, falls darunter)
+- Could have also made a stop at like .5 for 1kk and then go down all the way to .1 or so. (An alternative you could have used was to make it more like a step function, which stays the same for a bit of time, and the ncontinues to go down (right now it stays the same for 500k, then goes down linearly until .15, and then stays the same again
+- exp setup: Anfang refrenz für die komplett-tabelle am ende
+- neue 25k 4s 3 3 run starten (Bzw testen warum es so unlucky war ?)
+- climbing speed signifikanztest ???
+
+
+
+Größeres todos:
+- Elitismus und NSGA
+- Pseudocode für Methodology
+- "sag mir noch mal bescheid wenn du das platziert hast" (5 tmp)
+- steigt GA oder NSGA schneller an in 1kk? -> Hypothesentest
+
+Programmiertodo
+- Boxplots der gruppierungen zeigen (k steps, nGen, ...)
+d - step plot fix
+
+
+Todos:
+schreib todo:
+1 - chapter referenzieren (in 1.3 und generell)
+3 - vor und nachteile der einzelenn ansätze erläutern (basics)
+3 - domain kapitel aufteilen in kleinere bzw einfach am rand erwähnen
+3 - mehr zu CL und lokale minimum
+3 - EA Quellen
+3 - EA: roulette wheel ; fitness proportional usw verbessern
+- \textit beim EA Kapitel: Wo genau hin überprüfen
+- NSGA besser erklären, ggf mit einer Grafik & warum es eigentlich für multiobjetive gedacht ist) (auf corwding distance eingehen) & erwähnen, dass man es auch für single objectives benutzen kann
+- RH Quelle
+- RH: at first glance absatz verbessern --> diesen RH algorithmus vs iteration eines Algorithmus (ggf als begriff einführen)
+- MCTS Quelle / RHEA Quelle
+
+
+
+
+
+----------------------------
+
+Samstag-
+- alle Plots noch mal überarbeiten (2h) (NSGA 5kk, GA 5kk, Gruppierung nach curricCount, nGen, curricLength;	crossoverMutation comparisons
+- Discussion Chapter zusammenführen
++ auswertung für die Crossover / Mutation rates (inkl Distributions --> Auswirkungen des eAs besser verstehen)
++ ggf puren NSGA vs GA plot, wo nur experimente sind die in beiden varianten ausgeführt wurden
+1 - (bei ssh aufräumen)
+1 - evtl mit mehr als 1-2 CPUs ausprobieren
+- RQ2 überarbeiten, weil ich ja gar nicht auf konvergenz untersucht habe
+- plot für aus welcher gen das gewählte curriculum kam
+- evtl mal ein plot mit RRH CI/SD vs RHEA CL CI/SD, damit man die unterschiede besesr sehen kann
+- Plot für den effekt, den man eigentlich erzielen möchte (Basics Teil, ggf Methodology)
+
+
+Todo für @home /Sonntag
+- SAC ausprobieren mit besserer HW
+- Gruppierungen für 2curric vs 3 vs 4 (vs 1 evtl auch noch) (auch für nGen und curricLength; damit ich den teil abschließen kann !)
+- SPLCL 10 runs starten;  (--> VORHER PULLEN)
+- NSGA multiobj run auf cluster starten
+- evtl noch einen anderen single obj starten
+- CL Baseline (REIHENFOLGE statt alles gleichzeitig !!!)
+
+SAC todo:
+numFrames herausfinden
+schauen wie ich das speichern kann
+irgendwie in meins einbetten (basierend auf iterPerEnv starten)
+
+
+Nächste Woche:
+- 1kk vs 2kk vs 3 vs 4 vs 5kk distributions der environments anschauen
+
+
+Random:
+- das ist super unclean geworden wegen der mutation/crossover probability und dass ich das jetzt hier und mal da geändert habe
+- alle C runs beschränken auf durchschnitt oder min der frames done
+
+Do:
+d - RRH Traning time plot (wo die y achse auch passend ist und verlgiechbar mit den anderen)
+d - time plots neu (alle zusammen, spezifisches NSGA vs GA)
+d - time plot sortieren nach iterationSteps
+d - Realtiver env distribution plot. Ggf auch env distr ohne SD anzeigen
+d - SPLCL logs sind broken (aber ab wann`???)
+d - ich glaub nen neues experiment machen, so dass ich sagen kann "zu hoch" ist schlecht fürCoMu
+d - 1kk performacne: SPLCL fehlt
+d - Experimente Tabelle machen (erstmal in google)
+d + plot sortieren !! (250k muss rechts sein)
+d - plot of snapshotScore vs actualScore
+
+
+Fr
+d eval --> args.procs mit args.episodes ersetzen (sofern es kleiner ist)
+(halb)- das mit den distributions hinbekommen (1-2h)
+(notizen)- Feedback einarbeiten (2-3h) (erstmal notizen machen)
+d- anderes auch begradigen damit es einheitlich ist (zB manches RRH)
+d? - SAC weitermachen
+d - größere Achsenbeschriftungen
+d - NSGA mehrdimensional (also 4 objectives
+
+
+
+
+--------------------------------------
 - interneal / external validation ?
 
-Other question is, how can you maximize the spike pre 1kk iterations?
 Stackedbarplot performance (NSGA vs GA vs RRH vs AP vs SPLCL)
 
 Neue Fragen

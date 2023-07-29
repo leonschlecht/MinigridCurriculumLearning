@@ -565,6 +565,7 @@ def plotAggregatedBarplot(filteredDfList):
 
 
 def main(comparisons: int):
+    sns.set(font_scale=2)
     pathList = ["storage", "_evaluate"]
     useCrossoverMutationPath = args.crossoverMutation
     if useCrossoverMutationPath:
