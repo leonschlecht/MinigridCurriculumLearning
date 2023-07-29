@@ -1,32 +1,37 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
 import numpy as np
 
-difficultyStepsize = 100000
-iterationsDone = np.linspace(0, 5000000, 1000)
+iterationSteps = 100000
+totalIterations = 5000000
+startDecreasingNum = 500000
+sns.set(style="darkgrid")
+plt.figure(figsize=(10, 6))
 
 
-def calculateMaxSteps(x):
-    startDecreaseNum = 500000
-    if x <= startDecreaseNum:
+def calculateMaxSteps(iterDone, smoothingFactor=20, difficultyStepSize=100000, startDecreaseNum=500000):
+    if iterDone <= startDecreaseNum:
         value: float = 1.0
     else:
-        value = 1 - ((x - startDecreaseNum) / difficultyStepsize / 20)
+        value = 1 - ((iterDone - startDecreaseNum) / difficultyStepSize / smoothingFactor)
     value = max(value, 0.15)
     return value
 
 
-# Create a vectorized version of the function to apply on a numpy array
-vcalc_value = np.vectorize(calculateMaxSteps)
+x = np.arange(0, totalIterations)
+y = np.ones_like(x, dtype=float)
+for i in range(startDecreasingNum - iterationSteps, totalIterations, iterationSteps):
+    y[i: i + iterationSteps] = calculateMaxSteps(i)
+data = pd.DataFrame({'x': x, 'y': y})
+ax = sns.lineplot(data=data, x='x', y='y')
 
-y_values = vcalc_value(iterationsDone)
-sns.set(style="darkgrid")
+ax.set_xlabel('Training Iterations Done', fontsize='x-large')
+ax.set_ylabel('Maximum Steps %', fontsize='x-large')
+plt.title("Visualization of Maximum Steps Decreasing", fontsize="x-large")
 
-plt.figure(figsize=(10, 6))
-sns.lineplot(x=iterationsDone, y=y_values)
-plt.xlabel('training iterations done')
-plt.ylabel('maximum steps %')
-# plt.title('')
+ax.xaxis.set_tick_params(labelsize='medium')
+ax.yaxis.set_tick_params(labelsize='medium')
 plt.ylim(0, 1.01)
-plt.xlim(0, 5000000)
+plt.xlim(0, totalIterations)
 plt.show()
