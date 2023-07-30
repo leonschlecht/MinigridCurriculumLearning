@@ -24,7 +24,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     # Load agent
     model_dir = utils.get_model_dir(model)
     agent = utils.Agent(env.observation_space, env.action_space, model_dir,
-                        argmax=args.argmax, num_envs=args.procs,
+                        argmax=args.argmax, num_envs=envsToLoad,
                         use_memory=args.memory, use_text=args.text)
 
     # Initialize logs
@@ -35,8 +35,8 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     obss = env.reset()
 
     log_done_counter = 0
-    log_episode_return = torch.zeros(args.procs, device=device)
-    log_episode_num_frames = torch.zeros(args.procs, device=device)
+    log_episode_return = torch.zeros(envsToLoad, device=device)
+    log_episode_num_frames = torch.zeros(envsToLoad, device=device)
 
     while log_done_counter < args.episodes:
         actions = agent.get_actions(obss)
@@ -45,7 +45,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
         agent.analyze_feedbacks(rewards, dones)
 
         log_episode_return += torch.tensor(rewards, device=device, dtype=torch.float)
-        log_episode_num_frames += torch.ones(args.procs, device=device)
+        log_episode_num_frames += torch.ones(envsToLoad, device=device)
 
         for i, done in enumerate(dones):
             if done:
