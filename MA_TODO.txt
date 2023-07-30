@@ -1,6 +1,33 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-structure:
+Todo für @home /Sonntag
+- SPLCL 10 runs starten;  (--> VORHER PULLEN)
+
+- NSGA multiobj run auf cluster starten
+
+- SAC ausprobieren mit besserer HW
+
+
+- Gruppierungen für 2curric vs 3 vs 4 (vs 1 evtl auch noch) (auch für nGen und curricLength; damit ich den teil abschließen kann !)
+
+- evtl noch einen anderen single obj starten
+- CL Baseline (REIHENFOLGE statt alles gleichzeitig !!!)
+
+SAC todo:
+numFrames herausfinden
+schauen wie ich das speichern kann
+irgendwie in meins einbetten (basierend auf iterPerEnv starten)
+
+
+@Alex:
+Zeigen wie agent in 12x12 performt mit PPO ohne alles
+
+
+
+-------------------------------
+
+
+Results chapter structure:
 - 5kk
     - RHEA CL (GA dann NSGA)
         - beide vseinander
@@ -15,33 +42,29 @@ Next week wichtig:
 - Mergen von dem Results chapter fertig
 
 - evtl die Legend bei den plots umbenennen (damit es einheitlich ist mit denn namen die ich bnenutze in meiner arbeit)
--
 
-pc tmp datei rüberschieben
-Random notes:
-- diesen dip versuchen auszubalancieren, der durch die maxSteps entstanden ist wurde mal probiert
-- vllt mal die todos im code bearbeiten
-- Constraints einfügen für bessere balance (zb Relationship zwischen den einzelnen env-rewards --> Multi obj wäre besser) ; oder threshold rewards (ggf punishen, falls darunter)
-- Could have also made a stop at like .5 for 1kk and then go down all the way to .1 or so. (An alternative you could have used was to make it more like a step function, which stays the same for a bit of time, and the ncontinues to go down (right now it stays the same for 500k, then goes down linearly until .15, and then stays the same again
-- exp setup: Anfang refrenz für die komplett-tabelle am ende
+
+General todo:
+- alle Plots noch mal überarbeiten (2h) (NSGA 5kk, GA 5kk, Gruppierung nach curricCount, nGen, curricLength;	crossoverMutation comparisons
+- Discussion Chapter zusammenführen
++ auswertung für die Crossover / Mutation rates (inkl Distributions --> Auswirkungen des eAs besser verstehen)
++ ggf puren NSGA vs GA plot, wo nur experimente sind die in beiden varianten ausgeführt wurden
+1 - (bei ssh aufräumen)
+1 - evtl mit mehr als 1-2 CPUs ausprobieren
+- RQ2 überarbeiten, weil ich ja gar nicht auf konvergenz untersucht habe
+- plot für aus welcher gen das gewählte curriculum kam
+- evtl mal ein plot mit RRH CI/SD vs RHEA CL CI/SD, damit man die unterschiede besesr sehen kann
+- Plot für den effekt, den man eigentlich erzielen möchte (Basics Teil, ggf Methodology)
 - neue 25k 4s 3 3 run starten (Bzw testen warum es so unlucky war ?)
 - climbing speed signifikanztest ???
-
-
-
-Größeres todos:
 - Elitismus und NSGA
 - Pseudocode für Methodology
 - "sag mir noch mal bescheid wenn du das platziert hast" (5 tmp)
 - steigt GA oder NSGA schneller an in 1kk? -> Hypothesentest
+- - 1kk vs 2kk vs 3 vs 4 vs 5kk distributions der environments anschauen
 
-Programmiertodo
-- Boxplots der gruppierungen zeigen (k steps, nGen, ...)
-d - step plot fix
-
-
-Todos:
-schreib todo:
+Prog: - Boxplots der gruppierungen zeigen (k steps, nGen, ...)
+schreib:
 1 - chapter referenzieren (in 1.3 und generell)
 3 - vor und nachteile der einzelenn ansätze erläutern (basics)
 3 - domain kapitel aufteilen in kleinere bzw einfach am rand erwähnen
@@ -53,44 +76,35 @@ schreib todo:
 - RH Quelle
 - RH: at first glance absatz verbessern --> diesen RH algorithmus vs iteration eines Algorithmus (ggf als begriff einführen)
 - MCTS Quelle / RHEA Quelle
+- vornachteile in basics kapitel einzelner ansätze
+- domain basic teil rausnehmen (bzw in verkürzer form an anderen sachen einbringen)
+- cl local minimum in more depth
+- EA Quelle
+- RW so anpassen, dass man je nach domain noch bestimmt gos/nogos erwähnt für die Algorithmen
+- Sorgen: Begründung mit NSGA2. Warum überhaupt unterschiedlichen Effekt wenn single objective. Sehr reingeprägt als Multiobjective Problem
+---> starker elitismus (auch in basic erläutern)
+- multiobjective & singleobjective quelle da einbinde
 
 
 
 
-
-----------------------------
-
-Samstag-
-- alle Plots noch mal überarbeiten (2h) (NSGA 5kk, GA 5kk, Gruppierung nach curricCount, nGen, curricLength;	crossoverMutation comparisons
-- Discussion Chapter zusammenführen
-+ auswertung für die Crossover / Mutation rates (inkl Distributions --> Auswirkungen des eAs besser verstehen)
-+ ggf puren NSGA vs GA plot, wo nur experimente sind die in beiden varianten ausgeführt wurden
-1 - (bei ssh aufräumen)
-1 - evtl mit mehr als 1-2 CPUs ausprobieren
-- RQ2 überarbeiten, weil ich ja gar nicht auf konvergenz untersucht habe
-- plot für aus welcher gen das gewählte curriculum kam
-- evtl mal ein plot mit RRH CI/SD vs RHEA CL CI/SD, damit man die unterschiede besesr sehen kann
-- Plot für den effekt, den man eigentlich erzielen möchte (Basics Teil, ggf Methodology)
+Low prio todo
+- vllt mal die todos im code bearbeiten
 
 
-Todo für @home /Sonntag
-- SAC ausprobieren mit besserer HW
-- Gruppierungen für 2curric vs 3 vs 4 (vs 1 evtl auch noch) (auch für nGen und curricLength; damit ich den teil abschließen kann !)
-- SPLCL 10 runs starten;  (--> VORHER PULLEN)
-- NSGA multiobj run auf cluster starten
-- evtl noch einen anderen single obj starten
-- CL Baseline (REIHENFOLGE statt alles gleichzeitig !!!)
 
-SAC todo:
-numFrames herausfinden
-schauen wie ich das speichern kann
-irgendwie in meins einbetten (basierend auf iterPerEnv starten)
+Iwo einfügen
+- diesen dip versuchen auszubalancieren, der durch die maxSteps entstanden ist wurde mal probiert
+- Could have also made a stop at like .5 for 1kk and then go down all the way to .1 or so. (An alternative you could have used was to make it more like a step function, which stays the same for a bit of time, and the ncontinues to go down (right now it stays the same for 500k, then goes down linearly until .15, and then stays the same again
+- exp setup: Anfang refrenz für die komplett-tabelle am ende
 
 
-Nächste Woche:
-- 1kk vs 2kk vs 3 vs 4 vs 5kk distributions der environments anschauen
+Schreib-Ideen
+- Constraints einfügen für bessere balance (zb Relationship zwischen den einzelnen env-rewards --> Multi obj wäre besser) ; oder threshold rewards (ggf punishen, falls darunter)
 
 
+
+--------------------------------------------------------------------------------------------------------
 Random:
 - das ist super unclean geworden wegen der mutation/crossover probability und dass ich das jetzt hier und mal da geändert habe
 - alle C runs beschränken auf durchschnitt oder min der frames done
@@ -119,14 +133,15 @@ d - NSGA mehrdimensional (also 4 objectives
 
 
 
+Sa
+Schreibtag
+step plot fix
+paar kleinigkeiten
 
 --------------------------------------
-- interneal / external validation ?
-
+- internal / external validation ?
 Stackedbarplot performance (NSGA vs GA vs RRH vs AP vs SPLCL)
 
-Neue Fragen
-- Feste begriffe einführen, wie ich zB die hyperparameter nenne. zB curricStep statt "for every step of a curriculum"
 Experimente:
 - mit anderem ALgorithmus ( SAC / TD3 )
 - mit anderen Gamma raten
