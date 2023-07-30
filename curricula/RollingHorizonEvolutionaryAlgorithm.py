@@ -23,13 +23,13 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         super().__init__(txtLogger, startTime, cmdLineString, args)
         self.nGen = args.nGen
         self.useNSGA = args.useNSGA
-        if self.useNSGA:
-            self.objectives = 4
+        self.multiObj: bool = args.multiObj
+        if self.multiObj:
+            self.objectives: int = 4
         else:
-            self.objectives = 1
+            self.objectives: int = 1
         self.inequalityConstr = 0
         self.xupper = len(ENV_NAMES.ALL_ENVS) - 1
-        self.useNSGA: bool = args.useNSGA
         self.crossoverProb = args.crossoverProb
         self.mutationProb = args.mutationProb
         self.crossoverEta = args.crossoverEta
@@ -114,8 +114,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         curricula = self.evolXToCurriculum(evolX)
         self.curricula = curricula
         snapshotReward = np.zeros(len(curricula))
-        genKey = GEN_PREFIX + str(genNr)
-        if self.useNSGA:
+        if self.multiObj:
             rewards = np.zeros((len(curricula), 4))
         else:
             rewards = np.zeros(len(curricula))
@@ -129,11 +128,13 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
                     rewards[i][j] = tmp[j]
             else:
                 rewards[i] = np.sum(tmp)
+        genKey = GEN_PREFIX + str(genNr)
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula
         print("REWARDS sent for pymoo", rewards)
         return rewards
+
 
     def evolXToCurriculum(self, x):
         """

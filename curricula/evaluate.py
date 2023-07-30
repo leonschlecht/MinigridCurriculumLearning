@@ -93,7 +93,7 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
     return results
 
 
-def evaluateAgent(model, difficulty, args, txtLogger) -> int:
+def evaluateAgent(model, difficulty, args, txtLogger) -> list:
     """
     Evaluates and calculates the average performance in ALL environments
     Called from other classes to start the evaluation

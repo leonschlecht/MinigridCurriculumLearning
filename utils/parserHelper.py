@@ -31,8 +31,9 @@ def initializeArgParser():
     parser.add_argument("--numCurric", default=3, type=int,
                         help="Determines the amount of curricula that are used for training")
     parser.add_argument("--difficultyStepsize", default=100000, type=int,
-                        help="Determines when the difficulty will be adjusted. Default 100k -> -.1 decrease every 100k") # TODO add starting @500k param too
-    parser.add_argument("--trainEpochs", default=50, type=int, help="Tells the algorithm how long to train for.") # TODO change this since its calculated
+                        help="Determines when the difficulty will be adjusted. Default 100k -> -.1 decrease every 100k")  # TODO add starting @500k param too
+    parser.add_argument("--trainEpochs", default=50, type=int,
+                        help="Tells the algorithm how long to train for.")  # TODO change this since its calculated
     parser.add_argument("--nGen", default=3, type=int,
                         help="The amount of generations per RHEA iteration")
     parser.add_argument("--gamma", default=0.9, type=float,
@@ -52,6 +53,8 @@ def initializeArgParser():
     # EA PAram
     parser.add_argument("--useNSGA", default=False, action="store_true",
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
+    parser.add_argument("--multiObj", default=False, action="store_true",
+                        help="Whether multi objective NSGA is to be used")
     parser.add_argument("--crossoverProb", type=float, default=0.8, help="Crossover Probability of the RHEA CL")
     parser.add_argument("--mutationProb", type=float, default=0.8, help="Mutation Probability of the RHEA CL")
     parser.add_argument("--crossoverEta", type=float, default=3.0, help="Crossover ETA of the RHEA CL")

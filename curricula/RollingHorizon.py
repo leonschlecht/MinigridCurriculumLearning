@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from numpy import ndarray
 
 import utils
-from curricula import train, evaluate
+from curricula import train, evaluate, RollingHorizonEvolutionaryAlgorithm
 from utils import ENV_NAMES, getEnvFromDifficulty, storage
 from utils import getModelWithCandidatePrefix
 from utils.curriculumHelper import *
@@ -102,7 +102,13 @@ class RollingHorizon(ABC):
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         # TODO can probably remove genNr from method param
+        isMultiObj = False
         reward = np.zeros(len(curricula[i]))
+        # if isinstance(self, type(RollingHorizonEvolutionaryAlgorithm)):
+        if hasattr(self, "multiObj"): # TODO ??
+            isMultiObj = True
+            if isMultiObj:
+                reward = np.zeros((len(curricula[i]), 4)) # TODO self.objectives
         nameOfCurriculumI = self.getCurriculumName(i, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
@@ -110,8 +116,13 @@ class RollingHorizon(ABC):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, curricula[i][j],
                                                  self.args, self.txtLogger)
-            reward[j] = ((self.gamma ** j) * evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args,
-                                                                  self.txtLogger))
+            tmp = evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args, self.txtLogger)
+            print("evalScore", tmp)
+            if isMultiObj:
+                for i in range(len(tmp)):
+                    reward[i][j] = (self.gamma ** j) * tmp[i]
+            else:
+                reward[j] = (self.gamma ** j) * tmp
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
             self.logInfoAfterCurriculum(nameOfCurriculumI, iterationsDone, reward, j)
@@ -187,7 +198,8 @@ class RollingHorizon(ABC):
                     except Exception as e:
                         print("Exception while deleting:", e)
 
-            self.txtLogger.info(f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}], seed: {self.seed}")
+            self.txtLogger.info(
+                f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}], seed: {self.seed}")
         else:
             self.txtLogger.info("Creating model. . .")
             train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
