@@ -10,6 +10,9 @@ from training.PPO import MyPPOAlgo
 from utils import device, ENV_NAMES
 from model import ACModel
 
+from gymnasium.envs.registration import register
+
+
 # Parse arguments
 
 parser = argparse.ArgumentParser()
@@ -93,6 +96,13 @@ if __name__ == "__main__":
     txt_logger.info(f"Device: {device}\n")
 
     # Load environments
+    """
+    register(
+        id=args.env,
+        entry_point="minigrid.envs:DoorKeyEnv",
+        kwargs={"size": 12, "max_steps": 12*12*10},
+    )
+    """
 
     envs = []
     for i in range(args.procs):
@@ -146,7 +156,7 @@ if __name__ == "__main__":
     start_time = time.time()
     values = []
     startCountingValue = False
-    while num_frames < args.frames * 10:
+    while num_frames < args.frames:
         # Update model parameters
         update_start_time = time.time()
         exps, logs1 = algo.collect_experiences()
@@ -190,20 +200,6 @@ if __name__ == "__main__":
                 tb_writer.add_scalar(field, value, num_frames)
 
         # Save status
-        if logs["value"] > 0.75 and not startCountingValue:
-            startCountingValue = True
-            values = []
-        if startCountingValue:
-            values.append(logs["value"])
-            if len(values) > 10:
-                startCountingValue = False
-                import numpy as np
-
-                if np.mean(values) > 0.75:
-                    print("NEXT")
-                    # break
-        else:
-            startCountingValue = False
 
         if args.save_interval > 0 and update % args.save_interval == 0:
             status = {"num_frames": num_frames, "update": update,
