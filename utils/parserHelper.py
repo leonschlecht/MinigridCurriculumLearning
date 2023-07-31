@@ -12,6 +12,8 @@ def initializeArgParser():
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
     parser.add_argument("--trainAllParalell", default=False, action="store_true",
                         help="traines all 4 environments in parallel")
+    parser.add_argument("--asCurriculum", default=False, action="store_true",
+                        help="Adds the option to use --allParalell as a linear curriculum (6,8,10,12 in that order per epoch)")
     parser.add_argument("--allSimultaneous", default=True, action="store_false",
                         help="Determines if all envs should be trained simultaneously from the start, or if the envs should be selected depending on progress")
     parser.add_argument("--trainLinear", default=False, action="store_true",
@@ -94,5 +96,6 @@ def initializeArgParser():
     args.trainEvolutionary = not (
             args.trainLinear or args.trainAdaptive or args.trainRandomRH or args.trainBiasedRandomRH or args.trainAllParalell
     )
+    # TODO create some logic to ensure proper usage and not using some wrong args params
     # TODO create object for type safety
     return args

@@ -1,6 +1,5 @@
 import os
 
-
 from curricula import train, evaluate, RollingHorizon
 from utils import getEnvFromDifficulty, storage
 from utils.curriculumHelper import *
@@ -25,6 +24,7 @@ class allParalell:
         self.trainingTime = 0
         self.model = args.model + "_s" + str(self.seed)
         self.isSPLCL = not args.allSimultaneous
+        self.asCurriculum = args.asCurriculum
 
         self.selectedModel = self.model + os.sep + "model"
 
@@ -40,7 +40,7 @@ class allParalell:
 
         if not self.isSPLCL:
             print("AllPara")
-            self.initialEnvNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
+            self.initialEnvNames = self.updateEnvNamesNoAdjusment(self.envDifficulty, 0)
         else:
             print("SPLCL")
             self.initialEnvNames = self.initializeEnvNames(self.envDifficulty)
@@ -55,9 +55,9 @@ class allParalell:
     def trainEachCurriculum(self, startEpoch: int, totalEpochs: int, iterationsDone: int, initialEnvNames: list):
         envNames = initialEnvNames
         print("training will go on until", totalEpochs)
-        lastReward = 1
+        currentStep = 1 # helper param to determine at what point in an epoch we are
         for epoch in range(startEpoch, totalEpochs):
-            self.txtLogger.info(f"Envs: {envNames }")
+            self.txtLogger.info(f"Envs: {envNames}")
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
             if epoch == 0:
@@ -67,7 +67,13 @@ class allParalell:
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
             oldEnvNames = envNames.copy()
             if not self.isSPLCL:
-                envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
+                if self.asCurriculum:
+                    envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty, True, currentStep)
+                else:
+                    envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty, False)
+                currentStep += 1
+                if currentStep >= 4:  # TODO should probably have an #envs parameter here too
+                    currentStep = 0
             else:
                 envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty, self.seed + epoch, reward)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, oldEnvNames, reward, self.envDifficulty, iterationsDone)
@@ -89,11 +95,16 @@ class allParalell:
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
     @staticmethod
-    def updateEnvNamesNoAdjusment(difficulty) -> list:
+    def updateEnvNamesNoAdjusment(difficulty, currentStep=-1) -> list:
         envNames = []
         for j in range(len(ENV_NAMES.ALL_ENVS)):
-            index = j
+            if currentStep != -1:
+                index = currentStep
+            else:
+                index = j
             envNames.append(getEnvFromDifficulty(index, difficulty))
+        print("asCurric?", asCurriculum, "envs", envNames)
+        exit()
         return envNames
 
     @staticmethod
