@@ -103,8 +103,6 @@ class allParalell:
             else:
                 index = j
             envNames.append(getEnvFromDifficulty(index, difficulty))
-        print("asCurric?", asCurriculum, "envs", envNames)
-        exit()
         return envNames
 
     @staticmethod
