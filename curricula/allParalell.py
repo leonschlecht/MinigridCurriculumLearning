@@ -68,9 +68,9 @@ class allParalell:
             oldEnvNames = envNames.copy()
             if not self.isSPLCL:
                 if self.asCurriculum:
-                    envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty, True, currentStep)
+                    envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty, currentStep)
                 else:
-                    envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty, False)
+                    envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
                 currentStep += 1
                 if currentStep >= 4:  # TODO should probably have an #envs parameter here too
                     currentStep = 0
