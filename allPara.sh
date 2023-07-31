@@ -8,7 +8,7 @@
 #SBATCH --mem=16G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
-srun -c 2 -v python3 -m scripts.trainCurriculum --procs 16 --trainAllParalell --asCurric --model AllPara_v2 --noRewardShaping --seed 1
+srun -c 2 -v python3 -m scripts.trainCurriculum --procs 16 --trainAllParalell --asCurric --model AllPara_AsCurric --noRewardShaping --seed 3053
 echo "---------- Cluster Job End ---------------------"
 
 
