@@ -115,26 +115,25 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.curricula = curricula
         snapshotReward = np.zeros(len(curricula))
         if self.multiObj:
-            rewards = np.zeros((len(curricula), 4))
+            rewards = np.zeros((len(curricula), self.objectives))
         else:
             rewards = np.zeros(len(curricula))
 
         for i in range(len(curricula)):
             rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
             snapshotReward[i] = np.sum(rewardI[0])
-            tmp = [sum(x) for x in zip(*rewardI)]
-            if self.useNSGA:
+            if self.multiObj:
+                tmp = [sum(x) for x in zip(*rewardI)]
                 for j in range(len(tmp)):
                     rewards[i][j] = tmp[j]
             else:
-                rewards[i] = np.sum(tmp)
+                rewards[i] = np.sum(rewardI)
         genKey = GEN_PREFIX + str(genNr)
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula
         print("REWARDS sent for pymoo", rewards)
         return rewards
-
 
     def evolXToCurriculum(self, x):
         """

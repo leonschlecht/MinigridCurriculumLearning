@@ -105,10 +105,10 @@ class RollingHorizon(ABC):
         isMultiObj = False
         reward = np.zeros(len(curricula[i]))
         # if isinstance(self, type(RollingHorizonEvolutionaryAlgorithm)):
-        if hasattr(self, "multiObj"): # TODO ??
+        if hasattr(self, "multiObj") and self.multiObj: # TODO this is very ugly, but isinstance of did not work
             isMultiObj = True
             if isMultiObj:
-                reward = np.zeros((len(curricula[i]), 4)) # TODO self.objectives
+                reward = np.zeros((len(curricula[i]), self.objectives))
         nameOfCurriculumI = self.getCurriculumName(i, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
@@ -117,12 +117,11 @@ class RollingHorizon(ABC):
                                                  nameOfCurriculumI, curricula[i][j],
                                                  self.args, self.txtLogger)
             tmp = evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args, self.txtLogger)
-            print("evalScore", tmp)
             if isMultiObj:
-                for i in range(len(tmp)):
-                    reward[i][j] = (self.gamma ** j) * tmp[i]
+                for k in range(len(tmp)):
+                    reward[j][k] = (self.gamma ** j) * tmp[k]
             else:
-                reward[j] = (self.gamma ** j) * tmp
+                reward[j] = (self.gamma ** j) * np.sum(tmp)
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
             self.logInfoAfterCurriculum(nameOfCurriculumI, iterationsDone, reward, j)
