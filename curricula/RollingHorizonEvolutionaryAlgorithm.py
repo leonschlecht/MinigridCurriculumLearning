@@ -22,10 +22,14 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
     def __init__(self, txtLogger, startTime: datetime, cmdLineString: str, args: argparse.Namespace):
         super().__init__(txtLogger, startTime, cmdLineString, args)
         self.nGen = args.nGen
-        self.objectives = 1
+        self.useNSGA = args.useNSGA
+        self.multiObj: bool = args.multiObj
+        if self.multiObj:
+            self.objectives: int = 4
+        else:
+            self.objectives: int = 1
         self.inequalityConstr = 0
         self.xupper = len(ENV_NAMES.ALL_ENVS) - 1
-        self.useNSGA: bool = args.useNSGA
         self.crossoverProb = args.crossoverProb
         self.mutationProb = args.mutationProb
         self.crossoverEta = args.crossoverEta
@@ -109,22 +113,25 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         """
         curricula = self.evolXToCurriculum(evolX)
         self.curricula = curricula
-        rewards = np.zeros(len(curricula))
         snapshotReward = np.zeros(len(curricula))
-        genKey = GEN_PREFIX + str(genNr)
+        if self.multiObj:
+            rewards = np.zeros((len(curricula), self.objectives))
+        else:
+            rewards = np.zeros(len(curricula))
+
         for i in range(len(curricula)):
             rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
-            snapshotReward[i] = rewardI[0]
-            rewards[i] = np.sum(rewardI)
-            # self.txtLogger.info(f"\n===curriculum {i} done===\n")
+            snapshotReward[i] = np.sum(rewardI[0])
+            if self.multiObj:
+                tmp = [sum(x) for x in zip(*rewardI)]
+                for j in range(len(tmp)):
+                    rewards[i][j] = tmp[j]
+            else:
+                rewards[i] = np.sum(rewardI)
+        genKey = GEN_PREFIX + str(genNr)
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula
-        # self.txtLogger.info("\n")
-        #self.txtLogger.info(f"currentRewards after {genKey}: {self.currentRewardsDict}")
-        #self.txtLogger.info(f"snapshot Rewards after {genKey}: {self.currentSnapshotRewards}")
-        #self.txtLogger.info(f"currentEnvDetails for {genKey}: {self.curriculaEnvDetails[genKey]}")
-        #self.txtLogger.info(f"\n\n===       Generation {genNr} done      ===\n")
         return rewards
 
     def evolXToCurriculum(self, x):

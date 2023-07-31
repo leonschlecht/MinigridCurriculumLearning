@@ -63,7 +63,7 @@ class allParalell:
             if epoch == 0:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
-            reward = evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger)
+            reward = np.sum(evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger))
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
             oldEnvNames = envNames.copy()
             if not self.isSPLCL:
