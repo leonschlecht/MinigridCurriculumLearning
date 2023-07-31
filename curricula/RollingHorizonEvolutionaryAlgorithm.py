@@ -132,7 +132,6 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula
-        print("REWARDS sent for pymoo", rewards)
         return rewards
 
     def evolXToCurriculum(self, x):

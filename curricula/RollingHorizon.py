@@ -125,7 +125,6 @@ class RollingHorizon(ABC):
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
             self.logInfoAfterCurriculum(nameOfCurriculumI, iterationsDone, reward, j)
-        print("Pre transform reward", reward)
         return reward
 
     def logInfoAfterCurriculum(self, nameOfCurriculumI, iterationsDone, rewardList, j):
