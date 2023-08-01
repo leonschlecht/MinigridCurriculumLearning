@@ -12,8 +12,8 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 OFFSET = 10000
-xAndYFontSize = 20
-
+xAndYFontSize = 16
+legendFontSize = 14
 
 def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
                     modelNames: list[str], limitX=False):
@@ -255,12 +255,12 @@ def getSpecificModel(specificModelList: list, modelName: str):
             keys = ['MiniGrid-DoorKey-6x6', 'MiniGrid-DoorKey-8x8', 'MiniGrid-DoorKey-10x10', 'MiniGrid-DoorKey-12x12']
             data = []
 
-            for i in range(5):  # Loops 5 times for 5 'kk' values
-                split_value = f"{i + 1}kk"  # Forming the 'split' value
-                row = {"trained until": split_value, "id": result.modelName}  # Starting dictionary for this row
+            for i in range(result.framesTrained // 1000000):
+                split_value = f"{i + 1}m"
+                row = {"trained until": split_value, "id": result.modelName}
                 for key in keys:
-                    row[key] = result.splitDistrBestCurric[i][key]  # Adding value from result.splitDistrBestCurric
-                data.append(row)  # Appending this row to data
+                    row[key] = result.splitDistrBestCurric[i][key]
+                data.append(row)
 
             splitDistrDf = pd.DataFrame(data)
     rewardScoreDf = pd.DataFrame(scoreHelper)
@@ -350,7 +350,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             pass
         filteredScoreDfList = filterDf(filters, scoreDf, models, showCanceled=args.showCanceled)
         filteredDistrDfList = filterDf(filters, distrDf, models, showCanceled=args.showCanceled)
-        filteredSplitDistrDfList = filterDf(filters, distrDf, models, showCanceled=args.showCanceled)
+        filteredSplitDistrDfList = filterDf(filters, splitDistrDf, models, showCanceled=args.showCanceled)
     else:
         while modelsEntered < comparisons:
             val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
@@ -368,7 +368,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
                     break
                 print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
-    print(filteredSplitDistrDfList)
+
     return filteredScoreDfList, filteredDistrDfList, filteredSplitDistrDfList
 
 
@@ -444,17 +444,16 @@ def removeExperimentPrefix(dictDf):
 def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
     fig, ax = plt.subplots(figsize=(12, 8))
     if isSplit:
-        # TODO only works with 1 experiment unfortunately
+        # TODO only works with 1 experiment unfortunately (or aggregates it all)
         df = aggregatedDf
-        print(aggregatedDf)
         df = df.melt(id_vars=['trained until', 'id'],
                      value_vars=['MiniGrid-DoorKey-6x6', 'MiniGrid-DoorKey-8x8', 'MiniGrid-DoorKey-10x10', 'MiniGrid-DoorKey-12x12'],
                      var_name='Environment',
                      value_name='Value')
         sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
+        plt.title("Environment Distribution at different Training Stages", fontsize=xAndYFontSize)
         plt.show()
     else:
-        print(aggregatedDf)
         group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
         # sort by the numerical values of the string (50k, 75k, ...)
         aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
@@ -472,7 +471,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         plt.xticks(rotation=-45, ha='left', fontsize=9)
         plt.subplots_adjust(bottom=0.2)
         if args.normalize:
-            plt.ylim((0, .55))
+            plt.ylim((0, 1))
         plt.show()
 
 
@@ -501,7 +500,7 @@ def includeNormalizedColumns(aggregatedDf, prefix):
 def showTrainingTimePlot(aggregatedDf):
     fig, ax = plt.subplots(figsize=(12, 8))
     group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
-    if args.rhea:
+    if args.rhea or args.nsga or args.ga:
         aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
         aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
         aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
@@ -509,14 +508,16 @@ def showTrainingTimePlot(aggregatedDf):
     else:
         sns.barplot(x='id', y='sumTrainingTime', data=aggregatedDf, ax=ax)
 
-    plt.ylabel('training time (hours)')
+    plt.ylabel('training time (hours)', fontsize=xAndYFontSize)
     plt.xlabel('')
     title = "Training Time"
+    # ax.legend(loc='upper right', bbox_to_anchor=(0.5, -0.2), fontsize="14") # TODO fix fontsize
+
     if args.title:
         title = args.title
     plt.title(title, fontsize=xAndYFontSize)
-    plt.xticks(rotation=-45, ha='left', fontsize=9)
-    plt.subplots_adjust(bottom=0.2)
+    plt.xticks(rotation=-45, ha='left', fontsize=10)
+    plt.subplots_adjust(bottom=0.3)
 
     # TODO the legend part might be specific to some of the settings and not universal
     if args.rhea:
@@ -547,19 +548,19 @@ def plotAggregatedBarplot(filteredDfList):
 
     if args.trainingTime:
         showTrainingTimePlot(aggregatedDf)
-
     column_prefixes = {'snapshotDistr': 's', 'curricDistr': 'c', 'allDistr': 'a'}
-    for arg, prefix in column_prefixes.items():
-        if getattr(args, arg):
-            if args.normalize:
-                aggregatedDf = includeNormalizedColumns(aggregatedDf, prefix)
-                columns_to_visualize = [f'6x6n', f'8x8n', f'10x10n', f'12x12n', 'id']
-            else:
-                columns_to_visualize = [f'6x6{prefix}', f'8x8{prefix}', f'10x10{prefix}', f'12x12{prefix}', 'id']
-            showDistrVisualization(aggregatedDf, columns_to_visualize)
     if args.splitDistr:
         toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10", "MiniGrid-DoorKey-12x12"]
         showDistrVisualization(aggregatedDf, toVisualize, True)
+    else:
+        for arg, prefix in column_prefixes.items():
+            if getattr(args, arg):
+                if args.normalize:
+                    aggregatedDf = includeNormalizedColumns(aggregatedDf, prefix)
+                    columns_to_visualize = [f'6x6n', f'8x8n', f'10x10n', f'12x12n', 'id']
+                else:
+                    columns_to_visualize = [f'6x6{prefix}', f'8x8{prefix}', f'10x10{prefix}', f'12x12{prefix}', 'id']
+                showDistrVisualization(aggregatedDf, columns_to_visualize)
 
     print("---- Done ----")
 

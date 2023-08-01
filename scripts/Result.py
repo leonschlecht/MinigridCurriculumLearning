@@ -140,7 +140,7 @@ class Result:
             for epochList in bestCurriculaDict:
                 curriculum = self.getListOrDictEntry(bestCurriculaDict, epochList)
                 epochNr = int(epochList.split("_")[1])
-                if epochNr * self.iterationsPerEnv > 1000000 * (i+1):
+                if epochNr * self.iterationsPerEnv > 1000000 * (i+1): # TODO maybe here for the 500k steps
                     splitDistributions.append(bestCurriculaEnvDistribution)
                     bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
                     i += 1

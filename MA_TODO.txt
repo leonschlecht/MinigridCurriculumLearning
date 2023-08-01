@@ -1,12 +1,9 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-d- SPLCL 10 runs starten;  (--> VORHER PULLEN)
-d - NSGA multiobj run auf cluster starten
-d - CL Baseline (REIHENFOLGE statt alles gleichzeitig !!!)
 
+- einen nsga&ga filter einbauen
 
-nachher: - SAC ausprobieren mit besserer HW
-    SAC todo:
+SAC todo:
     schauen wie ich das speichern kann
     irgendwie in meins einbetten (basierend auf iterPerEnv starten)
 
@@ -14,55 +11,82 @@ nachher: - SAC ausprobieren mit besserer HW
 @Alex:
 - No Curric Baseline (einfach 12x12 ausprobieren) useful ? Ist kein aufwand
 - evtl noch einen anderen single obj starten
+- Baseline trainieren ohne CL (random order der samples) --> Quasi 1 epoch mit 4 batches ( --> frag alex dazu)
+- $...$ ahh
+- aus welcher gen kommt das beste curriculum - interessant?
+- Meine neue Struktur für das kapitel
+- hätte die rewards einzeln alle loggen sollen (damit ich weiß wie gut er welche env kann und wo er struggelt)
+- all Curric plot useful? Kann man evtl besser zeigen ok: best curric sieht die sitr so aus, 1. step sieht sie so aus ...
 
 
-------------------------------
-
-- Gruppierungen für 2curric vs 3 vs 4 (vs 1 evtl auch noch) (auch für nGen und curricLength; damit ich den teil abschließen kann !)
-
-
--------------------------------
+-------------------------------------------------------------
 
 
 Results chapter structure:
 - 5kk
     - RHEA CL (GA dann NSGA)
-        - beide vseinander
-        - einzelne params vergleichen (und ggf 1-3 plots noch dazu packen --> welcher param zu low = schlecht;
+        - beide vs einander
+        - Crossove Mutation Variationen
+        - Gamma Anpassungen
+        - Snapshot vs curricscore zeigen
+        - Reward shaping vs ohne
+        - einzelne params vergleichen (und ggf 1-3 plots noch dazu packen --> welcher params evtl schlechtere Performance auslösen
             welcher param höher wirkt vielversprechend?
+    - RndRH, SPLCL, AllParallel einzeln
+    - RHEA CL vs andere. Was sieht man? Wer performt am besten? Wieso?
+- 1kk
+    - RHEA CL (GA dann NSGA)
+        - beide vs einander
+        - einzelne params vergleichen (und ggf 1-3 plots noch dazu packen --> welcher params evtl schlechtere Performance auslösen
+            welcher param höher wirkt vielversprechend?
+    - RndRH, SPLCL, AllParallel einzeln
+    - RHEA CL vs andere. Wer braucht am längsten? Wieso?
+- Training Time
+- Env Distributions
+    - RHEA CL
+    - Andere Methoden
+    - Wie sieht die Overall Env Selection aus? Warum wird 12x12 so selten gewählt?
+    - Wie verhält sich der EA anders nach 1kk, 2kk, 3kk, 4kk, 5kk iterationen? Welche Erkenntnisse kann man daraus ziehen?
+    - Kann man hier vllt auch erklären, warum die performacne für curricCount=2 so schlecht ist?
+- Zusammenfassend noch mal die RQs beantworten
+- Limitations noch mal zusammenfassen
+
+
 
 ------------------------------------------------
 
 Next week wichtig:
 - SAC hinbekommen ODER anderen Algo (Oder es sein lassen)
 - Env Distributions genug text geschrieben(-> verstehen und erklären was wann passiert im algo)
-- bonus: aus welcher gen kam das selektierte curriculum
 - Mergen von dem Results chapter fertig
-
+- Kapitel 4 & 5 fertig ( Fr & Sa & So)
+- Entscheiden, welche Grafiken ich alles brauche & dann das nötige dafür implementieren (Welche gruppierungen brauche ich?)
+    - Gruppierungen für 2curric vs 3 vs 4 (vs 1 evtl auch noch) (auch für nGen und curricLength; damit ich den teil abschließen kann !)
+- Grafiken alle neu machen
+- Pseudocode für Methodology
 - evtl die Legend bei den plots umbenennen (damit es einheitlich ist mit denn namen die ich bnenutze in meiner arbeit)
 
 
 General todo:
-- alle Plots noch mal überarbeiten (2h) (NSGA 5kk, GA 5kk, Gruppierung nach curricCount, nGen, curricLength;	crossoverMutation comparisons
-- Discussion Chapter zusammenführen
-+ auswertung für die Crossover / Mutation rates (inkl Distributions --> Auswirkungen des eAs besser verstehen)
 + ggf puren NSGA vs GA plot, wo nur experimente sind die in beiden varianten ausgeführt wurden
 1 - (bei ssh aufräumen)
 1 - evtl mit mehr als 1-2 CPUs ausprobieren
 - RQ2 überarbeiten, weil ich ja gar nicht auf konvergenz untersucht habe
-- plot für aus welcher gen das gewählte curriculum kam
 - evtl mal ein plot mit RRH CI/SD vs RHEA CL CI/SD, damit man die unterschiede besesr sehen kann
 - Plot für den effekt, den man eigentlich erzielen möchte (Basics Teil, ggf Methodology)
 - neue 25k 4s 3 3 run starten (Bzw testen warum es so unlucky war ?)
 - climbing speed signifikanztest ???
 - Elitismus und NSGA
-- Pseudocode für Methodology
-- "sag mir noch mal bescheid wenn du das platziert hast" (5 tmp)
-- steigt GA oder NSGA schneller an in 1kk? -> Hypothesentest
-- - 1kk vs 2kk vs 3 vs 4 vs 5kk distributions der environments anschauen
-- CrMutation -> Inclusion of other variants
++++
+- Warum ist die iterationSteps egal bei dem initialen climb? Sollte es nicht gut machbar sein
+- anhang: tabelle der experimente
+- anhang: canceled experiments. ggf noch 1-2 sätze dazu schreiben wie weit es kam und was für performance das hatte
 
-Prog: - Boxplots der gruppierungen zeigen (k steps, nGen, ...)
+
+
+Prog:
+    - Boxplots der gruppierungen zeigen (k steps, nGen, ...)
+
 schreib:
 1 - chapter referenzieren (in 1.3 und generell)
 3 - vor und nachteile der einzelenn ansätze erläutern (basics)
@@ -137,13 +161,29 @@ Schreibtag
 step plot fix
 paar kleinigkeiten
 
---------------------------------------
+So
+Ruhetag ?
+
+
+
+Mo
+viel überarbeiten im results kapitel; manche plots verbessert
+d- SPLCL 10 runs starten;  (--> VORHER PULLEN)
+d - NSGA multiobj run auf cluster starten
+d - CL Baseline (REIHENFOLGE statt alles gleichzeitig !!!)
+- SAC @home probiert (ging nicht starten)
+
+Di:
+- Distribution teil fertigmachen
+
+
+
+----------------------------------------------------------------------------------
 - internal / external validation ?
 Stackedbarplot performance (NSGA vs GA vs RRH vs AP vs SPLCL)
 
 Experimente:
 - mit anderem ALgorithmus ( SAC / TD3 )
-- mit anderen Gamma raten
 - mit / ohne Rewardshaping vergleichen
 - mit anderen curricLengths (--stepsPerCurric)
 
@@ -224,7 +264,6 @@ Plot: Env distribution of NSGA vs GA (vs random rh vs splcl)
 - env distributions anschuaen,
 - env distribution normalisieren
 - 2 Grafiken einbinden (objetive function smoothing Nr1, und vllt die data driven / model driven #2)
-- Baseline trainieren ohne CL (random order der samples) --> Quasi 1 epoch mit 4 batches ( --> frag alex dazu)
 stackedBarplot: heatmap: zeile curricula, spalte environments; Rot markeiren was oft ist und weiß was weniger
 
 
