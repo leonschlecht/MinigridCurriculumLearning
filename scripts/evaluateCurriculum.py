@@ -14,6 +14,8 @@ import numpy as np
 OFFSET = 10000
 xAndYFontSize = 16
 legendFontSize = 14
+xLabelFontSize = 12
+
 
 def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
                     modelNames: list[str], limitX=False):
@@ -456,7 +458,11 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
     else:
         group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
         # sort by the numerical values of the string (50k, 75k, ...)
-        aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+        print("ADF", aggregatedDf)
+        if args.rhea or args.nsga or args.ga:
+            aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+        else:
+            aggregatedDf["sort_col"] = aggregatedDf["id"]
         aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
         aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
 
@@ -472,6 +478,17 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         plt.subplots_adjust(bottom=0.2)
         if args.normalize:
             plt.ylim((0, 1))
+        legend = ax.legend(fontsize=legendFontSize)
+        labels = []
+        sizes = ["6x6", "8x8", "10x10", "12x12"]
+        for item in legend.get_texts():
+            label = item.get_text()
+            for size in sizes:
+                if label.startswith(size):
+                    labels.append(size)
+                    break
+        for label, text in zip(legend.texts, labels):
+            label.set_text(text)
         plt.show()
 
 
@@ -516,7 +533,7 @@ def showTrainingTimePlot(aggregatedDf):
     if args.title:
         title = args.title
     plt.title(title, fontsize=xAndYFontSize)
-    plt.xticks(rotation=-45, ha='left', fontsize=10)
+    plt.xticks(rotation=-45, ha='left', fontsize=xLabelFontSize)
     plt.subplots_adjust(bottom=0.3)
 
     # TODO the legend part might be specific to some of the settings and not universal

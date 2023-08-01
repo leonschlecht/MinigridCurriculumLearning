@@ -57,27 +57,51 @@ class Result:
             self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
             self.bestCurriculaEnvDistribution, self.splitDistrBestCurric = \
                 self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
+        elif self.loadedArgsDict[trainRandomRH] == "True":
+            self.allCurricDistribution = {env: 0 for env in usedEnvEnumeration}
+            self.bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
+            self.snapshotEnvDistribution = {env: 0 for env in usedEnvEnumeration}
 
+            for helper in self.fullEnvDict:
+                for tmp in self.fullEnvDict[helper]:
+                    for t in tmp:
+                        for env in t:
+                            envStrRaw = env.split("-custom")[0]  # TODO this is duplicate in other method
+                            self.allCurricDistribution[envStrRaw] += 1
+            for epochKey in self.bestCurriculaDict:
+                i = 0
+                for stepOfBestCurric in self.bestCurriculaDict[epochKey]:
+                    for env in stepOfBestCurric:
+                        envStrRaw = env.split("-custom")[0]  # TODO this is duplicate in other method
+                        self.bestCurriculaEnvDistribution[envStrRaw] += 1
+                        if i == 0:
+                            self.snapshotEnvDistribution[envStrRaw] += 1
+                    i += 1
+            # TODO move to new method
+            bestCurricScores = self.snapShotScores
+            avgEpochRewards = self.snapShotScores
         elif self.loadedArgsDict[trainAllParalell]:
-            # print("AllPara detected")
             self.allCurricDistribution = []
             bestCurricScores = self.snapShotScores
             avgEpochRewards = self.snapShotScores
-            self.snapshotEnvDistribution: dict = {}
-            for env in usedEnvEnumeration:
-                self.snapshotEnvDistribution[env] = self.epochsTrained
+            self.snapshotEnvDistribution = {env: 0 for env in usedEnvEnumeration}
+            if self.loadedArgsDict["allSimultaneous"] == "True":
+                for env in usedEnvEnumeration:
+                    self.snapshotEnvDistribution[env] = self.epochsTrained
+            else:
+                for env in usedEnvEnumeration:
+                    self.snapshotEnvDistribution[env] = 0
+                for helper in self.fullEnvDict:
+                    for epochResult in self.fullEnvDict[helper]:
+                        envStrRaw = epochResult.split("-custom")[0] # TODO this is duplicate in other method
+                        self.snapshotEnvDistribution[envStrRaw] += 1
             self.bestCurriculaEnvDistribution = self.snapshotEnvDistribution
             self.allCurricDistribution = self.snapshotEnvDistribution
-            # TODO there is still the differentiation between adjusting the envs used and using all 4 at the same time
-        elif self.loadedArgsDict[trainBiasedRandomRH]:
-            print("biased random rh detected")
-        elif self.loadedArgsDict[trainRandomRH]:
-            print("random rh detected")
-            # TODO can probably copy some stuff from the trainevolutioanry thigns above
+            # TODO move all this code out of if else maybe ?
+
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
 
-        # print("modelname:", self.modelName)
         errorPrefix = f"model: {self.modelName}_s{self.loadedArgsDict[seedKey]}:"
         assert self.bestCurricScore != []
         assert self.avgEpochRewards != []
