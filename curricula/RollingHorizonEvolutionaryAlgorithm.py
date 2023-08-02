@@ -74,10 +74,6 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
                            eliminate_duplicates=True,
                            )
 
-        # NSGA2 Default: # sampling: FloatRandomSampling = FloatRandomSampling(),
-        # selection: TournamentSelection = TournamentSelection(func_comp=binary_tournament),
-        # crossover: SBX = SBX(eta=15, prob=0.9),
-        # mutation: PM = PM(eta=20),
         curricProblem = CurriculumProblem(self.curricula, self.objectives, self.inequalityConstr, self.xupper,
                                           self.paraEnvs, self)
 
@@ -115,11 +111,13 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         curricula = self.evolXToCurriculum(evolX)
         self.curricula = curricula
         snapshotReward = np.zeros(len(curricula))
+        genKey = GEN_PREFIX + str(genNr)
+
         if self.multiObj:
             rewards = np.zeros((len(curricula), self.objectives))
         else:
             rewards = np.zeros(len(curricula))
-
+        self.rawRewardDetails[genKey] = {}
         for i in range(len(curricula)):
             rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
             rawReward = rewardI.copy()
@@ -134,11 +132,10 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
                     rewards[i][j] = envRewards[j]
             else:
                 rewards[i] = np.sum(rewardI)
-        genKey = GEN_PREFIX + str(genNr)
+            self.rawRewardDetails[genKey][f"curric_{i}"] = rawReward
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula
-        self.rawRewardDetails[genKey] = rawReward
         return rewards
 
     def evolXToCurriculum(self, x):
