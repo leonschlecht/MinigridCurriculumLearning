@@ -1,9 +1,8 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 
-- einen nsga&ga filter einbauen
-
 PLOT todo :
+- einen nsga&ga filter einbauen
 - Überall titel hinzufügen mit einheitlicher schriftgröße
 - Legend immer hinzufügen + fontsize anpassen
 - unnötigen krams aus legend rauscutten (also zb "Column" oder das n bei "6x6n")
@@ -17,24 +16,13 @@ SAC todo:
     irgendwie in meins einbetten (basierend auf iterPerEnv starten)
 
 
-@Alex:
-- No Curric Baseline (einfach 12x12 ausprobieren) useful ? Ist kein aufwand
-- evtl noch einen anderen single obj starten
-- Baseline trainieren ohne CL (random order der samples) --> Quasi 1 epoch mit 4 batches ( --> frag alex dazu)
-- $...$ ahh
-- aus welcher gen kommt das beste curriculum - interessant?
-- Meine neue Struktur für das kapitel
-- hätte die rewards einzeln alle loggen sollen (damit ich weiß wie gut er welche env kann und wo er struggelt)
-- all Curric plot useful? Kann man evtl besser zeigen ok: best curric sieht die sitr so aus, 1. step sieht sie so aus ...
-
-
 
 ----------------------------
-- evtl noch 3. EA algo
-- bayesian optimization
-- Rewardveränderungen der einzelnen envs (
-- Performance plotten durch env distribution --> Neue Runs, damit man besser nachvollziehen kann, wie gut er in welcher env ist
-- whiteboard step-color plot (unter der performance)
+@Alex:
+- $...$ ahh
+- aus welcher gen kommt das beste curriculum - interessant?
+- all Curric plot useful? Kann man evtl besser zeigen ok: best curric sieht die sitr so aus, 1. step sieht sie so aus ...
+
 
 -------------------------------------------------------------
 
@@ -74,7 +62,7 @@ Results chapter structure:
 
 Next week wichtig:
 - SAC hinbekommen ODER anderen Algo (Oder es sein lassen)
-- Env Distributions genug text geschrieben(-> verstehen und erklären was wann passiert im algo)
+(d) - Env Distributions genug text geschrieben(-> verstehen und erklären was wann passiert im algo).
 - Mergen von dem Results chapter fertig
 - Kapitel 4 & 5 fertig ( Fr & Sa & So)
 - Entscheiden, welche Grafiken ich alles brauche & dann das nötige dafür implementieren (Welche gruppierungen brauche ich?)
@@ -82,7 +70,8 @@ Next week wichtig:
 - Grafiken alle neu machen
 - Pseudocode für Methodology
 - evtl die Legend bei den plots umbenennen (damit es einheitlich ist mit denn namen die ich bnenutze in meiner arbeit)
-
+++
+- neue Runs starten mit den neuen Rewardstruktur. Auch den Code dazu schreiben.
 
 General todo:
 + ggf puren NSGA vs GA plot, wo nur experimente sind die in beiden varianten ausgeführt wurden
@@ -98,8 +87,11 @@ General todo:
 - Warum ist die iterationSteps egal bei dem initialen climb? Sollte es nicht gut machbar sein
 - anhang: tabelle der experimente
 - anhang: canceled experiments. ggf noch 1-2 sätze dazu schreiben wie weit es kam und was für performance das hatte
-
-
+- No Curric Baseline (einfach 12x12 ausprobieren) useful ? Ist kein aufwand
+- evtl noch einen anderen single obj starten ( --> falls man aussage verstärken möchte. Aber wird bei der geringen popzahl eh nix ausmachen)
+- Rewardveränderungen der einzelnen envs plotten (ggf als 4er plot
+- Performance plotten durch env distribution --> Neue Runs, damit man besser nachvollziehen kann, wie gut er in welcher env ist &
+- aus dem meeting: whiteboard step-color plot (unter der performance!)
 
 Prog:
     - Boxplots der gruppierungen zeigen (k steps, nGen, ...)
@@ -127,7 +119,6 @@ schreib:
 
 
 
-
 Low prio todo
 - vllt mal die todos im code bearbeiten
 
@@ -141,6 +132,7 @@ Iwo einfügen
 
 Schreib-Ideen
 - Constraints einfügen für bessere balance (zb Relationship zwischen den einzelnen env-rewards --> Multi obj wäre besser) ; oder threshold rewards (ggf punishen, falls darunter)
+- bayesian optimization -> Hyperparameter tuning hätte man damit vllt machen sollen statt so willkürlich
 
 
 

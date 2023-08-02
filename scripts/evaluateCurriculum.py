@@ -11,10 +11,11 @@ from utils.curriculumHelper import *
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 
-OFFSET = 10000
-xAndYFontSize = 16
+OFFSET = 1000
+
+labelFontsize = 20
 legendFontSize = 14
-xLabelFontSize = 12
+tickFontsize = 12
 
 
 def plotPerformance(allYValues: list[list[float]], allXValues: list[list[int]], maxYValue: int, title: str,
@@ -175,7 +176,7 @@ def plotEnvsUsedDistribution(allEnvDistributions: list[dict], ax, modelNames, fi
         x = np.arange(len(envs))
         x = [xi + x_offset + distrIndex * bar_width for xi in x]
         ax.bar(x, envOccurrences, width=bar_width, label=modelNames[distrIndex])
-    ax.set_ylabel('Occurrence', fontsize=xAndYFontSize)  # TODO only for index == 0?
+    ax.set_ylabel('Occurrence', fontsize=labelFontsize)  # TODO only for index == 0?
     ax.set_xticks(np.arange(len(envs)))
     ax.set_xticklabels(envs)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2))
@@ -388,16 +389,16 @@ def plotMultipleLineplots(filteredDfList, yColumns: list[str]):
     # for name, group in grouped:
     #     sns.lineplot(x='iterationSteps', y='snapshotScore', data=group, label=str(name), ax=ax)
 
-    ax.set_ylabel("evaluation reward", fontsize=xAndYFontSize)
-    ax.set_xlabel("iterations", fontsize=xAndYFontSize)
+    ax.set_ylabel("evaluation reward", fontsize=labelFontsize)
+    ax.set_xlabel("iterations", fontsize=labelFontsize)
 
     box = ax.get_position()
     # Edit this line out to move the legend out of the plot
     # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     # ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
-    ax.set_xlim((0, args.xIterations))
+    ax.set_xlim((0, args.xIterations + OFFSET))
     ax.set_ylim((0, 1))
-    plt.title("mean performance", fontsize=xAndYFontSize)
+    plt.title("mean performance", fontsize=labelFontsize)
     plt.show()
 
 
@@ -453,7 +454,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
                      var_name='Environment',
                      value_name='Value')
         sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
-        plt.title("Environment Distribution at different Training Stages", fontsize=xAndYFontSize)
+        plt.title("Environment Distribution at different Training Stages", fontsize=labelFontsize)
         plt.show()
     else:
         group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
@@ -471,14 +472,15 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
         melted_df['id'] = pd.Categorical(melted_df['id'], categories=aggregatedDf['id'].unique(), ordered=True)
         sns.barplot(data=melted_df, x='id', y='Value', hue='Column', errorbar=args.errorbar)
-        plt.ylabel('Value', fontsize=xAndYFontSize)
-        plt.title("Environment Distribution", fontsize=xAndYFontSize)
+        plt.ylabel('Value', fontsize=labelFontsize)
+        plt.title("Environment Distribution", fontsize=labelFontsize)
         plt.xlabel('')
-        plt.xticks(rotation=-45, ha='left', fontsize=9)
+        plt.yticks(fontsize=tickFontsize)
+        plt.xticks(rotation=-15, ha='left', fontsize=tickFontsize) # TODO some args param or smth
         plt.subplots_adjust(bottom=0.2)
         if args.normalize:
             plt.ylim((0, 1))
-        legend = ax.legend(fontsize=legendFontSize)
+        legend = ax.legend(fontsize=labelFontsize)
         labels = []
         sizes = ["6x6", "8x8", "10x10", "12x12"]
         for item in legend.get_texts():
@@ -525,15 +527,15 @@ def showTrainingTimePlot(aggregatedDf):
     else:
         sns.barplot(x='id', y='sumTrainingTime', data=aggregatedDf, ax=ax)
 
-    plt.ylabel('training time (hours)', fontsize=xAndYFontSize)
+    plt.ylabel('training time (hours)', fontsize=labelFontsize)
     plt.xlabel('')
     title = "Training Time"
     # ax.legend(loc='upper right', bbox_to_anchor=(0.5, -0.2), fontsize="14") # TODO fix fontsize
 
     if args.title:
         title = args.title
-    plt.title(title, fontsize=xAndYFontSize)
-    plt.xticks(rotation=-45, ha='left', fontsize=xLabelFontSize)
+    plt.title(title, fontsize=labelFontsize)
+    plt.xticks(rotation=-45, ha='left', fontsize=tickFontsize)
     plt.subplots_adjust(bottom=0.3)
 
     # TODO the legend part might be specific to some of the settings and not universal
@@ -658,9 +660,9 @@ def main(comparisons: int):
             print(f"{occur} experiments done with {m}")
             modelDf = modelDf[modelDf[iterationSteps] < args.xIterations + OFFSET]
             sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m, errorbar=args.errorbar)
-            plt.xlabel('Index', fontsize=xAndYFontSize)
-            plt.ylabel('training time (hours)', fontsize=xAndYFontSize)
-            plt.title(args.title, fontsize=xAndYFontSize)
+            plt.xlabel('Index', fontsize=labelFontsize)
+            plt.ylabel('training time (hours)', fontsize=labelFontsize)
+            plt.title(args.title, fontsize=labelFontsize)
             plt.legend()
             plt.show()
 
