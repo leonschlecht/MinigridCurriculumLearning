@@ -24,6 +24,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.nGen = args.nGen
         self.useNSGA = args.useNSGA
         self.multiObj: bool = args.multiObj
+        self.numEnvironments = 4
         if self.multiObj:
             self.objectives: int = 4
         else:
@@ -109,7 +110,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         This method is called from the curriculumProblem_eval method. It simulates one generation and returns the reward to pymoo
         :param evolX: the X parameter of the current RHEA population
         :param genNr: the number of the current generation
-        :return: the rewards after the rolling horizon
+        :return: the rewards after the rolling horizon, which will be sent to pymoo (CurricProblem) for the evaluation
         """
         curricula = self.evolXToCurriculum(evolX)
         self.curricula = curricula
@@ -121,17 +122,23 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
 
         for i in range(len(curricula)):
             rewardI = self.trainACurriculum(i, self.iterationsDone, genNr, curricula)
+            rawReward = rewardI.copy()
             snapshotReward[i] = np.sum(rewardI[0])
+            # Do gamma transformation
+            for j in range(len(rewardI)):
+                rewardI[j] = rewardI[j] * self.gamma ** j
+            # Do adjustments for correct shape for pymoo
             if self.multiObj:
-                tmp = [sum(x) for x in zip(*rewardI)]
-                for j in range(len(tmp)):
-                    rewards[i][j] = tmp[j]
+                envRewards = [sum(x) for x in zip(*rewardI)]
+                for j in range(len(envRewards)):
+                    rewards[i][j] = envRewards[j]
             else:
                 rewards[i] = np.sum(rewardI)
         genKey = GEN_PREFIX + str(genNr)
         self.currentRewardsDict[genKey] = rewards
         self.currentSnapshotRewards[genKey] = snapshotReward
         self.curriculaEnvDetails[genKey] = curricula
+        self.rawRewardDetails[genKey] = rawReward
         return rewards
 
     def evolXToCurriculum(self, x):
@@ -163,7 +170,6 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         :return the transformed list containing integers representing the environment Nr
         """
         indices = []
-        print("curricList", curriculaList)
         for i in range(len(curriculaList)):
             indices.append([])
             for env in curriculaList[i]:

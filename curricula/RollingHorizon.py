@@ -47,6 +47,7 @@ class RollingHorizon(ABC):
         self.currentRewardsDict = {}
         self.currentSnapshotRewards = {}
         self.curriculaEnvDetails = {}
+        self.rawRewardDetails = {}
         self.modelExists = os.path.exists(self.logFilePath)
 
     def saveFirstStepOfModel(self, exactIterationsPerEnv: int, nameOfCurriculumI: str):
@@ -72,7 +73,6 @@ class RollingHorizon(ABC):
             rewards["epoch" + str(epoch)] = self.currentRewardsDict
 
             # normalize currentRewards
-            print("currentRewards", self.currentRewardsDict)
             currentRewardsList = [self.currentRewardsDict[key] for key in self.currentRewardsDict]
             bestCurricScoreRaw: float = np.max(currentRewardsList)
             currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values()))
@@ -82,10 +82,8 @@ class RollingHorizon(ABC):
 
             self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.difficultyStepsize)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurricScoreRaw,
-                                    currentSnapshotScore,
-                                    self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula,
-                                    self.curriculaEnvDetails,
-                                    self.logFilePath, self.curricMaxReward)
+                                    currentSnapshotScore, self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula,
+                                    self.curriculaEnvDetails, self.logFilePath, self.curricMaxReward, self.rawRewardDetails)
             self.updateSpecificInfo(
                 epoch)  # TODO this should probably be already done in the executeOneEpoch method, name is confusing
             self.logInfoAfterEpoch(epoch, currentBestCurriculum, bestCurricScoreRaw, currentSnapshotScore,
@@ -102,13 +100,9 @@ class RollingHorizon(ABC):
         Simulates a horizon and returns the rewards obtained after evaluating the state at the end of the horizon
         """
         # TODO can probably remove genNr from method param
-        isMultiObj = False
-        reward = np.zeros(len(curricula[i]))
+        reward = np.zeros((len(curricula[i]), self.numEnvironments))
         # if isinstance(self, type(RollingHorizonEvolutionaryAlgorithm)):
-        if hasattr(self, "multiObj") and self.multiObj: # TODO this is very ugly, but isinstance of did not work
-            isMultiObj = True
-            if isMultiObj:
-                reward = np.zeros((len(curricula[i]), self.objectives))
+        # if hasattr(self, "multiObj") and self.multiObj: # TODO this is very ugly, but isinstance of did not work
         nameOfCurriculumI = self.getCurriculumName(i, genNr)
         utils.copyAgent(src=self.selectedModel, dest=nameOfCurriculumI, txtLogger=self.txtLogger)
         initialIterationsDone = iterationsDone
@@ -117,11 +111,8 @@ class RollingHorizon(ABC):
                                                  nameOfCurriculumI, curricula[i][j],
                                                  self.args, self.txtLogger)
             tmp = evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args, self.txtLogger)
-            if isMultiObj:
-                for k in range(len(tmp)):
-                    reward[j][k] = (self.gamma ** j) * tmp[k]
-            else:
-                reward[j] = (self.gamma ** j) * np.sum(tmp)
+            for k in range(len(tmp)):
+                reward[j][k] = tmp[k]  # (self.gamma ** j) * tmp[k]
             if j == 0:
                 self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
             self.logInfoAfterCurriculum(nameOfCurriculumI, iterationsDone, reward, j)
@@ -139,6 +130,8 @@ class RollingHorizon(ABC):
         self.currentRewardsDict = {}
         self.currentSnapshotRewards = {}
         self.curriculaEnvDetails = {}
+        self.rawRewardDetails = {}
+
         self.lastEpochStartTime = datetime.now()
 
     def initializeTrainingVariables(self, modelExists: bool) -> tuple:
@@ -224,6 +217,7 @@ class RollingHorizon(ABC):
         trainingInfoJson = {selectedEnvs: {},
                             bestCurriculas: {},
                             curriculaEnvDetailsKey: {},
+                            rawRewardsKey: {},
                             rewardsKey: {},
                             actualPerformance: {},
                             maxStepRewardKey: stepMaxReward,
@@ -300,9 +294,10 @@ class RollingHorizon(ABC):
     @staticmethod
     def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullRewardsDict,
                            currentScoreRaw: float, snapshotScore: float, framesDone, envDifficulty: int,
-                           lastEpochStartTime, curricula, curriculaEnvDetails, logFilePath, curricMaxReward) -> None:
+                           lastEpochStartTime, curricula, curriculaEnvDetails, logFilePath, curricMaxReward, rawRewards) -> None:
         """
         Updates the training info dictionary
+        :param rawRewards:
         :param curricMaxReward:
         :param snapshotScore:
         :param curriculaEnvDetails:
@@ -332,6 +327,7 @@ class RollingHorizon(ABC):
              "snapshotScoreRaw": snapshotScore, "curriculum": bestCurriculum}
         trainingInfoJson[curriculaEnvDetailsKey][currentEpoch] = curriculaEnvDetails
         trainingInfoJson[difficultyKey].append(envDifficulty)
+        trainingInfoJson[rawRewardsKey][currentEpoch] = rawRewards
 
         now = datetime.now()
         timeSinceLastEpoch = (now - lastEpochStartTime).total_seconds()

@@ -24,7 +24,7 @@ class RandomRollingHorizon(RollingHorizon):
             self.currentBestCurriculum = None
             self.lastChosenCurriculum = None
             # TODO 1/3 probably needs to be updated upon reload
-        #self.txtLogger.info(f"curricula list start {self.curricula}")
+        # self.txtLogger.info(f"curricula list start {self.curricula}")
 
     def getCurrentBestCurriculum(self):
         currentBestCurriculumIdx = np.argmax(self.currentRewardsDict)
@@ -55,16 +55,17 @@ class RandomRollingHorizon(RollingHorizon):
         snapshotRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
         for i in range(len(self.curricula)):
             reward = self.trainACurriculum(i, self.iterationsDone, -1, self.curricula)
+            # TODO tet this so that the changes did not break everything
             currentRewards["curric_" + str(i)] = np.sum(reward)
             snapshotRewards["curric_" + str(i)] = reward[0]
-            #self.txtLogger.info(f"\tepoch {epoch }: RRH Curriculum {i} done")
+            # self.txtLogger.info(f"\tepoch {epoch }: RRH Curriculum {i} done")
 
         self.currentRewardsDict = currentRewards
         self.currentSnapshotRewards = snapshotRewards
         self.curriculaEnvDetails = self.curricula
-        #self.txtLogger.info(f"\n\tcurrentRewards for : {self.currentRewardsDict}")
-        #self.txtLogger.info(f"\tsnapshot Rewards for : {self.currentSnapshotRewards}")
-        #self.txtLogger.info(f"\tcurrentEnvDetails for : {self.curriculaEnvDetails}\n\n")
+        # self.txtLogger.info(f"\n\tcurrentRewards for : {self.currentRewardsDict}")
+        # self.txtLogger.info(f"\tsnapshot Rewards for : {self.currentSnapshotRewards}")
+        # self.txtLogger.info(f"\tcurrentEnvDetails for : {self.curriculaEnvDetails}\n\n")
 
     def calculateConsecutivelyChosen(self, consecutiveCount, currentBestCurriculum, lastChosenCurriculum) -> int:
         self.lastChosenCurriculum = currentBestCurriculum
