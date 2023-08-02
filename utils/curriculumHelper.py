@@ -1,10 +1,7 @@
 import json
 import re
 from datetime import datetime
-
-import numpy as np
 from gymnasium.envs.registration import register
-
 from utils import ENV_NAMES
 
 ###### DEFINE CONSTANTS AND DICTIONARY KEYS #####
@@ -32,6 +29,8 @@ snapshotScoreKey = "snapshotScore"
 iterationsPerEnvKey = "iterationsPerEnv"
 maxStepRewardKey = "maxStepReward"
 maxCurricRewardKey = "maxCurricReward"
+iterationSteps = "iterationSteps"
+
 
 MAX_REWARD_PER_ENV = 1
 
