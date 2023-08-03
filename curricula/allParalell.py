@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 from curricula import train, evaluate, RollingHorizon
 from utils import getEnvFromDifficulty, storage
 from utils.curriculumHelper import *
