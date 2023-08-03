@@ -10,5 +10,3 @@
 echo "------------Cluster Job Start-----------------------"
 srun -c 2 -v python3 -m scripts.trainCurriculum --procs 24 --noRewardShaping --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 100000 --model 100k_3step_3gen_3curric_nRS_gamma70 --gamma .7 --seed 8515
 echo "---------- Cluster Job End ---------------------"
-
-

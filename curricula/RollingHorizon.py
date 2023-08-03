@@ -4,6 +4,7 @@ import random
 import shutil
 from abc import ABC, abstractmethod
 
+import numpy as np
 from numpy import ndarray
 
 import utils
