@@ -285,7 +285,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
                      var_name='Environment',
                      value_name='Value')
         sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
-        plt.title("Environment Distribution at different Training Stages", fontsize=labelFontsize)
+        plt.title("Environment Distribution at different Training Stages", fontsize=titleFontsize)
         plt.show()
     else:
         group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
@@ -304,7 +304,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         melted_df['id'] = pd.Categorical(melted_df['id'], categories=aggregatedDf['id'].unique(), ordered=True)
         sns.barplot(data=melted_df, x='id', y='Value', hue='Column', errorbar=args.errorbar)
         plt.ylabel('Value', fontsize=labelFontsize)
-        plt.title("Environment Distribution", fontsize=labelFontsize)
+        plt.title("Environment Distribution", fontsize=titleFontsize)
         plt.xlabel('')
         plt.yticks(fontsize=tickFontsize)
         plt.xticks(rotation=-15, ha='left', fontsize=tickFontsize) # TODO some args param or smth
@@ -365,7 +365,7 @@ def showTrainingTimePlot(aggregatedDf):
 
     if args.title:
         title = args.title
-    plt.title(title, fontsize=labelFontsize)
+    plt.title(title, fontsize=title)
     plt.xticks(rotation=-45, ha='left', fontsize=tickFontsize)
     plt.subplots_adjust(bottom=0.3)
 
@@ -493,7 +493,7 @@ def main(comparisons: int):
             sns.lineplot(x=iterationSteps, y="snapshotScore", data=modelDf, label=m, errorbar=args.errorbar)
             plt.xlabel('Index', fontsize=labelFontsize)
             plt.ylabel('training time (hours)', fontsize=labelFontsize)
-            plt.title(args.title, fontsize=labelFontsize)
+            plt.title(args.title, fontsize=titleFontsize)
             plt.legend()
             plt.show()
 

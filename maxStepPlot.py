@@ -3,18 +3,19 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 
-iterationSteps = 100000
+iterationSteps = 75000
 totalIterations = 5000000
 startDecreasingNum = 500000
 sns.set(style="darkgrid")
+sns.set(font_scale=1.3)
 plt.figure(figsize=(10, 6))
 
 
-def calculateMaxSteps(iterDone, smoothingFactor=20, difficultyStepSize=100000, startDecreaseNum=500000):
+def calculateMaxSteps(iterDone, difficultyStepSize=2000000, startDecreaseNum=500000):
     if iterDone <= startDecreaseNum:
         value: float = 1.0
     else:
-        value = 1 - ((iterDone - startDecreaseNum) / difficultyStepSize / smoothingFactor)
+        value = 1 - ((iterDone - startDecreaseNum) / difficultyStepSize)
     value = max(value, 0.15)
     return value
 
@@ -32,6 +33,6 @@ plt.title("Visualization of Maximum Steps Decreasing", fontsize="x-large")
 
 ax.xaxis.set_tick_params(labelsize='medium')
 ax.yaxis.set_tick_params(labelsize='medium')
-plt.ylim(0, 1.01)
+plt.ylim(0, 1.005)
 plt.xlim(0, totalIterations)
 plt.show()

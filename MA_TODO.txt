@@ -17,11 +17,30 @@ SAC todo:
 
 
 
+Next week wichtig:
+- SAC hinbekommen ODER anderen Algo (Oder es sein lassen)
+(d) - Env Distributions genug text geschrieben(-> verstehen und erklären was wann passiert im algo).
+- Mergen von dem Results chapter fertig
+- Kapitel 4 & 5 fertig (2-3 Tage => 12h würde ich sagen)
+- Kapitel 5: erklären der baselines
+- Entscheiden, welche Grafiken ich alles brauche & dann das nötige dafür implementieren (Welche gruppierungen brauche ich?)
+    - Gruppierungen für 2curric vs 3 vs 4 (vs 1 evtl auch noch) (auch für nGen und curricLength; damit ich den teil abschließen kann !)
+- Grafiken alle neu machen
+- Pseudocode für Methodology
+- evtl die Legend bei den plots umbenennen (damit es einheitlich ist mit denn namen die ich bnenutze in meiner arbeit)
+++
+- neue Runs starten mit den neuen Rewardstruktur. Auch den Code dazu schreiben.
+- Feedback eingearbeitet ;
+- (PPO besser verstehen, ggf manche sahcne zitieren aus dem paper oder aus einem anderen)
+-
+
 ----------------------------
 @Alex:
 - $...$ ahh
 - aus welcher gen kommt das beste curriculum - interessant?
 - all Curric plot useful? Kann man evtl besser zeigen ok: best curric sieht die sitr so aus, 1. step sieht sie so aus ...
+- SAC: wie am besten ausprobieren?
+- wenn jetzt multiobj, hätte ich nicht auch nsga 3 benutzen können / sollen ? --> Wie erkläre ich das
 
 
 -------------------------------------------------------------
@@ -60,18 +79,6 @@ Results chapter structure:
 
 ------------------------------------------------
 
-Next week wichtig:
-- SAC hinbekommen ODER anderen Algo (Oder es sein lassen)
-(d) - Env Distributions genug text geschrieben(-> verstehen und erklären was wann passiert im algo).
-- Mergen von dem Results chapter fertig
-- Kapitel 4 & 5 fertig ( Fr & Sa & So)
-- Entscheiden, welche Grafiken ich alles brauche & dann das nötige dafür implementieren (Welche gruppierungen brauche ich?)
-    - Gruppierungen für 2curric vs 3 vs 4 (vs 1 evtl auch noch) (auch für nGen und curricLength; damit ich den teil abschließen kann !)
-- Grafiken alle neu machen
-- Pseudocode für Methodology
-- evtl die Legend bei den plots umbenennen (damit es einheitlich ist mit denn namen die ich bnenutze in meiner arbeit)
-++
-- neue Runs starten mit den neuen Rewardstruktur. Auch den Code dazu schreiben.
 
 General todo:
 + ggf puren NSGA vs GA plot, wo nur experimente sind die in beiden varianten ausgeführt wurden
@@ -92,6 +99,9 @@ General todo:
 - Rewardveränderungen der einzelnen envs plotten (ggf als 4er plot
 - Performance plotten durch env distribution --> Neue Runs, damit man besser nachvollziehen kann, wie gut er in welcher env ist &
 - aus dem meeting: whiteboard step-color plot (unter der performance!)
+- RRH FIXEN weil ich ja den reward log angepasst habe (gamma struktur müsste wieder reingehholt werden glaube ich)
+- Capitalize curriculum -> Curriculum
+
 
 Prog:
     - Boxplots der gruppierungen zeigen (k steps, nGen, ...)
@@ -117,17 +127,20 @@ schreib:
 ---> starker elitismus (auch in basic erläutern)
 - multiobjective & singleobjective quelle da einbinde
 
-
-
-Low prio todo
-- vllt mal die todos im code bearbeiten
-
-
-
 Iwo einfügen
 - diesen dip versuchen auszubalancieren, der durch die maxSteps entstanden ist wurde mal probiert
 - Could have also made a stop at like .5 for 1kk and then go down all the way to .1 or so. (An alternative you could have used was to make it more like a step function, which stays the same for a bit of time, and the ncontinues to go down (right now it stays the same for 500k, then goes down linearly until .15, and then stays the same again
 - exp setup: Anfang refrenz für die komplett-tabelle am ende
+
+
+
+
+
+Low prio todo
+- vllt mal die todos im code bearbeiten
+- Docstrings alle vervollständigen
+- README erweitern
+- commits aufräumen
 
 
 Schreib-Ideen
