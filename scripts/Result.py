@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt, cm
 
 from curricula import RollingHorizonEvolutionaryAlgorithm
 from utils.curriculumHelper import *
@@ -15,7 +16,7 @@ class Result:
         self.loadedArgsDict[trainEvolutionary] = self.getTrainEvolutionary(self.loadedArgsDict[trainEvolutionary])
         self.modelName = self.loadedArgsDict[modelKey]
         self.seed = self.loadedArgsDict[seedKey]
-        self.selectedEnvList = evaluationDictionary[selectedEnvs]
+        self.selectedEnvDict = evaluationDictionary[selectedEnvs]  # TODO fix this for all para and others maybe ??
         self.epochsTrained = evaluationDictionary[epochsDone] - 1
         self.framesTrained = evaluationDictionary[numFrames]
         self.modelPerformance = evaluationDictionary[
@@ -54,9 +55,41 @@ class Result:
                 epochRewardsList = np.array(list(epochDict.values()))
                 avgEpochRewards.append(np.sum(epochRewardsList) / self.maxCurricAvgReward)
             self.allCurricDistribution = self.getAllCurriculaEnvDistribution(self.fullEnvDict, usedEnvEnumeration)
-            self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvList, usedEnvEnumeration)
+            self.snapshotEnvDistribution = self.getSnapshotEnvDistribution(self.selectedEnvDict, usedEnvEnumeration)
             self.bestCurriculaEnvDistribution, self.splitDistrBestCurric = \
                 self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
+            formatHelperList = [[env for env in self.selectedEnvDict[epoch]] for epoch in self.selectedEnvDict]
+            # keep only the env size part, e.g. 6x6
+            self.formattedSelectedEnvList = [[env.split("-")[2] for env in sublist] for sublist in formatHelperList]
+
+            assert len(self.formattedSelectedEnvList) == len(self.snapShotScores), \
+                "Something went went wrong with creating the formatted selected env list"
+
+            if not self.canceled:
+                """
+                x = self.iterationsList
+                y = self.formattedSelectedEnvList
+                y1 = list(zip(*y))[0]
+                y2 = list(zip(*y))[1]
+
+                y_combined = y1 + y2
+                unique_y = np.unique(y_combined)
+                num_unique_y = 4
+                assert len(unique_y) == 4, f"There should be 4 envs not, {unique_y}"
+                cmap = cm.get_cmap("Set3", num_unique_y)  # Get the Set3 colormap with the number of unique y-values
+
+                colors = [cmap(i) for i in range(num_unique_y)]
+                color_mapping = dict(zip(unique_y, colors))
+                plt.scatter(x, y1, color=[color_mapping[y] for y in y1], s=5)
+                plt.scatter(x, y2, color=[color_mapping[y] for y in y2], s=5)
+
+                #unique_envs = list(set([env for sublist in y for env in sublist]))
+                #unique_envs.sort(key=lambda env: int(env.split('x')[0]), reverse=False)
+                # plt.yticks(range(len(unique_envs)), unique_envs)
+                plt.show()
+                """
+
+
         elif self.loadedArgsDict[trainRandomRH] == "True":
             self.allCurricDistribution = {env: 0 for env in usedEnvEnumeration}
             self.bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
@@ -93,7 +126,7 @@ class Result:
                     self.snapshotEnvDistribution[env] = 0
                 for helper in self.fullEnvDict:
                     for epochResult in self.fullEnvDict[helper]:
-                        envStrRaw = epochResult.split("-custom")[0] # TODO this is duplicate in other method
+                        envStrRaw = epochResult.split("-custom")[0]  # TODO this is duplicate in other method
                         self.snapshotEnvDistribution[envStrRaw] += 1
             self.bestCurriculaEnvDistribution = self.snapshotEnvDistribution
             self.allCurricDistribution = self.snapshotEnvDistribution
@@ -164,7 +197,7 @@ class Result:
             for epochList in bestCurriculaDict:
                 curriculum = self.getListOrDictEntry(bestCurriculaDict, epochList)
                 epochNr = int(epochList.split("_")[1])
-                if epochNr * self.iterationsPerEnv > 1000000 * (i+1): # TODO maybe here for the 500k steps
+                if epochNr * self.iterationsPerEnv > 1000000 * (i + 1):  # TODO maybe here for the 500k steps
                     splitDistributions.append(bestCurriculaEnvDistribution)
                     bestCurriculaEnvDistribution = {env: 0 for env in usedEnvEnumeration}
                     i += 1
