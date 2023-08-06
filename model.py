@@ -4,6 +4,10 @@ import torch.nn.functional as F
 from torch.distributions.categorical import Categorical
 import torch_ac
 
+"""
+This file contains the neural network architecture for the PPO and A2C algorithms
+"""
+
 
 # Function from https://github.com/ikostrikov/pytorch-a2c-ppo-acktr/blob/master/model.py
 def init_params(m):
@@ -33,7 +37,7 @@ class ACModel(nn.Module, torch_ac.RecurrentACModel):
         )
         n = obs_space["image"][0]
         m = obs_space["image"][1]
-        self.image_embedding_size = 64 # before  ((n-1)//2-2)*((m-1)//2-2)*64
+        self.image_embedding_size = 64  # before  ((n-1)//2-2)*((m-1)//2-2)*64
 
         # Define memory
         if self.use_memory:
@@ -70,7 +74,7 @@ class ACModel(nn.Module, torch_ac.RecurrentACModel):
 
     @property
     def memory_size(self):
-        return 2*self.semi_memory_size
+        return 2 * self.semi_memory_size
 
     @property
     def semi_memory_size(self):

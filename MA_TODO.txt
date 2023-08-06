@@ -1,16 +1,58 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 
+So:
+- SAC zu hause rumprobieren (evtl auch einfach am laptop)
+- Architekturgrafik vom model
+
+
+
+
+----------------
+
+- experimente ohne MAXSTEPS anpassung machen
+-
+
+
+Future work
+- more objectives
+- andere offspring raten
+- varying von den parametern
+
+-----
+
+- Horizon definieren im basics teil als Wort ( = 1 Iteration vom RH)
+- Limitation: hyperparameter sind sehr domänenabhängig
+    PPO mit guten hyperparametern kann es das nicht doch lösen?
+- ParaEnv im methodology: falls ich es da nicht hinpacke; ich müsste jedenfalls so oder so dazuschreiben dass das vllt nur für taskdriven cl sinn ergibt
+
+
 wie kann ich das besser plotten ???
 Vor allem wenn ich zb 5 experimente habe ?
+- TODO für den plot
+    - y achse wieder sortieren (achtung dass die values auch mitgemappt werden)
+    - farben fixen
+    - größe der punkte
+    - überlegen,wie man das gut plotten kann
+    - mach die y achse näher beinander
+    - ggf etws anderes als kreise zum darstellen benutzen
 
 
-Morgen:
-- Pseudocode Methodology einbauen
-- Methodology & Exp setup fertig zu 95% (Samstag will ich das beenden!)
-- SAC rumprobieren (3-4h), ggf von neu anfangen
-- Anfangen mit wann welche env gewählt wurde
--
+Do:
+- methodology & exp setup viel überarbeiten
+
+
+Fr:
+- Methodology & Exp setup weitermachen
+- etwas den used env plot gearbeitet
+
+
+
+Sa:
+d - Pseudocode Methodology einbauen
+- Methodology & Exp setup fertig
+- SAC rumprobieren (3h)
+- WENN ZEIT ÜBRIG: etwas am discussion chapter arbeiten
 
 PLOT todo :
 - einen nsga&ga filter einbauen
@@ -52,7 +94,10 @@ Next week wichtig:
 - all Curric plot useful? Kann man evtl besser zeigen ok: best curric sieht die sitr so aus, 1. step sieht sie so aus ...
 - SAC: wie am besten ausprobieren?
 - wenn jetzt multiobj, hätte ich nicht auch nsga 3 benutzen können / sollen ? --> Wie erkläre ich das
-
+- 10 Crossover Mtation runs -> irgendwie erwähnen "out of curiosity ??"
+- 1 Trainingsalgo: Wenn PPO es alleine nicht schafft, aber dann mit gleichen parametern und unserem Ansatz ...?
+- \\ oder auch mal was anderes verwenden (was ist eig aus andere env / was anderes als minigrid verwenden geworden?)??
+- RW: Einen RHEA CL Ansatz finden ??
 
 ------------------------------------------------------------------------------------------------------------
 
@@ -125,6 +170,20 @@ Schreib-Ideen
 - bayesian optimization -> Hyperparameter tuning hätte man damit vllt machen sollen statt so willkürlich
 
 
+
+ka wo:
+@Alex:
+- ausprobierne mit mehr trainings envs als eval envs
+- experiment mit mehr als 4 envs (zB empty & minigrid)
+- CROSSOVER MUTATION PROBLEM
+- 2 oder 3 RQs ? Weil stability kann bei performacne irgendwie schon direkt abgefrühstückt werden
+----------------
+
+
+
+Später
+- Distributions mit SPLCL
+- schauen ob gamma useful war: Berechne wie groß die summe gewesen wäre im ausgewählten Curriculum ohne Gamma für alle Curricula und schaue, ob die entscheidung dieselbe gewesen wäre
 
 --------------------------------------------------------------------------------------------------------
 Random:

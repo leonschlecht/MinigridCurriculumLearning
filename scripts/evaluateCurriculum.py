@@ -13,11 +13,6 @@ import numpy as np
 
 OFFSET = 1000
 
-labelFontsize = 16
-titleFontsize = 20
-legendFontSize = 14 # TODO why is this still so big sometimes ?
-tickFontsize = 12
-
 def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
     results = []

@@ -57,6 +57,14 @@ allCurricDistributoinKey = "allCurricDistribution"
 NEXT_ENVS = "NextEnvs"
 
 
+# Evaluation font sizes
+# TODO maybe use different file for this
+labelFontsize = 16
+titleFontsize = 20
+legendFontSize = 14 # TODO why is this still so big sometimes ?
+tickFontsize = 12
+
+
 def saveTrainingInfoToFile(path, jsonBody):
     with open(path, 'w') as f:
         f.write(json.dumps(jsonBody, indent=4, default=str))
