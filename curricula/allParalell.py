@@ -22,7 +22,7 @@ class allParalell:
         self.iterationsDone = 0
         self.txtLogger = txtLogger
         TOTAL_ITERATIONS = 10000000
-        self.totalEpochs = 1000000 # TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
+        self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
         self.trainingTime = 0
         self.model = args.model + "_s" + str(self.seed)
         self.isSPLCL = not args.allSimultaneous
@@ -63,7 +63,7 @@ class allParalell:
     def trainEachCurriculum(self, startEpoch: int, totalEpochs: int, iterationsDone: int, initialEnvNames: list):
         envNames = initialEnvNames
         print("training will go on until", totalEpochs)
-        currentStep = 1 # helper param to determine at what point in an epoch we are (used for AllParallel as Curric)
+        currentStep = 1  # helper param to determine at what point in an epoch we are (used for AllParallel as Curric)
         for epoch in range(startEpoch, totalEpochs):
             self.txtLogger.info(f"Envs: {envNames}")
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
@@ -71,9 +71,11 @@ class allParalell:
             if epoch == 0:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
-            reward = np.sum(evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger))
+            reward = (evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger))
+            self.trainingInfoJson[rawRewardsKey][f"epoch_{epoch}"] = reward
+            reward = np.sum(reward)
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
-            oldEnvNames = envNames.copy() # used for the logs
+            oldEnvNames = envNames.copy()  # used for the logs
             if not self.isSPLCL:
                 if self.asCurriculum:
                     envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, currentStep)
