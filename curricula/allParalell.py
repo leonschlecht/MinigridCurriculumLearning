@@ -27,6 +27,9 @@ class allParalell:
         self.model = args.model + "_s" + str(self.seed)
         self.isSPLCL = not args.allSimultaneous
         self.asCurriculum = args.asCurriculum
+        self.ppoEnv = args.ppoEnv
+        self.ppoSingleEnv = self.ppoEnv != -1
+        assert 0 <= self.ppoEnv < len(ENV_NAMES.ALL_ENVS)
 
         self.selectedModel = self.model + os.sep + "model"
 
@@ -41,8 +44,11 @@ class allParalell:
         self.startEpoch = 1
 
         if not self.isSPLCL:
-            print("AllPara")
-            self.initialEnvNames = self.updateEnvNamesNoAdjusment(self.envDifficulty, 0)
+            print("AllPara or NoCurric")
+            if self.ppoSingleEnv:
+                self.initialEnvNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.ppoEnv)
+            else:
+                self.initialEnvNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, 0)
         else:
             print("SPLCL")
             self.initialEnvNames = self.initializeEnvNames(self.envDifficulty)
@@ -68,16 +74,21 @@ class allParalell:
             reward = np.sum(evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger))
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
             oldEnvNames = envNames.copy()
-            if not self.isSPLCL:
+            if not self.isSPLCL: # TODO is this correct ?
                 if self.asCurriculum:
-                    envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty, currentStep)
+                    envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, currentStep)
                 else:
-                    envNames = self.updateEnvNamesNoAdjusment(self.envDifficulty)
+                    if self.ppoSingleEnv:
+                        envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.ppoEnv)
+                    else:
+                        envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty)
                 currentStep += 1
                 if currentStep >= 4:  # TODO should probably have an #envs parameter here too
                     currentStep = 0
             else:
+                # TODO this looks iffy ??
                 envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty, self.seed + epoch, reward)
+            print("Reward = ", reward)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, oldEnvNames, reward, self.envDifficulty, iterationsDone)
             self.logInfoAfterEpoch(epoch, reward, self.txtLogger, totalEpochs)
             self.txtLogger.info(f"reward {reward}")
@@ -97,7 +108,7 @@ class allParalell:
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
     @staticmethod
-    def updateEnvNamesNoAdjusment(difficulty, currentStep=-1) -> list:
+    def updateEnvNamesNoAdjustment(difficulty, currentStep=-1) -> list:
         envNames = []
         for j in range(len(ENV_NAMES.ALL_ENVS)):
             if currentStep != -1:
@@ -138,6 +149,7 @@ class allParalell:
         # TODO get the value of the models progress (maybe last 3 runs, and then decide if you should go up or not)
         np.random.seed(seed)
         randomIndexSample = np.random.choice(range(len(ENV_NAMES.ALL_ENVS)), size=self.paraEnvs, replace=False)
+        print("SPLCLCL reward", reward)
         if reward > self.stepMaxReward * .85:
             nextStep = "goUp"
         elif reward > self.stepMaxReward * .5:

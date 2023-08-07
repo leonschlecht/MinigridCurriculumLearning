@@ -14,6 +14,8 @@ def initializeArgParser():
                         help="traines all 4 environments in parallel")
     parser.add_argument("--asCurriculum", default=False, action="store_true",
                         help="Adds the option to use --allParalell as a linear curriculum (6,8,10,12 in that order per epoch)")
+    parser.add_argument("--ppoEnv", default=-1, type=int,
+                        help="Adds the option to use --allParalell with PPO only for a single environment. Number corresponds to evironment index in array of all envs")
     parser.add_argument("--allSimultaneous", default=True, action="store_false",
                         help="Determines if all envs should be trained simultaneously from the start, or if the envs should be selected depending on progress")
     parser.add_argument("--trainLinear", default=False, action="store_true",
