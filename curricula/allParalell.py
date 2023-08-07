@@ -22,7 +22,7 @@ class allParalell:
         self.iterationsDone = 0
         self.txtLogger = txtLogger
         TOTAL_ITERATIONS = 10000000
-        self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
+        self.totalEpochs = 1000000 # TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
         self.trainingTime = 0
         self.model = args.model + "_s" + str(self.seed)
         self.isSPLCL = not args.allSimultaneous
