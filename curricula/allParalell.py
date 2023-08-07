@@ -63,7 +63,7 @@ class allParalell:
     def trainEachCurriculum(self, startEpoch: int, totalEpochs: int, iterationsDone: int, initialEnvNames: list):
         envNames = initialEnvNames
         print("training will go on until", totalEpochs)
-        currentStep = 1 # helper param to determine at what point in an epoch we are
+        currentStep = 1 # helper param to determine at what point in an epoch we are (used for AllParallel as Curric)
         for epoch in range(startEpoch, totalEpochs):
             self.txtLogger.info(f"Envs: {envNames}")
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
@@ -73,8 +73,8 @@ class allParalell:
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
             reward = np.sum(evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger))
             self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
-            oldEnvNames = envNames.copy()
-            if not self.isSPLCL: # TODO is this correct ?
+            oldEnvNames = envNames.copy() # used for the logs
+            if not self.isSPLCL:
                 if self.asCurriculum:
                     envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, currentStep)
                 else:
@@ -83,12 +83,10 @@ class allParalell:
                     else:
                         envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty)
                 currentStep += 1
-                if currentStep >= 4:  # TODO should probably have an #envs parameter here too
+                if currentStep >= len(ENV_NAMES.ALL_ENVS):
                     currentStep = 0
             else:
-                # TODO this looks iffy ??
                 envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty, self.seed + epoch, reward)
-            print("Reward = ", reward)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, oldEnvNames, reward, self.envDifficulty, iterationsDone)
             self.logInfoAfterEpoch(epoch, reward, self.txtLogger, totalEpochs)
             self.txtLogger.info(f"reward {reward}")

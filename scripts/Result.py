@@ -5,6 +5,27 @@ from curricula import RollingHorizonEvolutionaryAlgorithm
 from utils.curriculumHelper import *
 
 
+def getTransformedReward(evaluationDictionary):
+    """
+    Helper function that transforms the string of the json containing all the rewards (as strings!) to an actual dict with lists
+    :return:
+    """
+    rawRewardStr = evaluationDictionary["rawRewards"]
+    transformedRawReward = {}
+    for epoch in rawRewardStr:
+        transformedRawReward[epoch] = {}
+        for gen in rawRewardStr[epoch]:
+            transformedRawReward[epoch][gen] = {}
+            for curric in rawRewardStr[epoch][gen]:
+                transformedRawReward[epoch][gen][curric] = []
+                s = (rawRewardStr[epoch][gen][curric])[1:-1]
+                tmp = s.split("\n")
+                for curricStep in tmp:
+                    numbers = re.findall(r'[0-9]*\.?[0-9]+', curricStep)
+                    numbers = [float(n) for n in numbers]
+                    transformedRawReward[epoch][gen][curric].append(numbers)
+    return transformedRawReward
+
 class Result:
     def __init__(self, evaluationDictionary, modelName, logfilePath):
         # NOTE: the modelName is the name of the directory; not the name of the --model command when the training was performed
@@ -44,8 +65,8 @@ class Result:
         numCurric = float(self.loadedArgsDict[numCurricKey])
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
 
-        if self.loadedArgsDict[trainEvolutionary]:  # TODO to method
-            self.epochDict = self.getEpochDict(self.rewardsDict)  # TODO THIS SEEMS BUGGED ??? / why does it only show g1,g2,g3
+        if self.loadedArgsDict[trainEvolutionary]:  # TODO move to method
+            self.epochDict = self.getEpochDict(self.rewardsDict)
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
             self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
             for epochKey in self.rewardsDict:
@@ -64,8 +85,11 @@ class Result:
 
             assert len(self.formattedSelectedEnvList) == len(self.snapShotScores), \
                 "Something went went wrong with creating the formatted selected env list"
+            if "newLog" in self.modelName:
+                self.rawReward = getTransformedReward(evaluationDictionary)
 
             if not self.canceled:
+
                 """
                 x = self.iterationsList
                 y = self.formattedSelectedEnvList

@@ -21,6 +21,7 @@ parser.add_argument("--episodes", type=int, default=1000000, help="number of epi
 parser.add_argument("--memory", action="store_true", default=False, help="add a LSTM to the model")
 parser.add_argument("--text", action="store_true", default=False, help="add a GRU to the model")
 parser.add_argument("--size", type=int, help="Tell the level size of the environment")
+parser.add_argument("--env", type=str, default=None, help="What env to visualize")
 
 args = parser.parse_args()
 
@@ -31,13 +32,13 @@ utils.seed(args.seed)
 # Set device
 
 print(f"Device: {device}\n")
-envName = "MiniGrid-DoorKey-custom-" + str(args.size) + "x" + str(args.size)
-# Load environment
-register(
-    id=envName,
-    entry_point="minigrid.envs:DoorKeyEnv",
-    kwargs={"size": args.size, "max_steps": (args.size ** 2) * 10},
-)
+if args.env is None:
+    envName = "MiniGrid-DoorKey-custom-" + str(args.size) + "x" + str(args.size)
+    envName = "MiniGrid-PutNear-8x8-N3-v0"
+    envName = "MiniGrid-DistShift2-v0"
+    envName = "MiniGrid-MultiRoom-N4-S5-v0"
+else:
+    envName = args.env
 
 env = utils.make_env(envName, args.seed, render_mode="human")
 for _ in range(args.shift):
