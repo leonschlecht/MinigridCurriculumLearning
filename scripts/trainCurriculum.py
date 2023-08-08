@@ -31,7 +31,7 @@ def main():
     assert args.iterPerEnv > 0, "The iterations per curricululm step must be >= 1"
     assert args.trainEpochs > 1, "There must be at least 2 training epochs for the algorithm"
     assert 0 < args.paraEnv <= len(
-        ENV_NAMES.ALL_ENVS), "Cant train on more envs in parallel than there are envs available"
+        ENV_NAMES.DOORKEY_ENVS), "Cant train on more envs in parallel than there are envs available"
 
     if args.trainEvolutionary:
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)

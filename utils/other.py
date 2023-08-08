@@ -27,10 +27,10 @@ def synthesize(array):
 
 def getEnvListThroughDifficulty(difficulty: int) -> list:
     envList = []
-    for i in range(len(ENV_NAMES.ALL_ENVS)):
+    for i in range(len(ENV_NAMES.DOORKEY_ENVS)):
         envList.append(getEnvFromDifficulty(i, difficulty))
     return envList
 
 
 def getEnvFromDifficulty(index: int, envDifficulty) -> str:
-    return ENV_NAMES.ALL_ENVS[index] + ENV_NAMES.CUSTOM_POSTFIX + str(envDifficulty)
+    return ENV_NAMES.DOORKEY_ENVS[index] + ENV_NAMES.CUSTOM_POSTFIX + str(envDifficulty)

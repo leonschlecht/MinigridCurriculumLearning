@@ -30,7 +30,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         else:
             self.objectives: int = 1
         self.inequalityConstr = 0
-        self.xupper = len(ENV_NAMES.ALL_ENVS) - 1
+        self.xupper = len(ENV_NAMES.DOORKEY_ENVS) - 1
         self.crossoverProb = args.crossoverProb
         self.mutationProb = args.mutationProb
         self.crossoverEta = args.crossoverEta
@@ -170,7 +170,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         for i in range(len(curriculaList)):
             indices.append([])
             for env in curriculaList[i]:
-                indices[i].append(ENV_NAMES.ALL_ENVS.index(env))
+                indices[i].append(ENV_NAMES.DOORKEY_ENVS.index(env))
         return indices
 
     def getCurriculumName(self, i, genNr):

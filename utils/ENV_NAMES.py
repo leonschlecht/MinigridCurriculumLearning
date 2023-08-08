@@ -13,11 +13,11 @@ class ENV_NAMES:
 
     # TODO find better way so you dont have to manually change everything by hand when sth changes
     # maybe with an additional parameter or something, to determine the correctl ength and which envs etc
-    ALL_ENVS = [DOORKEY_6x6,
-                DOORKEY_8x8,
-                DOORKEY_10x10,
-                DOORKEY_12x12
-                ]
+    DOORKEY_ENVS = [DOORKEY_6x6,
+                    DOORKEY_8x8,
+                    DOORKEY_10x10,
+                    DOORKEY_12x12
+                    ]
     # ALL_ENVS = [DOORKEY_5x5,
     #           DOORKEY_6x6,
     #          DOORKEY_8x8,

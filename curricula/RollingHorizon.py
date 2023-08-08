@@ -40,7 +40,7 @@ class RollingHorizon(ABC):
         # TODO remove --model param and let it be created automatically (or optional for debug)
         self.trainingTime = 0
 
-        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS, args.noRewardShaping)
+        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.DOORKEY_ENVS, args.noRewardShaping)
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
         self.trainingInfoJson = {}
         self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])
@@ -234,7 +234,7 @@ class RollingHorizon(ABC):
                             iterationsPerEnvKey: args.iterPerEnv,
                             consecutivelyChosen: 0,
                             fullArgs: args,
-                            usedEnvEnumerationKey: ENV_NAMES.ALL_ENVS,
+                            usedEnvEnumerationKey: ENV_NAMES.DOORKEY_ENVS,
                             additionalNotes: "",
                             numFrames: 0}
         saveTrainingInfoToFile(logFilePath, trainingInfoJson)
@@ -284,7 +284,7 @@ class RollingHorizon(ABC):
         for i in range(numberOfCurricula):
             current = []
             for j in range(stepsPerCurric):
-                indices = random.choices(range(len(ENV_NAMES.ALL_ENVS)), k=paraEnv)
+                indices = random.choices(range(len(ENV_NAMES.DOORKEY_ENVS)), k=paraEnv)
                 newCurriculum = [getEnvFromDifficulty(idx, envDifficulty) for idx in indices]
                 current.append(newCurriculum)
             curricula.append(current)

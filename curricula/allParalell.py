@@ -16,7 +16,7 @@ class allParalell:
         self.lastEpochStartTime = startTime
         self.envDifficulty: float = 1.0
         self.seed = args.seed
-        self.paraEnvs = len(ENV_NAMES.ALL_ENVS)
+        self.paraEnvs = len(ENV_NAMES.DOORKEY_ENVS)
 
         self.ITERATIONS_PER_EVALUATE = args.iterPerEnv
         self.iterationsDone = 0
@@ -29,11 +29,11 @@ class allParalell:
         self.asCurriculum = args.asCurriculum
         self.ppoEnv = args.ppoEnv
         self.ppoSingleEnv = self.ppoEnv != -1
-        assert 0 <= self.ppoEnv < len(ENV_NAMES.ALL_ENVS)
+        assert 0 <= self.ppoEnv < len(ENV_NAMES.DOORKEY_ENVS)
 
         self.selectedModel = self.model + os.sep + "model"
 
-        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.ALL_ENVS, args.noRewardShaping)
+        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.DOORKEY_ENVS, args.noRewardShaping)
 
         self.trainingInfoJson = {}
         self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])
@@ -85,7 +85,7 @@ class allParalell:
                     else:
                         envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty)
                 currentStep += 1
-                if currentStep >= len(ENV_NAMES.ALL_ENVS):
+                if currentStep >= len(ENV_NAMES.DOORKEY_ENVS):
                     currentStep = 0
             else:
                 envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty, self.seed + epoch, reward)
@@ -110,7 +110,7 @@ class allParalell:
     @staticmethod
     def updateEnvNamesNoAdjustment(difficulty, currentStep=-1) -> list:
         envNames = []
-        for j in range(len(ENV_NAMES.ALL_ENVS)):
+        for j in range(len(ENV_NAMES.DOORKEY_ENVS)):
             if currentStep != -1:
                 index = currentStep
             else:
@@ -126,29 +126,29 @@ class allParalell:
         :return:
         """
         envNames = []
-        for j in range(len(ENV_NAMES.ALL_ENVS)):
+        for j in range(len(ENV_NAMES.DOORKEY_ENVS)):
             envNames.append(getEnvFromDifficulty(0, startDifficulty))
         return envNames
 
     @staticmethod
     def getHarderEnv(envName) -> str:
-        index = ENV_NAMES.ALL_ENVS.index(envName) + 1
-        if index >= len(ENV_NAMES.ALL_ENVS):
-            index = len(ENV_NAMES.ALL_ENVS) - 1
-        return ENV_NAMES.ALL_ENVS[index]
+        index = ENV_NAMES.DOORKEY_ENVS.index(envName) + 1
+        if index >= len(ENV_NAMES.DOORKEY_ENVS):
+            index = len(ENV_NAMES.DOORKEY_ENVS) - 1
+        return ENV_NAMES.DOORKEY_ENVS[index]
 
     @staticmethod
     def getEasierEnv(envName) -> str:
-        index = ENV_NAMES.ALL_ENVS.index(envName) - 1
+        index = ENV_NAMES.DOORKEY_ENVS.index(envName) - 1
         if index < 0:
             index = 0
-        return ENV_NAMES.ALL_ENVS[index]
+        return ENV_NAMES.DOORKEY_ENVS[index]
 
     def updateEnvNamesDynamically(self, currentEnvNames: list, newDifficulty: float, seed: int, reward: float) -> list:
         envNames = currentEnvNames
         # TODO get the value of the models progress (maybe last 3 runs, and then decide if you should go up or not)
         np.random.seed(seed)
-        randomIndexSample = np.random.choice(range(len(ENV_NAMES.ALL_ENVS)), size=self.paraEnvs, replace=False)
+        randomIndexSample = np.random.choice(range(len(ENV_NAMES.DOORKEY_ENVS)), size=self.paraEnvs, replace=False)
         print("SPLCLCL reward", reward)
         if reward > self.stepMaxReward * .85:
             nextStep = "goUp"
