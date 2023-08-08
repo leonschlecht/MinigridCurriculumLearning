@@ -132,7 +132,7 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
     :return:
     """
     for env in selectedEnvsList:
-        size = int(env.split("-")[-1])
+        size = int(env.split("-")[-1].split("x")[-1]) # DoorKey-5x5 ---> 5
         custom_postfix = ENV_NAMES.CUSTOM_POSTFIX + str(maxStepsPercent)
 
         if "DoorKey" in env:
@@ -152,12 +152,10 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
             entry_point=entry_point,
             kwargs=kwargs,
         )
-
-    print("register env success")
-    exit()
+        print(env+custom_postfix)
 
 
-def calculateEnvDifficulty(iterationsDone, difficultyStepsize, selectedEnvs=ENV_NAMES.DOORKEY_ENVS) -> float:
+def calculateEnvDifficulty(iterationsDone, difficultyStepsize, selectedEnvsList) -> float:
     startDecreaseNum = 500000
     if iterationsDone <= startDecreaseNum:
         newMaxStepsPercent: float = 1.0
@@ -167,6 +165,6 @@ def calculateEnvDifficulty(iterationsDone, difficultyStepsize, selectedEnvs=ENV_
 
     assert newMaxStepsPercent <= 1
     if newMaxStepsPercent < 1:
-        registerEnvs(selectedEnvs, newMaxStepsPercent)
+        registerEnvs(selectedEnvsList, newMaxStepsPercent)
 
     return newMaxStepsPercent

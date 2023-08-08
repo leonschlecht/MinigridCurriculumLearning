@@ -61,7 +61,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
 
     # Print logs
     num_frames = sum(logs["num_frames_per_episode"])
-    evalTime = end_time - start_time
+    evalTime = end_time - start_time + .0001
     fps = num_frames / evalTime
     return_per_episode = utils.synthesize(logs["return_per_episode"])
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
@@ -93,10 +93,11 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
     return results
 
 
-def evaluateAgent(model, difficulty, args, txtLogger) -> list:
+def evaluateAgent(model, difficulty, args, txtLogger, envList: list) -> list:
     """
     Evaluates and calculates the average performance in ALL environments
     Called from other classes to start the evaluation
+    :param envList:
     :param txtLogger:
     :param model: the name of the model
     :param difficulty:
@@ -104,7 +105,7 @@ def evaluateAgent(model, difficulty, args, txtLogger) -> list:
     :return: the average reward
     """
     rewards = []
-    envs = getEnvListThroughDifficulty(difficulty)
+    envs = getEnvListThroughDifficulty(difficulty, envList)
     evaluationResult = evaluateAll(model, envs, args, txtLogger)
     for evalEnv in envs:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv, args.noRewardShaping)

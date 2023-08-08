@@ -87,8 +87,8 @@ class RandomRollingHorizon(RollingHorizon):
         # TODO 1/3 test this
         for i in range(numberOfCurricula):
             curricula.append(bestCurriculum[1:])
-            envId = np.random.randint(0, len(ENV_NAMES.DOORKEY_ENVS))
-            curricula[i].append(getEnvFromDifficulty(envId, envDifficulty))
+            envId = np.random.randint(0, len(envList))
+            curricula[i].append(getEnvFromDifficulty(envId, envList, envDifficulty))
         assert len(curricula) == numberOfCurricula
         return curricula
 

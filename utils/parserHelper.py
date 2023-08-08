@@ -83,6 +83,12 @@ def initializeArgParser():
     parser.add_argument("--worst-episodes-to-show", type=int, default=10, help="how many worst episodes to show")
     parser.add_argument("--memory", action="store_true", default=False, help="add a LSTM to the model")
 
+    # training logs / updates
+    parser.add_argument("--log-interval", type=int, default=1,
+                        help="number of updates between two logs (default: 1)")
+    parser.add_argument("--save-interval", type=int, default=2,
+                        help="number of updates between two saves (default: 2, 0 means no saving)")
+
     args = parser.parse_args()
     args.mem = args.recurrence > 1
     args.trainEvolutionary = not (args.trainRandomRH or args.trainAllParalell)

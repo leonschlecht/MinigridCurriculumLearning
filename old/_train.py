@@ -67,7 +67,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     args.mem = args.recurrence > 1
-    args.env = args.env or ENV_NAMES.DOORKEY_5x5
+    args.env = args.env
     # Set run dir
 
     date = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")

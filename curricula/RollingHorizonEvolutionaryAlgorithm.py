@@ -1,5 +1,4 @@
 import argparse
-from datetime import datetime
 
 import numpy as np
 from pymoo.algorithms.moo.nsga2 import NSGA2
@@ -24,13 +23,13 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.nGen = args.nGen
         self.useNSGA = args.useNSGA
         self.multiObj: bool = args.multiObj
-        self.numEnvironments = 4 # TODO args param ?? damit ich auch togglen kann was ich wähle
         if self.multiObj:
-            self.objectives: int = 4 # TODO num envs
+            self.objectives: int = self.numEnvironments
         else:
             self.objectives: int = 1
         self.inequalityConstr = 0
-        self.xupper = len(ENV_NAMES.ALL_ENVS) - 1 # TODO ?
+        # xupper  should depend on amount of training envs ( if != eval envs) for single obj
+        self.xupper = len(self.allEnvs) - 1
         self.crossoverProb = args.crossoverProb
         self.mutationProb = args.mutationProb
         self.crossoverEta = args.crossoverEta
@@ -151,27 +150,13 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
                 tmp = curriculumI[i:i + self.args.paraEnv]
                 envNames = []
                 for envId in tmp:
-                    envNames.append(getEnvFromDifficulty(envId, self.envDifficulty))
+                    envNames.append(getEnvFromDifficulty(envId, self.allEnvs, self.envDifficulty))
                 sublist.append(envNames)
             curriculumList.append(sublist)
         assert curriculumList != []
         assert len(curriculumList) == self.numCurric
         assert len(curriculumList[0]) == self.stepsPerCurric
         return curriculumList
-
-    @staticmethod
-    def createFirstGeneration(curriculaList):
-        """
-        Helper method that creates the biased first population of the RHEA
-        Transform from environment language strings -> integers
-        :return the transformed list containing integers representing the environment Nr
-        """
-        indices = []
-        for i in range(len(curriculaList)):
-            indices.append([])
-            for env in curriculaList[i]:
-                indices[i].append(ENV_NAMES.DOORKEY_ENVS.index(env))
-        return indices
 
     def getCurriculumName(self, i, genNr):
         assert genNr >= 0, "genNr must be a positive number in RHEA"

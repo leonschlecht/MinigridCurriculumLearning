@@ -8,8 +8,8 @@ import numpy as np
 from numpy import ndarray
 
 import utils
-from curricula import train, evaluate, RollingHorizonEvolutionaryAlgorithm
-from utils import ENV_NAMES, getEnvFromDifficulty, storage
+from curricula import train, evaluate
+from utils import getEnvFromDifficulty, storage
 from utils import getModelWithCandidatePrefix
 from utils.curriculumHelper import *
 
@@ -18,6 +18,11 @@ class RollingHorizon(ABC):
     def __init__(self, txtLogger, startTime, cmdLineString: str, args: argparse.Namespace):
         random.seed(args.seed)
         self.args = args
+        if args.dynamicObstacle:
+            self.allEnvs = ENV_NAMES.DYNAMIC_OBST_ENVS
+        else:
+            self.allEnvs = ENV_NAMES.DOORKEY_ENVS
+        self.numEnvironments = len(self.allEnvs)
         self.numCurric = args.numCurric
         self.stepsPerCurric = args.stepsPerCurric
         self.cmdLineString = cmdLineString
@@ -28,7 +33,7 @@ class RollingHorizon(ABC):
         self.paraEnvs = args.paraEnv
         self.difficultyStepsize = args.difficultyStepsize
         self.curricula = self.randomlyInitializeCurricula(args.numCurric, args.stepsPerCurric, self.envDifficulty,
-                                                          self.paraEnvs, self.seed)
+                                                          self.paraEnvs, self.allEnvs, self.seed)
 
         self.ITERATIONS_PER_ENV = args.iterPerEnv
         self.iterationsDone = 0
@@ -40,7 +45,7 @@ class RollingHorizon(ABC):
         # TODO remove --model param and let it be created automatically (or optional for debug)
         self.trainingTime = 0
 
-        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.DOORKEY_ENVS, args.noRewardShaping)
+        self.stepMaxReward = calculateCurricStepMaxReward(self.allEnvs, args.noRewardShaping)
         self.curricMaxReward = calculateCurricMaxReward(self.stepsPerCurric, self.stepMaxReward, args.gamma)
         self.trainingInfoJson = {}
         self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])
@@ -81,7 +86,7 @@ class RollingHorizon(ABC):
             currentBestCurriculum = self.getCurrentBestCurriculum()
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
 
-            self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.difficultyStepsize)
+            self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.allEnvs, self.difficultyStepsize)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurricScoreRaw,
                                     currentSnapshotScore, self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula,
                                     self.curriculaEnvDetails, self.logFilePath, self.curricMaxReward, self.rawRewardDetails)
@@ -111,7 +116,7 @@ class RollingHorizon(ABC):
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_ENV, iterationsDone,
                                                  nameOfCurriculumI, curricula[i][j],
                                                  self.args, self.txtLogger)
-            tmp = evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args, self.txtLogger)
+            tmp = evaluate.evaluateAgent(nameOfCurriculumI, self.envDifficulty, self.args, self.txtLogger, self.allEnvs)
             for k in range(len(tmp)):
                 reward[j][k] = tmp[k]  # (self.gamma ** j) * tmp[k]
             if j == 0:
@@ -153,30 +158,8 @@ class RollingHorizon(ABC):
             self.envDifficulty = self.trainingInfoJson[difficultyKey][-1]
             self.ITERATIONS_PER_ENV = self.trainingInfoJson[iterationsPerEnvKey]
             self.exactIterationsSet = True
-
-            register(
-                id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
-                entry_point="minigrid.envs:DoorKeyEnv",
-                kwargs={"size": 12, "max_steps": int(maxStepsEnv4 * self.envDifficulty)},
-            )
-            register(
-                id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
-                entry_point="minigrid.envs:DoorKeyEnv",
-                kwargs={"size": 10, "max_steps": int(maxStepsEnv4 * self.envDifficulty)},
-            )
-
-            register(
-                id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
-                entry_point="minigrid.envs:DoorKeyEnv",
-                kwargs={"size": 8, "max_steps": int(maxStepsEnv4 * self.envDifficulty)},
-            )
-
-            register(
-                id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(self.envDifficulty),
-                entry_point="minigrid.envs:DoorKeyEnv",
-                kwargs={"size": 6, "max_steps": int(maxStepsEnv4 * self.envDifficulty)},
-            )
-            # TODO move registration stuff
+            self.allEnvs = self.trainingInfoJson[usedEnvEnumerationKey]
+            registerEnvs(self.allEnvs, self.envDifficulty)
 
             # TODO maybe move this to storage
             prefix = f"epoch_{startEpoch}_"
@@ -191,13 +174,13 @@ class RollingHorizon(ABC):
                         print("Exception while deleting:", e)
 
             self.txtLogger.info(
-                f"Continung training from epoch {startEpoch}... [total epochs: {self.totalEpochs}], seed: {self.seed}")
+                f"Continuing training from epoch {startEpoch}... [total epochs: {self.totalEpochs}], seed: {self.seed}")
         else:
             self.txtLogger.info("Creating model. . .")
-            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.envDifficulty)], self.args,
+            train.startTraining(0, 0, self.selectedModel, [getEnvFromDifficulty(0, self.allEnvs, self.envDifficulty)], self.args,
                                 self.txtLogger)
             self.trainingInfoJson = self.initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed,
-                                                          self.stepMaxReward, self.curricMaxReward, self.args)
+                                                          self.stepMaxReward, self.curricMaxReward, self.allEnvs, self.args)
             startEpoch = 1
             utils.copyAgent(src=self.selectedModel, dest=utils.getEpochModelName(self.model, startEpoch),
                             txtLogger=self.txtLogger)  # copy epoch0 -> epoch1
@@ -205,11 +188,11 @@ class RollingHorizon(ABC):
             rewardsDict = {}
 
             self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
-                                                              self.paraEnvs, self.seed)
+                                                              self.paraEnvs, self.allEnvs, self.seed)
         return startEpoch, rewardsDict
 
     @staticmethod
-    def initTrainingInfo(cmdLineString: str, logFilePath: str, seed: int, stepMaxReward: float, curricMaxReward: float,
+    def initTrainingInfo(cmdLineString: str, logFilePath: str, seed: int, stepMaxReward: float, curricMaxReward: float, allEnvs: list,
                          args: argparse.Namespace) -> dict:
         """
         Initializes the trainingInfo dictionary
@@ -234,7 +217,7 @@ class RollingHorizon(ABC):
                             iterationsPerEnvKey: args.iterPerEnv,
                             consecutivelyChosen: 0,
                             fullArgs: args,
-                            usedEnvEnumerationKey: ENV_NAMES.DOORKEY_ENVS,
+                            usedEnvEnumerationKey: allEnvs,  # TODO das könnte schwer sein, wenn ich eval != training mache
                             additionalNotes: "",
                             numFrames: 0}
         saveTrainingInfoToFile(logFilePath, trainingInfoJson)
@@ -269,10 +252,11 @@ class RollingHorizon(ABC):
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
     @staticmethod
-    def randomlyInitializeCurricula(numberOfCurricula: int, stepsPerCurric: int, envDifficulty: int, paraEnv: int,
+    def randomlyInitializeCurricula(numberOfCurricula: int, stepsPerCurric: int, envDifficulty: float, paraEnv: int, envList: list,
                                     seed: int) -> list:
         """
         Initializes list of curricula randomly. Method allows duplicates, but they are extremely unlikely.
+        :param envList:
         :param paraEnv: the amount of envs that will be trained in parallel per step of a curriculum
         :param seed: the random seed
         :param envDifficulty:
@@ -284,8 +268,8 @@ class RollingHorizon(ABC):
         for i in range(numberOfCurricula):
             current = []
             for j in range(stepsPerCurric):
-                indices = random.choices(range(len(ENV_NAMES.DOORKEY_ENVS)), k=paraEnv)
-                newCurriculum = [getEnvFromDifficulty(idx, envDifficulty) for idx in indices]
+                indices = random.choices(range(len(envList)), k=paraEnv)
+                newCurriculum = [getEnvFromDifficulty(idx, envList, envDifficulty) for idx in indices]
                 current.append(newCurriculum)
             curricula.append(current)
         assert len(curricula) == numberOfCurricula
@@ -294,7 +278,7 @@ class RollingHorizon(ABC):
 
     @staticmethod
     def updateTrainingInfo(trainingInfoJson, epoch: int, bestCurriculum: list, fullRewardsDict,
-                           currentScoreRaw: float, snapshotScore: float, framesDone, envDifficulty: int,
+                           currentScoreRaw: float, snapshotScore: float, framesDone, envDifficulty: float,
                            lastEpochStartTime, curricula, curriculaEnvDetails, logFilePath, curricMaxReward, rawRewards) -> None:
         """
         Updates the training info dictionary

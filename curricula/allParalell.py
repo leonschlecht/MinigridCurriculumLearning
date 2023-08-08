@@ -16,7 +16,11 @@ class allParalell:
         self.lastEpochStartTime = startTime
         self.envDifficulty: float = 1.0
         self.seed = args.seed
-        self.paraEnvs = len(ENV_NAMES.DOORKEY_ENVS)
+        if args.dynamicObstacle:
+            self.allEnvs = ENV_NAMES.DYNAMIC_OBST_ENVS
+        else:
+            self.allEnvs = ENV_NAMES.DOORKEY_ENVS
+        self.paraEnvs = len(self.allEnvs)
 
         self.ITERATIONS_PER_EVALUATE = args.iterPerEnv
         self.iterationsDone = 0
@@ -29,11 +33,11 @@ class allParalell:
         self.asCurriculum = args.asCurriculum
         self.ppoEnv = args.ppoEnv
         self.ppoSingleEnv = self.ppoEnv != -1
-        assert 0 <= self.ppoEnv < len(ENV_NAMES.DOORKEY_ENVS)
+        assert 0 <= self.ppoEnv < len(self.allEnvs)
 
         self.selectedModel = self.model + os.sep + "model"
 
-        self.stepMaxReward = calculateCurricStepMaxReward(ENV_NAMES.DOORKEY_ENVS, args.noRewardShaping)
+        self.stepMaxReward = calculateCurricStepMaxReward(self.allEnvs, args.noRewardShaping)
 
         self.trainingInfoJson = {}
         self.logFilePath = storage.getLogFilePath(["storage", self.model, "status.json"])
@@ -46,17 +50,17 @@ class allParalell:
         if not self.isSPLCL:
             print("AllPara or NoCurric")
             if self.ppoSingleEnv:
-                self.initialEnvNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.ppoEnv)
+                self.initialEnvNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.allEnvs, self.ppoEnv)
             else:
-                self.initialEnvNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, 0)
+                self.initialEnvNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.allEnvs, 0)
         else:
             print("SPLCL")
-            self.initialEnvNames = self.initializeEnvNames(self.envDifficulty)
+            self.initialEnvNames = self.initializeEnvNames(self.allEnvs, self.envDifficulty)
         if self.modelExists:
             self.loadTrainingInfo()
         else:
             self.trainingInfoJson = RollingHorizon.initTrainingInfo(self.cmdLineString, self.logFilePath, self.seed,
-                                                                    self.stepMaxReward, None, self.args)
+                                                                    self.stepMaxReward, None, self.allEnvs, self.args)
 
         self.trainEachCurriculum(self.startEpoch, self.totalEpochs, self.iterationsDone, self.initialEnvNames)
 
@@ -71,21 +75,21 @@ class allParalell:
             if epoch == 0:
                 self.ITERATIONS_PER_EVALUATE = iterationsDone
                 self.txtLogger.info(f"Exact iterations set: {iterationsDone} ")
-            reward = (evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger))
+            reward = (evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger, self.allEnvs))
             self.trainingInfoJson[rawRewardsKey][f"epoch_{epoch}"] = reward
             reward = np.sum(reward)
-            self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize)
+            self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.allEnvs, self.difficultyStepSize)
             oldEnvNames = envNames.copy()  # used for the logs
             if not self.isSPLCL:
                 if self.asCurriculum:
-                    envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, currentStep)
+                    envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.allEnvs, currentStep)
                 else:
                     if self.ppoSingleEnv:
-                        envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.ppoEnv)
+                        envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.allEnvs, self.ppoEnv)
                     else:
-                        envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty)
+                        envNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.allEnvs)
                 currentStep += 1
-                if currentStep >= len(ENV_NAMES.DOORKEY_ENVS):
+                if currentStep >= len(self.allEnvs):
                     currentStep = 0
             else:
                 envNames = self.updateEnvNamesDynamically(envNames, self.envDifficulty, self.seed + epoch, reward)
@@ -108,47 +112,56 @@ class allParalell:
         txtLogger.info(f"\nEPOCH: {epoch} SUCCESS (total: {totalEpochs})\n ")
 
     @staticmethod
-    def updateEnvNamesNoAdjustment(difficulty, currentStep=-1) -> list:
+    def updateEnvNamesNoAdjustment(difficulty, envList: list, currentStep=-1) -> list:
         envNames = []
-        for j in range(len(ENV_NAMES.DOORKEY_ENVS)):
+        for j in range(len(envList)):
             if currentStep != -1:
                 index = currentStep
             else:
                 index = j
-            envNames.append(getEnvFromDifficulty(index, difficulty))
+            envNames.append(getEnvFromDifficulty(index, envList, difficulty))
         return envNames
 
     @staticmethod
-    def initializeEnvNames(startDifficulty=1.0) -> list:
+    def initializeEnvNames(envList: list, startDifficulty=1.0) -> list:
         """
         Initialize an env list for the training with the easiest index
+        :param envList:
         :param startDifficulty:
         :return:
         """
         envNames = []
-        for j in range(len(ENV_NAMES.DOORKEY_ENVS)):
-            envNames.append(getEnvFromDifficulty(0, startDifficulty))
+        for j in range(len(envList)):
+            envNames.append(getEnvFromDifficulty(0, envList, startDifficulty))
         return envNames
 
     @staticmethod
-    def getHarderEnv(envName) -> str:
-        index = ENV_NAMES.DOORKEY_ENVS.index(envName) + 1
-        if index >= len(ENV_NAMES.DOORKEY_ENVS):
-            index = len(ENV_NAMES.DOORKEY_ENVS) - 1
-        return ENV_NAMES.DOORKEY_ENVS[index]
+    def getHarderEnv(envList, envName) -> str:
+        index = envList.index(envName) + 1
+        if index >= len(envList):
+            index = len(envList) - 1
+        return envList[index]
 
     @staticmethod
-    def getEasierEnv(envName) -> str:
-        index = ENV_NAMES.DOORKEY_ENVS.index(envName) - 1
+    def getEasierEnv(envList, envName) -> str:
+        index = envList.index(envName) - 1
         if index < 0:
             index = 0
-        return ENV_NAMES.DOORKEY_ENVS[index]
+        return envList[index]
 
     def updateEnvNamesDynamically(self, currentEnvNames: list, newDifficulty: float, seed: int, reward: float) -> list:
+        """
+        SPLCL Update method depending on the progress decide which env to use
+        :param currentEnvNames:
+        :param newDifficulty:
+        :param seed:
+        :param reward:
+        :return:
+        """
         envNames = currentEnvNames
-        # TODO get the value of the models progress (maybe last 3 runs, and then decide if you should go up or not)
+        assert len(currentEnvNames) == len(self.allEnvs)
         np.random.seed(seed)
-        randomIndexSample = np.random.choice(range(len(ENV_NAMES.DOORKEY_ENVS)), size=self.paraEnvs, replace=False)
+        randomIndexSample = np.random.choice(range(len(currentEnvNames)), size=self.paraEnvs, replace=False)
         print("SPLCLCL reward", reward)
         if reward > self.stepMaxReward * .85:
             nextStep = "goUp"
@@ -164,9 +177,9 @@ class allParalell:
             for i in randomIndexSample:
                 cutEnv = envNames[i].split("-custom")[0]
                 if nextStep == "goDown":
-                    nextEnv = self.getEasierEnv(cutEnv)
+                    nextEnv = self.getEasierEnv(self.allEnvs, cutEnv)
                 elif nextStep == "goUp":
-                    nextEnv = self.getHarderEnv(cutEnv)
+                    nextEnv = self.getHarderEnv(self.allEnvs, cutEnv)
                 else:
                     raise Exception("Invalid new difficulty")
                 envNames[i] = nextEnv + ENV_NAMES.CUSTOM_POSTFIX + str(newDifficulty)
