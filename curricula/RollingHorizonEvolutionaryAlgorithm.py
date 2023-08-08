@@ -13,7 +13,7 @@ from pymoo.optimize import minimize
 import utils
 from curricula.RollingHorizon import RollingHorizon
 from curricula.curriculumProblem import CurriculumProblem
-from utils import getEnvFromDifficulty, ENV_NAMES
+from utils import getEnvFromDifficulty
 from utils.curriculumHelper import *
 
 
@@ -24,13 +24,13 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         self.nGen = args.nGen
         self.useNSGA = args.useNSGA
         self.multiObj: bool = args.multiObj
-        self.numEnvironments = 4
+        self.numEnvironments = 4 # TODO args param ?? damit ich auch togglen kann was ich wähle
         if self.multiObj:
-            self.objectives: int = 4
+            self.objectives: int = 4 # TODO num envs
         else:
             self.objectives: int = 1
         self.inequalityConstr = 0
-        self.xupper = len(ENV_NAMES.DOORKEY_ENVS) - 1
+        self.xupper = len(ENV_NAMES.ALL_ENVS) - 1 # TODO ?
         self.crossoverProb = args.crossoverProb
         self.mutationProb = args.mutationProb
         self.crossoverEta = args.crossoverEta

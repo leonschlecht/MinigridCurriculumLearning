@@ -7,9 +7,9 @@ def initializeArgParser():
     :return:
     """
     parser = argparse.ArgumentParser()
-    # General parameters
-    parser.add_argument("--trainAdaptive", default=False, action="store_true",
-                        help="Decides what training method will be used. If set, adaptive curriculum will be used")
+    parser.add_argument("--dynamicObstacle", action="store_true", default=False,
+                        help="Whether to use dynamic obstacle or doorkey for training RHEA CL")
+    # AllParallel params
     parser.add_argument("--trainAllParalell", default=False, action="store_true",
                         help="traines all 4 environments in parallel")
     parser.add_argument("--asCurriculum", default=False, action="store_true",
@@ -18,10 +18,6 @@ def initializeArgParser():
                         help="Adds the option to use --allParalell with PPO only for a single environment. Number corresponds to evironment index in array of all envs")
     parser.add_argument("--allSimultaneous", default=True, action="store_false",
                         help="Determines if all envs should be trained simultaneously from the start, or if the envs should be selected depending on progress")
-    parser.add_argument("--trainLinear", default=False, action="store_true",
-                        help="Decides what training method will be used. If set, linear curriculum will be used")
-    parser.add_argument("--trainBiasedRandomRH", default=False, action="store_true",
-                        help="Decides what training method will be used. If set, Biased Random RH will be used")
     parser.add_argument("--trainRandomRH", default=False, action="store_true",
                         help="Decides what training method will be used. If set, Full Random RH will be used")
 
@@ -42,18 +38,8 @@ def initializeArgParser():
                         help="The amount of generations per RHEA iteration")
     parser.add_argument("--gamma", default=0.9, type=float,
                         help="The dampening factor for the curricula RH. Later steps will be weighed less if gamma is high")
-
-    parser.add_argument("--algo", default="ppo", help="algorithm to use: a2c | ppo ")  # TODO remove ?
-    parser.add_argument("--model", default=None, required=True, help="name of the model (REQUIRED)")
-    parser.add_argument("--seed", type=int, default=1, help="random seed (default: 1)")
-    parser.add_argument("--log-interval", type=int, default=1,
-                        help="number of updates between two logs (default: 1)")  # TODO remove
-    parser.add_argument("--save-interval", type=int, default=2,
-                        help="number of updates between two saves (default: 2, 0 means no saving)")  # TODO remove (??)
-    parser.add_argument("--procs", type=int, default=32, help="number of processes (default: 32)")
     parser.add_argument("--noRewardShaping", action="store_true", default=False,
                         help="Whether or not to use rewardshaping for RHEA CL")
-
     # EA PAram
     parser.add_argument("--useNSGA", default=False, action="store_true",
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")
@@ -63,8 +49,12 @@ def initializeArgParser():
     parser.add_argument("--mutationProb", type=float, default=0.8, help="Mutation Probability of the RHEA CL")
     parser.add_argument("--crossoverEta", type=float, default=3.0, help="Crossover ETA of the RHEA CL")
     parser.add_argument("--mutationEta", type=float, default=3.0, help="Mutation ETA of the RHEA CL")
+    # General params
+    parser.add_argument("--model", default=None, required=True, help="name of the model (REQUIRED)")
+    parser.add_argument("--seed", type=int, default=1, help="random seed (default: 1)")
+    parser.add_argument("--procs", type=int, default=32, help="number of processes (default: 32)")
 
-    # Parameters for underlying training algorithm
+    # PPO Parameters
     parser.add_argument("--epochs", type=int, default=4, help="number of epochs for PPO (default: 4)")
     parser.add_argument("--batch-size", type=int, default=256, help="batch size for PPO (default: 256)")
     parser.add_argument("--frames-per-proc", type=int, default=None,
@@ -95,9 +85,8 @@ def initializeArgParser():
 
     args = parser.parse_args()
     args.mem = args.recurrence > 1
-    args.trainEvolutionary = not (
-            args.trainLinear or args.trainAdaptive or args.trainRandomRH or args.trainBiasedRandomRH or args.trainAllParalell
-    )
-    # TODO create some logic to ensure proper usage and not using some wrong args params
+    args.trainEvolutionary = not (args.trainRandomRH or args.trainAllParalell)
+
+    # TODO create some logic to ensure proper usage and not using some wrong args params combinations
     # TODO create object for type safety
     return args

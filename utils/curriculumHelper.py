@@ -31,17 +31,13 @@ maxStepRewardKey = "maxStepReward"
 maxCurricRewardKey = "maxCurricReward"
 iterationSteps = "iterationSteps"
 
-
 MAX_REWARD_PER_ENV = 1
 
 # Key names of hey they appear in the command line args
 oldArgsIterPerEnvName = "iterPerEnv"
 argsModelKey = "model"
 trainEvolutionary = "trainEvolutionary"
-trainLinear = "trainLinear"
-trainAdaptive = "trainAdaptive"
 trainRandomRH = "trainRandomRH"
-trainBiasedRandomRH = "trainBiasedRandomRH"
 trainAllParalell = "trainAllParalell"
 nGenerations = "nGen"
 numCurricKey = "numCurric"
@@ -56,13 +52,21 @@ allCurricDistributoinKey = "allCurricDistribution"
 # Used for all Paralell training
 NEXT_ENVS = "NextEnvs"
 
-
 # Evaluation font sizes
 # TODO maybe use different file for this
 labelFontsize = 16
 titleFontsize = 20
-legendFontSize = 14 # TODO why is this still so big sometimes ?
+legendFontSize = 14  # TODO why is this still so big sometimes ?
 tickFontsize = 12
+
+
+# Env sizes
+def getDoorKeyMaxSteps(envSize: int) -> int:
+    """
+    Returns the maximum steps allowed for a given doorkey environment size
+    """
+    DOORKEY_MAXSTEP_MULTIPLICATOR = 10
+    return envSize ** 2 * DOORKEY_MAXSTEP_MULTIPLICATOR
 
 
 def saveTrainingInfoToFile(path, jsonBody):
@@ -112,44 +116,57 @@ def getRewardMultiplier(evalEnv, noRewardShaping: bool):
     raise Exception("Something went wrong with the evaluation reward multiplier!", evalEnv)
 
 
-def calculateEnvDifficulty(iterationsDone, difficultyStepsize) -> float:
+def getDynamicObstacleMaxSteps(size):
+    return 4 * size ** 2
+
+
+def getNObstacles(size):
+    return size // 2
+
+
+def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
+    """
+    Register the new environments with the given updated max steps percentage
+    :param selectedEnvsList:
+    :param maxStepsPercent:
+    :return:
+    """
+    for env in selectedEnvsList:
+        size = int(env.split("-")[-1])
+        custom_postfix = ENV_NAMES.CUSTOM_POSTFIX + str(maxStepsPercent)
+
+        if "DoorKey" in env:
+            entry_point = "minigrid.envs:DoorKeyEnv"
+            max_steps = int(getDoorKeyMaxSteps(size) * maxStepsPercent)
+            kwargs = {"size": size, "max_steps": max_steps}
+        elif "Dynamic-Obstacle" in env:
+            entry_point = "minigrid.envs:DynamicObstaclesEnv"
+            max_steps = int(getDynamicObstacleMaxSteps(size) * maxStepsPercent)
+            kwargs = {"size": size, "n_obstacles": getNObstacles(size), "max_steps": max_steps}
+            # TODO maybe add "agent_start_pos": None for random
+        else:
+            raise Exception("Env not found")
+
+        register(
+            id=env + custom_postfix,
+            entry_point=entry_point,
+            kwargs=kwargs,
+        )
+
+    print("register env success")
+    exit()
+
+
+def calculateEnvDifficulty(iterationsDone, difficultyStepsize, selectedEnvs=ENV_NAMES.DOORKEY_ENVS) -> float:
     startDecreaseNum = 500000
     if iterationsDone <= startDecreaseNum:
-        value: float = 1.0
+        newMaxStepsPercent: float = 1.0
     else:
-        value = 1 - ((iterationsDone - startDecreaseNum) / difficultyStepsize / 20)
-    value = max(value, 0.15)
+        newMaxStepsPercent = 1 - ((iterationsDone - startDecreaseNum) / difficultyStepsize / 20)
+    newMaxStepsPercent = max(newMaxStepsPercent, 0.15)
 
-    assert value <= 1
-    if value < 1:
-        register(
-            id=ENV_NAMES.DOORKEY_12x12 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
-            entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 12, "max_steps": int(maxStepsEnv4 * value)},
-        )
-        register(
-            id=ENV_NAMES.DOORKEY_10x10 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
-            entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 10, "max_steps": int(maxStepsEnv4 * value)},
-        )
+    assert newMaxStepsPercent <= 1
+    if newMaxStepsPercent < 1:
+        registerEnvs(selectedEnvs, newMaxStepsPercent)
 
-        register(
-            id=ENV_NAMES.DOORKEY_8x8 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
-            entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 8, "max_steps": int(maxStepsEnv4 * value)},
-        )
-
-        register(
-            id=ENV_NAMES.DOORKEY_6x6 + ENV_NAMES.CUSTOM_POSTFIX + str(value),
-            entry_point="minigrid.envs:DoorKeyEnv",
-            kwargs={"size": 6, "max_steps": int(maxStepsEnv4 * value)},
-        )
-    return value
-
-
-ENV_SIZE_POWER = 2
-SIZE_MUTIPLICATOR = 10
-maxStepsEnv4 = 12 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-maxStepsEnv3 = 10 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-maxStepsEnv2 = 8 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
-maxStepsEnv1 = 6 ** ENV_SIZE_POWER * SIZE_MUTIPLICATOR
+    return newMaxStepsPercent
