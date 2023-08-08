@@ -36,12 +36,12 @@ class RollingHorizon(ABC):
                                                           self.paraEnvs, self.allEnvs, self.seed)
 
         self.ITERATIONS_PER_ENV = args.iterPerEnv
+        self.constMaxsteps = args.constMaxsteps
         self.iterationsDone = 0
         self.txtLogger = txtLogger
         self.model = args.model + "_s" + str(self.seed)
         self.selectedModel = utils.getEpochModelName(self.model, 0)
-        self.totalEpochs = 5000000 // self.ITERATIONS_PER_ENV + 1  # TODO remove args.trainEpochs
-        # TODO calculate totalEpochs based on another args parameter (4kk vs 5kk etc)
+        self.totalEpochs = args.trainingIterations // self.ITERATIONS_PER_ENV + 1  # TODO remove args.trainEpochs
         # TODO remove --model param and let it be created automatically (or optional for debug)
         self.trainingTime = 0
 
@@ -86,7 +86,8 @@ class RollingHorizon(ABC):
             currentBestCurriculum = self.getCurrentBestCurriculum()
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
 
-            self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.allEnvs, self.difficultyStepsize)
+            if not self.constMaxsteps:
+                self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.allEnvs, self.difficultyStepsize)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurricScoreRaw,
                                     currentSnapshotScore, self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula,
                                     self.curriculaEnvDetails, self.logFilePath, self.curricMaxReward, self.rawRewardDetails)

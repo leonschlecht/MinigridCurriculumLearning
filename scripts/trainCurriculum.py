@@ -37,7 +37,6 @@ def main():
     assert args.stepsPerCurric > 0, "Steps per curriculum must be >= 1"
     assert args.numCurric > 0, "There must be at least 1 curriculum"
     assert args.iterPerEnv > 0, "The iterations per curricululm step must be >= 1"
-    assert args.trainEpochs > 1, "There must be at least 2 training epochs for the algorithm"
     assert 0 < args.paraEnv <= len(
         ENV_NAMES.DOORKEY_ENVS), "Cant train on more envs in parallel than there are envs available"
 

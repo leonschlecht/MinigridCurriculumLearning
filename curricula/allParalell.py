@@ -16,6 +16,7 @@ class allParalell:
         self.lastEpochStartTime = startTime
         self.envDifficulty: float = 1.0
         self.seed = args.seed
+        self.constMaxsteps = args.constMaxsteps
         if args.dynamicObstacle:
             self.allEnvs = ENV_NAMES.DYNAMIC_OBST_ENVS
         else:
@@ -78,7 +79,8 @@ class allParalell:
             reward = (evaluate.evaluateAgent(self.selectedModel, self.envDifficulty, self.args, self.txtLogger, self.allEnvs))
             self.trainingInfoJson[rawRewardsKey][f"epoch_{epoch}"] = reward
             reward = np.sum(reward)
-            self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.allEnvs, self.difficultyStepSize)
+            if not self.constMaxsteps:
+                self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.allEnvs, self.difficultyStepSize)
             oldEnvNames = envNames.copy()  # used for the logs
             if not self.isSPLCL:
                 if self.asCurriculum:

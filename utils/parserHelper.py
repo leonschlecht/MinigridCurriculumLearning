@@ -9,6 +9,8 @@ def initializeArgParser():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dynamicObstacle", action="store_true", default=False,
                         help="Whether to use dynamic obstacle or doorkey for training RHEA CL")
+    parser.add_argument("--constMaxsteps", action="store_true", default=False,
+                        help="Whether to keep maxSteps of environments constant or not")
     # AllParallel params
     parser.add_argument("--trainAllParalell", default=False, action="store_true",
                         help="traines all 4 environments in parallel")
@@ -32,8 +34,8 @@ def initializeArgParser():
                         help="Determines the amount of curricula that are used for training")
     parser.add_argument("--difficultyStepsize", default=100000, type=int,
                         help="Determines when the difficulty will be adjusted. Default 100k -> -.1 decrease every 100k")  # TODO add starting @500k param too
-    parser.add_argument("--trainEpochs", default=50, type=int,
-                        help="Tells the algorithm how long to train for.")  # TODO change this since its calculated
+    parser.add_argument("--trainingIterations", default=5000000, type=int,
+                        help="How many RHEA CL Training iterations")
     parser.add_argument("--nGen", default=3, type=int,
                         help="The amount of generations per RHEA iteration")
     parser.add_argument("--gamma", default=0.9, type=float,

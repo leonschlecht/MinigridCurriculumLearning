@@ -1,18 +1,39 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 
+Morgen:
+- Alle Varianten Testen
+- Neue Runs Queuen
+- Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
 
-- Kapitel 1
-- Mail
+
+evtl:
+- ppo mit anderen hyperparametern (weniger LR)
+
+---------------------------------------
+
+- experimente ohne MAXSTEPS anpassung machen
+
+
+
+d - Kapitel 1
+d - Mail
 - Evaluation: 4x1 plots nebeneinander (oder sonst auch 2x2 geht antürlich auch)
--
-war das schlimm mit den maxSteps ??? Dadurch dass man überall die 12x12 genommen hat.
-und auch prüfen, ob das für andere experimente auch genommen wurde
 
-- andere Env experimente queuen
 
+Morgen:
+d - Restliche PPO Runs queuen (von mir aus auch 6x6 & 8x8)
+- Den Dynamic Obstacles mal queuen (Brauch ich für RHEA CL, RRH, SPLCL, AP, APasCurric)
+
+
+
+Allg:
+- EAs und anderen Envs. Ich hatte ja diesen Gedanken, dass man evtl. mehr envs zum Training verwenden könnte, als man in der Evaluierung benutzt, um Kosten zu sparen (zB TrainingsEnv: 6,8,10,12,14,16 und evaluierung mit 6, 8, 12, 16. Wie würde sich der EA dadurch verändern? Für single obj macht es glaube ich keinen Unterschied, aber für Multi Obj?
+- war das schlimm mit den maxSteps ??? Dadurch dass man überall die 12x12 genommen hat.
+    und auch prüfen, ob das für andere experimente auch genommen wurde
 - Neue Rewardlog experimente auswerten
 - den selected Env plot irgendwie machen / überdenken
+!! - diese RHEA CL Hoffnung mal irgendwie als graifk hinbekommen , vllt kann ich das für ja auch existierende logs benutzen
 
 
 ??
@@ -20,34 +41,7 @@ und auch prüfen, ob das für andere experimente auch genommen wurde
 -
 
 
----------------------------------------------
-
-Next Week:
-- Kapitel 4 & 5 abgeschickt (Netzwerk grafik?)
-- Kapitel 1 & 2 & 3 fertigmachen
-- SAC weiterprobieren oder halt neuen Algo
--
-
-
-So:
-- SAC zu hause rumprobieren (evtl auch einfach am laptop)
-- Architekturgrafik vom model
-
-
-
-
-----------------
-
-- experimente ohne MAXSTEPS anpassung machen
--
-
-
-Future work
-- more objectives
-- andere offspring raten
-- varying von den parametern
-
------
+-----------------------------------------------------------------
 
 - Horizon definieren im basics teil als Wort ( = 1 Iteration vom RH)
 - Limitation: hyperparameter sind sehr domänenabhängig
@@ -519,16 +513,17 @@ am ende ggf bayesian optimization ( zB 2 Params gleichzeitg variieren lasesn)
 ============================================================
 SEEDLISTE
  1
- 9152
- 2330
  1214
- 8515
+ 2330
+8515
+ 9152
 
+ 185
+ 1517
+ 3053
  2529
  8258
- 1517
-  185
- 3053
+
 
  9030
  4221
