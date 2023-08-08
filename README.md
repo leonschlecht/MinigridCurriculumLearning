@@ -24,16 +24,5 @@ errorbar: ci | sd | se | None (default)
 
 
 
-atm:
-Common GA & NSGA runs:
-17
-27
 
-20
-31
-
-12
-25
-
-23
-29
+If you want to change DoorKey Environments, you need to do so in the ENV_NAMES.py file

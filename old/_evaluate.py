@@ -40,7 +40,7 @@ if __name__ == "__main__":
     # Load environments
 
     envs = []
-    args.env = args.env or ENV_NAMES.DOORKEY_5x5_v0
+    args.env = args.env
     for i in range(args.procs):
         env = utils.make_env(args.env, args.seed + 10000 * i)
         envs.append(env)
