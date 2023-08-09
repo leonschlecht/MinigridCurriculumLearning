@@ -15,11 +15,11 @@ def initializeArgParser():
     parser.add_argument("--trainAllParalell", default=False, action="store_true",
                         help="traines all 4 environments in parallel")
     parser.add_argument("--asCurriculum", default=False, action="store_true",
-                        help="Adds the option to use --allParalell as a linear curriculum (6,8,10,12 in that order per epoch)")
+                        help="Adds the option to use --allParalell as a linear curriculum (easy -> hard) per epoch")
     parser.add_argument("--ppoEnv", default=-1, type=int,
                         help="Adds the option to use --allParalell with PPO only for a single environment. Number corresponds to evironment index in array of all envs")
     parser.add_argument("--allSimultaneous", default=True, action="store_false",
-                        help="Determines if all envs should be trained simultaneously from the start, or if the envs should be selected depending on progress")
+                        help="If set, SPCL will be performed. --trainallParalell must be set too")
     parser.add_argument("--trainRandomRH", default=False, action="store_true",
                         help="Decides what training method will be used. If set, Full Random RH will be used")
 

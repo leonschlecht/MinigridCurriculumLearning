@@ -56,7 +56,7 @@ class allParalell:
         self.startEpoch = 1
 
         if not self.isSPLCL:
-            print("AllPara or NoCurric")
+            print("AllPara normal or NoCurric or ppo only")
             if self.ppoSingleEnv:
                 self.initialEnvNames = self.updateEnvNamesNoAdjustment(self.envDifficulty, self.allEnvs, self.ppoEnv)
             else:
@@ -77,7 +77,6 @@ class allParalell:
         print("training will go on until", totalEpochs)
         currentStep = 1  # helper param to determine at what point in an epoch we are (used for AllParallel as Curric)
         for epoch in range(startEpoch, totalEpochs):
-            self.txtLogger.info(f"Envs: {envNames}")
             iterationsDone = train.startTraining(iterationsDone + self.ITERATIONS_PER_EVALUATE, iterationsDone,
                                                  self.selectedModel, envNames, self.args, self.txtLogger)
             if epoch == 0:

@@ -2,16 +2,16 @@ import argparse
 import os
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 
 from scripts.Result import Result
 from utils import storage
 from utils.curriculumHelper import *
-from matplotlib.ticker import MaxNLocator
-import numpy as np
 
 OFFSET = 1000
+
 
 def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
@@ -201,9 +201,39 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     return filteredScoreDfList, filteredDistrDfList, filteredSplitDistrDfList
 
 
+def printDfStats(filteredDfList):
+    sumScore = {}
+    avg = {}
+    median = {}
+    std = {}
+    # Concatenate the DataFrames vertically
+    concatenated_df = pd.concat(filteredDfList)
+
+    # Reset the index of the concatenated DataFrame
+    concatenated_df = concatenated_df.reset_index(drop=True)
+    for df in filteredDfList:
+        id = df.head(1)["id"].item()
+        score = np.sum(df[snapshotScoreKey])
+        sumScore[id] = score
+        avg[id] = np.average(df[snapshotScoreKey])
+        median[id] = np.median(df[snapshotScoreKey])
+        std[id] = np.std(df[snapshotScoreKey])
+    sorted_data = dict(sorted(sumScore.items(), key=lambda item: item[1]))
+    sorted_data2 = dict(sorted(avg.items(), key=lambda item: item[1]))
+    sorted_data3 = dict(sorted(median.items(), key=lambda item: item[1]))
+    sorted_data4 = dict(sorted(std.items(), key=lambda item: item[1]))
+
+    print("best scores", sorted_data)
+    print("avg scores", sorted_data2)
+    print("median scores", sorted_data3)
+    print("std scores", sorted_data4)
+
+
 def plotMultipleLineplots(filteredDfList, yColumns: list[str]):
     fig, ax = plt.subplots(figsize=(12, 8))  # Increase figure size
     sns.set_theme(style="darkgrid")
+    printDfStats(filteredDfList)
+
     for df in filteredDfList:
         for yStr in yColumns:
             sns.lineplot(x=iterationSteps, y=yStr, data=df, label=df.head(1)["id"].item() + "_" + yStr, ax=ax,
@@ -277,6 +307,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         df = aggregatedDf
         df = df.melt(id_vars=['trained until', 'id'],
                      value_vars=['MiniGrid-DoorKey-6x6', 'MiniGrid-DoorKey-8x8', 'MiniGrid-DoorKey-10x10', 'MiniGrid-DoorKey-12x12'],
+                     # TODO needs to be adjusted soon after dynObs runs
                      var_name='Environment',
                      value_name='Value')
         sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
@@ -285,7 +316,6 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
     else:
         group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
         # sort by the numerical values of the string (50k, 75k, ...)
-        print("ADF", aggregatedDf)
         if args.rhea or args.nsga or args.ga:
             aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
         else:
@@ -302,13 +332,13 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         plt.title("Environment Distribution", fontsize=titleFontsize)
         plt.xlabel('')
         plt.yticks(fontsize=tickFontsize)
-        plt.xticks(rotation=-15, ha='left', fontsize=tickFontsize) # TODO some args param or smth
+        plt.xticks(rotation=-15, ha='left', fontsize=tickFontsize)
         plt.subplots_adjust(bottom=0.2)
         if args.normalize:
             plt.ylim((0, 1))
         legend = ax.legend(fontsize=labelFontsize)
         labels = []
-        sizes = ["6x6", "8x8", "10x10", "12x12"]
+        sizes = ["6x6", "8x8", "10x10", "12x12"]  # TODO here too
         for item in legend.get_texts():
             label = item.get_text()
             for size in sizes:

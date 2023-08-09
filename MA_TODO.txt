@@ -1,32 +1,30 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
+Ist CrossoverMutation 80/80 optimal für DoorKey?
+Mal ausprobieren, ob ich beim weitertrainieren von bestimmten Modeln (auf 10x10 auch stagniere)
+
+12x12 ist nie in den snapshots mit drin --> iwi für future work / limitations mit aufnehmen, weil man das ja langfristig iwi ermutigen möchte (wenn es immer im 3. schritt attraktiv ist aber nie im 1. und sich dann jede epoch wiederholen könnte vllt
+
 
 Morgen:
-- Alle Varianten Testen (
-    d RHEA CL DooorKey,
-    d RHEA CL DynamicObst,
-    d RRH,
-    SPCL,
-    AP,
-    APCurric,
-    PPO only)
+- Alle Varianten Testen
 - Neue Runs Queuen (
-    Dynamic Obstacles,
-    ggf Rest PPO,
-    PPO mit dynamicObstacle,
-    PPO Ohne maxsteps --constMaxsteps
-    RHEA CL Ohne maxsteps --constMaxsteps
-    RRH dObst
-    SPCL doBst
-    AP dObst
-    APCurric dObst
+    d PPO mit dynamicObstacle,
+    d PPO Ohne maxsteps --constMaxsteps
+    d PPO varying LRs
+    d RHEA CL mit --constMaxsteps
+    d RRH dObst
+    d SPCL doBst
+    d AP dObst
+    d APCurric dObst
 
+
+- Bevor ich weitere experimente zu unmengen queue (vor allem minigrid) mussi ch Gamma mal auswerten
 - Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
 - experimente ohne MAXSTEPS anpassung machen (--constMaxsteps)
 
 
 evtl:
-- ppo mit anderen hyperparametern (weniger LR)
 - Docstirngs anfangen zu schreiben
 
 Do:
