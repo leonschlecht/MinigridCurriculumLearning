@@ -10,10 +10,10 @@ from utils.curriculumHelper import *
 class allParalell:
     """
     This class contains multiple baseline variants. They train for X iterations and then evaluate and save the results / logs
-    - SPCL
-    - AllParallel with all envs simultaneously
-    - AllParallel as a repeating curriculum
-    - PPO Only trying to solve an env with regular evaluations
+    - SPCL: add --trainAllParalell --allSimultaneous
+    - AllParallel with all envs simultaneously --trainAllParalell
+    - AllParallel as a repeating curriculum --trainAllParalell --asCurric
+    - PPO Only trying to solve an env with regular evaluations add --trainAllParalell --ppoEnv (envIndex)
     """
     def __init__(self, txtLogger, startTime, cmdLineString: str, args, modelName):
         self.difficultyStepSize = args.difficultyStepsize
@@ -32,7 +32,7 @@ class allParalell:
         self.ITERATIONS_PER_EVALUATE = args.iterPerEnv
         self.iterationsDone = 0
         self.txtLogger = txtLogger
-        TOTAL_ITERATIONS = args.trainingEpochs * 2
+        TOTAL_ITERATIONS = args.trainingIterations * 2
         self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
         self.trainingTime = 0
         self.model = modelName

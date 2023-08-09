@@ -45,7 +45,7 @@ def main():
         e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args, model)
         e.startCurriculumTraining()
     elif args.trainRandomRH:
-        e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, True, model)  # TODO remove True param
+        e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, model)
         e.startCurriculumTraining()
     elif args.trainAllParalell:
         e = allParalell(txtLogger, startTime, cmdLineString, args, model)
