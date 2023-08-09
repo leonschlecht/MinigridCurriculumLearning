@@ -40,7 +40,8 @@ class allParalell:
         self.asCurriculum = args.asCurriculum
         self.ppoEnv = args.ppoEnv
         self.ppoSingleEnv = self.ppoEnv != -1
-        assert 0 <= self.ppoEnv < len(self.allEnvs)
+        if self.ppoSingleEnv:
+            assert 0 <= self.ppoEnv < len(self.allEnvs)
 
         self.selectedModel = self.model + os.sep + "model"
 
