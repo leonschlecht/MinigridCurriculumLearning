@@ -2,8 +2,6 @@ import multiprocessing
 import sys
 from datetime import datetime
 
-from gymnasium.envs.registration import register
-
 import utils
 from curricula import RollingHorizonEvolutionaryAlgorithm, RandomRollingHorizon, allParalell
 from utils import ENV_NAMES
@@ -18,18 +16,21 @@ def main():
         print("fork not set")
     cmdLineString = ' '.join(sys.argv)
     args = utils.initializeArgParser()
-    # TODO add --debug option with some preset parameters, and only use more params if != default ones (+ rnd model name)
-
     if not args.dynamicObstacle:
         print("Using DoorKey")
+        envHintForModelName = "Door"
         envs = ENV_NAMES.DOORKEY_ENVS
     else:
         print("Using Dynamic Obstacles")
+        envHintForModelName = "Obst"
         envs = ENV_NAMES.DYNAMIC_OBST_ENVS
     registerEnvs(envs, 1.0)
-
-    # TODO this is not clear if it creates a folder or not
-    model = args.model + "_s" + str(args.seed)
+    reshapingString = ""
+    if args.noRewardShaping:
+        reshapingString = "_noRS"
+    # TODO what about gamma and Crossover / Mutation rates & evolAlgo ?
+    model = args.model + "_" + envHintForModelName + reshapingString + "_s" + str(args.seed)
+    # get txt logger creates the directory
     txtLogger = utils.get_txt_logger(utils.get_model_dir(model))
     startTime: datetime = datetime.now()
 
@@ -41,13 +42,13 @@ def main():
         ENV_NAMES.DOORKEY_ENVS), "Cant train on more envs in parallel than there are envs available"
 
     if args.trainEvolutionary:
-        e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args)
+        e = RollingHorizonEvolutionaryAlgorithm(txtLogger, startTime, cmdLineString, args, model)
         e.startCurriculumTraining()
     elif args.trainRandomRH:
-        e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, True) # TODO remove True param
+        e = RandomRollingHorizon(txtLogger, startTime, cmdLineString, args, True, model)  # TODO remove True param
         e.startCurriculumTraining()
     elif args.trainAllParalell:
-        e = allParalell(txtLogger, startTime, cmdLineString, args)
+        e = allParalell(txtLogger, startTime, cmdLineString, args, model)
     else:
         raise Exception("No training method selected!")
 

@@ -18,8 +18,8 @@ from utils.curriculumHelper import *
 
 class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
 
-    def __init__(self, txtLogger, startTime: datetime, cmdLineString: str, args: argparse.Namespace):
-        super().__init__(txtLogger, startTime, cmdLineString, args)
+    def __init__(self, txtLogger, startTime: datetime, cmdLineString: str, args: argparse.Namespace, model):
+        super().__init__(txtLogger, startTime, cmdLineString, args, model)
         self.nGen = args.nGen
         self.useNSGA = args.useNSGA
         self.multiObj: bool = args.multiObj

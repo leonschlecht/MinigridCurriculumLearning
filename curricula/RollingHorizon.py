@@ -15,7 +15,7 @@ from utils.curriculumHelper import *
 
 
 class RollingHorizon(ABC):
-    def __init__(self, txtLogger, startTime, cmdLineString: str, args: argparse.Namespace):
+    def __init__(self, txtLogger, startTime, cmdLineString: str, args: argparse.Namespace, modelName):
         random.seed(args.seed)
         self.args = args
         if args.dynamicObstacle:
@@ -39,10 +39,9 @@ class RollingHorizon(ABC):
         self.constMaxsteps = args.constMaxsteps
         self.iterationsDone = 0
         self.txtLogger = txtLogger
-        self.model = args.model + "_s" + str(self.seed)
+        self.model = modelName
         self.selectedModel = utils.getEpochModelName(self.model, 0)
-        self.totalEpochs = args.trainingIterations // self.ITERATIONS_PER_ENV + 1  # TODO remove args.trainEpochs
-        # TODO remove --model param and let it be created automatically (or optional for debug)
+        self.totalEpochs = args.trainingIterations // self.ITERATIONS_PER_ENV + 1
         self.trainingTime = 0
 
         self.stepMaxReward = calculateCurricStepMaxReward(self.allEnvs, args.noRewardShaping)

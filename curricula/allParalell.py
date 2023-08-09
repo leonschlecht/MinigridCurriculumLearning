@@ -8,8 +8,14 @@ from utils.curriculumHelper import *
 
 
 class allParalell:
-    def __init__(self, txtLogger, startTime, cmdLineString: str, args):
-        # random.seed(args.seed)
+    """
+    This class contains multiple baseline variants. They train for X iterations and then evaluate and save the results / logs
+    - SPCL
+    - AllParallel with all envs simultaneously
+    - AllParallel as a repeating curriculum
+    - PPO Only trying to solve an env with regular evaluations
+    """
+    def __init__(self, txtLogger, startTime, cmdLineString: str, args, modelName):
         self.difficultyStepSize = args.difficultyStepsize
         self.args = args
         self.cmdLineString = cmdLineString
@@ -26,10 +32,10 @@ class allParalell:
         self.ITERATIONS_PER_EVALUATE = args.iterPerEnv
         self.iterationsDone = 0
         self.txtLogger = txtLogger
-        TOTAL_ITERATIONS = 10000000
+        TOTAL_ITERATIONS = args.trainingEpochs * 2
         self.totalEpochs = TOTAL_ITERATIONS // self.ITERATIONS_PER_EVALUATE
         self.trainingTime = 0
-        self.model = args.model + "_s" + str(self.seed)
+        self.model = modelName
         self.isSPLCL = not args.allSimultaneous
         self.asCurriculum = args.asCurriculum
         self.ppoEnv = args.ppoEnv

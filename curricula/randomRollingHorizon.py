@@ -1,11 +1,8 @@
-import os
 import numpy as np
-from numpy import ndarray
 
 import utils
-from curricula import train, evaluate, RollingHorizon
-from utils import getModelWithCandidatePrefix, ENV_NAMES, getEnvFromDifficulty
-from utils.curriculumHelper import *
+from curricula import RollingHorizon
+from utils import getEnvFromDifficulty
 
 
 class RandomRollingHorizon(RollingHorizon):
@@ -16,8 +13,8 @@ class RandomRollingHorizon(RollingHorizon):
     This aims to achieve that given the last best curriculum, based on this we want to continue most of our training.
     """
 
-    def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom):
-        super().__init__(txtLogger, startTime, cmdLineString, args)
+    def __init__(self, txtLogger, startTime, cmdLineString: str, args, fullRandom, modelName):
+        super().__init__(txtLogger, startTime, cmdLineString, args, modelName)
         self.fullRandom = fullRandom
         if not self.fullRandom:
             self.curricConsecutivelyChosen = 0
@@ -42,13 +39,15 @@ class RandomRollingHorizon(RollingHorizon):
         # TODO 1/3 this should be renamed (this was intended for trainingInfoJson updates)
         if self.fullRandom:
             self.curricula = self.randomlyInitializeCurricula(self.numCurric, self.stepsPerCurric, self.envDifficulty,
-                                                              self.paraEnvs, self.seed + epoch)
+                                                              self.paraEnvs, self.allEnvs, self.seed + epoch)
         else:
+            """
             self.curricula = self.updateCurriculaAfterHorizon(self.lastChosenCurriculum, self.numCurric,
                                                               self.envDifficulty)
             self.curricConsecutivelyChosen = \
                 self.calculateConsecutivelyChosen(self.curricConsecutivelyChosen, self.currentBestCurriculum,
                                                   self.lastChosenCurriculum)
+            """
 
     def executeOneEpoch(self, epoch: int) -> None:
         currentRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
@@ -74,7 +73,7 @@ class RandomRollingHorizon(RollingHorizon):
             return consecutiveCount + 1
         return 0
 
-    def updateCurriculaAfterHorizon(self, bestCurriculum: list, numberOfCurricula: int, envDifficulty: int) -> list:
+    def updateCurriculaAfterHorizon(self, bestCurriculum: list, numberOfCurricula: int, envDifficulty: int, envList) -> list:
         """
         Updates the List of curricula by using the last N-1 Envs, and randomly selecting a last new one
         :param envDifficulty:
@@ -84,7 +83,6 @@ class RandomRollingHorizon(RollingHorizon):
         """
         curricula = []
         # TODO 1/3 maybe only do this for a percentage of curricula, and randomly set the others OR instead of using [1:], use [1:__]
-        # TODO 1/3 test this
         for i in range(numberOfCurricula):
             curricula.append(bestCurriculum[1:])
             envId = np.random.randint(0, len(envList))
@@ -93,5 +91,5 @@ class RandomRollingHorizon(RollingHorizon):
         return curricula
 
     def getCurriculumName(self, i, genNr):
-        assert genNr == -1, "this parameter shouldnt matter for RRH"
+        assert genNr == -1, "this parameter shouldnt be set for RRH"
         return utils.getModelWithCurricSuffix(self.selectedModel, i)
