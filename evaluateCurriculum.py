@@ -201,7 +201,6 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
                     break
                 print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
-
     return filteredScoreDfList, filteredDistrDfList, filteredSplitDistrDfList
 
 
@@ -324,7 +323,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
             aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
         elif args.crossoverMutation:
             # add the numerical parts together (cross54_mut_56 => 54 + 56 = 110)
-            aggregatedDf['sort_col'] = aggregatedDf['id'].str.extract(r'(\d+)_Mut(\d+)').astype(int).sum(axis=1)
+            aggregatedDf['sort_col'] = aggregatedDf['id'].str.extractall(r'(\d+)').astype(int).sum(level=0)
         else:
             # default: only sort by the ID string
             aggregatedDf["sort_col"] = aggregatedDf["id"]
@@ -421,12 +420,14 @@ def showTrainingTimePlot(aggregatedDf):
 
 def plotAggregatedBarplot(filteredDfList):
     assert len(filteredDfList) > 0, "filteredDfList empty"
-    for f in filteredDfList:
-        for fullModelName in f["id"]:
-            expParams = fullModelName.split("_")
-            noModelName = "_".join(expParams[1:])
-            break
-        f["id"] = noModelName + "_" + expParams[0]
+
+    if not args.crossoverMutation:
+        for f in filteredDfList:
+            for fullModelName in f["id"]:
+                expParams = fullModelName.split("_")
+                noModelName = "_".join(expParams[1:])
+                break
+            f["id"] = noModelName + "_" + expParams[0]
     aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
 
     if args.trainingTime:
@@ -487,7 +488,7 @@ def main(comparisons: int):
     print("------------------\n\n\n")
 
     if args.model is None and not args.skip:
-        filteredScoreDf, filteredDistrDf, filteredSplitDistrDf = \
+        filteredScoreDf, filteredFullDistrDf, filteredSplitDistrDf = \
             getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf, splitDistrDf)
         if args.scores is not None:
             if args.scores == "both":
@@ -496,20 +497,15 @@ def main(comparisons: int):
                 yColumns = ["bestCurricScore"]
             else:
                 yColumns = ["snapshotScore"]
-            # avgEpochRewards is not useful
+            # avgEpochRewards is probably not useful
             plotMultipleLineplots(filteredScoreDf, yColumns)
         if args.splitDistr:
             plotAggregatedBarplot(filteredSplitDistrDf)
-        else:  # TODO
-            plotAggregatedBarplot(filteredDistrDf)
+        else:
+            plotAggregatedBarplot(filteredFullDistrDf)
 
-    if args.model is not None and not args.skip:
-        filteredScoreDf = scoreDf[scoreDf["id"] == args.model]
-        sns.lineplot(x=iterationSteps, y="snapshotScore", data=filteredScoreDf, label=args.model, errorbar=args.errorbar)
-        # TODO this part is probably never called
-        plt.show()
     if args.skip:
-        # TODO this has become deprecated
+        # TODO this is deprecated and is not fully functional anymore i think
         print("starting evaluation. . .")
         for m in models:
             if "C_" in m and not args.showCanceled:
@@ -533,7 +529,7 @@ def main(comparisons: int):
     # filepath = Path('./out.csv') # TODO DF save as csv
     # filepath.parent.mkdir(parents=True, exist_ok=True)
     # scoreDf.to_csv(filepath, index=False)
-
+    print("Done")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

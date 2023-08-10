@@ -1,30 +1,43 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-- Andere Env als Dynamic Obstacle oder nicht ??
-- Sind Rewardshaping runs schlechter als die ohne ???
-- Bessere RHEA CL ModelName generierung ? Damit ich das nicht immre alles manuell machen muss ...
-- testen ob ich die .sh scripts in einen ordner packen kann, damit der root ordner nicht so voll ist ( --> testen ob python .py statt -m geht)
-- limitation: desired effekt von "langsamer anstieg, aber dann besser" leider nicht beobachtet ( war ja auch die Hoffnung von gamma)
-d - besser kenntlich machen, welcher der runs für beides nRS & RS ausgeführt wurde
-- Sind die nRS > RS oder tritt das nicht immer auf???
 
-TODO
+Morgen (FR):
+- Kann ich nicht schon iwelche runs tiwerqueuen die ähnlich sind zu den aktuellen die laufen ?? (vllt auch ParaEnv 1 ?)
+- Wenn ein gutes model auf 6x6 trainiert, wird es dann schlechter in 10x10 & 12x12 ?
+- @phind below
 - Discussion chapter etwas schreiben / mergen
-- Gamma Auswertung (s.u.)
-- Sobol Auswertung (welche erkenntnisse kann ich daraus ziehen? beste kombination für doorkey? Warum sehen die env distrs so aus ??)
-- Auswertung: dynObstacle filter einbauen (direkt in main oder so) ; und generell auch mal schauen wie ich das am besten mache, ob ich refactor soll oder eher etwasn eu machen, weil das sehr unübersichtlich wird langsam
-- Erste DynObstacle runs anschauen
-- - Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
-(d) - evtl einen run starten mit lower lr & 1 paraEnv; damit man auch mal eine chance hat für eine gute verteilung
-d - paraEnv oder paraEnvs ?
 
-+
-Bei der neuen Rewardstruktur müsste man evtl was anpassen (option für "old" oder neue variante, damit ich mit den neuen auch die alten plots hinkriege)
-- unnötige .pt dateien aus dem repo löschen (problem ist halt dass die in der gitignore sind)
+Wichtig: - Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
+    - Basics Teil weiterschreiben (1 neue Grafik einbinden aus dem Vid)
 
+
+
+Sa:
+- Evaluate überarbeiten (evtl neuschreiben)
+-
+
+
+----------------
+
+- Andere Env als Dynamic Obstacle oder nicht ??
+- Bessere RHEA CL ModelName generierung ? Damit ich das nicht immre alles manuell machen muss ...
+(d) --> geht nicht wirklich - testen ob ich die .sh scripts in einen ordner packen kann, damit der root ordner nicht so voll ist ( --> testen ob python .py statt -m geht)
+- limitation: desired effekt von "langsamer anstieg, aber dann besser" leider nicht beobachtet ( war ja auch die Hoffnung von gamma)
+- Sind die nRS > RS oder tritt das nicht immer auf???
+- Evaluate so überarbeiten dass ich 1 df habe und nicht 20 listen
+
+
+numCurric: 1-5
+curricLen: 2-5
+nGen: 1-5
+paraEnv: 1-2
+gamma: between 0 and 1 (float)
+...
+--> phind prompt beenden
 
 Samstag:
 - Alle neuen Runs Queuen (und die Configuration datei damit füllen, und Tabelle updaten)
+    - keep in mind: kann ggf auch noch mehr queuen, weil ich neue rewradslogs habe
     Dynamic obstacle: --noRewardShaping
         - RHEA CL (3 scripts - seed)
         - RRH (3 scripts - seed)
@@ -44,7 +57,7 @@ Samstag:
             - AP as curric (1 script)
         evtl: mehr nRS runs queuen
         sobol: mehr Runs queuen damit es einheitlich ist bzgl der nRS & RS Parameter
-
+    - eval überarbeiten
 
 
 
@@ -69,12 +82,22 @@ iwann bald:
 - unnötigen krams aus legend rauscutten (also zb "Column" oder das n bei "6x6n")
 - Größere x & y achsenbeschriftungen
 - Bessere Gruppierungsmöglichkeiten einbauen, ggf auch mal subplots verwenden.
-- Die x-tick labels einheitlich machen (zB Wan nsoll _NSGA dazukommen,
-- Manche Ordner besser benennen (zB _step anpassen an das was ich eigentlich benutze
 - Mal ausprobieren, ob ich beim weitertrainieren von bestimmten Modeln (auf 10x10 auch stagniere)
 - 12x12 ist nie in den snapshots mit drin --> iwi für future work / limitations mit aufnehmen, weil man das ja langfristig iwi ermutigen möchte (wenn es immer im 3. schritt attraktiv ist aber nie im 1. und sich dann jede epoch wiederholen könnte vllt
     aber irgendwie ist diese begründung bisher mit dem reward shaping entfernen auch nicht so gut. Bzw hat das überhaupt was gebracht ?
-- aus welcher gen kam das beste curriculum (vllt kann man das irgendwie ranken oder so?) & dann auch für alle irgendwie kombinieren (von einer exp configuration)
+- PLOT aus welcher gen kam das beste curriculum (vllt kann man das irgendwie ranken oder so?) & dann auch für alle irgendwie kombinieren (von einer exp configuration)
+- Future work: ablation study --> Wie würde das überhaupt aussehen ?
+- baseline: manual curriculum (ggf auch in AP einbauen?)
+- limitation: zu wenig zeit mit der architektur verbracht & den PPO hypers
+- limitation: zu wenig trainignszeit um besser in 12x12 zu werden? Müsste ggf erst öfter trainieren, um den positiven effekt zu sehen (bei sowas ist TSCL gluabe ich einfach besser, wenn man abs(slope) betrachtet)
+- Wie kann es sein dass er erst besser wird im 12x12 und dann iwann alles wieder verlernt ???
+
+-Gamma50 hat schnellsten anstieg (sollte auch so sein, weil greedieste variante); Aber warum hat gamma70 slightly worse am ende ?
+- NSGA multi vs single: Multi scheint 1% besser zu sein (oderi st es wegen nRS ?)
+- Ist das PPO Netzwerk zu schwach?
+- Ist dieser eine Run mit "newLogs" durch ??
+- Limitation: wie umgehen mit catastrophic forgetting? TSCL macht das viel besser mit dem abs(slope) dass man auch informationen aus dervergangenheit verwendet
+
 
 
 - Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
@@ -96,7 +119,6 @@ Allg:
 - EAs und anderen Envs. Ich hatte ja diesen Gedanken, dass man evtl. mehr envs zum Training verwenden könnte, als man in der Evaluierung benutzt, um Kosten zu sparen (zB TrainingsEnv: 6,8,10,12,14,16 und evaluierung mit 6, 8, 12, 16. Wie würde sich der EA dadurch verändern? Für single obj macht es glaube ich keinen Unterschied, aber für Multi Obj?
 - war das schlimm mit den maxSteps ??? Dadurch dass man überall die 12x12 genommen hat.
     und auch prüfen, ob das für andere experimente auch genommen wurde
-- Neue Rewardlog experimente auswerte
 
 
 
@@ -107,33 +129,6 @@ low prio
 
 
 -----------------------------------------------------------------
-
-- TODO für den plot
-    - y achse wieder sortieren (achtung dass die values auch mitgemappt werden)
-    - farben fixen
-    - größe der punkte
-    - überlegen,wie man das gut plotten kann
-    - mach die y achse näher beinander
-    - ggf etws anderes als kreise zum darstellen benutzen
-    - bei 2.2 die markierung reinpacken (oder sogar basieren auf den iterSteps, für exakten marker)
-        Achsen usw noch anpassen (beschränkung y)
-        farbe hinbekommen (hue mus gesettz sein)
-        4 nebeneinander noch machen
-        vllt auch mal schreiben morgen
-        oder mind. noch die neuen experimente Queuen mit der anderen umgebung !!!
-
-
-
-
-PLOT todo :
-- einen nsga&ga filter einbauen
-- Überall titel hinzufügen mit einheitlicher schriftgröße
-- Legend immer hinzufügen + fontsize anpassen
-- unnötigen krams aus legend rauscutten (also zb "Column" oder das n bei "6x6n")
-- Größere x & y achsenbeschriftungen
-- Bessere Gruppierungsmöglichkeiten einbauen, ggf auch mal subplots verwenden.
-- Die x-tick labels einheitlich machen (zB Wan nsoll _NSGA dazukommen,
-- Manche Ordner besser benennen (zB _step anpassen an das was ich eigentlich benutze)
 
 SAC todo:
     schauen wie ich das speichern kann
@@ -148,12 +143,9 @@ SAC todo:
 - (PPO besser verstehen, ggf manche sahcne zitieren aus dem paper oder aus einem anderen)
 
 ----------------------------
-@Alex:
 - all Curric plot useful? Kann man evtl besser zeigen ok: best curric sieht die sitr so aus, 1. step sieht sie so aus ...
 - wenn jetzt multiobj, hätte ich nicht auch nsga 3 benutzen können / sollen ? --> Wie erkläre ich das
 - RW: Einen RHEA CL Ansatz finden ??
-
-
 
 ------------------------------------------------------------------------------------------------------------
 
