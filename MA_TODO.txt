@@ -1,6 +1,10 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
 - Andere Env als Dynamic Obstacle oder nicht ??
+- Sind Rewardshaping runs schlechter als die ohne ???
+- Bessere RHEA CL ModelName generierung ? Damit ich das nicht immre alles manuell machen muss ...
+- testen ob ich die .sh scripts in einen ordner packen kann, damit der root ordner nicht so voll ist ( --> testen ob python .py statt -m geht)
+
 
 TODO
 - Discussion chapter etwas schreiben / mergen
@@ -9,7 +13,6 @@ TODO
 - Auswertung: dynObstacle filter einbauen (direkt in main oder so) ; und generell auch mal schauen wie ich das am besten mache, ob ich refactor soll oder eher etwasn eu machen, weil das sehr unübersichtlich wird langsam
 - Erste DynObstacle runs anschauen
 - - Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
-- ConstMaxsteps mal etwas auswerten, falls schon etwas progress ist
 - evtl einen run starten mit lower lr & 1 paraEnv; damit man auch mal eine chance hat für eine gute verteilung
 d - paraEnv oder paraEnvs ?
 
@@ -20,6 +23,25 @@ Bei der neuen Rewardstruktur müsste man evtl was anpassen (option für "old" od
 
 Samstag:
 - Alle neuen Runs Queuen (und die Configuration datei damit füllen, und Tabelle updaten)
+    Dynamic obstacle: --noRewardShaping
+        - RHEA CL (3 scripts - seed)
+        - RRH (3 scripts - seed)
+        - PPOnly (4 Scripts - envChange)
+        - AP normal (1 script)
+        - AP asCurric (1 script)
+        - SPCL (1 script)
+    DKey:
+        - PPO andere LR (1 script)
+        --constMaxsteps:
+            - PPO andere LR (1 script)
+            - RHEA const maxsteps (3-9 scripts)
+            - RRH (3 scripts)
+            - SPCL (1 script)
+            - AP normal (1 script)
+            - AP as curric (1 script)
+
+
+
 
 --------------------------------------------------------------------------------------------------------
 
@@ -52,13 +74,14 @@ iwann bald:
 
 - Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
 - experimente ohne MAXSTEPS anpassung machen (--constMaxsteps)
+- curricuulumScore wird als Formel eingeführt, taucht aber nicht im pseudocode auf ?
 
 
 evtl:
 - Docstirngs anfangen zu schreiben
 - Experimente evtl mal richtig benenen dass man sie besser einordnen kann (legend ist confusing sonst) [oder im cod transformieren]
 - Wie EA Initialisieren, wenn man train != eval envs. man könnte evtl. mehr envs zum Training verwenden könnte, als man in der Evaluierung benutzt, um Kosten zu sparen (zB TrainingsEnv: 6,8,10,12,14,16 und evaluierung mit 6, 8, 12, 16. Wie würde sich der EA dadurch verändern? Für single obj macht es glaube ich keinen Unterschied, aber für Multi Obj?
-
+- AP aufteilen als oberklasse und 4 unterklassen
 
 ---------------------------------------
 
@@ -87,6 +110,13 @@ low prio
     - überlegen,wie man das gut plotten kann
     - mach die y achse näher beinander
     - ggf etws anderes als kreise zum darstellen benutzen
+    - bei 2.2 die markierung reinpacken (oder sogar basieren auf den iterSteps, für exakten marker)
+        Achsen usw noch anpassen (beschränkung y)
+        farbe hinbekommen (hue mus gesettz sein)
+        4 nebeneinander noch machen
+        vllt auch mal schreiben morgen
+        oder mind. noch die neuen experimente Queuen mit der anderen umgebung !!!
+
 
 
 

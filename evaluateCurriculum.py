@@ -1,14 +1,18 @@
 import argparse
 import os
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import sys
 
-from scripts.Result import Result
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from curricula.Result import Result
 from utils import storage
 from utils.curriculumHelper import *
+
+# find out if i can go back 1 directory and then run the scripts. this would solve the same issue
 
 OFFSET = 1000
 
@@ -224,9 +228,9 @@ def printDfStats(filteredDfList):
     sorted_data4 = dict(sorted(std.items(), key=lambda item: item[1]))
 
     print("best scores", sorted_data)
-    print("avg scores", sorted_data2)
-    print("median scores", sorted_data3)
-    print("std scores", sorted_data4)
+    print("\navg scores", sorted_data2)
+    print("\nmedian scores", sorted_data3)
+    print("\nstd scores", sorted_data4)
 
 
 def plotMultipleLineplots(filteredDfList, yColumns: list[str]):

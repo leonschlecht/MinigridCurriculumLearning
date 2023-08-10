@@ -68,7 +68,7 @@ class Result:
         if self.loadedArgsDict[trainEvolutionary]:  # TODO move to method
             self.epochDict = self.getEpochDict(self.rewardsDict)
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
-            self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric
+            self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric # WTH is this ??
             for epochKey in self.rewardsDict:
                 epochDict = self.rewardsDict[epochKey]
                 bestGen, bestIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
