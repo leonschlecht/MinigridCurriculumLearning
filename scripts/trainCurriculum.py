@@ -25,9 +25,11 @@ def main():
         envHintForModelName = "Obst"
         envs = ENV_NAMES.DYNAMIC_OBST_ENVS
     registerEnvs(envs, 1.0)
-    reshapingString = ""
+
     if args.noRewardShaping:
         reshapingString = "_noRS"
+    else:
+        reshapingString = "_RS"
     constMaxsteps = ""
     if args.constMaxsteps:
         constMaxsteps = "_Constmaxstep"

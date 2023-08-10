@@ -4,7 +4,9 @@ eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 - Sind Rewardshaping runs schlechter als die ohne ???
 - Bessere RHEA CL ModelName generierung ? Damit ich das nicht immre alles manuell machen muss ...
 - testen ob ich die .sh scripts in einen ordner packen kann, damit der root ordner nicht so voll ist ( --> testen ob python .py statt -m geht)
-
+- limitation: desired effekt von "langsamer anstieg, aber dann besser" leider nicht beobachtet ( war ja auch die Hoffnung von gamma)
+d - besser kenntlich machen, welcher der runs für beides nRS & RS ausgeführt wurde
+- Sind die nRS > RS oder tritt das nicht immer auf???
 
 TODO
 - Discussion chapter etwas schreiben / mergen
@@ -13,7 +15,7 @@ TODO
 - Auswertung: dynObstacle filter einbauen (direkt in main oder so) ; und generell auch mal schauen wie ich das am besten mache, ob ich refactor soll oder eher etwasn eu machen, weil das sehr unübersichtlich wird langsam
 - Erste DynObstacle runs anschauen
 - - Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
-- evtl einen run starten mit lower lr & 1 paraEnv; damit man auch mal eine chance hat für eine gute verteilung
+(d) - evtl einen run starten mit lower lr & 1 paraEnv; damit man auch mal eine chance hat für eine gute verteilung
 d - paraEnv oder paraEnvs ?
 
 +
@@ -32,6 +34,7 @@ Samstag:
         - SPCL (1 script)
     DKey:
         - PPO andere LR (1 script)
+        - RHEA CL 1 paraEnv (1 script)
         --constMaxsteps:
             - PPO andere LR (1 script)
             - RHEA const maxsteps (3-9 scripts)
@@ -39,6 +42,8 @@ Samstag:
             - SPCL (1 script)
             - AP normal (1 script)
             - AP as curric (1 script)
+        evtl: mehr nRS runs queuen
+        sobol: mehr Runs queuen damit es einheitlich ist bzgl der nRS & RS Parameter
 
 
 
