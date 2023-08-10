@@ -86,7 +86,7 @@ class RollingHorizon(ABC):
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
 
             if not self.constMaxsteps:
-                self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.allEnvs, self.difficultyStepsize)
+                self.envDifficulty = calculateEnvDifficulty(self.iterationsDone, self.difficultyStepsize, self.allEnvs)
             self.updateTrainingInfo(self.trainingInfoJson, epoch, currentBestCurriculum, rewards, bestCurricScoreRaw,
                                     currentSnapshotScore, self.iterationsDone, self.envDifficulty, self.lastEpochStartTime, self.curricula,
                                     self.curriculaEnvDetails, self.logFilePath, self.curricMaxReward, self.rawRewardDetails)

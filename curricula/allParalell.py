@@ -86,7 +86,7 @@ class allParalell:
             self.trainingInfoJson[rawRewardsKey][f"epoch_{epoch}"] = reward
             reward = np.sum(reward)
             if not self.constMaxsteps:
-                self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.allEnvs, self.difficultyStepSize)
+                self.envDifficulty = calculateEnvDifficulty(iterationsDone, self.difficultyStepSize, self.allEnvs)
             oldEnvNames = envNames.copy()  # used for the logs
             if not self.isSPLCL:
                 if self.asCurriculum:

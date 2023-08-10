@@ -155,7 +155,7 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
         print(env+custom_postfix)
 
 
-def calculateEnvDifficulty(iterationsDone, difficultyStepsize, selectedEnvsList) -> float:
+def calculateEnvDifficulty(iterationsDone: int, difficultyStepsize: int, selectedEnvsList: list) -> float:
     startDecreaseNum = 500000
     if iterationsDone <= startDecreaseNum:
         newMaxStepsPercent: float = 1.0
