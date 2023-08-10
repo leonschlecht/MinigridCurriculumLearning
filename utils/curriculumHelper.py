@@ -156,7 +156,14 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
 
 
 def calculateEnvDifficulty(iterationsDone: int, difficultyStepsize: int, selectedEnvsList: list) -> float:
-    startDecreaseNum = 500000
+    """
+    Calculates the environment difficulty based on the current iterationsDone
+    :param iterationsDone:
+    :param difficultyStepsize: smoothing factor to the max step decline
+    :param selectedEnvsList: the list of environments used for training. This will update the maximum steps allowed for each env
+    :return:
+    """
+    startDecreaseNum = 00
     if iterationsDone <= startDecreaseNum:
         newMaxStepsPercent: float = 1.0
     else:
