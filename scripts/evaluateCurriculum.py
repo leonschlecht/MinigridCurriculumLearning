@@ -318,7 +318,11 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         # sort by the numerical values of the string (50k, 75k, ...)
         if args.rhea or args.nsga or args.ga:
             aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+        elif args.crossoverMutation:
+            # add the numerical parts together (cross54_mut_56 => 54 + 56 = 110)
+            aggregatedDf['sort_col'] = aggregatedDf['id'].str.extract(r'(\d+)_Mut(\d+)').astype(int).sum(axis=1)
         else:
+            # default: only sort by the ID string
             aggregatedDf["sort_col"] = aggregatedDf["id"]
         aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
         aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
