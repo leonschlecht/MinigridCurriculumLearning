@@ -28,12 +28,14 @@ def main():
     reshapingString = ""
     if args.noRewardShaping:
         reshapingString = "_noRS"
-    # TODO what about gamma and Crossover / Mutation rates & evolAlgo ?
-    model = args.model + "_" + envHintForModelName + reshapingString + "_s" + str(args.seed)
+    constMaxsteps = ""
+    if args.constMaxsteps:
+        constMaxsteps = "_Constmaxstep"
+    # TODO what about gamma and Crossover / Mutation rates & evolAlgo in the modelname?
+    model = args.model + "_" + envHintForModelName + reshapingString + constMaxsteps + "_s" + str(args.seed)
     # get txt logger creates the directory
     txtLogger = utils.get_txt_logger(utils.get_model_dir(model))
     startTime: datetime = datetime.now()
-
     ############
     assert args.stepsPerCurric > 0, "Steps per curriculum must be >= 1"
     assert args.numCurric > 0, "There must be at least 1 curriculum"
