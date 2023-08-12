@@ -163,7 +163,7 @@ def calculateEnvDifficulty(iterationsDone: int, difficultyStepsize: int, selecte
     :param selectedEnvsList: the list of environments used for training. This will update the maximum steps allowed for each env
     :return:
     """
-    startDecreaseNum = 00
+    startDecreaseNum = 500000
     if iterationsDone <= startDecreaseNum:
         newMaxStepsPercent: float = 1.0
     else:

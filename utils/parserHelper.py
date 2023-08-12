@@ -32,16 +32,17 @@ def initializeArgParser():
                         help="Determines the amount of steps used per curriculum during training. --paraEnv determines how many envs to be used")
     parser.add_argument("--numCurric", default=3, type=int,
                         help="Determines the amount of curricula that are used for training")
-    parser.add_argument("--difficultyStepsize", default=100000, type=int,
+    parser.add_argument("--difficultyStepsize", default=100000, type=int, # TODO remove this ?
                         help="Determines when the difficulty will be adjusted. Default 100k -> -.1 decrease every 100k")  # TODO add starting @500k param too
     parser.add_argument("--trainingIterations", default=5000000, type=int,
                         help="How many RHEA CL Training iterations")
     parser.add_argument("--nGen", default=3, type=int,
                         help="The amount of generations per RHEA iteration")
     parser.add_argument("--gamma", default=0.9, type=float,
-                        help="The dampening factor for the curricula RH. Later steps will be weighed less if gamma is high")
+                        help="The dampening factor for RHEACL. Later steps will be weighed less if gamma is high")
     parser.add_argument("--noRewardShaping", action="store_true", default=False,
                         help="Whether or not to use rewardshaping for RHEA CL")
+    # multiObj => use NSGA
     # EA PAram
     parser.add_argument("--useNSGA", default=False, action="store_true",
                         help="Decides what training method will be used. If set, adaptive curriculum will be used")

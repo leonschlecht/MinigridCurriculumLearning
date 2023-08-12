@@ -1,39 +1,37 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-
-Morgen (FR):
-- Kann ich nicht schon iwelche runs tiwerqueuen die ähnlich sind zu den aktuellen die laufen ?? (vllt auch ParaEnv 1 ?)
+- Kann ich berechnen wie viele komplette passes durch die env meine Frames haben? (5kk / 1440 ?), oder vllt mit der Distribution verrechnen41
+- brauche ich maxsteps vergleiche PPO vs RHEA CL ?
+- # Is it relevant how the curricula REWARDS look like at later generations ? We could compare it against the snapshot and notice differences i guess
+- Ne Grafik, die zeigt, dass Gamma relevant ist und was sonst passieren könnte (Alle Curric Gleichgewichtet -> Schlechter snapshot gefahr
+- Vllt viel weniger iterationen machen, aber dafür viel geringere steps anpeilen (müsste man dann evtl mit PPO anpassen, damit er nicht übershootet)
+- limitation: ineperience des researchers
 - Wenn ein gutes model auf 6x6 trainiert, wird es dann schlechter in 10x10 & 12x12 ?
-- @phind below
-- Discussion chapter etwas schreiben / mergen
 
-Wichtig: - Kapitel 2 überarbeiten (Grafiken einbinden (zB wang et al obj func), verlinkungen machen, non-convex kram erwähnen; Minigrid zuende ; NSGA
-    - Basics Teil weiterschreiben (1 neue Grafik einbinden aus dem Vid)
+
+
+- limitation: poor understanding of the actual leraning curve still, because minigrid too easy potentially
+- limitation maybe the max step is useless and just confusing for the results ( --> longer training time especially)
+- Why does no RS have more usage of 12x12 ??
+- Kann man spcl nicht mit dem para env abusen ? Also dass man 8 steps hat statt 4 (
+    6666
+    6688
+    8888
+    88zz
+    zzzz
+    zztt
+    tttt
+- sollte ich runs nicht vllt 10x durchlaufen lasesn ?
+============
 
 
 
 Sa:
-- Evaluate überarbeiten (evtl neuschreiben)
--
-
-
-----------------
-
-- Andere Env als Dynamic Obstacle oder nicht ??
-- Bessere RHEA CL ModelName generierung ? Damit ich das nicht immre alles manuell machen muss ...
-(d) --> geht nicht wirklich - testen ob ich die .sh scripts in einen ordner packen kann, damit der root ordner nicht so voll ist ( --> testen ob python .py statt -m geht)
-- limitation: desired effekt von "langsamer anstieg, aber dann besser" leider nicht beobachtet ( war ja auch die Hoffnung von gamma)
-- Sind die nRS > RS oder tritt das nicht immer auf???
-- Evaluate so überarbeiten dass ich 1 df habe und nicht 20 listen
-
-
-numCurric: 1-5
-curricLen: 2-5
-nGen: 1-5
-paraEnv: 1-2
-gamma: between 0 and 1 (float)
-...
---> phind prompt beenden
+- Evaluate überarbeiten (evtl neuschreiben --> curricScore vs snapshot -- Warum unterschiedlich ???) (evtl liegt es an alten logs an was anderem)
+    weil eig sollte der snapshot ja aus dem best curric abgeleitet werden können
+    - Vllt mal snapshot anders probieren & schauen ob es dadurch unterschiede gibt
+    - Ich glaube die snapshotscore plots sind einfach broken (minimal), aber nicht schlimm. Der ALgorithmus hat schon richtig gehandelt
+- Basics Teil verbessern
 
 Samstag:
 - Alle neuen Runs Queuen (und die Configuration datei damit füllen, und Tabelle updaten)
@@ -58,6 +56,26 @@ Samstag:
         evtl: mehr nRS runs queuen
         sobol: mehr Runs queuen damit es einheitlich ist bzgl der nRS & RS Parameter
     - eval überarbeiten
+- Wichtig: - Kapitel 2 überarbeiten non-convex kram erwähnen; Minigrid zuende ; NSGA
+
+
+Nächster Tag:
+- Feedback einarbeiten (iwi habe das gefühl dash abe ich an vielen stellen schon gemacht, aber sowas wie bascis ->  preliminaries hat mich grad verwundert ...
+
+
+
+----------------
+
+- Andere Env als Dynamic Obstacle oder nicht ??
+- Bessere RHEA CL ModelName generierung ? Damit ich das nicht immre alles manuell machen muss ...
+(d) --> geht nicht wirklich - testen ob ich die .sh scripts in einen ordner packen kann, damit der root ordner nicht so voll ist ( --> testen ob python .py statt -m geht)
+- limitation: desired effekt von "langsamer anstieg, aber dann besser" leider nicht beobachtet ( war ja auch die Hoffnung von gamma)
+- Sind die nRS > RS oder tritt das nicht immer auf???
+- Evaluate so überarbeiten dass ich 1 df habe und nicht 20 listen
+
+
+
+
 
 
 

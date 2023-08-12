@@ -81,6 +81,7 @@ class RollingHorizon(ABC):
             currentRewardsList = [self.currentRewardsDict[key] for key in self.currentRewardsDict]
             bestCurricScoreRaw: float = np.max(currentRewardsList)
             currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values()))
+            print("currentRewards", currentRewardsList, "; snapshot", currentSnapshotScore)
             currentBestModel = self.getCurrentBestModel()
             currentBestCurriculum = self.getCurrentBestCurriculum()
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
