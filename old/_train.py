@@ -96,13 +96,11 @@ if __name__ == "__main__":
     txt_logger.info(f"Device: {device}\n")
 
     # Load environments
-    """
     register(
         id=args.env,
         entry_point="minigrid.envs:DoorKeyEnv",
         kwargs={"size": 12, "max_steps": 12*12*10},
     )
-    """
 
     envs = []
     for i in range(args.procs):
