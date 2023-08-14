@@ -9,7 +9,6 @@ eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 - Wenn ein gutes model auf 6x6 trainiert, wird es dann schlechter in 10x10 & 12x12 ?
 
 
-
 - limitation: poor understanding of the actual leraning curve still, because minigrid too easy potentially
 - limitation maybe the max step is useless and just confusing for the results ( --> longer training time especially)
 - Why does no RS have more usage of 12x12 ??
@@ -22,6 +21,7 @@ eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
     zztt
     tttt
 - sollte ich runs nicht vllt 10x durchlaufen lasesn ?
+- Curriculum Progression plot evtl für die ersten 1kk
 ============
 
 
@@ -33,36 +33,36 @@ Sa:
     - Ich glaube die snapshotscore plots sind einfach broken (minimal), aber nicht schlimm. Der ALgorithmus hat schon richtig gehandelt
 - Basics Teil verbessern
 
+
 Samstag:
 - Alle neuen Runs Queuen (und die Configuration datei damit füllen, und Tabelle updaten)
-    - keep in mind: kann ggf auch noch mehr queuen, weil ich neue rewradslogs habe
     Dynamic obstacle: --noRewardShaping
-        - RHEA CL (3 scripts - seed)
-        - RRH (3 scripts - seed)
-        - PPOnly (4 Scripts - envChange)
-        - AP normal (1 script)
-        - AP asCurric (1 script)
-        - SPCL (1 script)
+        - Q RHEA CL (3 scripts - seed) 5x queued
+        - TODO fix & test wegen rewrads log ; RRH (3 scripts - seed): CurriculumRewards (1 eintrag bei 2numCurric); rawRewards fehlt
+        - Q PPOnly (4 Scripts - envChange)
+        - Q AP normal (1 script)
+        - Q AP asCurric (1 script)
+        - Q SPCL (1 script)
     DKey:
-        - PPO andere LR (1 script)
-        - RHEA CL 1 paraEnv (1 script)
-        --constMaxsteps:
-            - PPO andere LR (1 script)
-            - RHEA const maxsteps (3-9 scripts)
-            - RRH (3 scripts)
-            - SPCL (1 script)
-            - AP normal (1 script)
-            - AP as curric (1 script)
-        evtl: mehr nRS runs queuen
-        sobol: mehr Runs queuen damit es einheitlich ist bzgl der nRS & RS Parameter
-    - eval überarbeiten
+        - Q PPO andere LR
+        - Q RHEA CL 1 paraEnv
+        constMaxsteps:
+            - Q PPO andere LR (1 script)
+            - Q RHEA const maxsteps (3-9 scripts)
+            - TODO RRH (3 scripts)
+            - Q SPCL (1 script)
+            - Q AP normal (1 script)
+            - Q AP as curric (1 script) [queued mit Dynamic obstacle ausvereshen)
+        Q sobol: mehr Runs queuen damit es einheitlich ist bzgl der nRS & RS Parameter
 - Wichtig: - Kapitel 2 überarbeiten non-convex kram erwähnen; Minigrid zuende ; NSGA
 
 
 Nächster Tag:
 - Feedback einarbeiten (iwi habe das gefühl dash abe ich an vielen stellen schon gemacht, aber sowas wie bascis ->  preliminaries hat mich grad verwundert ...
-
-
+- RRH fixen
+- evtl: mehr nRS runs queuen
+- Cluster mit -c 10 ausprobieren
+- Checken, dass die logs klappen
 
 ----------------
 
