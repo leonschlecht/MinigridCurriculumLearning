@@ -8,10 +8,10 @@
 #SBATCH --mem=24G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
-srun -c 2 -v python3 -m scripts.trainCurriculum  --trainAllParalell  --model SPCL_DynObs --iterPerEnv 50000 --procs 16 --seed 1 --dynamicObstacle --allSimultaneous
-srun -c 2 -v python3 -m scripts.trainCurriculum  --trainAllParalell  --model SPCL_DynObs --iterPerEnv 50000 --procs 16 --seed 1214 --dynamicObstacle --allSimultaneous
-srun -c 2 -v python3 -m scripts.trainCurriculum  --trainAllParalell  --model SPCL_DynObs --iterPerEnv 50000 --procs 16 --seed 2330 --dynamicObstacle --allSimultaneous
-srun -c 2 -v python3 -m scripts.trainCurriculum  --trainAllParalell  --model SPCL_DynObs --iterPerEnv 50000 --procs 16 --seed 9152 --dynamicObstacle --allSimultaneous
+srun -c 2 -v python3 trainCurriculum.py  --trainAllParalell  --model SPCL_DynObs2 --iterPerEnv 50000 --procs 16 --seed 1 --dynamicObstacle --allSimultaneous
+srun -c 2 -v python3 trainCurriculum.py  --trainAllParalell  --model SPCL_DynObs2 --iterPerEnv 50000 --procs 16 --seed 1214 --dynamicObstacle --allSimultaneous
+srun -c 2 -v python3 trainCurriculum.py  --trainAllParalell  --model SPCL_DynObs2 --iterPerEnv 50000 --procs 16 --seed 2330 --dynamicObstacle --allSimultaneous
+srun -c 2 -v python3 trainCurriculum.py  --trainAllParalell  --model SPCL_DynObs2 --iterPerEnv 50000 --procs 16 --seed 9152 --dynamicObstacle --allSimultaneous
 echo "---------- Cluster Job End ---------------------"
 
 
