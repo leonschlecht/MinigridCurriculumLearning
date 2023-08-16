@@ -99,7 +99,7 @@ if __name__ == "__main__":
     register(
         id=args.env,
         entry_point="minigrid.envs:DoorKeyEnv",
-        kwargs={"size": 12, "max_steps": 12*12*10},
+        kwargs={"size": 6, "max_steps": 28},
     )
 
     envs = []
