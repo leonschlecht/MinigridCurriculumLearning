@@ -1,6 +1,7 @@
 import multiprocessing
 import sys
 from datetime import datetime
+from logging import Logger
 
 import utils
 from curricula import RollingHorizonEvolutionaryAlgorithm, RandomRollingHorizon, allParalell
@@ -36,7 +37,7 @@ def main():
     # TODO what about gamma and Crossover / Mutation rates & evolAlgo in the modelname?
     model = args.model + "_" + envHintForModelName + reshapingString + constMaxsteps + "_s" + str(args.seed)
     # get txt logger creates the directory
-    txtLogger = utils.get_txt_logger(utils.get_model_dir(model))
+    txtLogger: Logger = utils.get_txt_logger(utils.get_model_dir(model))
     startTime: datetime = datetime.now()
     ############
     assert args.stepsPerCurric > 0, "Steps per curriculum must be >= 1"
@@ -55,7 +56,7 @@ def main():
         e = allParalell(txtLogger, startTime, cmdLineString, args, model)
     else:
         raise Exception("No training method selected!")
-
+    # TODO close txt logger or does python do it automatically for Logger instance ?
 
 if __name__ == "__main__":
     main()

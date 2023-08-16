@@ -41,7 +41,6 @@ class Agent:
             actions = dist.probs.max(1, keepdim=True)[1]
         else:
             actions = dist.sample()
-
         return actions.cpu().numpy()
 
     def get_action(self, obs):
