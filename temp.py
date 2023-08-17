@@ -58,8 +58,6 @@ for i, sample in enumerate(scaled_samples):
 
 exit()
 
-
-exit()
 # Define hyperparameters ranges
 numCurric_range = range(1, 6)
 curricLen_range = range(2, 6)

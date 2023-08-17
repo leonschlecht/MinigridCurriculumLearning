@@ -158,6 +158,7 @@ class Result:
 
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
+        self.usedEnvEnumeration = usedEnvEnumeration
 
         errorPrefix = f"model: {self.modelName}_s{self.loadedArgsDict[seedKey]}:"
         assert self.bestCurricScore != []

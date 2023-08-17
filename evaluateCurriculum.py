@@ -85,7 +85,7 @@ def getSpecificModel(specificModelList: list, modelName: str):
             sumTrainingTime: result.trainingTimeSum,
             "id": modelName})
         if result.loadedArgsDict[trainEvolutionary] and not result.canceled:
-            keys = ['MiniGrid-DoorKey-6x6', 'MiniGrid-DoorKey-8x8', 'MiniGrid-DoorKey-10x10', 'MiniGrid-DoorKey-12x12']
+            keys = result.usedEnvEnumeration
             data = []
 
             for i in range(result.framesTrained // 1000000):
@@ -255,7 +255,7 @@ def plotMultipleLineplots(filteredDfList, yColumns: list[str]):
     # Edit this line out to move the legend out of the plot
     # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     # ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
-    ax.set_xlim((0, args.xIterations + OFFSET))
+    ax.set_xlim((2500000, args.xIterations + OFFSET))
     ax.set_ylim((0, 1))
     plt.title("mean performance", fontsize=titleFontsize)
     plt.show()
@@ -314,9 +314,11 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
                      var_name='Environment',
                      value_name='Value')
         sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
+        # TODO fix this for dynamic obstacles
         plt.title("Environment Distribution at different Training Stages", fontsize=titleFontsize)
         plt.show()
     else:
+        # TODO fix for dynamic obstacles
         group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
         # sort by the numerical values of the string (50k, 75k, ...)
         if args.rhea or args.nsga or args.ga:
@@ -397,7 +399,7 @@ def showTrainingTimePlot(aggregatedDf):
 
     if args.title:
         title = args.title
-    plt.title(title, fontsize=title)
+    plt.title(title, fontsize=titleFontsize)
     plt.xticks(rotation=-45, ha='left', fontsize=tickFontsize)
     plt.subplots_adjust(bottom=0.3)
 

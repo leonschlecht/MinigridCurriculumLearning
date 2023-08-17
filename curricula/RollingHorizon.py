@@ -97,8 +97,6 @@ class RollingHorizon(ABC):
                                    self.stepMaxReward, self.totalEpochs)
 
             self.resetEpochVariables()
-            exit(
-            )
 
         self.trainingInfoJson["done"] = True
         saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
