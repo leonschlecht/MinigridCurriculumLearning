@@ -452,6 +452,13 @@ def plotAggregatedBarplot(filteredDfList):
 def main(comparisons: int):
     sns.set(font_scale=2)
     pathList = ["storage", "_evaluate"]
+    if args.env.lower() == "doorkey":
+        pathList.append("Doorkey")
+    elif "dyn" in args.env.lower():
+        pathList.append("DynamicObstacle")
+    else:
+        raise Exception(" Both not implemented yet")
+        # TODO both
     useCrossoverMutationPath = args.crossoverMutation
     if useCrossoverMutationPath:
         pathList.append("SOBOL_GA_75_3_3_3")
@@ -534,6 +541,7 @@ def main(comparisons: int):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default=None, help="Option to select a single model for evaluation")
+    parser.add_argument("--env", default="DoorKey", help="Whether to use doorkey or dynamic obstacle or both")
     parser.add_argument("--title", default=None, type=str, help="Title of the distribution plots")
     parser.add_argument("--comparisons", default=-1, help="Choose how many models you want to compare")
     parser.add_argument("--skip", action="store_true", default=False, help="Debug option to skip the UI part and see each model 1 by 1")
