@@ -9,5 +9,5 @@
 #SBATCH --verbose
 
 echo "------------Cluster Job Start-----------------------"
-srun -c 2 -v python3 -m scripts.trainCurriculum --procs 24 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 50000 --model 50k_3step_3gen_3curric --seed 8515
+srun -c 2 -v python3 trainCurriculum.py --procs 24 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 50000 --model 50k_3step_3gen_3curric --seed 8515
 echo "---------- Cluster Job End ---------------------"

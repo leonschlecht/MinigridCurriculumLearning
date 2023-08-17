@@ -35,7 +35,7 @@ template = '''#!/bin/bash
 #SBATCH --mem=20G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
-srun -c 4 -v python3 -m scripts.trainCurriculum --procs 32 --numCurric {numCurric} --stepsPerCurric {stepsPerCurric} --nGen {gen} --iterPerEnv {iterPerEnv} --model {modelName} --seed {seed}
+srun -c 4 -v python3 trainCurriculum.py --procs 32 --numCurric {numCurric} --stepsPerCurric {stepsPerCurric} --nGen {gen} --iterPerEnv {iterPerEnv} --model {modelName} --seed {seed}
 echo "---------- Cluster Job End ---------------------"
 '''
 
