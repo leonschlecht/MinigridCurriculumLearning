@@ -80,8 +80,10 @@ class RollingHorizon(ABC):
             # normalize currentRewards
             currentRewardsList = [self.currentRewardsDict[key] for key in self.currentRewardsDict]
             bestCurricScoreRaw: float = np.max(currentRewardsList)
-            currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values()))
-            print("currentRewards", currentRewardsList, "; snapshot", currentSnapshotScore)
+            currentSnapshotScore: float = np.max(list(self.currentSnapshotRewards.values())) # TODO
+            print("currentRewards", currentRewardsList)
+            print("snapshots", self.currentSnapshotRewards)
+            print("raw", self.rawRewardDetails)
             currentBestModel = self.getCurrentBestModel()
             currentBestCurriculum = self.getCurrentBestCurriculum()
             utils.copyAgent(src=getModelWithCandidatePrefix(currentBestModel), dest=nextModel, txtLogger=self.txtLogger)
@@ -98,6 +100,9 @@ class RollingHorizon(ABC):
                                    self.stepMaxReward, self.totalEpochs)
 
             self.resetEpochVariables()
+            exit(
+            )
+
         self.trainingInfoJson["done"] = True
         saveTrainingInfoToFile(self.logFilePath, self.trainingInfoJson)
         printFinalLogs(self.trainingInfoJson, self.txtLogger)

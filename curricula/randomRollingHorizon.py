@@ -27,9 +27,13 @@ class RandomRollingHorizon(RollingHorizon):
         snapshotRewards = {"curric_" + str(i): [] for i in range(len(self.curricula))}
         for i in range(len(self.curricula)):
             reward = self.trainACurriculum(i, self.iterationsDone, -1, self.curricula)
-            currentRewards["curric_" + str(i)] = np.sum(reward)
-            snapshotRewards["curric_" + str(i)] = reward[0]
-
+            rawReward = reward.copy()
+            print(f" curric reward {i}:", reward)
+            for j in range(len(reward)):
+                reward[j] = reward[j] * self.gamma ** j
+            currentRewards["curric_" + str(i)] = np.sum(reward * self.gamma ** i)
+            snapshotRewards["curric_" + str(i)] = np.sum(reward[0])
+            self.rawRewardDetails[f"curric_{i}"] = rawReward
         self.currentRewardsDict = currentRewards
         self.currentSnapshotRewards = snapshotRewards
         self.curriculaEnvDetails = self.curricula

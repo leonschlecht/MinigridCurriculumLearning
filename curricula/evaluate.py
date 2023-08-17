@@ -104,11 +104,12 @@ def evaluateAgent(model, difficulty, args, txtLogger, envList: list) -> list:
     :param args: the command line arugments
     :return: the average reward
     """
+    startTime = time.time()
     rewards = []
     envs = getEnvListThroughDifficulty(difficulty, envList)
     evaluationResult = evaluateAll(model, envs, args, txtLogger)
     for evalEnv in envs:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv, args.noRewardShaping)
         rewards.append(currentReward)
-    print("Evaluate agent", rewards)
+    print("Evaluate agent", rewards, "duration:", time.time() - startTime)
     return rewards

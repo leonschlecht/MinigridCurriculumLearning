@@ -120,9 +120,9 @@ def startTraining(framesToTrain: int, currentFramesDone, model: str, envList: li
                 status["vocab"] = preprocess_obss.vocab.vocab
             utils.save_status(status, model_dir)
             # txt_logger.info("\t\tStatus saved")
-
+    trainingTime = time.time() - start_time
     txt_logger.info(f'\nTrained on {envList} using model {model} for {framesWithThisEnv} frames. '
-                    f'Duration {time.time() - start_time}. Fps: ??. totalF {status["num_frames"]}')
+                    f'Duration {trainingTime}. Fps: {framesWithThisEnv / trainingTime}. totalF {status["num_frames"]}')
 
     algo.env.end()
     algo.env.close()
