@@ -1,0 +1,541 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris1
+srun: cpus-per-task       : 2
+srun: jobid               : 1144020
+srun: job-name            : 150_34g2c
+srun: mem                 : 24G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1144020: nodes(1):`paris1', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1144020.0 on host paris1, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris1, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Using Dynamic Obstacles
+MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0
+Device: cpu
+Creating model. . .
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=3, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Created model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_0
+
+The training will go on for 34 epochs, seed: 2330
+
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen1 for 150528 frames. Duration 142.21610283851624. Fps: 1058.4455416481337. totalF 150528
+Evaluate agent [-0.5, -0.6666666666666666, -0.3125, -0.06666666666666667] duration: 19.78618812561035
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen1 for 150528 frames. Duration 135.67299032211304. Fps: 1109.4912822560952. totalF 301056
+Evaluate agent [-0.2, -0.4666666666666667, -0.3333333333333333, -0.2] duration: 25.340725660324097
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen1 for 150528 frames. Duration 165.30603098869324. Fps: 910.6019852977776. totalF 451584
+Evaluate agent [-0.06666666666666667, -0.2, 0.0, -0.06666666666666667] duration: 24.49765920639038
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen1 for 150528 frames. Duration 158.8773651123047. Fps: 947.4477367723034. totalF 150528
+Evaluate agent [0.7863888906108009, 0.8902343772351742, 0.9149218757947286, 0.8734375] duration: 6.109366178512573
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen1 for 150528 frames. Duration 163.69419264793396. Fps: 919.5683583213535. totalF 301056
+Evaluate agent [0.7688666661580403, 0.8962499976158143, 0.9167236313223839, 0.9562890609105428] duration: 2.9420502185821533
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen1 for 150528 frames. Duration 163.5982747077942. Fps: 920.1075027769135. totalF 451584
+Evaluate agent [0.8860000007682376, 0.8860294047523948, 0.9061121274443233, 0.953125003973643] duration: 3.234483480453491
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen2 for 150528 frames. Duration 158.29966020584106. Fps: 950.9053892109725. totalF 150528
+Evaluate agent [0.7863888906108009, 0.8902343772351742, 0.9149218757947286, 0.8734375] duration: 4.908092021942139
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen2 for 150528 frames. Duration 137.99868083000183. Fps: 1090.7930358075873. totalF 301056
+Evaluate agent [0.7466666658719381, 0.8770833333333333, 0.9139843702316284, 0.9618554711341858] duration: 2.434474229812622
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen2 for 150528 frames. Duration 136.87647104263306. Fps: 1099.7361259636427. totalF 451584
+Evaluate agent [0.8938000043233235, 0.8879166722297669, 0.9153906265894572, 0.9551171859105428] duration: 2.532480001449585
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen2 for 150528 frames. Duration 151.9782841205597. Fps: 990.4572937577765. totalF 150528
+Evaluate agent [0.7863888906108009, 0.8902343772351742, 0.9149218757947286, 0.8734375] duration: 6.272869825363159
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen2 for 150528 frames. Duration 163.92225098609924. Fps: 918.2890003918071. totalF 301056
+Evaluate agent [0.7688666661580403, 0.8962499976158143, 0.9167236313223839, 0.9562890609105428] duration: 3.1103031635284424
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen2 for 150528 frames. Duration 157.01064705848694. Fps: 958.7120543737894. totalF 451584
+Evaluate agent [0.8867058824090397, 0.8984374962747097, 0.9235351532697678, 0.9629101594289143] duration: 3.121056318283081
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen3 for 150528 frames. Duration 160.79960823059082. Fps: 936.1216837303417. totalF 150528
+Evaluate agent [0.7863888906108009, 0.8902343772351742, 0.9149218757947286, 0.8734375] duration: 6.310905933380127
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen3 for 150528 frames. Duration 163.6346549987793. Fps: 919.9029386600469. totalF 301056
+Evaluate agent [0.7466666658719381, 0.8770833333333333, 0.9139843702316284, 0.9618554711341858] duration: 3.080843448638916
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen3 for 150528 frames. Duration 160.90256524085999. Fps: 935.5226858855234. totalF 451584
+Evaluate agent [0.8788000067075094, 0.878333330154419, 0.9041406234105428, 0.9538867195447286] duration: 3.877955436706543
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen3 for 150528 frames. Duration 159.6892809867859. Fps: 942.6305827781642. totalF 150528
+Evaluate agent [0.7863888906108009, 0.8902343772351742, 0.9149218757947286, 0.8734375] duration: 6.620361804962158
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen3 for 150528 frames. Duration 163.2873775959015. Fps: 921.8593758822069. totalF 301056
+Evaluate agent [0.7688666661580403, 0.8962499976158143, 0.9167236313223839, 0.9562890609105428] duration: 3.1685099601745605
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen3 for 150528 frames. Duration 160.97268629074097. Fps: 935.1151643709525. totalF 451584
+Evaluate agent [0.8938000043233235, 0.9054166674613953, 0.9285888671875, 0.968066414197286] duration: 2.9472198486328125
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen4 for 150528 frames. Duration 156.00332403182983. Fps: 964.9025168802641. totalF 150528
+Evaluate agent [0.7863888906108009, 0.8902343772351742, 0.9149218757947286, 0.8734375] duration: 4.931448698043823
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen4 for 150528 frames. Duration 137.22561955451965. Fps: 1096.9380243183768. totalF 301056
+Evaluate agent [0.7466666658719381, 0.8770833333333333, 0.9139843702316284, 0.9618554711341858] duration: 2.392369031906128
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric0_gen4 for 150528 frames. Duration 132.8082399368286. Fps: 1133.4236495536718. totalF 451584
+Evaluate agent [0.7658823553253623, 0.8666666626930237, 0.9220703111754524, 0.96015625] duration: 2.808736801147461
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen4 for 150528 frames. Duration 133.1995370388031. Fps: 1130.0940179405343. totalF 150528
+Evaluate agent [0.7863888906108009, 0.8902343772351742, 0.9149218757947286, 0.8734375] duration: 4.913937330245972
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen4 for 150528 frames. Duration 159.94380474090576. Fps: 941.1305442173363. totalF 301056
+Evaluate agent [0.7688666661580403, 0.8962499976158143, 0.9167236313223839, 0.9562890609105428] duration: 3.375515937805176
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_1_curric1_gen4 for 150528 frames. Duration 157.4403054714203. Fps: 956.0957059202666. totalF 451584
+Evaluate agent [0.9034000039100647, 0.9125, 0.9323242194950581, 0.96220703125] duration: 2.75602650642395
+Best results in epoch 1 came from curriculum [['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'], ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'], ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0']]
+Raw Reward of best curriculum: 9.654748380317455.             Snapshot Reward 3.464982643640704. That is 0.866 of maxReward
+
+EPOCH: 1 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen1 for 150528 frames. Duration 171.89861941337585. Fps: 875.6789351403427. totalF 301055
+Evaluate agent [0.14779999653498332, 0.3799999992052714, 0.7909635384877522, 0.9625585953394572] duration: 3.03031587600708
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen1 for 150528 frames. Duration 160.05994272232056. Fps: 940.4476687908291. totalF 451583
+Evaluate agent [0.8920000046491623, 0.881249996026357, 0.9147460907697678, 0.9582226514816284] duration: 3.3153483867645264
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen1 for 150528 frames. Duration 166.35150480270386. Fps: 904.8791003034758. totalF 602111
+Evaluate agent [0.7568666696548462, 0.78125, 0.9104687531789144, 0.9608007788658142] duration: 3.182192087173462
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen1 for 150528 frames. Duration 160.39300298690796. Fps: 938.4948046161765. totalF 301055
+Evaluate agent [0.8768124990165234, 0.8933333357175192, 0.9092968702316284, 0.9309765577316285] duration: 4.131707191467285
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen1 for 150528 frames. Duration 169.06371760368347. Fps: 890.3625339226562. totalF 451583
+Evaluate agent [0.7540624998509884, 0.8799999992052714, 0.9174999992052714, 0.9526562452316284] duration: 3.725342273712158
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen1 for 150528 frames. Duration 168.25161814689636. Fps: 894.6600434390931. totalF 602111
+Evaluate agent [0.8932000041007996, 0.8912499944368998, 0.9163281242052714, 0.95546875] duration: 3.3535754680633545
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen2 for 150528 frames. Duration 161.55368065834045. Fps: 931.7522162700956. totalF 301055
+Evaluate agent [0.8768124990165234, 0.8933333357175192, 0.9092968702316284, 0.9309765577316285] duration: 4.632123708724976
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen2 for 150528 frames. Duration 167.80031776428223. Fps: 897.0662392395136. totalF 451583
+Evaluate agent [0.7112666606903076, 0.7558333277702332, 0.9196093797683715, 0.956640625] duration: 3.187885284423828
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen2 for 150528 frames. Duration 166.0562710762024. Fps: 906.4878972918972. totalF 602111
+Evaluate agent [0.8863750025629997, 0.8859375007450581, 0.9198437492052715, 0.9541210889816284] duration: 3.5524275302886963
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen2 for 150528 frames. Duration 144.41167545318604. Fps: 1042.3533937101693. totalF 301055
+Evaluate agent [0.8768124990165234, 0.8933333357175192, 0.9092968702316284, 0.9309765577316285] duration: 3.3819973468780518
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen2 for 150528 frames. Duration 138.16012525558472. Fps: 1089.5184100444014. totalF 451583
+Evaluate agent [0.7540624998509884, 0.8799999992052714, 0.9174999992052714, 0.9526562452316284] duration: 2.873887777328491
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen2 for 150528 frames. Duration 155.2426311969757. Fps: 969.6305637142051. totalF 602111
+Evaluate agent [0.8980000058809916, 0.8953124992549419, 0.925000003973643, 0.9629687547683716] duration: 2.7556982040405273
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen3 for 150528 frames. Duration 158.1163845062256. Fps: 952.0076016794654. totalF 301055
+Evaluate agent [0.8768124990165234, 0.8933333357175192, 0.9092968702316284, 0.9309765577316285] duration: 4.582141399383545
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen3 for 150528 frames. Duration 164.57083082199097. Fps: 914.6699888926216. totalF 451583
+Evaluate agent [0.7112666606903076, 0.7558333277702332, 0.9196093797683715, 0.956640625] duration: 3.124462842941284
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen3 for 150528 frames. Duration 160.10305309295654. Fps: 940.1944378449971. totalF 602111
+Evaluate agent [0.8787647064994363, 0.8741666674613953, 0.9081249952316284, 0.9596874992052714] duration: 3.0644476413726807
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen3 for 150528 frames. Duration 160.11776757240295. Fps: 940.108035992529. totalF 301055
+Evaluate agent [0.8768124990165234, 0.8933333357175192, 0.9092968702316284, 0.9309765577316285] duration: 4.146650314331055
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen3 for 150528 frames. Duration 145.82588744163513. Fps: 1032.2447038784305. totalF 451583
+Evaluate agent [0.7540624998509884, 0.8799999992052714, 0.9174999992052714, 0.9526562452316284] duration: 2.6323373317718506
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen3 for 150528 frames. Duration 126.31731843948364. Fps: 1191.6655757073822. totalF 602111
+Evaluate agent [0.8925999999046326, 0.9058333357175191, 0.9242968797683716, 0.9651953061421712] duration: 2.208574056625366
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen4 for 150528 frames. Duration 125.24954509735107. Fps: 1201.8247242574898. totalF 301055
+Evaluate agent [0.8768124990165234, 0.8933333357175192, 0.9092968702316284, 0.9309765577316285] duration: 3.376171588897705
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen4 for 150528 frames. Duration 132.3320496082306. Fps: 1137.5022184394375. totalF 451583
+Evaluate agent [0.7112666606903076, 0.7558333277702332, 0.9196093797683715, 0.956640625] duration: 2.516911745071411
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric0_gen4 for 150528 frames. Duration 126.7449471950531. Fps: 1187.644977817902. totalF 602111
+Evaluate agent [0.8893529422142926, 0.8945312537252903, 0.9310937523841858, 0.9656054735183716] duration: 2.104891300201416
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen4 for 150528 frames. Duration 126.07143950462341. Fps: 1193.9896981542731. totalF 301055
+Evaluate agent [0.8768124990165234, 0.8933333357175192, 0.9092968702316284, 0.9309765577316285] duration: 3.2621164321899414
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen4 for 150528 frames. Duration 131.37356114387512. Fps: 1145.8013217373905. totalF 451583
+Evaluate agent [0.7540624998509884, 0.8799999992052714, 0.9174999992052714, 0.9526562452316284] duration: 2.619171619415283
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_2_curric1_gen4 for 150528 frames. Duration 125.50250673294067. Fps: 1199.402337997213. totalF 602111
+Evaluate agent [0.8908750005066395, 0.8862499992052714, 0.9160644486546516, 0.9529492139816285] duration: 2.6150474548339844
+Best results in epoch 2 came from curriculum [['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'], ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'], ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0']]
+Raw Reward of best curriculum: 9.751435804282625.             Snapshot Reward 3.6104192626972997. That is 0.903 of maxReward
+
+EPOCH: 2 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen1 for 150528 frames. Duration 136.552481174469. Fps: 1102.3454037988142. totalF 451582
+Evaluate agent [0.8700625002384186, 0.8195833404858907, 0.9172656257947286, 0.9538281281789144] duration: 2.818026542663574
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen1 for 150528 frames. Duration 126.90587091445923. Fps: 1186.1389777740326. totalF 602110
+Evaluate agent [0.8893529422142926, 0.8941666682561239, 0.9243106596610126, 0.9646679679552714] duration: 2.1214263439178467
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen1 for 150528 frames. Duration 130.81217002868652. Fps: 1150.7186217229626. totalF 752638
+Evaluate agent [0.7544666727383932, 0.6037499984105428, 0.6653645873069763, 0.8351745568215847] duration: 2.971540927886963
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen1 for 150528 frames. Duration 131.97459173202515. Fps: 1140.5831836604398. totalF 451582
+Evaluate agent [0.8880624994635582, 0.897083330154419, 0.9083593765894572, 0.947540283203125] duration: 2.8387022018432617
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen1 for 150528 frames. Duration 137.24688696861267. Fps: 1096.7680457074748. totalF 602110
+Evaluate agent [0.8824000000953675, 0.884765625, 0.9207812547683716, 0.9644921819368998] duration: 2.420743227005005
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen1 for 150528 frames. Duration 136.43354177474976. Fps: 1103.306401357813. totalF 752638
+Evaluate agent [0.8980000019073486, 0.9066406302154064, 0.9167236275970936, 0.9644921819368998] duration: 2.425746202468872
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen2 for 150528 frames. Duration 132.6519284248352. Fps: 1134.7592288135784. totalF 451582
+Evaluate agent [0.8880624994635582, 0.897083330154419, 0.9083593765894572, 0.947540283203125] duration: 2.85292649269104
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen2 for 150528 frames. Duration 137.16785836219788. Fps: 1097.3999433783101. totalF 602110
+Evaluate agent [0.8415999929110209, 0.8773437552154064, 0.9158593734105428, 0.9580468694368999] duration: 2.745192527770996
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen2 for 150528 frames. Duration 138.35424160957336. Fps: 1087.9897735609738. totalF 752638
+Evaluate agent [0.8762499988079071, 0.859583334128062, 0.9114501886069775, 0.9593945264816284] duration: 2.7837417125701904
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen2 for 150528 frames. Duration 133.34488010406494. Fps: 1128.862239648984. totalF 451582
+Evaluate agent [0.8880624994635582, 0.897083330154419, 0.9083593765894572, 0.947540283203125] duration: 2.9272449016571045
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen2 for 150528 frames. Duration 137.16588425636292. Fps: 1097.4157372737327. totalF 602110
+Evaluate agent [0.8824000000953675, 0.884765625, 0.9207812547683716, 0.9644921819368998] duration: 2.3373489379882812
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen2 for 150528 frames. Duration 133.29211020469666. Fps: 1129.309152423457. totalF 752638
+Evaluate agent [0.8908000032107035, 0.8954166690508525, 0.9271093765894572, 0.9639062404632568] duration: 2.3821256160736084
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen3 for 150528 frames. Duration 132.43186354637146. Fps: 1136.6448826516144. totalF 451582
+Evaluate agent [0.8880624994635582, 0.897083330154419, 0.9083593765894572, 0.947540283203125] duration: 2.822619676589966
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen3 for 150528 frames. Duration 137.5057408809662. Fps: 1094.7033850048974. totalF 602110
+Evaluate agent [0.8415999929110209, 0.8773437552154064, 0.9158593734105428, 0.9580468694368999] duration: 2.74583101272583
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen3 for 150528 frames. Duration 137.04689502716064. Fps: 1098.3685545751882. totalF 752638
+Evaluate agent [0.8762499988079071, 0.859583334128062, 0.9114501886069775, 0.9593945264816284] duration: 2.78967547416687
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen3 for 150528 frames. Duration 132.71426367759705. Fps: 1134.2262378494438. totalF 451582
+Evaluate agent [0.8880624994635582, 0.897083330154419, 0.9083593765894572, 0.947540283203125] duration: 2.9910662174224854
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen3 for 150528 frames. Duration 132.64663934707642. Fps: 1134.8044755671203. totalF 602110
+Evaluate agent [0.8773750029504299, 0.88125, 0.9107031305631001, 0.959277335802714] duration: 2.7199513912200928
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen3 for 150528 frames. Duration 136.6442244052887. Fps: 1101.605286686189. totalF 752638
+Evaluate agent [0.8841999967892965, 0.7753676386440501, 0.9153906226158142, 0.9616796890894572] duration: 2.8069393634796143
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen4 for 150528 frames. Duration 133.85940885543823. Fps: 1124.5231193465306. totalF 451582
+Evaluate agent [0.8880624994635582, 0.897083330154419, 0.9083593765894572, 0.947540283203125] duration: 2.8276989459991455
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen4 for 150528 frames. Duration 138.0284194946289. Fps: 1090.5580209578325. totalF 602110
+Evaluate agent [0.8415999929110209, 0.8773437552154064, 0.9158593734105428, 0.9580468694368999] duration: 2.7873992919921875
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric0_gen4 for 150528 frames. Duration 136.79972386360168. Fps: 1100.3530983007415. totalF 752638
+Evaluate agent [0.8762499988079071, 0.859583334128062, 0.9114501886069775, 0.9593945264816284] duration: 2.7698850631713867
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen4 for 150528 frames. Duration 133.22108793258667. Fps: 1129.9112050201172. totalF 451582
+Evaluate agent [0.8880624994635582, 0.897083330154419, 0.9083593765894572, 0.947540283203125] duration: 2.8182365894317627
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen4 for 150528 frames. Duration 133.58224177360535. Fps: 1126.8563695398543. totalF 602110
+Evaluate agent [0.8773750029504299, 0.88125, 0.9107031305631001, 0.959277335802714] duration: 2.6711294651031494
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_3_curric1_gen4 for 150528 frames. Duration 136.57876443862915. Fps: 1102.1332680721302. totalF 752638
+Evaluate agent [0.8841999967892965, 0.7753676386440501, 0.9153906226158142, 0.9616796890894572] duration: 2.655301332473755
+Best results in epoch 3 came from curriculum [['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'], ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'], ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0']]
+Raw Reward of best curriculum: 9.9137843627731.             Snapshot Reward 3.6410454894105593. That is 0.91 of maxReward
+
+EPOCH: 3 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen1 for 150528 frames. Duration 142.39686965942383. Fps: 1057.1018896695111. totalF 602109
+Evaluate agent [0.8595999916394551, 0.8762500047683716, 0.9200781226158142, 0.9560546875] duration: 2.8333988189697266
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen1 for 150528 frames. Duration 134.06826996803284. Fps: 1122.7712570311514. totalF 752637
+Evaluate agent [0.8992000063260396, 0.8792968764901161, 0.9254687507947286, 0.9605663975079854] duration: 2.62290096282959
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen1 for 150528 frames. Duration 137.95797061920166. Fps: 1091.1149194524958. totalF 903165
+Evaluate agent [0.7596874982118607, 0.8958333293596904, 0.9156249910593033, 0.9637304623921712] duration: 2.453815221786499
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen1 for 150528 frames. Duration 131.92499232292175. Fps: 1141.012005000102. totalF 602109
+Evaluate agent [0.889750000089407, 0.9046875014901161, 0.9245312452316284, 0.9656192520085503] duration: 2.431713342666626
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen1 for 150528 frames. Duration 137.70230889320374. Fps: 1093.140712090335. totalF 752637
+Evaluate agent [0.8807499967515469, 0.8941406272351742, 0.9210156242052714, 0.9545312444368999] duration: 2.530083656311035
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen1 for 150528 frames. Duration 136.98249650001526. Fps: 1098.8849221329765. totalF 903165
+Evaluate agent [0.8925625011324883, 0.8898437470197678, 0.9202392548322678, 0.959863277276357] duration: 2.6072301864624023
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen2 for 150528 frames. Duration 132.78068780899048. Fps: 1133.6588361143274. totalF 602109
+Evaluate agent [0.889750000089407, 0.9046875014901161, 0.9245312452316284, 0.9656192520085503] duration: 2.4316821098327637
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen2 for 150528 frames. Duration 137.83899211883545. Fps: 1092.056737256356. totalF 752637
+Evaluate agent [0.7720625065267086, 0.8929166674613953, 0.9254687468210856, 0.9630273381868998] duration: 2.475083589553833
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen2 for 150528 frames. Duration 137.48149991035461. Fps: 1094.8964049574117. totalF 903165
+Evaluate agent [0.8968000014623007, 0.9025000055631002, 0.9200781305631002, 0.9595117131868999] duration: 2.4376659393310547
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen2 for 150528 frames. Duration 133.19902634620667. Fps: 1130.0983507848805. totalF 602109
+Evaluate agent [0.889750000089407, 0.9046875014901161, 0.9245312452316284, 0.9656192520085503] duration: 2.4154813289642334
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen2 for 150528 frames. Duration 137.9156002998352. Fps: 1091.4501308970473. totalF 752637
+Evaluate agent [0.8807499967515469, 0.8941406272351742, 0.9210156242052714, 0.9545312444368999] duration: 2.509822368621826
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen2 for 150528 frames. Duration 131.52730011940002. Fps: 1144.4620231948136. totalF 903165
+Evaluate agent [0.8936875015497208, 0.8960937522351742, 0.9266406257947286, 0.9649023373921712] duration: 2.287736415863037
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen3 for 150528 frames. Duration 131.15390157699585. Fps: 1147.7203361093325. totalF 602109
+Evaluate agent [0.889750000089407, 0.9046875014901161, 0.9245312452316284, 0.9656192520085503] duration: 2.414390802383423
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen3 for 150528 frames. Duration 138.47530841827393. Fps: 1087.0385610214357. totalF 752637
+Evaluate agent [0.7720625065267086, 0.8929166674613953, 0.9254687468210856, 0.9630273381868998] duration: 2.4629430770874023
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen3 for 150528 frames. Duration 132.52503180503845. Fps: 1135.8457941851034. totalF 903165
+Evaluate agent [0.6459375023841858, 0.6254166682561239, 0.7902604182561238, 0.8343229214350383] duration: 2.763637065887451
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen3 for 150528 frames. Duration 133.68048214912415. Fps: 1126.02825468629. totalF 602109
+Evaluate agent [0.889750000089407, 0.9046875014901161, 0.9245312452316284, 0.9656192520085503] duration: 2.43019700050354
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen3 for 150528 frames. Duration 138.4116497039795. Fps: 1087.5385151606365. totalF 752637
+Evaluate agent [0.8807499967515469, 0.8941406272351742, 0.9210156242052714, 0.9545312444368999] duration: 2.519977569580078
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen3 for 150528 frames. Duration 132.56544160842896. Fps: 1135.4995553413441. totalF 903165
+Evaluate agent [0.892000000923872, 0.8988281264901161, 0.9268750031789144, 0.965136722723643] duration: 2.340704917907715
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen4 for 150528 frames. Duration 132.78274726867676. Fps: 1133.6412530719592. totalF 602109
+Evaluate agent [0.889750000089407, 0.9046875014901161, 0.9245312452316284, 0.9656192520085503] duration: 2.4144508838653564
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen4 for 150528 frames. Duration 137.85004496574402. Fps: 1091.9691759070988. totalF 752637
+Evaluate agent [0.7720625065267086, 0.8929166674613953, 0.9254687468210856, 0.9630273381868998] duration: 2.5006165504455566
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric0_gen4 for 150528 frames. Duration 134.217369556427. Fps: 1121.523991249998. totalF 903165
+Evaluate agent [0.8936875015497208, 0.9003906212747097, 0.9215576127171516, 0.9636132756868998] duration: 2.366506576538086
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen4 for 150528 frames. Duration 132.43733477592468. Fps: 1136.597925763785. totalF 602109
+Evaluate agent [0.889750000089407, 0.9046875014901161, 0.9245312452316284, 0.9656192520085503] duration: 2.4266059398651123
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen4 for 150528 frames. Duration 138.04897284507751. Fps: 1090.3956537867675. totalF 752637
+Evaluate agent [0.8807499967515469, 0.8941406272351742, 0.9210156242052714, 0.9545312444368999] duration: 2.5231800079345703
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_4_curric1_gen4 for 150528 frames. Duration 133.01801252365112. Fps: 1131.6362133529512. totalF 903165
+Evaluate agent [0.8919999996821085, 0.8912500023841858, 0.917968746026357, 0.9605078101158142] duration: 2.7096400260925293
+MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946
+MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946
+MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946
+MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946
+Best results in epoch 4 came from curriculum [['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0'], ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'], ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0']]
+Raw Reward of best curriculum: 9.953082023372108.             Snapshot Reward 3.6845879988197017. That is 0.921 of maxReward
+
+EPOCH: 4 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen1 for 150528 frames. Duration 142.1498019695282. Fps: 1058.9392170399772. totalF 752636
+Evaluate agent [0.38560283978780113, 0.380637256304423, 0.7850964188575744, 0.959526272614797] duration: 2.4419546127319336
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen1 for 150528 frames. Duration 133.03774285316467. Fps: 1131.4683846232983. totalF 903164
+Evaluate agent [0.8851063807805379, 0.8789359821992762, 0.9142303802073002, 0.9607003132502238] duration: 2.2574667930603027
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen1 for 150528 frames. Duration 138.67855644226074. Fps: 1085.445391571211. totalF 1053692
+Evaluate agent [0.7445478774607182, 0.6252451022466023, 0.7941115722060204, 0.955386205514272] duration: 2.476163387298584
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen1 for 150528 frames. Duration 133.55253171920776. Fps: 1127.1070496550594. totalF 752636
+Evaluate agent [0.8794743418693542, 0.8899816200137138, 0.9093491658568382, 0.9600205977757772] duration: 2.4104981422424316
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen1 for 150528 frames. Duration 138.40441584587097. Fps: 1087.595356550112. totalF 903164
+Evaluate agent [0.8806382973988851, 0.8870588302612304, 0.9186776876449585, 0.9563748796780904] duration: 2.4830949306488037
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen1 for 150528 frames. Duration 136.40145683288574. Fps: 1103.5659258714634. totalF 1053692
+Evaluate agent [0.882290359805612, 0.8844117720921835, 0.917438018321991, 0.9544593254725139] duration: 2.761425495147705
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen2 for 150528 frames. Duration 132.71625924110413. Fps: 1134.2091832662152. totalF 752636
+Evaluate agent [0.8794743418693542, 0.8899816200137138, 0.9093491658568382, 0.9600205977757772] duration: 2.3898520469665527
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen2 for 150528 frames. Duration 138.74622416496277. Fps: 1084.9160105505232. totalF 903164
+Evaluate agent [0.7339007139205933, 0.881323532263438, 0.9045454581578573, 0.9605767289797466] duration: 2.631657361984253
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen2 for 150528 frames. Duration 137.20284128189087. Fps: 1097.1201368252414. totalF 1053692
+Evaluate agent [0.8874999955296516, 0.8804687485098839, 0.9045454541842143, 0.9571163694063822] duration: 2.54860258102417
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen2 for 150528 frames. Duration 133.85172629356384. Fps: 1124.587662544312. totalF 752636
+Evaluate agent [0.8794743418693542, 0.8899816200137138, 0.9093491658568382, 0.9600205977757772] duration: 2.465888261795044
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen2 for 150528 frames. Duration 140.38876342773438. Fps: 1072.2225648599351. totalF 903164
+Evaluate agent [0.8806382973988851, 0.8870588302612304, 0.9186776876449585, 0.9563748796780904] duration: 3.0386040210723877
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen2 for 150528 frames. Duration 169.11106872558594. Fps: 890.1132322938577. totalF 1053692
+Evaluate agent [0.8927659511566162, 0.8980882366498312, 0.9216683879494667, 0.9614418188730876] duration: 3.363652229309082
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen3 for 150528 frames. Duration 180.26815700531006. Fps: 835.0226823230128. totalF 752636
+Evaluate agent [0.8794743418693542, 0.8899816200137138, 0.9093491658568382, 0.9600205977757772] duration: 3.5819287300109863
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen3 for 150528 frames. Duration 185.57329058647156. Fps: 811.1512142953487. totalF 903164
+Evaluate agent [0.7339007139205933, 0.881323532263438, 0.9045454581578573, 0.9605767289797466] duration: 3.8831381797790527
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen3 for 150528 frames. Duration 179.4779977798462. Fps: 838.6989038324506. totalF 1053692
+Evaluate agent [0.8851063807805379, 0.8835294087727864, 0.9127272725105285, 0.9638516982396443] duration: 3.3711042404174805
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen3 for 150528 frames. Duration 181.11849927902222. Fps: 831.1022926934924. totalF 752636
+Evaluate agent [0.8794743418693542, 0.8899816200137138, 0.9093491658568382, 0.9600205977757772] duration: 3.5983667373657227
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen3 for 150528 frames. Duration 185.31836533546448. Fps: 812.2670396294143. totalF 903164
+Evaluate agent [0.8806382973988851, 0.8870588302612304, 0.9186776876449585, 0.9563748796780904] duration: 3.701101541519165
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen3 for 150528 frames. Duration 181.03204584121704. Fps: 831.4991928668138. totalF 1053692
+Evaluate agent [0.8895744601885478, 0.8982536792755127, 0.915702474117279, 0.9632955670356751] duration: 3.5625765323638916
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen4 for 150528 frames. Duration 179.55051231384277. Fps: 838.3601809884381. totalF 752636
+Evaluate agent [0.8794743418693542, 0.8899816200137138, 0.9093491658568382, 0.9600205977757772] duration: 3.5825324058532715
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen4 for 150528 frames. Duration 185.50992560386658. Fps: 811.4282807779992. totalF 903164
+Evaluate agent [0.7339007139205933, 0.881323532263438, 0.9045454581578573, 0.9605767289797466] duration: 3.8654086589813232
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric0_gen4 for 150528 frames. Duration 165.26254510879517. Fps: 910.841593906864. totalF 1053692
+Evaluate agent [0.8851063807805379, 0.8835294087727864, 0.9127272725105285, 0.9638516982396443] duration: 2.8456387519836426
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen4 for 150528 frames. Duration 137.3371045589447. Fps: 1096.0475720193576. totalF 752636
+Evaluate agent [0.8794743418693542, 0.8899816200137138, 0.9093491658568382, 0.9600205977757772] duration: 2.4420368671417236
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen4 for 150528 frames. Duration 140.4793393611908. Fps: 1071.5312350165086. totalF 903164
+Evaluate agent [0.8806382973988851, 0.8870588302612304, 0.9186776876449585, 0.9563748796780904] duration: 2.5066075325012207
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_5_curric1_gen4 for 150528 frames. Duration 136.91018056869507. Fps: 1099.465352939712. totalF 1053692
+Evaluate agent [0.882290359805612, 0.8844117720921835, 0.917438018321991, 0.9544593254725139] duration: 2.9235939979553223
+MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825
+MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825
+MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825
+MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825
+Best results in epoch 5 came from curriculum [['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946'], ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.948946'], ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.948946', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.948946']]
+Raw Reward of best curriculum: 9.893211610650024.             Snapshot Reward 3.6388257255156837. That is 0.91 of maxReward
+
+EPOCH: 5 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen1 for 150528 frames. Duration 142.6804850101471. Fps: 1055.0006189654794. totalF 903163
+Evaluate agent [-0.23931034406026205, -0.45411764523562265, -0.2349775791168213, -0.47827740510304767] duration: 2.137375831604004
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen1 for 150528 frames. Duration 132.86172103881836. Fps: 1132.9674101995115. totalF 1053691
+Evaluate agent [0.8700431063771248, 0.8756000068452623, 0.907982063293457, 0.9591275175412496] duration: 2.366584539413452
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen1 for 150528 frames. Duration 138.94637393951416. Fps: 1083.3532083789933. totalF 1204219
+Evaluate agent [0.8299568966031075, 0.87232000430425, 0.9163228789965312, 0.9534899353981018] duration: 2.709357500076294
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen1 for 150528 frames. Duration 133.90909552574158. Fps: 1124.1058675589645. totalF 903163
+Evaluate agent [0.87862069606781, 0.8919999996821085, 0.9130941748619079, 0.9574496666590373] duration: 2.543217420578003
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen1 for 150528 frames. Duration 138.45873165130615. Fps: 1087.1687051062192. totalF 1053691
+Evaluate agent [0.8634482781092326, 0.8479000069200993, 0.9074439485867818, 0.9516778508822124] duration: 2.7433552742004395
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen1 for 150528 frames. Duration 139.22829031944275. Fps: 1081.1595808196123. totalF 1204219
+Evaluate agent [-0.39698275178670883, -0.7657499983906746, -0.40955717861652374, -0.6146308739980062] duration: 2.718325614929199
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen2 for 150528 frames. Duration 134.1570873260498. Fps: 1122.0279375487858. totalF 903163
+Evaluate agent [0.87862069606781, 0.8919999996821085, 0.9130941748619079, 0.9574496666590373] duration: 2.548325777053833
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen2 for 150528 frames. Duration 138.43743181228638. Fps: 1087.3359757504586. totalF 1053691
+Evaluate agent [0.8613793134689331, 0.8690499998629093, 0.9127242229878902, 0.9567785223325094] duration: 2.438277244567871
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen2 for 150528 frames. Duration 137.2266764640808. Fps: 1096.9295757840555. totalF 1204219
+Evaluate agent [0.8674568980932236, 0.8694400072097779, 0.8953363299369812, 0.9490604003270467] duration: 2.6675431728363037
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen2 for 150528 frames. Duration 134.01106929779053. Fps: 1123.250495565457. totalF 903163
+Evaluate agent [0.87862069606781, 0.8919999996821085, 0.9130941748619079, 0.9574496666590373] duration: 2.5694901943206787
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen2 for 150528 frames. Duration 137.30089950561523. Fps: 1096.3365902336554. totalF 1053691
+Evaluate agent [0.8634482781092326, 0.8479000069200993, 0.9074439485867818, 0.9516778508822124] duration: 2.776505947113037
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen2 for 150528 frames. Duration 133.22223019599915. Fps: 1129.9015170256516. totalF 1204219
+Evaluate agent [0.8889655232429504, 0.8718400041262309, 0.914237666875124, 0.9610067049662272] duration: 2.2270140647888184
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen3 for 150528 frames. Duration 132.65521621704102. Fps: 1134.7311043820305. totalF 903163
+Evaluate agent [0.87862069606781, 0.8919999996821085, 0.9130941748619079, 0.9574496666590373] duration: 2.560152053833008
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen3 for 150528 frames. Duration 138.8927628993988. Fps: 1083.7713704999064. totalF 1053691
+Evaluate agent [0.8613793134689331, 0.8690499998629093, 0.9127242229878902, 0.9567785223325094] duration: 2.4347476959228516
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen3 for 150528 frames. Duration 133.41881775856018. Fps: 1128.236650038387. totalF 1204219
+Evaluate agent [0.8675862113634746, 0.8835294211612028, 0.9144394636154175, 0.9569127519925436] duration: 2.5336477756500244
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen3 for 150528 frames. Duration 134.41864943504333. Fps: 1119.8446096033822. totalF 903163
+Evaluate agent [0.87862069606781, 0.8919999996821085, 0.9130941748619079, 0.9574496666590373] duration: 2.5586163997650146
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen3 for 150528 frames. Duration 139.16417694091797. Fps: 1081.6576744739887. totalF 1053691
+Evaluate agent [0.8634482781092326, 0.8479000069200993, 0.9074439485867818, 0.9516778508822124] duration: 2.8169989585876465
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen3 for 150528 frames. Duration 138.60455179214478. Fps: 1086.0249396840586. totalF 1204219
+Evaluate agent [-0.39698275178670883, -0.7657499983906746, -0.40955717861652374, -0.6146308739980062] duration: 2.682227373123169
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen4 for 150528 frames. Duration 138.17310070991516. Fps: 1089.4160963791578. totalF 903163
+Evaluate agent [0.87862069606781, 0.8919999996821085, 0.9130941748619079, 0.9574496666590373] duration: 3.3436925411224365
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen4 for 150528 frames. Duration 184.48245310783386. Fps: 815.9475194749998. totalF 1053691
+Evaluate agent [0.8351724108060201, 0.8444800019264221, 0.9125560561815897, 0.9563087264696757] duration: 3.8455731868743896
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric0_gen4 for 150528 frames. Duration 178.4232053756714. Fps: 843.657077469616. totalF 1204219
+Evaluate agent [0.8862069010734558, 0.8852800051371257, 0.9134809449315071, 0.961610738436381] duration: 3.4685792922973633
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen4 for 150528 frames. Duration 181.66748666763306. Fps: 828.5907553474121. totalF 903163
+Evaluate agent [0.87862069606781, 0.8919999996821085, 0.9130941748619079, 0.9574496666590373] duration: 3.7950878143310547
+
+Trained on ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen4 for 150528 frames. Duration 185.9244248867035. Fps: 809.6192853183601. totalF 1053691
+Evaluate agent [0.8613793134689331, 0.8690499998629093, 0.9127242229878902, 0.9567785223325094] duration: 3.6176652908325195
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_6_curric1_gen4 for 150528 frames. Duration 185.68620491027832. Fps: 810.657959608435. totalF 1204219
+Evaluate agent [0.8674568980932236, 0.8694400072097779, 0.8953363299369812, 0.9490604003270467] duration: 3.9582629203796387
+MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.798419
+MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.798419
+MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.798419
+MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.798419
+Best results in epoch 6 came from curriculum [['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825'], ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.8736825'], ['MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.8736825', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.8736825']]
+Raw Reward of best curriculum: 9.81530234704532.             Snapshot Reward 3.6411645372708636. That is 0.91 of maxReward
+
+EPOCH: 6 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.798419', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.798419'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_7_curric0_gen1 for 150528 frames. Duration 189.5915060043335. Fps: 793.9596196707218. totalF 1053690
+Evaluate agent [0.8397468328475952, 0.8238486833870411, 0.8917647043863932, 0.9490330457687378] duration: 4.002742290496826
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.798419', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.798419'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_7_curric0_gen1 for 150528 frames. Duration 181.14184713363647. Fps: 830.9951697077967. totalF 1204218
+Evaluate agent [0.6224472602208455, 0.8652631600697835, 0.8970588286717732, 0.9538708627223969] duration: 3.5307629108428955
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.798419', 'MiniGrid-Dynamic-Obstacles-8x8-custom-diff0.798419'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_7_curric0_gen1 for 150528 frames. Duration 186.39561653137207. Fps: 807.5726393204358. totalF 1354746
+Evaluate agent [0.8312499970197678, 0.7271929820378621, 0.9102941195170084, 0.9546878774960835] duration: 3.657965660095215
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.798419', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.798419'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_7_curric1_gen1 for 150528 frames. Duration 179.0118534564972. Fps: 840.88286386343. totalF 1053690
+Evaluate agent [0.8545792944291059, 0.871052626768748, 0.9032352964083353, 0.9521175066630045] duration: 3.450385332107544
+
+Trained on ['MiniGrid-Dynamic-Obstacles-6x6-custom-diff0.798419', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.798419'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_7_curric1_gen1 for 150528 frames. Duration 162.29164457321167. Fps: 927.5154022614827. totalF 1204218
+Evaluate agent [0.8547468334436417, 0.8668421149253845, 0.9002941211064657, 0.95108935435613] duration: 2.6180593967437744
+
+Trained on ['MiniGrid-Dynamic-Obstacles-16x16-custom-diff0.798419', 'MiniGrid-Dynamic-Obstacles-5x5-custom-diff0.798419'] using model 150k_3step_4gen_2curric_Obst_noRS_s2330/epoch_7_curric1_gen1 for 150528 frames. Duration 138.42952156066895. Fps: 1087.3981091817088. totalF 1354746
+Evaluate agent [0.8586001466302311, 0.861052644252777, 0.9015625007450581, 0.9509424765904745] duration: 2.5896904468536377

@@ -1,0 +1,61 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : helena2
+srun: cpus-per-task       : 2
+srun: jobid               : 1143997
+srun: job-name            : rrhDO
+srun: mem                 : 16G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1143997: nodes(1):`helena2', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1143997.0 on host helena2, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node helena2, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Using Dynamic Obstacles
+MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0
+Device: cpu
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+/home/schlecht/tmp/Anaconda/home/schlecht/AnacondaNeu/lib/python3.10/site-packages/gymnasium/envs/registration.py:693: UserWarning: [33mWARN: Overriding environment MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0 already in registry.[0m
+  logger.warn(f"Overriding environment {new_spec.id} already in registry.")
+MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-6x6-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-8x8-custom-diff1.0
+MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0
+deleted: ./ epoch_2_curric0
+Continuing training from epoch 2... [total epochs: 51], seed: 1
+
+Trained on ['MiniGrid-Dynamic-Obstacles-5x5-custom-diff1.0', 'MiniGrid-Dynamic-Obstacles-16x16-custom-diff1.0'] using model rrh_100k_3_3_Obst_noRS_s1/epoch_2_curric0 for 101376 frames. Duration 108.30527329444885. Fps: 936.0209056893261. totalF 202751
+Evaluate agent [-0.5, -0.5263157894736842, -0.125, -0.06666666666666667] duration: 21.573601722717285
+Traceback (most recent call last):
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/trainCurriculum.py", line 62, in <module>
+    main()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/trainCurriculum.py", line 54, in main
+    e.startCurriculumTraining()
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 74, in startCurriculumTraining
+    self.executeOneEpoch(epoch)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/randomRollingHorizon.py", line 29, in executeOneEpoch
+    reward = self.trainACurriculum(i, self.iterationsDone, -1, self.curricula)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 124, in trainACurriculum
+    self.saveFirstStepOfModel(iterationsDone - initialIterationsDone, nameOfCurriculumI)
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/curricula/RollingHorizon.py", line 62, in saveFirstStepOfModel
+    utils.copyAgent(src=nameOfCurriculumI, dest=utils.getModelWithCandidatePrefix(
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/storage.py", line 119, in copyAgent
+    raise Exception(f"Path exists at {fullDestPath}! Copying agent failed")
+Exception: Path exists at /home/schlecht/nobackup/MinigridCurriculumLearning/storage/rrh_100k_3_3_Obst_noRS_s1/epoch_2_curric0_CANDIDATE! Copying agent failed
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1143997.0 (status=0x0100).
+srun: error: helena2: task 0: Exited with exit code 1
+---------- Cluster Job End ---------------------

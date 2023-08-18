@@ -1,0 +1,193 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : cp2019-12
+srun: cpus-per-task       : 4
+srun: jobid               : 1143986
+srun: job-name            : rrhDO
+srun: mem                 : 16G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1143986: nodes(1):`cp2019-12', cpu counts: 4(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1143986.0 on host cp2019-12, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node cp2019-12, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Device: cpu
+/home/schlecht/nobackup/MinigridCurriculumLearning/old/_train.py --procs 32 --frames 500000 --algo ppo --model debug1234 --env MiniGrid-DoorKey-5x5-v0
+
+Namespace(algo='ppo', env='MiniGrid-DoorKey-5x5-v0', model='debug1234', seed=1, log_interval=1, save_interval=10, procs=32, frames=500000, epochs=4, batch_size=256, frames_per_proc=None, discount=0.99, lr=0.001, gae_lambda=0.95, entropy_coef=0.01, value_loss_coef=0.5, max_grad_norm=0.5, optim_eps=1e-08, optim_alpha=0.99, clip_eps=0.2, recurrence=1, text=False, mem=False)
+
+Device: cpu
+
+Environments loaded
+
+Training status loaded
+
+Observations preprocessor loaded
+Model loaded
+
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=7, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+
+Optimizer loaded
+
+MiniGrid-DoorKey-5x5-v0 U 1 | F 004096 | FPS 1361 | D 3 | rR:msmM 0.02 0.14 0.00 0.79 | F:msmM 1.8 10.3 0.0 59.0 | H 1.730 | V 0.356 | pL 0.067 | vL 0.017 | g 0.148
+MiniGrid-DoorKey-5x5-v0 U 2 | F 008192 | FPS 1411 | D 5 | rR:msmM 0.07 0.17 0.00 0.79 | F:msmM 235.7 38.9 59.0 250.0 | H 1.764 | V 0.280 | pL 0.093 | vL 0.006 | g 0.092
+MiniGrid-DoorKey-5x5-v0 U 3 | F 012288 | FPS 1231 | D 9 | rR:msmM 0.05 0.11 0.00 0.43 | F:msmM 241.7 22.6 158.0 250.0 | H 1.846 | V 0.246 | pL 0.046 | vL 0.001 | g 0.037
+MiniGrid-DoorKey-5x5-v0 U 4 | F 016384 | FPS 1158 | D 12 | rR:msmM 0.00 0.00 0.00 0.00 | F:msmM 250.0 0.0 250.0 250.0 | H 1.899 | V 0.178 | pL 0.063 | vL 0.002 | g 0.052
+MiniGrid-DoorKey-5x5-v0 U 5 | F 020480 | FPS 1101 | D 16 | rR:msmM 0.02 0.11 0.00 0.61 | F:msmM 245.5 24.9 107.0 250.0 | H 1.918 | V 0.154 | pL 0.027 | vL 0.001 | g 0.026
+MiniGrid-DoorKey-5x5-v0 U 6 | F 024576 | FPS 1110 | D 20 | rR:msmM 0.03 0.13 0.00 0.61 | F:msmM 242.3 30.2 107.0 250.0 | H 1.935 | V 0.117 | pL 0.038 | vL 0.001 | g 0.035
+MiniGrid-DoorKey-5x5-v0 U 7 | F 028672 | FPS 1093 | D 23 | rR:msmM 0.00 0.03 0.00 0.15 | F:msmM 249.5 2.6 235.0 250.0 | H 1.938 | V 0.091 | pL 0.017 | vL 0.000 | g 0.010
+MiniGrid-DoorKey-5x5-v0 U 8 | F 032768 | FPS 1058 | D 27 | rR:msmM 0.04 0.14 0.00 0.73 | F:msmM 241.9 32.4 75.0 250.0 | H 1.941 | V 0.070 | pL 0.018 | vL 0.001 | g 0.023
+MiniGrid-DoorKey-5x5-v0 U 9 | F 036864 | FPS 1027 | D 31 | rR:msmM 0.05 0.18 0.00 0.76 | F:msmM 238.8 43.2 68.0 250.0 | H 1.938 | V 0.059 | pL 0.008 | vL 0.001 | g 0.022
+MiniGrid-DoorKey-5x5-v0 U 10 | F 040960 | FPS 1050 | D 35 | rR:msmM 0.05 0.16 0.00 0.76 | F:msmM 238.4 36.2 68.0 250.0 | H 1.938 | V 0.049 | pL 0.011 | vL 0.001 | g 0.022
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 11 | F 045056 | FPS 1042 | D 39 | rR:msmM 0.07 0.19 0.00 0.77 | F:msmM 234.7 44.0 64.0 250.0 | H 1.932 | V 0.053 | pL 0.001 | vL 0.002 | g 0.046
+MiniGrid-DoorKey-5x5-v0 U 12 | F 049152 | FPS 1034 | D 43 | rR:msmM 0.08 0.19 0.00 0.77 | F:msmM 231.9 44.5 64.0 250.0 | H 1.941 | V 0.034 | pL 0.007 | vL 0.000 | g 0.015
+MiniGrid-DoorKey-5x5-v0 U 13 | F 053248 | FPS 1028 | D 47 | rR:msmM 0.06 0.15 0.00 0.59 | F:msmM 237.6 33.1 114.0 250.0 | H 1.939 | V 0.036 | pL 0.000 | vL 0.001 | g 0.020
+MiniGrid-DoorKey-5x5-v0 U 14 | F 057344 | FPS 1070 | D 51 | rR:msmM 0.07 0.18 0.00 0.72 | F:msmM 235.1 42.4 79.0 250.0 | H 1.936 | V 0.035 | pL 0.005 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 15 | F 061440 | FPS 1043 | D 55 | rR:msmM 0.10 0.25 0.00 0.91 | F:msmM 227.1 59.4 26.0 250.0 | H 1.933 | V 0.029 | pL -0.002 | vL 0.002 | g 0.059
+MiniGrid-DoorKey-5x5-v0 U 16 | F 065536 | FPS 1046 | D 59 | rR:msmM 0.10 0.20 0.00 0.91 | F:msmM 228.8 46.7 26.0 250.0 | H 1.930 | V 0.013 | pL -0.005 | vL 0.001 | g 0.047
+MiniGrid-DoorKey-5x5-v0 U 17 | F 069632 | FPS 1067 | D 63 | rR:msmM 0.12 0.20 0.00 0.67 | F:msmM 225.4 43.7 91.0 250.0 | H 1.925 | V 0.015 | pL -0.011 | vL 0.002 | g 0.032
+MiniGrid-DoorKey-5x5-v0 U 18 | F 073728 | FPS 1042 | D 67 | rR:msmM 0.18 0.27 0.00 0.80 | F:msmM 209.1 61.8 55.0 250.0 | H 1.919 | V 0.022 | pL -0.013 | vL 0.003 | g 0.047
+MiniGrid-DoorKey-5x5-v0 U 19 | F 077824 | FPS 1046 | D 71 | rR:msmM 0.23 0.28 0.00 0.85 | F:msmM 197.8 66.9 43.0 250.0 | H 1.909 | V 0.055 | pL -0.011 | vL 0.004 | g 0.055
+MiniGrid-DoorKey-5x5-v0 U 20 | F 081920 | FPS 1113 | D 74 | rR:msmM 0.35 0.31 0.00 0.86 | F:msmM 170.0 75.0 38.0 250.0 | H 1.887 | V 0.088 | pL -0.020 | vL 0.006 | g 0.103
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 21 | F 086016 | FPS 1098 | D 78 | rR:msmM 0.46 0.33 0.00 0.95 | F:msmM 144.4 84.7 14.0 250.0 | H 1.862 | V 0.126 | pL -0.040 | vL 0.012 | g 0.114
+MiniGrid-DoorKey-5x5-v0 U 22 | F 090112 | FPS 1028 | D 82 | rR:msmM 0.58 0.29 0.00 0.94 | F:msmM 114.6 75.7 16.0 250.0 | H 1.809 | V 0.197 | pL -0.063 | vL 0.016 | g 0.190
+MiniGrid-DoorKey-5x5-v0 U 23 | F 094208 | FPS 1101 | D 86 | rR:msmM 0.72 0.21 0.00 0.97 | F:msmM 77.7 57.3 8.0 250.0 | H 1.778 | V 0.258 | pL -0.093 | vL 0.018 | g 0.143
+MiniGrid-DoorKey-5x5-v0 U 24 | F 098304 | FPS 1044 | D 90 | rR:msmM 0.77 0.17 0.16 0.96 | F:msmM 64.4 47.0 12.0 232.0 | H 1.697 | V 0.377 | pL -0.103 | vL 0.019 | g 0.165
+MiniGrid-DoorKey-5x5-v0 U 25 | F 102400 | FPS 1050 | D 93 | rR:msmM 0.85 0.11 0.45 0.97 | F:msmM 40.6 30.8 9.0 153.0 | H 1.584 | V 0.523 | pL -0.121 | vL 0.016 | g 0.166
+MiniGrid-DoorKey-5x5-v0 U 26 | F 106496 | FPS 1141 | D 97 | rR:msmM 0.89 0.07 0.63 0.97 | F:msmM 31.3 18.6 9.0 102.0 | H 1.496 | V 0.655 | pL -0.118 | vL 0.010 | g 0.137
+MiniGrid-DoorKey-5x5-v0 U 27 | F 110592 | FPS 1065 | D 101 | rR:msmM 0.91 0.05 0.62 0.97 | F:msmM 25.9 13.4 8.0 106.0 | H 1.416 | V 0.719 | pL -0.078 | vL 0.005 | g 0.104
+MiniGrid-DoorKey-5x5-v0 U 28 | F 114688 | FPS 1068 | D 105 | rR:msmM 0.92 0.04 0.70 0.97 | F:msmM 22.5 11.2 8.0 83.0 | H 1.348 | V 0.769 | pL -0.047 | vL 0.004 | g 0.077
+MiniGrid-DoorKey-5x5-v0 U 29 | F 118784 | FPS 1045 | D 109 | rR:msmM 0.93 0.03 0.78 0.97 | F:msmM 20.7 9.6 7.0 62.0 | H 1.300 | V 0.812 | pL -0.034 | vL 0.002 | g 0.061
+MiniGrid-DoorKey-5x5-v0 U 30 | F 122880 | FPS 1036 | D 113 | rR:msmM 0.93 0.03 0.82 0.97 | F:msmM 18.4 7.4 7.0 49.0 | H 1.248 | V 0.836 | pL -0.015 | vL 0.002 | g 0.048
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 31 | F 126976 | FPS 1000 | D 117 | rR:msmM 0.94 0.03 0.81 0.97 | F:msmM 17.7 7.1 7.0 52.0 | H 1.248 | V 0.847 | pL -0.009 | vL 0.001 | g 0.034
+MiniGrid-DoorKey-5x5-v0 U 32 | F 131072 | FPS 1006 | D 121 | rR:msmM 0.94 0.02 0.84 0.97 | F:msmM 17.2 6.4 7.0 45.0 | H 1.232 | V 0.851 | pL -0.006 | vL 0.001 | g 0.040
+MiniGrid-DoorKey-5x5-v0 U 33 | F 135168 | FPS 1024 | D 125 | rR:msmM 0.94 0.02 0.85 0.97 | F:msmM 16.7 6.3 7.0 43.0 | H 1.297 | V 0.855 | pL -0.002 | vL 0.001 | g 0.031
+MiniGrid-DoorKey-5x5-v0 U 34 | F 139264 | FPS 1026 | D 129 | rR:msmM 0.93 0.03 0.84 0.97 | F:msmM 19.5 7.4 7.0 45.0 | H 1.276 | V 0.841 | pL 0.010 | vL 0.001 | g 0.034
+MiniGrid-DoorKey-5x5-v0 U 35 | F 143360 | FPS 1019 | D 133 | rR:msmM 0.94 0.02 0.84 0.97 | F:msmM 17.9 6.3 7.0 45.0 | H 1.268 | V 0.842 | pL -0.006 | vL 0.001 | g 0.030
+MiniGrid-DoorKey-5x5-v0 U 36 | F 147456 | FPS 1072 | D 137 | rR:msmM 0.94 0.02 0.83 0.97 | F:msmM 17.5 6.1 8.0 47.0 | H 1.261 | V 0.845 | pL -0.007 | vL 0.001 | g 0.036
+MiniGrid-DoorKey-5x5-v0 U 37 | F 151552 | FPS 1018 | D 141 | rR:msmM 0.93 0.03 0.85 0.97 | F:msmM 18.5 7.0 7.0 43.0 | H 1.271 | V 0.844 | pL 0.002 | vL 0.001 | g 0.035
+MiniGrid-DoorKey-5x5-v0 U 38 | F 155648 | FPS 1015 | D 145 | rR:msmM 0.94 0.02 0.81 0.97 | F:msmM 17.8 6.7 8.0 54.0 | H 1.262 | V 0.851 | pL 0.004 | vL 0.001 | g 0.035
+MiniGrid-DoorKey-5x5-v0 U 39 | F 159744 | FPS 1027 | D 149 | rR:msmM 0.94 0.02 0.87 0.97 | F:msmM 17.8 5.5 7.0 36.0 | H 1.278 | V 0.854 | pL 0.002 | vL 0.001 | g 0.036
+MiniGrid-DoorKey-5x5-v0 U 40 | F 163840 | FPS 1020 | D 153 | rR:msmM 0.93 0.02 0.84 0.97 | F:msmM 18.1 6.4 8.0 44.0 | H 1.348 | V 0.846 | pL -0.001 | vL 0.001 | g 0.030
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 41 | F 167936 | FPS 1022 | D 157 | rR:msmM 0.94 0.02 0.86 0.97 | F:msmM 17.9 5.9 8.0 40.0 | H 1.321 | V 0.844 | pL -0.005 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 42 | F 172032 | FPS 1015 | D 161 | rR:msmM 0.94 0.02 0.86 0.97 | F:msmM 18.0 6.0 9.0 39.0 | H 1.312 | V 0.847 | pL -0.005 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 43 | F 176128 | FPS 1048 | D 165 | rR:msmM 0.94 0.02 0.84 0.97 | F:msmM 17.7 6.3 8.0 45.0 | H 1.325 | V 0.852 | pL 0.000 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 44 | F 180224 | FPS 1026 | D 169 | rR:msmM 0.93 0.02 0.83 0.97 | F:msmM 18.8 6.6 7.0 47.0 | H 1.295 | V 0.845 | pL 0.009 | vL 0.001 | g 0.033
+MiniGrid-DoorKey-5x5-v0 U 45 | F 184320 | FPS 1025 | D 173 | rR:msmM 0.94 0.02 0.81 0.97 | F:msmM 17.9 6.5 8.0 53.0 | H 1.298 | V 0.844 | pL 0.004 | vL 0.001 | g 0.048
+MiniGrid-DoorKey-5x5-v0 U 46 | F 188416 | FPS 1065 | D 177 | rR:msmM 0.93 0.04 0.38 0.97 | F:msmM 18.5 12.2 8.0 171.0 | H 1.289 | V 0.837 | pL 0.003 | vL 0.002 | g 0.065
+MiniGrid-DoorKey-5x5-v0 U 47 | F 192512 | FPS 1026 | D 181 | rR:msmM 0.94 0.06 0.00 0.97 | F:msmM 17.5 16.1 8.0 250.0 | H 1.269 | V 0.848 | pL -0.009 | vL 0.002 | g 0.051
+MiniGrid-DoorKey-5x5-v0 U 48 | F 196608 | FPS 1029 | D 185 | rR:msmM 0.93 0.02 0.84 0.97 | F:msmM 18.9 6.9 8.0 44.0 | H 1.307 | V 0.844 | pL 0.005 | vL 0.001 | g 0.041
+MiniGrid-DoorKey-5x5-v0 U 49 | F 200704 | FPS 1075 | D 188 | rR:msmM 0.94 0.02 0.84 0.97 | F:msmM 17.4 6.1 7.0 45.0 | H 1.307 | V 0.848 | pL -0.007 | vL 0.001 | g 0.040
+MiniGrid-DoorKey-5x5-v0 U 50 | F 204800 | FPS 1009 | D 192 | rR:msmM 0.94 0.02 0.86 0.97 | F:msmM 16.8 5.5 9.0 40.0 | H 1.281 | V 0.857 | pL -0.008 | vL 0.001 | g 0.035
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 51 | F 208896 | FPS 1033 | D 196 | rR:msmM 0.94 0.02 0.87 0.97 | F:msmM 17.4 5.7 8.0 36.0 | H 1.270 | V 0.850 | pL -0.006 | vL 0.001 | g 0.030
+MiniGrid-DoorKey-5x5-v0 U 52 | F 212992 | FPS 1051 | D 200 | rR:msmM 0.94 0.02 0.85 0.97 | F:msmM 17.9 6.4 7.0 42.0 | H 1.266 | V 0.847 | pL -0.001 | vL 0.001 | g 0.041
+MiniGrid-DoorKey-5x5-v0 U 53 | F 217088 | FPS 1027 | D 204 | rR:msmM 0.94 0.02 0.87 0.97 | F:msmM 16.6 5.5 7.0 37.0 | H 1.243 | V 0.857 | pL -0.007 | vL 0.001 | g 0.030
+MiniGrid-DoorKey-5x5-v0 U 54 | F 221184 | FPS 1037 | D 208 | rR:msmM 0.94 0.02 0.87 0.97 | F:msmM 16.8 5.0 7.0 35.0 | H 1.341 | V 0.862 | pL 0.004 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 55 | F 225280 | FPS 1043 | D 212 | rR:msmM 0.94 0.02 0.85 0.97 | F:msmM 17.7 5.6 8.0 43.0 | H 1.344 | V 0.852 | pL 0.004 | vL 0.001 | g 0.031
+MiniGrid-DoorKey-5x5-v0 U 56 | F 229376 | FPS 1033 | D 216 | rR:msmM 0.93 0.02 0.84 0.97 | F:msmM 18.5 6.2 7.0 44.0 | H 1.378 | V 0.847 | pL 0.005 | vL 0.001 | g 0.032
+MiniGrid-DoorKey-5x5-v0 U 57 | F 233472 | FPS 1088 | D 220 | rR:msmM 0.93 0.02 0.81 0.97 | F:msmM 18.6 6.7 8.0 52.0 | H 1.362 | V 0.845 | pL 0.005 | vL 0.001 | g 0.034
+MiniGrid-DoorKey-5x5-v0 U 58 | F 237568 | FPS 1032 | D 224 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 18.6 6.1 7.0 41.0 | H 1.351 | V 0.839 | pL 0.001 | vL 0.001 | g 0.040
+MiniGrid-DoorKey-5x5-v0 U 59 | F 241664 | FPS 1121 | D 228 | rR:msmM 0.93 0.05 0.22 0.97 | F:msmM 18.5 14.1 7.0 217.0 | H 1.337 | V 0.846 | pL 0.001 | vL 0.002 | g 0.057
+MiniGrid-DoorKey-5x5-v0 U 60 | F 245760 | FPS 1046 | D 231 | rR:msmM 0.93 0.02 0.80 0.97 | F:msmM 19.9 6.3 9.0 55.0 | H 1.402 | V 0.839 | pL 0.011 | vL 0.001 | g 0.042
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 61 | F 249856 | FPS 1063 | D 235 | rR:msmM 0.93 0.02 0.81 0.97 | F:msmM 20.1 6.7 9.0 52.0 | H 1.380 | V 0.836 | pL 0.007 | vL 0.001 | g 0.033
+MiniGrid-DoorKey-5x5-v0 U 62 | F 253952 | FPS 1019 | D 239 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 19.5 6.5 8.0 43.0 | H 1.375 | V 0.833 | pL -0.000 | vL 0.001 | g 0.033
+MiniGrid-DoorKey-5x5-v0 U 63 | F 258048 | FPS 1057 | D 243 | rR:msmM 0.93 0.02 0.81 0.97 | F:msmM 19.3 6.8 9.0 52.0 | H 1.374 | V 0.829 | pL 0.002 | vL 0.001 | g 0.037
+MiniGrid-DoorKey-5x5-v0 U 64 | F 262144 | FPS 1063 | D 247 | rR:msmM 0.93 0.05 0.27 0.97 | F:msmM 19.9 14.4 8.0 203.0 | H 1.353 | V 0.832 | pL -0.001 | vL 0.002 | g 0.040
+MiniGrid-DoorKey-5x5-v0 U 65 | F 266240 | FPS 1035 | D 251 | rR:msmM 0.94 0.02 0.82 0.97 | F:msmM 17.7 6.3 7.0 50.0 | H 1.338 | V 0.846 | pL -0.008 | vL 0.001 | g 0.033
+MiniGrid-DoorKey-5x5-v0 U 66 | F 270336 | FPS 1054 | D 255 | rR:msmM 0.94 0.02 0.81 0.97 | F:msmM 17.9 6.5 7.0 52.0 | H 1.344 | V 0.846 | pL -0.005 | vL 0.001 | g 0.032
+MiniGrid-DoorKey-5x5-v0 U 67 | F 274432 | FPS 1038 | D 259 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 18.4 6.4 9.0 43.0 | H 1.341 | V 0.851 | pL 0.008 | vL 0.001 | g 0.035
+MiniGrid-DoorKey-5x5-v0 U 68 | F 278528 | FPS 1043 | D 263 | rR:msmM 0.93 0.02 0.70 0.97 | F:msmM 18.2 6.9 8.0 83.0 | H 1.393 | V 0.847 | pL 0.008 | vL 0.001 | g 0.040
+MiniGrid-DoorKey-5x5-v0 U 69 | F 282624 | FPS 1053 | D 267 | rR:msmM 0.92 0.04 0.56 0.97 | F:msmM 22.0 11.4 9.0 122.0 | H 1.459 | V 0.819 | pL 0.021 | vL 0.002 | g 0.049
+MiniGrid-DoorKey-5x5-v0 U 70 | F 286720 | FPS 1044 | D 271 | rR:msmM 0.93 0.03 0.63 0.97 | F:msmM 20.8 9.3 8.0 102.0 | H 1.424 | V 0.828 | pL 0.004 | vL 0.002 | g 0.035
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 71 | F 290816 | FPS 1026 | D 275 | rR:msmM 0.93 0.03 0.85 0.97 | F:msmM 19.8 7.2 8.0 41.0 | H 1.322 | V 0.830 | pL -0.004 | vL 0.001 | g 0.038
+MiniGrid-DoorKey-5x5-v0 U 72 | F 294912 | FPS 1055 | D 279 | rR:msmM 0.93 0.02 0.79 0.97 | F:msmM 18.7 6.9 8.0 58.0 | H 1.327 | V 0.839 | pL -0.008 | vL 0.001 | g 0.030
+MiniGrid-DoorKey-5x5-v0 U 73 | F 299008 | FPS 1058 | D 282 | rR:msmM 0.93 0.03 0.63 0.97 | F:msmM 18.4 8.7 8.0 103.0 | H 1.342 | V 0.838 | pL -0.004 | vL 0.002 | g 0.039
+MiniGrid-DoorKey-5x5-v0 U 74 | F 303104 | FPS 1060 | D 286 | rR:msmM 0.94 0.02 0.82 0.97 | F:msmM 17.7 6.0 8.0 50.0 | H 1.335 | V 0.844 | pL -0.003 | vL 0.001 | g 0.034
+MiniGrid-DoorKey-5x5-v0 U 75 | F 307200 | FPS 1048 | D 290 | rR:msmM 0.93 0.03 0.58 0.97 | F:msmM 18.8 8.9 9.0 117.0 | H 1.365 | V 0.842 | pL 0.002 | vL 0.001 | g 0.038
+MiniGrid-DoorKey-5x5-v0 U 76 | F 311296 | FPS 1037 | D 294 | rR:msmM 0.93 0.03 0.76 0.97 | F:msmM 18.4 7.1 7.0 68.0 | H 1.343 | V 0.845 | pL -0.000 | vL 0.001 | g 0.036
+MiniGrid-DoorKey-5x5-v0 U 77 | F 315392 | FPS 0928 | D 299 | rR:msmM 0.94 0.02 0.84 0.97 | F:msmM 17.9 6.1 8.0 44.0 | H 1.367 | V 0.847 | pL -0.003 | vL 0.001 | g 0.031
+MiniGrid-DoorKey-5x5-v0 U 78 | F 319488 | FPS 1042 | D 303 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 18.5 6.4 8.0 42.0 | H 1.337 | V 0.846 | pL 0.002 | vL 0.001 | g 0.030
+MiniGrid-DoorKey-5x5-v0 U 79 | F 323584 | FPS 1107 | D 306 | rR:msmM 0.93 0.02 0.80 0.97 | F:msmM 18.7 6.4 8.0 55.0 | H 1.380 | V 0.846 | pL 0.004 | vL 0.001 | g 0.029
+MiniGrid-DoorKey-5x5-v0 U 80 | F 327680 | FPS 1038 | D 310 | rR:msmM 0.93 0.02 0.86 0.97 | F:msmM 19.2 6.4 8.0 38.0 | H 1.396 | V 0.840 | pL 0.000 | vL 0.001 | g 0.027
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 81 | F 331776 | FPS 1041 | D 314 | rR:msmM 0.93 0.03 0.83 0.97 | F:msmM 19.6 7.2 7.0 48.0 | H 1.387 | V 0.833 | pL 0.002 | vL 0.001 | g 0.030
+MiniGrid-DoorKey-5x5-v0 U 82 | F 335872 | FPS 1049 | D 318 | rR:msmM 0.93 0.02 0.82 0.97 | F:msmM 19.1 6.9 9.0 50.0 | H 1.338 | V 0.837 | pL -0.004 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 83 | F 339968 | FPS 1012 | D 322 | rR:msmM 0.94 0.02 0.82 0.97 | F:msmM 17.8 6.5 7.0 49.0 | H 1.307 | V 0.843 | pL -0.010 | vL 0.001 | g 0.031
+MiniGrid-DoorKey-5x5-v0 U 84 | F 344064 | FPS 1102 | D 326 | rR:msmM 0.94 0.02 0.88 0.97 | F:msmM 16.8 5.2 8.0 34.0 | H 1.338 | V 0.857 | pL -0.009 | vL 0.001 | g 0.026
+MiniGrid-DoorKey-5x5-v0 U 85 | F 348160 | FPS 1089 | D 330 | rR:msmM 0.94 0.02 0.87 0.97 | F:msmM 17.9 5.3 7.0 37.0 | H 1.398 | V 0.853 | pL 0.005 | vL 0.001 | g 0.029
+MiniGrid-DoorKey-5x5-v0 U 86 | F 352256 | FPS 1014 | D 334 | rR:msmM 0.93 0.02 0.86 0.97 | F:msmM 19.8 6.2 9.0 39.0 | H 1.410 | V 0.840 | pL 0.011 | vL 0.001 | g 0.034
+MiniGrid-DoorKey-5x5-v0 U 87 | F 356352 | FPS 1058 | D 337 | rR:msmM 0.93 0.03 0.81 0.97 | F:msmM 19.9 7.0 7.0 52.0 | H 1.433 | V 0.835 | pL 0.001 | vL 0.001 | g 0.029
+MiniGrid-DoorKey-5x5-v0 U 88 | F 360448 | FPS 1042 | D 341 | rR:msmM 0.93 0.03 0.82 0.97 | F:msmM 20.0 7.0 8.0 51.0 | H 1.430 | V 0.834 | pL 0.005 | vL 0.001 | g 0.038
+MiniGrid-DoorKey-5x5-v0 U 89 | F 364544 | FPS 1079 | D 345 | rR:msmM 0.93 0.03 0.80 0.97 | F:msmM 20.6 7.9 9.0 56.0 | H 1.440 | V 0.832 | pL 0.014 | vL 0.001 | g 0.039
+MiniGrid-DoorKey-5x5-v0 U 90 | F 368640 | FPS 0995 | D 349 | rR:msmM 0.93 0.03 0.80 0.97 | F:msmM 20.0 7.9 7.0 56.0 | H 1.408 | V 0.832 | pL 0.002 | vL 0.001 | g 0.032
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 91 | F 372736 | FPS 1005 | D 353 | rR:msmM 0.93 0.03 0.77 0.97 | F:msmM 19.4 7.2 7.0 65.0 | H 1.353 | V 0.835 | pL -0.006 | vL 0.001 | g 0.030
+MiniGrid-DoorKey-5x5-v0 U 92 | F 376832 | FPS 1012 | D 357 | rR:msmM 0.93 0.02 0.84 0.97 | F:msmM 19.0 6.2 8.0 45.0 | H 1.374 | V 0.838 | pL -0.002 | vL 0.001 | g 0.029
+MiniGrid-DoorKey-5x5-v0 U 93 | F 380928 | FPS 1010 | D 362 | rR:msmM 0.93 0.02 0.84 0.97 | F:msmM 18.3 6.9 8.0 44.0 | H 1.344 | V 0.841 | pL -0.004 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 94 | F 385024 | FPS 1021 | D 366 | rR:msmM 0.93 0.02 0.83 0.97 | F:msmM 18.6 6.7 8.0 47.0 | H 1.358 | V 0.844 | pL -0.001 | vL 0.001 | g 0.030
+MiniGrid-DoorKey-5x5-v0 U 95 | F 389120 | FPS 1035 | D 369 | rR:msmM 0.93 0.02 0.83 0.97 | F:msmM 18.3 6.2 8.0 48.0 | H 1.342 | V 0.842 | pL -0.005 | vL 0.001 | g 0.031
+MiniGrid-DoorKey-5x5-v0 U 96 | F 393216 | FPS 1060 | D 373 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 18.8 6.1 9.0 43.0 | H 1.360 | V 0.840 | pL -0.006 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 97 | F 397312 | FPS 1031 | D 377 | rR:msmM 0.93 0.02 0.83 0.97 | F:msmM 18.2 6.5 7.0 46.0 | H 1.357 | V 0.842 | pL -0.007 | vL 0.001 | g 0.025
+MiniGrid-DoorKey-5x5-v0 U 98 | F 401408 | FPS 1026 | D 381 | rR:msmM 0.94 0.02 0.80 0.97 | F:msmM 17.8 6.7 9.0 55.0 | H 1.333 | V 0.846 | pL -0.003 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 99 | F 405504 | FPS 1047 | D 385 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 18.5 6.5 7.0 43.0 | H 1.356 | V 0.849 | pL 0.006 | vL 0.001 | g 0.028
+MiniGrid-DoorKey-5x5-v0 U 100 | F 409600 | FPS 1074 | D 389 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 18.7 6.3 9.0 41.0 | H 1.353 | V 0.843 | pL 0.006 | vL 0.001 | g 0.028
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 101 | F 413696 | FPS 1044 | D 393 | rR:msmM 0.93 0.02 0.86 0.97 | F:msmM 18.2 6.6 8.0 38.0 | H 1.362 | V 0.844 | pL -0.002 | vL 0.001 | g 0.023
+MiniGrid-DoorKey-5x5-v0 U 102 | F 417792 | FPS 1053 | D 397 | rR:msmM 0.93 0.03 0.76 0.97 | F:msmM 19.7 7.1 8.0 67.0 | H 1.377 | V 0.841 | pL 0.009 | vL 0.001 | g 0.034
+MiniGrid-DoorKey-5x5-v0 U 103 | F 421888 | FPS 1038 | D 401 | rR:msmM 0.93 0.02 0.84 0.97 | F:msmM 18.9 6.7 8.0 44.0 | H 1.361 | V 0.839 | pL 0.003 | vL 0.001 | g 0.031
+MiniGrid-DoorKey-5x5-v0 U 104 | F 425984 | FPS 1091 | D 405 | rR:msmM 0.93 0.02 0.84 0.97 | F:msmM 18.5 6.2 7.0 45.0 | H 1.348 | V 0.845 | pL -0.002 | vL 0.001 | g 0.026
+MiniGrid-DoorKey-5x5-v0 U 105 | F 430080 | FPS 1050 | D 409 | rR:msmM 0.94 0.02 0.87 0.97 | F:msmM 17.9 5.4 8.0 35.0 | H 1.349 | V 0.846 | pL -0.008 | vL 0.001 | g 0.021
+MiniGrid-DoorKey-5x5-v0 U 106 | F 434176 | FPS 1039 | D 412 | rR:msmM 0.93 0.02 0.86 0.97 | F:msmM 18.5 6.3 7.0 40.0 | H 1.342 | V 0.843 | pL -0.001 | vL 0.001 | g 0.026
+MiniGrid-DoorKey-5x5-v0 U 107 | F 438272 | FPS 1059 | D 416 | rR:msmM 0.94 0.02 0.86 0.97 | F:msmM 18.0 6.3 7.0 40.0 | H 1.312 | V 0.847 | pL -0.004 | vL 0.001 | g 0.029
+MiniGrid-DoorKey-5x5-v0 U 108 | F 442368 | FPS 1032 | D 420 | rR:msmM 0.94 0.02 0.83 0.97 | F:msmM 17.9 6.3 8.0 46.0 | H 1.303 | V 0.849 | pL -0.002 | vL 0.001 | g 0.025
+MiniGrid-DoorKey-5x5-v0 U 109 | F 446464 | FPS 1075 | D 424 | rR:msmM 0.94 0.02 0.87 0.97 | F:msmM 17.4 5.9 8.0 37.0 | H 1.328 | V 0.851 | pL 0.001 | vL 0.001 | g 0.029
+MiniGrid-DoorKey-5x5-v0 U 110 | F 450560 | FPS 1068 | D 428 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 18.2 5.8 7.0 42.0 | H 1.396 | V 0.853 | pL 0.005 | vL 0.001 | g 0.025
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 111 | F 454656 | FPS 1031 | D 432 | rR:msmM 0.93 0.03 0.84 0.97 | F:msmM 19.4 7.1 7.0 45.0 | H 1.422 | V 0.836 | pL 0.010 | vL 0.001 | g 0.033
+MiniGrid-DoorKey-5x5-v0 U 112 | F 458752 | FPS 1085 | D 436 | rR:msmM 0.93 0.03 0.81 0.97 | F:msmM 20.7 7.9 9.0 52.0 | H 1.419 | V 0.830 | pL 0.007 | vL 0.001 | g 0.029
+MiniGrid-DoorKey-5x5-v0 U 113 | F 462848 | FPS 1027 | D 440 | rR:msmM 0.93 0.03 0.82 0.97 | F:msmM 19.1 7.3 7.0 49.0 | H 1.352 | V 0.832 | pL -0.008 | vL 0.001 | g 0.025
+MiniGrid-DoorKey-5x5-v0 U 114 | F 466944 | FPS 1035 | D 444 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 19.2 6.6 9.0 41.0 | H 1.352 | V 0.840 | pL -0.006 | vL 0.001 | g 0.024
+MiniGrid-DoorKey-5x5-v0 U 115 | F 471040 | FPS 1043 | D 448 | rR:msmM 0.93 0.02 0.86 0.97 | F:msmM 18.9 6.0 8.0 40.0 | H 1.363 | V 0.840 | pL -0.001 | vL 0.001 | g 0.026
+MiniGrid-DoorKey-5x5-v0 U 116 | F 475136 | FPS 1040 | D 452 | rR:msmM 0.93 0.02 0.85 0.97 | F:msmM 18.7 6.1 8.0 41.0 | H 1.371 | V 0.843 | pL 0.003 | vL 0.001 | g 0.029
+MiniGrid-DoorKey-5x5-v0 U 117 | F 479232 | FPS 1070 | D 455 | rR:msmM 0.93 0.02 0.81 0.97 | F:msmM 18.4 6.8 8.0 53.0 | H 1.328 | V 0.844 | pL 0.003 | vL 0.001 | g 0.027
+MiniGrid-DoorKey-5x5-v0 U 118 | F 483328 | FPS 1046 | D 459 | rR:msmM 0.93 0.02 0.84 0.97 | F:msmM 18.9 6.6 8.0 45.0 | H 1.374 | V 0.838 | pL 0.001 | vL 0.001 | g 0.024
+MiniGrid-DoorKey-5x5-v0 U 119 | F 487424 | FPS 1025 | D 463 | rR:msmM 0.93 0.04 0.53 0.97 | F:msmM 19.1 10.0 8.0 131.0 | H 1.373 | V 0.837 | pL 0.001 | vL 0.001 | g 0.031
+MiniGrid-DoorKey-5x5-v0 U 120 | F 491520 | FPS 1025 | D 467 | rR:msmM 0.94 0.02 0.85 0.97 | F:msmM 18.0 6.0 8.0 41.0 | H 1.341 | V 0.848 | pL -0.002 | vL 0.001 | g 0.027
+Status saved
+MiniGrid-DoorKey-5x5-v0 U 121 | F 495616 | FPS 1064 | D 471 | rR:msmM 0.94 0.02 0.81 0.97 | F:msmM 18.0 6.1 9.0 53.0 | H 1.370 | V 0.849 | pL 0.000 | vL 0.001 | g 0.023
+MiniGrid-DoorKey-5x5-v0 U 122 | F 499712 | FPS 1068 | D 475 | rR:msmM 0.93 0.02 0.87 0.97 | F:msmM 18.5 6.3 9.0 37.0 | H 1.413 | V 0.849 | pL 0.005 | vL 0.001 | g 0.023
+MiniGrid-DoorKey-5x5-v0 U 123 | F 503808 | FPS 1012 | D 479 | rR:msmM 0.93 0.03 0.84 0.97 | F:msmM 20.3 7.6 8.0 45.0 | H 1.411 | V 0.831 | pL 0.006 | vL 0.001 | g 0.031
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1143986.0 (status=0x0000).
+srun: launch/slurm: _task_finish: cp2019-12: task 0: Completed
+---------- Cluster Job End ---------------------
