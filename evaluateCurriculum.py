@@ -1,5 +1,7 @@
 import argparse
 import os
+from collections import defaultdict
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -21,6 +23,8 @@ def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
     results = []
     for logPath in specificModelList:
+        print(logPath)
+
         with open(logPath, 'r') as f:
             trainingInfoDictionary = json.loads(f.read())
         assert trainingInfoDictionary is not None
@@ -28,7 +32,8 @@ def getSpecificModel(specificModelList: list, modelName: str):
             results.append(Result(trainingInfoDictionary, modelName, logPath))
         else:
             print("Epochs <= 1", logPath)
-
+    print(1)
+    # TODO wahrscheinlich lieber das als 1 df machen, so dass ich dan nauch leicht druaf filtern kann;;
     scoreHelper = []
     distributionHelper = []
     medianLen = []
@@ -111,7 +116,9 @@ def getAllModels(logfilePaths: list[list]):
     splitDistrDf = pd.DataFrame()
 
     for logfilePath in logfilePaths:
-        tmpScoreDf, tmpDistrDf, tmpSplitDf = getSpecificModel(logfilePath[0], logfilePath[1])
+        jsonPaths = logfilePaths[logfilePath]
+        modelName = logfilePath
+        tmpScoreDf, tmpDistrDf, tmpSplitDf = getSpecificModel(jsonPaths, modelName)
         scoreDf = pd.concat([scoreDf, tmpScoreDf], ignore_index=True)
         fullDistrDf = pd.concat([fullDistrDf, tmpDistrDf], ignore_index=True)
         splitDistrDf = pd.concat([splitDistrDf, tmpSplitDf], ignore_index=True)
@@ -454,43 +461,21 @@ def plotAggregatedBarplot(filteredDfList):
 def main(comparisons: int):
     sns.set(font_scale=2)
     pathList = ["storage", "_evaluate"]
-    if args.env.lower() == "doorkey":
-        pathList.append("Doorkey")
-    elif "dyn" in args.env.lower():
-        pathList.append("DynamicObstacle")
-    else:
-        raise Exception(" Both not implemented yet")
-        # TODO both
-    useCrossoverMutationPath = args.crossoverMutation
-    if useCrossoverMutationPath:
-        pathList.append("SOBOL_GA_75_3_3_3")
-    evalDirBasePath = storage.getLogFilePath(pathList)
-    fullLogfilePaths = []
-    evalDirectories = next(os.walk(evalDirBasePath))[1]
+    evalDirBasePath = os.path.join(*pathList)
     statusJson = "status.json"
-    specificModelList = []
-    for model in evalDirectories:
-        if model == "old" or (not args.crossoverMutation and "SOBOL" in model):
-            continue
-        path = evalDirBasePath + os.sep + model + os.sep
-        json_files = [f for f in os.listdir(path) if f == statusJson]
-        fullLogfilePaths.append([[], model])
-        for jsonFile in json_files:
-            fullLogfilePaths[-1][0].append(path + jsonFile)
-        seededExperimentsDirs = (next(os.walk(path)))[1]
-        for seededExperiment in seededExperimentsDirs:
-            path = evalDirBasePath + os.sep + model + os.sep + seededExperiment + os.sep
-            jsonFIlesHelper = [f for f in os.listdir(path) if f == statusJson]
-            for jsonFile2 in jsonFIlesHelper:
-                fullLogfilePaths[-1][0].append(path + jsonFile2)
-        if model == args.model:
-            specificModelList = fullLogfilePaths[-1][0]
-            break
 
-    if args.model is not None:
-        scoreDf, distrDf, splitDistrDf = getSpecificModel(specificModelList, args.model)
-    else:
-        scoreDf, distrDf, splitDistrDf = getAllModels(fullLogfilePaths)
+    expeirmentsWithLogFilePaths = defaultdict(list)
+    for dirpath, dirnames, filenames in os.walk(evalDirBasePath):
+        if statusJson in filenames:
+            helper = dirpath.split("\\")[-2]
+            pathToJson = os.path.join(dirpath, statusJson)
+            # Append pathToJson to the list associated with helper
+            expeirmentsWithLogFilePaths[helper].append(pathToJson)
+    print(expeirmentsWithLogFilePaths)
+    # TODO create result object
+    # Then create grouped df
+
+    scoreDf, distrDf, splitDistrDf = getAllModels(expeirmentsWithLogFilePaths)
     scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations + OFFSET]
     models = scoreDf["id"].unique()
     sns.set_theme(style="darkgrid")
