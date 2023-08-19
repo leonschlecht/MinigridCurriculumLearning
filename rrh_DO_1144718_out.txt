@@ -1,0 +1,28 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris3
+srun: cpus-per-task       : 2
+srun: jobid               : 1144718
+srun: job-name            : rrhDO
+srun: mem                 : 16G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1144718: nodes(1):`paris3', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1144718.0 on host paris3, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris3, 1 tasks started
+Traceback (most recent call last):
+  File "trainCurriculum.py", line 6, in <module>
+    import utils
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/__init__.py", line 2, in <module>
+    from .agent import *
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/agent.py", line 1, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1144718.0 (status=0x0100).
+srun: error: paris3: task 0: Exited with exit code 1
+---------- Cluster Job End ---------------------

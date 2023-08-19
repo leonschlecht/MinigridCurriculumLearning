@@ -1,0 +1,28 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : nox
+srun: cpus-per-task       : 2
+srun: jobid               : 1144719
+srun: job-name            : rrhDO
+srun: mem                 : 16G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1144719: nodes(1):`nox', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1144719.0 on host nox, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node nox, 1 tasks started
+Traceback (most recent call last):
+  File "trainCurriculum.py", line 6, in <module>
+    import utils
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/__init__.py", line 2, in <module>
+    from .agent import *
+  File "/home/schlecht/nobackup/MinigridCurriculumLearning/utils/agent.py", line 1, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+srun: launch/slurm: _task_finish: Received task exit notification for 1 task of StepId=1144719.0 (status=0x0100).
+srun: error: nox: task 0: Exited with exit code 1
+---------- Cluster Job End ---------------------
