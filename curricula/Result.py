@@ -26,6 +26,7 @@ def getTransformedReward(evaluationDictionary):
                     transformedRawReward[epoch][gen][curric].append(numbers)
     return transformedRawReward
 
+
 class Result:
     def __init__(self, evaluationDictionary, modelName, logfilePath):
         # NOTE: the modelName is the name of the directory; not the name of the --model command when the training was performed
@@ -68,7 +69,7 @@ class Result:
         if self.loadedArgsDict[trainEvolutionary]:  # TODO move to method
             self.epochDict = self.getEpochDict(self.rewardsDict)
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
-            self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric # WTH is this ??
+            self.maxCurricAvgReward = self.curricMaxReward * self.noOfGens * numCurric  # WTH is this ??
             for epochKey in self.rewardsDict:
                 epochDict = self.rewardsDict[epochKey]
                 bestGen, bestIdx = RollingHorizonEvolutionaryAlgorithm.getGenAndIdxOfBestIndividual(epochDict)
@@ -89,7 +90,6 @@ class Result:
                 self.rawReward = getTransformedReward(evaluationDictionary)
 
             if not self.canceled:
-
                 """
                 x = self.iterationsList
                 y = self.formattedSelectedEnvList
@@ -197,7 +197,7 @@ class Result:
             snapshotScores = []
             for epochDict in modelPerformance:
                 snapshotScores.append(epochDict[snapshotScoreKey])
-        return [float(i) / self.stepMaxReward for i in snapshotScores]
+        return [round(float(i) / self.stepMaxReward, 4) for i in snapshotScores]
 
     def getEpochDict(self, rewardsDict):
         """
@@ -284,21 +284,69 @@ class Result:
 
         return iterationsPerEnv
 
-    def finishAggregation(self, snapshotScores, bestCurricScores, avgEpochRewards, snapshotDistr, avgBestCurricDistr,
-                          avgAllCurricDistr, amountOfTrainingRuns: int) -> None:
-        # # TODO (Maybe aggregate difficulty too)
-        # TODO is this still needed ?
-        assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards)
+    def getScoreAtStepI(self, i):
+        assert self.snapShotScores[i] < 1
+        return ({"snapshotScore": self.snapShotScores[i],
+                 "bestCurricScore": self.bestCurricScore[i],
+                 "avgEpochRewards": self.avgEpochRewards[i],
+                 "id": self.modelName,
+                 "seed": self.seed,
+                 "group": self.iterationsPerEnv,  # TODO refactor this (column name)
+                 iterationSteps: self.iterationsList[i]})  #
 
-        self.snapShotScores = np.divide(snapshotScores, amountOfTrainingRuns)
-        self.bestCurricScore = np.divide(bestCurricScores, amountOfTrainingRuns)
-        self.avgEpochRewards = np.divide(avgEpochRewards, amountOfTrainingRuns)
+    def getDistributions(self):
+        # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
+        keys = self.snapshotEnvDistribution.keys()
+        snapshotHelper = [[] for _ in keys]
+        allCurricHelper = [[] for _ in keys]
+        bestCurricHelper = [[] for _ in keys]
+        for k in keys:
+            if "6x6" in k:
+                snapshotHelper[0] = (self.snapshotEnvDistribution[k])
+                allCurricHelper[0] = (self.allCurricDistribution[k])
+                bestCurricHelper[0] = (self.bestCurriculaEnvDistribution[k])
+            elif "8x8" in k:
+                snapshotHelper[1] = (self.snapshotEnvDistribution[k])
+                allCurricHelper[1] = (self.allCurricDistribution[k])
+                bestCurricHelper[1] = (self.bestCurriculaEnvDistribution[k])
+            elif "10x10" in k:
+                snapshotHelper[2] = (self.snapshotEnvDistribution[k])
+                allCurricHelper[2] = (self.allCurricDistribution[k])
+                bestCurricHelper[2] = (self.bestCurriculaEnvDistribution[k])
+            else:
+                snapshotHelper[3] = (self.snapshotEnvDistribution[k])
+                allCurricHelper[3] = (self.allCurricDistribution[k])
+                bestCurricHelper[3] = (self.bestCurriculaEnvDistribution[k])
+        return {
+            "6x6s": snapshotHelper[0],
+            "8x8s": snapshotHelper[1],
+            "10x10s": snapshotHelper[2],
+            "12x12s": snapshotHelper[3],
+            "6x6c": bestCurricHelper[0],
+            "8x8c": bestCurricHelper[1],
+            "10x10c": bestCurricHelper[2],
+            "12x12c": bestCurricHelper[3],
+            "6x6a": allCurricHelper[0],
+            "8x8a": allCurricHelper[1],
+            "10x10a": allCurricHelper[2],
+            "12x12a": allCurricHelper[3],
+            seedKey: self.seed,
+            "group": self.iterationsPerEnv,
+            iterationSteps: self.iterationsList[0],
+            sumTrainingTime: self.trainingTimeSum,
+            "id": self.modelName}
 
-        self.snapshotEnvDistribution = snapshotDistr
-        self.bestCurriculaEnvDistribution = avgBestCurricDistr
-        self.allCurricDistribution = avgAllCurricDistr  # TODO is this useful to aggegrate?
+    def getSplitDistrList(self):
+        data = []
+        if self.loadedArgsDict[trainEvolutionary] and not self.canceled:
+            keys = self.usedEnvEnumeration
+            data = []
 
-        for k in self.snapshotEnvDistribution.keys():
-            self.snapshotEnvDistribution[k] /= amountOfTrainingRuns
-            self.bestCurriculaEnvDistribution[k] /= amountOfTrainingRuns
-            self.allCurricDistribution[k] /= amountOfTrainingRuns
+            for i in range(self.framesTrained // 1000000):
+                split_value = f"{i + 1}m"
+                row = {"trained until": split_value, "id": self.modelName}
+                for key in keys:
+                    row[key] = self.splitDistrBestCurric[i][key]
+                data.append(row)
+
+        return data
