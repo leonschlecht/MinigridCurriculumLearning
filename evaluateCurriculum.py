@@ -23,8 +23,6 @@ def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
     results = []
     for logPath in specificModelList:
-        print(logPath)
-
         with open(logPath, 'r') as f:
             trainingInfoDictionary = json.loads(f.read())
         assert trainingInfoDictionary is not None
@@ -32,7 +30,6 @@ def getSpecificModel(specificModelList: list, modelName: str):
             results.append(Result(trainingInfoDictionary, modelName, logPath))
         else:
             print("Epochs <= 1", logPath)
-    print(1)
     # TODO wahrscheinlich lieber das als 1 df machen, so dass ich dan nauch leicht druaf filtern kann;;
     scoreHelper = []
     distributionHelper = []
@@ -102,6 +99,7 @@ def getSpecificModel(specificModelList: list, modelName: str):
 
             splitDistrDf = pd.DataFrame(data)
     rewardScoreDf = pd.DataFrame(scoreHelper)
+    assert not np.isnan(medianLen).all(), f"medianLen Nan, {medianLen} for modelName {modelName}"
     medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
     rewardScoreDf = rewardScoreDf[rewardScoreDf[iterationSteps] <= results[0].iterationsPerEnv * medianLen]
 
@@ -110,14 +108,24 @@ def getSpecificModel(specificModelList: list, modelName: str):
     return rewardScoreDf, distributionDf, splitDistrDf
 
 
-def getAllModels(logfilePaths: list[list]):
+def getAllModels(logfilePaths):
     scoreDf = pd.DataFrame()
     fullDistrDf = pd.DataFrame()
     splitDistrDf = pd.DataFrame()
 
-    for logfilePath in logfilePaths:
-        jsonPaths = logfilePaths[logfilePath]
-        modelName = logfilePath
+    for modelName in logfilePaths:
+        jsonPaths = logfilePaths[modelName]
+        # if no filter option ? --> then get the list of all
+
+        if "old" in jsonPaths[0]:
+            continue
+        if args.crossoverMutation and "_c" not in jsonPaths[0] and "_m" not in modelName:
+            continue
+        if "dyn" in args.env and "Doorkey" in jsonPaths[0]:
+            continue
+        elif "door" in args.env and "DynamicObstacle" in jsonPaths[0]:
+            continue
+        # TODO further filters ???
         tmpScoreDf, tmpDistrDf, tmpSplitDf = getSpecificModel(jsonPaths, modelName)
         scoreDf = pd.concat([scoreDf, tmpScoreDf], ignore_index=True)
         fullDistrDf = pd.concat([fullDistrDf, tmpDistrDf], ignore_index=True)
@@ -183,7 +191,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             # get ALL NSGA or GA runs
             # plot them
             # TODO
-            print()
+            pass
         if args.curric:
             # get all NSGA, GA, RRH runs
             # TODO
@@ -471,9 +479,6 @@ def main(comparisons: int):
             pathToJson = os.path.join(dirpath, statusJson)
             # Append pathToJson to the list associated with helper
             expeirmentsWithLogFilePaths[helper].append(pathToJson)
-    print(expeirmentsWithLogFilePaths)
-    # TODO create result object
-    # Then create grouped df
 
     scoreDf, distrDf, splitDistrDf = getAllModels(expeirmentsWithLogFilePaths)
     scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations + OFFSET]
@@ -523,7 +528,8 @@ def main(comparisons: int):
     # filepath = Path('./out.csv') # TODO DF save as csv
     # filepath.parent.mkdir(parents=True, exist_ok=True)
     # scoreDf.to_csv(filepath, index=False)
-    print("Done")
+    print("Evaluaiton finished!")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

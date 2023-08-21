@@ -167,6 +167,7 @@ class Result:
             f"{errorPrefix} {len(self.iterationsList)} and {len(self.snapShotScores)} "
         assert type(self.iterationsPerEnv) == int
         assert self.epochsTrained == len(self.rewardsDict.keys()) or not self.loadedArgsDict[trainEvolutionary]
+        assert not np.isnan(self.epochsTrained), f"Nan for {self.modelName} in epochs trained"
         assert usedEnvEnumerationKey in evaluationDictionary, f"UsedEnvs not found in Log File of model {self.logFilepath}"
         assert sum(self.snapshotEnvDistribution.values()) > 0
         assert sum(self.bestCurriculaEnvDistribution.values()) > 0
