@@ -167,29 +167,25 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     return filteredScoreDf, filteredDistrDf, filteredSplitDistrDf
 
 
-def printDfStats(filteredDfList):
+def printDfStats(df):
     sumScore = {}
     avg = {}
     median = {}
     std = {}
-    return
-    # TODO fix this
-    # Reset the index of the concatenated DataFrame
-    df = filteredDfList.reset_index(drop=True)
-    id = df.head(1)["id"].item()
-    score = np.sum(df[snapshotScoreKey])
-    sumScore[id] = score
-    avg[id] = np.average(df[snapshotScoreKey])
-    median[id] = np.median(df[snapshotScoreKey])
-    std[id] = np.std(df[snapshotScoreKey])
-    sorted_data = dict(sorted(sumScore.items(), key=lambda item: item[1]))
-    sorted_data2 = dict(sorted(avg.items(), key=lambda item: item[1]))
-    sorted_data3 = dict(sorted(median.items(), key=lambda item: item[1]))
-    sorted_data4 = dict(sorted(std.items(), key=lambda item: item[1]))
 
+    for filtered in df["id"].unique():
+        score = np.sum(df[df["id"] == filtered][snapshotScoreKey])
+        sumScore[filtered] = score
+        avg[filtered] = np.average(df[snapshotScoreKey])
+        median[filtered] = np.median(df[snapshotScoreKey])
+        std[filtered] = np.std(df[snapshotScoreKey])
+    sorted_data = dict(sorted(sumScore.items(), key=lambda item: item[1]))
     print("best scores", sorted_data)
+    sorted_data2 = dict(sorted(avg.items(), key=lambda item: item[1]))
     print("\navg scores", sorted_data2)
+    sorted_data3 = dict(sorted(median.items(), key=lambda item: item[1]))
     print("\nmedian scores", sorted_data3)
+    sorted_data4 = dict(sorted(std.items(), key=lambda item: item[1]))
     print("\nstd scores", sorted_data4)
 
 
@@ -200,8 +196,8 @@ def plotMultipleLineplots(df, yColumns: list[str]):
     for col in yColumns:
         sns.lineplot(data=df, x='iterationSteps', y=col, hue='id', ax=ax, errorbar=args.errorbar)
 
-    ax.set_ylabel("evaluation reward", fontsize=labelFontsize)
-    ax.set_xlabel("iterations", fontsize=labelFontsize)
+    ax.set_ylabel("Average Reward", fontsize=labelFontsize)
+    ax.set_xlabel("Iterations", fontsize=labelFontsize)
 
     # box = ax.get_position()
     # Edit this out to move the legend out of the plot
@@ -212,8 +208,10 @@ def plotMultipleLineplots(df, yColumns: list[str]):
     assert minX < maxX, "min X must be smaller than max X"
     ax.set_xlim((0, args.xIterations + OFFSET))
     ax.set_ylim((0, 1))
-    plt.legend(loc="best")
-    plt.title("mean performance", fontsize=titleFontsize)
+    plt.legend(loc="best", fontsize=labelFontsize)
+    plt.title("Evaluation Performance in all Environments", fontsize=titleFontsize)
+    plt.yticks(fontsize=tickFontsize)
+    plt.xticks(fontsize=tickFontsize)
     plt.show()
 
 
@@ -259,7 +257,7 @@ def removeExperimentPrefix(dictDf):
     return iterations + steps + gen + curric
 
 
-def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
+def showDistrVisualization(aggregatedDf, columnsToVisualize, title="Environment Distribution", isSplit=False):
     fig, ax = plt.subplots(figsize=(12, 8))
     if isSplit:
         # TODO only works with 1 experiment unfortunately (or aggregates it all)
@@ -292,15 +290,20 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, isSplit=False):
         grouped_df = grouped_df.reset_index()
         melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
         melted_df['id'] = pd.Categorical(melted_df['id'], categories=aggregatedDf['id'].unique(), ordered=True)
-        sns.barplot(data=melted_df, x='id', y='Value', hue='Column', errorbar=args.errorbar)
-        plt.ylabel('Value', fontsize=labelFontsize)
-        plt.title("Environment Distribution", fontsize=titleFontsize)
+        print("-------------", melted_df)
+        # TODO vllt mit pivot table machen um das mit errorbar wieder hinzukriegen
+        sns.barplot(data=melted_df[melted_df["Statistic"] == "mean"], x='id', y='Value', hue='Column', errorbar=args.errorbar)
+        # TODO filter x ticks
+        plt.ylabel('Occurence', fontsize=labelFontsize)
+        plt.title(title, fontsize=titleFontsize)
         plt.xlabel('')
         plt.yticks(fontsize=tickFontsize)
-        plt.xticks(rotation=-15, ha='left', fontsize=tickFontsize)
+        plt.xticks(rotation=-30, ha='left', fontsize=labelFontsize - 2)
         plt.subplots_adjust(bottom=0.2)
         if args.normalize:
             plt.ylim((0, 1))
+
+        # Transform legend / labels to cut helper column characters
         legend = ax.legend(fontsize=labelFontsize)
         labels = []
         sizes = ["6x6", "8x8", "10x10", "12x12"]  # TODO here too
@@ -322,7 +325,7 @@ def includeNormalizedColumns(aggregatedDf, prefix):
     :param prefix: prefix to use for column names
     :return: updated DataFrame
     """
-    envSizes = ['6x6', '8x8', '10x10', '12x12']
+    envSizes = ['6x6', '8x8', '10x10', '12x12']  # TODO dynamic
     normalizedDistributions = {size: [] for size in envSizes}
 
     for i, row in aggregatedDf.iterrows():
@@ -333,7 +336,6 @@ def includeNormalizedColumns(aggregatedDf, prefix):
     for size in envSizes:
         column_name = f"{size}n"
         aggregatedDf[column_name] = normalizedDistributions[size]
-
     return aggregatedDf
 
 
@@ -376,33 +378,41 @@ def showTrainingTimePlot(aggregatedDf):
     plt.show()
 
 
-def plotAggregatedBarplot(filteredDfList):
-    assert len(filteredDfList) > 0, "filteredDfList empty"
-
-    if not args.crossoverMutation:
-        for f in filteredDfList:
+def plotAggregatedBarplot(df):
+    assert type(df) is not list
+    print(df)
+    """ if not args.crossoverMutation:
+        for f in df:
             for fullModelName in f["id"]:
                 expParams = fullModelName.split("_")
                 noModelName = "_".join(expParams[1:])
                 break
             f["id"] = noModelName + "_" + expParams[0]
-    aggregatedDf = pd.concat([df.assign(DataFrame=i) for i, df in enumerate(filteredDfList)])
+    """
 
     if args.trainingTime:
-        showTrainingTimePlot(aggregatedDf)
+        showTrainingTimePlot(df)
+
     column_prefixes = {'snapshotDistr': 's', 'curricDistr': 'c', 'allDistr': 'a'}
     if args.splitDistr:
         toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10", "MiniGrid-DoorKey-12x12"]
-        showDistrVisualization(aggregatedDf, toVisualize, True)
+        showDistrVisualization(df, toVisualize, "Split Environment Distribution", True)
     else:
         for arg, prefix in column_prefixes.items():
             if getattr(args, arg):
                 if args.normalize:
-                    aggregatedDf = includeNormalizedColumns(aggregatedDf, prefix)
+                    df = includeNormalizedColumns(df, prefix)
                     columns_to_visualize = [f'6x6n', f'8x8n', f'10x10n', f'12x12n', 'id']
+                    title = "Normalized Environment Distributions"
                 else:
                     columns_to_visualize = [f'6x6{prefix}', f'8x8{prefix}', f'10x10{prefix}', f'12x12{prefix}', 'id']
-                showDistrVisualization(aggregatedDf, columns_to_visualize)
+                    prefix = ""
+                    if args.curricDistr:
+                        prefix = "Best Curricula "
+                    elif args.snapshotDistr:
+                        prefix = "Best First Step "
+                    title = prefix + "Environment Distribution"
+                showDistrVisualization(df, columns_to_visualize, title)
 
     print("---- Done ----")
 
