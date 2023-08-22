@@ -53,6 +53,12 @@ def getSpecificModel(specificModelList: list, modelName: str):
 
 
 def getAllDfs(logfilePaths):
+    """
+    Given the logfilepaths, it returns a df with all the relevant runs.
+    This does basic filtering, e.g. if you want DoorKey runs then the dynamic obstalce runs wont be shown
+    :param logfilePaths:
+    :return:
+    """
     scoreDf = pd.DataFrame()
     fullDistrDf = pd.DataFrame()
     splitDistrDf = pd.DataFrame()
@@ -79,30 +85,23 @@ def getAllDfs(logfilePaths):
     return scoreDf, fullDistrDf, splitDistrDf
 
 
-def filterDf(filters: list[str], dataFrame, models, showCanceled=False):
+def filterDf(filters: list[str], df, models, showCanceled=False):
     """
     Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
-    :param filters:
-    :param showCanceled:
-    :param dataFrame: the main dataframe
-    :param models: a list of all model names (unique values in id column of the df)
-    :return:
     """
-    filteredDf = []
-    for m in models:
-        append = True
-        for filterOption in filters:
-            if filterOption not in m or \
-                    (filterOption == "50k" and "150k" in m) or \
-                    (filterOption == "50k" and "250k" in m) or \
-                    (filterOption == "GA" and "NSGA" in m):  # TODO find way not having to do this manually every time
-                append = False
-                break
-        if append:
-            if "C_" in m and not showCanceled:  # TODO ???
-                continue
-            filteredDf.append(dataFrame[dataFrame["id"] == m])
 
+    def passes_filters(colId, filterList):
+        for filterOption in filterList:
+            if filterOption in colId:
+                if filterOption == 'GA' and 'NSGA' in colId or \
+                        (filterOption == '50k' and ('150k' in colId or '250k' in colId)) or \
+                        (not showCanceled and "C_" in colId):
+                    return False
+            else:
+                return False
+        return True
+
+    filteredDf = df[df['id'].apply(lambda x: passes_filters(x, filters))]
     return filteredDf
 
 
@@ -113,10 +112,8 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     filteredDistrDf = pd.DataFrame()
     filteredSplitDistrDf = pd.DataFrame()
     if args.filter:
-        print("args.filter")
-        raise Exception("123")
         filters = []
-        if args.rhea:
+        if args.rhea or args.gen:
             filters.append("GA_")  # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
             if args.rrh:
                 filters.append("RRH")  # todo ???
@@ -128,19 +125,6 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             filters.append("RndRH")
         if args.iter != 0:
             filters.append(str(args.iter) + "k")
-        if args.steps:
-            # get all NSGA, GA and RRH runs (or make differnetaion here too ?)
-            # TODO
-            pass
-        if args.gen:
-            # get ALL NSGA or GA runs
-            # plot them
-            # TODO
-            pass
-        if args.curric:
-            # get all NSGA, GA, RRH runs
-            # TODO
-            pass
         filteredScoreDf = filterDf(filters, scoreDf, models, showCanceled=args.showCanceled)
         filteredDistrDf = filterDf(filters, distrDf, models, showCanceled=args.showCanceled)
         filteredSplitDistrDf = filterDf(filters, splitDistrDf, models, showCanceled=args.showCanceled)
@@ -148,7 +132,6 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
         for i in range(len(models)):
             print(f"{i}: {models[i]}")
         print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
-        # TODO integrate normlaize columns instead
         while modelsEntered < comparisons:
             val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
             if val.isdigit() and int(val) < len(models) and val not in usedModels:
@@ -157,7 +140,6 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
                 filteredScoreDf = pd.concat([filteredScoreDf, scoreDf[scoreDf["id"] == models[int(val)]]], ignore_index=True)
                 filteredDistrDf = pd.concat([filteredDistrDf, distrDf[distrDf["id"] == models[int(val)]]], ignore_index=True)
                 filteredSplitDistrDf = pd.concat([filteredSplitDistrDf, splitDistrDf[splitDistrDf["id"] == models[int(val)]]], ignore_index=True)
-                # assert not filteredSplitDistrDf.empty, f"{models[int(val)]} but {splitDistrDf['id'].unique()}" # TODO rmeove
             else:
                 if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
                     val = [val]
@@ -194,12 +176,19 @@ def printDfStats(df):
     print("\nstd scores", sorted_data4)
 
 
-def plotMultipleLineplots(df, yColumns: list[str]):
+def plotMultipleLineplots(df, hue="id"):
+    sns.color_palette("tab10")
+    if args.scores == "both":
+        yColumns = ["snapshotScore", "bestCurricScore"]
+    elif args.scores == "curric":
+        yColumns = ["bestCurricScore"]
+    else:
+        yColumns = ["snapshotScore"]
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.set_theme(style="darkgrid")
     printDfStats(df)
     for col in yColumns:
-        sns.lineplot(data=df, x='iterationSteps', y=col, hue='id', ax=ax, errorbar=args.errorbar)
+        sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette="tab10")
 
     ax.set_ylabel("Average Reward", fontsize=labelFontsize)
     ax.set_xlabel("Iterations", fontsize=labelFontsize)
@@ -213,7 +202,10 @@ def plotMultipleLineplots(df, yColumns: list[str]):
     assert minX < maxX, "min X must be smaller than max X"
     ax.set_xlim((0, args.xIterations + OFFSET))
     ax.set_ylim((0, 1))
-    plt.legend(loc="best", fontsize=labelFontsize)
+    legendTitle = ""
+    if hue != "id":
+        legendTitle = hue
+    plt.legend(loc="best", fontsize=labelFontsize, title=legendTitle)
     plt.title("Evaluation Performance in all Environments", fontsize=titleFontsize)
     plt.yticks(fontsize=tickFontsize)
     plt.xticks(fontsize=tickFontsize)
@@ -262,6 +254,20 @@ def removeExperimentPrefix(dictDf):
     return iterations + steps + gen + curric
 
 
+def removeSuffixCharInLegend(ax, columnsToVisualize):
+    legend = ax.legend(fontsize=labelFontsize)
+    labels = []
+    sizes = [s[:-1] if s.endswith('n') else s for s in columnsToVisualize]
+    for item in legend.get_texts():
+        label = item.get_text()
+        for size in sizes:
+            if label.startswith(size):
+                labels.append(size)
+                break
+    for label, text in zip(legend.texts, labels):
+        label.set_text(text)
+
+
 def showDistrVisualization(df, columnsToVisualize, title="Environment Distribution", isSplit=False):
     fig, ax = plt.subplots(figsize=(12, 8))
     if isSplit:
@@ -280,6 +286,7 @@ def showDistrVisualization(df, columnsToVisualize, title="Environment Distributi
         sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
         plt.title("Environment Distribution at different Training Stages", fontsize=titleFontsize)
         plt.ylim((0, 1))
+        removeSuffixCharInLegend(ax, columnsToVisualize)
         plt.show()
     else:
         group_col = "group" if 'group' in df.columns else 'DataFrame'
@@ -310,18 +317,7 @@ def showDistrVisualization(df, columnsToVisualize, title="Environment Distributi
         if args.normalize:
             plt.ylim((0, 1))
 
-        # Transform legend / labels to cut helper column characters
-        legend = ax.legend(fontsize=labelFontsize)
-        labels = []
-        sizes = [s[:-1] if s.endswith('n') else s for s in columnsToVisualize]
-        for item in legend.get_texts():
-            label = item.get_text()
-            for size in sizes:
-                if label.startswith(size):
-                    labels.append(size)
-                    break
-        for label, text in zip(legend.texts, labels):
-            label.set_text(text)
+        removeSuffixCharInLegend(ax, columnsToVisualize)
         plt.show()
 
 
@@ -360,7 +356,6 @@ def includeNormalizedColumns(aggregatedDf, prefix):
         for size in envSizes:
             column_name = f"{size}n"
             aggregatedDf[column_name] = normalizedDistributions[size]
-    print(aggregatedDf)
     return aggregatedDf
 
 
@@ -456,6 +451,50 @@ def plotAggregatedBarplot(df):
         handleDistributionVisualization(df)
 
 
+def getGetNrFromModelName(modelName):
+    splitModelName = modelName.split("_")
+    for sub in splitModelName:
+        if "gen" in sub:
+            return int(sub[0])
+    raise Exception(f"Could not get gen nr from modelname {modelName}")
+
+
+def showFilteredGenPlot(df):
+    genColumn = "nGen"
+    df[genColumn] = df['id'].apply(getGetNrFromModelName)
+    nGenDict = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0}
+    usedIds = []
+    for i, row in df.iterrows():
+        id = row["id"]
+        if id not in usedIds:
+            usedIds.append(id)
+            genNr = str(getGetNrFromModelName(id))
+            nGenDict[genNr] += 1
+    print(nGenDict)
+    df = df[df[genColumn] <= 3]
+    df = df[df[genColumn] >= 1]
+    exit()
+    plotMultipleLineplots(df, genColumn)
+
+def showFilteredIterationSteps(df):
+    print(df)
+    stepIterations = "stepIterations"
+    # df[stepIterations] = df['id'].apply(getGetNrFromModelName)
+    nGenDict = {"25k": 0, "50k": 0, "75k": 0, "100k": 0, "150k": 0, "250k": 0}
+    usedIds = []
+    for i, row in df.iterrows():
+        id = row["id"]
+        if id not in usedIds:
+            usedIds.append(id)
+            genNr = str(getGetNrFromModelName(id))
+            nGenDict[genNr] += 1
+    print(nGenDict)
+    df = df[df[stepIterations] <= 3]
+    df = df[df[stepIterations] >= 1]
+    exit()
+    plotMultipleLineplots(df, stepIterations)
+
+
 def main(comparisons: int):
     sns.set(font_scale=2)
     pathList = ["storage", "_evaluate"]
@@ -477,14 +516,13 @@ def main(comparisons: int):
     filteredScoreDf, filteredFullDistrDf, filteredSplitDistrDf = \
         getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf, splitDistrDf)
     if args.scores is not None:
-        if args.scores == "both":
-            yColumns = ["snapshotScore", "bestCurricScore"]
-        elif args.scores == "curric":
-            yColumns = ["bestCurricScore"]
-        else:
-            yColumns = ["snapshotScore"]
         # avgEpochRewards is probably not useful
-        plotMultipleLineplots(filteredScoreDf, yColumns)
+        plotMultipleLineplots(filteredScoreDf)
+
+    if args.gen:
+        showFilteredGenPlot(filteredScoreDf)
+    if args.iterGroup:
+        showFilteredIterationSteps(filteredScoreDf)
     if args.splitDistr:
         plotAggregatedBarplot(filteredSplitDistrDf)
     else:  # TODO this is not always relevant ; depending in command
@@ -516,6 +554,7 @@ if __name__ == "__main__":
     parser.add_argument("--xIterations", default=1100000, type=int, help="#of iterations to show on the xaxis")
     parser.add_argument("--steps", action="store_true", default=False, help="filter for #curricSteps")
     parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
+    parser.add_argument("--iterGroup", action="store_true", default=False, help="Whether to group by iterationSteps")
     parser.add_argument("--curric", action="store_true", default=False, help="whether to filter for #curricula")
     parser.add_argument("--rhea", action="store_true", default=False, help="Only using rhea runs")
     parser.add_argument("--nsga", action="store_true", default=False, help="Only using GA runs")
@@ -527,5 +566,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.filter = args.comparisons == -1 and (
             args.crossoverMutation or args.splitDistr or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
-    isDoorKey = "door" in args.env
+    isDoorKey = args.env is None or "door" in args.env
     main(int(args.comparisons))
