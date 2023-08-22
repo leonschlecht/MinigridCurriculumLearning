@@ -113,7 +113,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     filteredSplitDistrDf = pd.DataFrame()
     if args.filter:
         filters = []
-        if args.rhea or args.gen:
+        if args.rhea or args.gen or args.iterGroup:
             filters.append("GA_")  # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
             if args.rrh:
                 filters.append("RRH")  # todo ???
@@ -458,6 +458,13 @@ def getGetNrFromModelName(modelName):
             return int(sub[0])
     raise Exception(f"Could not get gen nr from modelname {modelName}")
 
+def getIterationStepsFromModelName(modelName):
+    splitModelName = modelName.split("_")
+    for sub in splitModelName:
+        if "gen" in sub:
+            return int(sub[0])
+    raise Exception(f"Could not get gen nr from modelname {modelName}")
+
 
 def showFilteredGenPlot(df):
     genColumn = "nGen"
@@ -470,29 +477,27 @@ def showFilteredGenPlot(df):
             usedIds.append(id)
             genNr = str(getGetNrFromModelName(id))
             nGenDict[genNr] += 1
-    print(nGenDict)
+    print("nGen Dict", nGenDict)
     df = df[df[genColumn] <= 3]
     df = df[df[genColumn] >= 1]
-    exit()
     plotMultipleLineplots(df, genColumn)
 
+
+
 def showFilteredIterationSteps(df):
-    print(df)
-    stepIterations = "stepIterations"
-    # df[stepIterations] = df['id'].apply(getGetNrFromModelName)
-    nGenDict = {"25k": 0, "50k": 0, "75k": 0, "100k": 0, "150k": 0, "250k": 0}
+    iterationStepsDict = {"25000": 0, "50000": 0, "75000": 0, "100000": 0, "150000": 0, "250000": 0}
     usedIds = []
     for i, row in df.iterrows():
         id = row["id"]
         if id not in usedIds:
             usedIds.append(id)
-            genNr = str(getGetNrFromModelName(id))
-            nGenDict[genNr] += 1
-    print(nGenDict)
-    df = df[df[stepIterations] <= 3]
-    df = df[df[stepIterations] >= 1]
-    exit()
-    plotMultipleLineplots(df, stepIterations)
+            iterStep = row["group"]
+            iterationStepsDict[str(iterStep)] += 1
+    print("iterations Dict", iterationStepsDict)
+    df = df[df["group"] != 25000]
+    df = df[df["group"] != 250000]
+    df["iterationSteps "] = df["group"] # TODO idk why i originally named this group
+    plotMultipleLineplots(df, "iterationSteps ")
 
 
 def main(comparisons: int):
@@ -565,6 +570,6 @@ if __name__ == "__main__":
     parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     args = parser.parse_args()
     args.filter = args.comparisons == -1 and (
-            args.crossoverMutation or args.splitDistr or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
+            args.crossoverMutation or args.iterGroup or args.splitDistr or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
     isDoorKey = args.env is None or "door" in args.env
     main(int(args.comparisons))
