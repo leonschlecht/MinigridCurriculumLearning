@@ -113,7 +113,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     filteredSplitDistrDf = pd.DataFrame()
     if args.filter:
         filters = []
-        if args.rhea or args.gen or args.iterGroup:
+        if args.rhea:
             filters.append("GA_")  # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
             if args.rrh:
                 filters.append("RRH")  # todo ???
@@ -186,7 +186,7 @@ def plotMultipleLineplots(df, hue="id"):
         yColumns = ["snapshotScore"]
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.set_theme(style="darkgrid")
-    printDfStats(df)
+    # printDfStats(df) # TODO ? maybe args or just remove this part
     for col in yColumns:
         sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette="tab10")
 
@@ -458,13 +458,6 @@ def getGetNrFromModelName(modelName):
             return int(sub[0])
     raise Exception(f"Could not get gen nr from modelname {modelName}")
 
-def getIterationStepsFromModelName(modelName):
-    splitModelName = modelName.split("_")
-    for sub in splitModelName:
-        if "gen" in sub:
-            return int(sub[0])
-    raise Exception(f"Could not get gen nr from modelname {modelName}")
-
 
 def showFilteredGenPlot(df):
     genColumn = "nGen"
@@ -483,7 +476,6 @@ def showFilteredGenPlot(df):
     plotMultipleLineplots(df, genColumn)
 
 
-
 def showFilteredIterationSteps(df):
     iterationStepsDict = {"25000": 0, "50000": 0, "75000": 0, "100000": 0, "150000": 0, "250000": 0}
     usedIds = []
@@ -496,8 +488,78 @@ def showFilteredIterationSteps(df):
     print("iterations Dict", iterationStepsDict)
     df = df[df["group"] != 25000]
     df = df[df["group"] != 250000]
-    df["iterationSteps "] = df["group"] # TODO idk why i originally named this group
+    df["iterationSteps "] = df["group"]  # TODO idk why i originally named this group
     plotMultipleLineplots(df, "iterationSteps ")
+
+
+def getCurricCountFromModelName(modelName):
+    """
+
+    :param modelName:
+    :return:
+    """
+    splitModelName = modelName.split("_")
+    for sub in splitModelName:
+        if "curric" in sub:
+            return int(sub[0])
+    raise Exception(f"Could not get curric count from modelname {modelName}")
+
+
+def showFilteredCurricCount(df):
+    curricCountColumn = "curricCount"
+    df[curricCountColumn] = df['id'].apply(getCurricCountFromModelName)
+    curricCountDict = defaultdict(int)
+    usedIds = []
+    for i, row in df.iterrows():
+        id = row["id"]
+        if id not in usedIds:
+            usedIds.append(id)
+            curricCountDict[str(getCurricCountFromModelName(id))] += 1
+    df = df[df[curricCountColumn] != 7]
+    print("curricCount Dict", curricCountDict)
+    plotMultipleLineplots(df, curricCountColumn)
+
+
+def getCurricLenFromModelName(modelName):
+    splitModelName = modelName.split("_")
+    for sub in splitModelName:
+        if "step" in sub:
+            return int(sub[0])
+    raise Exception(f"Could not get curric step from modelname {modelName}")
+
+
+def showFilteredCurricLen(df):
+    curricLenCol = "curricLen"
+    df[curricLenCol] = df['id'].apply(getCurricLenFromModelName)
+    curricLenDict = defaultdict(int)
+    usedIds = []
+    for i, row in df.iterrows():
+        id = row["id"]
+        if id not in usedIds:
+            usedIds.append(id)
+            genNr = str(getCurricLenFromModelName(id))
+            curricLenDict[genNr] += 1
+    df = df[df[curricLenCol] != 7]
+    print("curricLen Dict", curricLenDict)
+    plotMultipleLineplots(df, curricLenCol)
+
+
+def showGroupedScorePlots(filteredScoreDf):
+    if args.gen:
+        showFilteredGenPlot(filteredScoreDf)
+    if args.iterGroup:
+        showFilteredIterationSteps(filteredScoreDf)
+    if args.curricCount:
+        showFilteredCurricCount(filteredScoreDf)
+    if args.curricLen:
+        showFilteredCurricLen(filteredScoreDf)
+
+
+def showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf):
+    if args.splitDistr:
+        plotAggregatedBarplot(filteredSplitDistrDf)
+    else:
+        plotAggregatedBarplot(filteredFullDistrDf)
 
 
 def main(comparisons: int):
@@ -520,18 +582,12 @@ def main(comparisons: int):
 
     filteredScoreDf, filteredFullDistrDf, filteredSplitDistrDf = \
         getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf, splitDistrDf)
+
     if args.scores is not None:
-        # avgEpochRewards is probably not useful
         plotMultipleLineplots(filteredScoreDf)
 
-    if args.gen:
-        showFilteredGenPlot(filteredScoreDf)
-    if args.iterGroup:
-        showFilteredIterationSteps(filteredScoreDf)
-    if args.splitDistr:
-        plotAggregatedBarplot(filteredSplitDistrDf)
-    else:  # TODO this is not always relevant ; depending in command
-        plotAggregatedBarplot(filteredFullDistrDf)
+    showGroupedScorePlots(filteredScoreDf)
+    showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf)
 
     # TODO DF save as csv
     # filepath = Path('./out.csv')
@@ -560,7 +616,9 @@ if __name__ == "__main__":
     parser.add_argument("--steps", action="store_true", default=False, help="filter for #curricSteps")
     parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
     parser.add_argument("--iterGroup", action="store_true", default=False, help="Whether to group by iterationSteps")
-    parser.add_argument("--curric", action="store_true", default=False, help="whether to filter for #curricula")
+    parser.add_argument("--curricLen", action="store_true", default=False, help="Whether to group by curricLength")
+    parser.add_argument("--curricCount", action="store_true", default=False, help="Whether to group by curricCount")
+
     parser.add_argument("--rhea", action="store_true", default=False, help="Only using rhea runs")
     parser.add_argument("--nsga", action="store_true", default=False, help="Only using GA runs")
     parser.add_argument("--ga", action="store_true", default=False, help="Only using NSGA runs")
@@ -569,7 +627,9 @@ if __name__ == "__main__":
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     args = parser.parse_args()
+    args.rhea = args.curricLen or args.iterGroup or args.gen or args.curricCount
     args.filter = args.comparisons == -1 and (
-            args.crossoverMutation or args.iterGroup or args.splitDistr or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
+            args.crossoverMutation or args.splitDistr or
+            args.iter or args.steps or args.rrhOnly or args.rhea or args.nsga or args.ga)
     isDoorKey = args.env is None or "door" in args.env
     main(int(args.comparisons))
