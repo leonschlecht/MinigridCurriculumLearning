@@ -40,8 +40,8 @@ def getSpecificModel(specificModelList: list, modelName: str):
         medianLen.append(result.epochsTrained)
         for i in range(len(result.snapShotScores)):
             scoreHelperList.append(result.getScoreAtStepI(i))
-        distributionHelperList.append(result.getDistributions())
-        splitDistrDf = pd.DataFrame(result.getSplitDistrList())
+        distributionHelperList.append(result.getDistributions(isDoorKey))
+        splitDistrDf = pd.DataFrame(result.getSplitDistrList(isDoorKey))
     rewardScoreDf = pd.DataFrame(scoreHelperList)
     assert not np.isnan(medianLen).all(), f"medianLen Nan, {medianLen} for modelName {modelName}"
     medianLen = int(np.median(medianLen)) + 1  # TODO just make suer all experiments are done to full so its not needed
@@ -60,14 +60,13 @@ def getAllDfs(logfilePaths):
     for modelName in logfilePaths:
         jsonPaths = logfilePaths[modelName]
         # if no filter option ? --> then get the list of all
-
         if "old" in jsonPaths[0]:
             continue
         if args.crossoverMutation and "_c" not in jsonPaths[0] and "_m" not in modelName:
             continue
-        if "dyn" in args.env and "Doorkey" in jsonPaths[0]:
+        if not isDoorKey and "Doorkey" in jsonPaths[0]:
             continue
-        elif "door" in args.env and "DynamicObstacle" in jsonPaths[0]:
+        elif isDoorKey and "DynamicObstacle" in jsonPaths[0]:
             continue
         # TODO further filters ???
         tmpScoreDf, tmpDistrDf, tmpSplitDf = getSpecificModel(jsonPaths, modelName)
@@ -75,6 +74,8 @@ def getAllDfs(logfilePaths):
         fullDistrDf = pd.concat([fullDistrDf, tmpDistrDf], ignore_index=True)
         splitDistrDf = pd.concat([splitDistrDf, tmpSplitDf], ignore_index=True)
     scoreDf = scoreDf[scoreDf[iterationSteps] < args.xIterations + OFFSET]
+    assert not scoreDf.empty
+    assert not fullDistrDf.empty
     return scoreDf, fullDistrDf, splitDistrDf
 
 
@@ -147,6 +148,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
         for i in range(len(models)):
             print(f"{i}: {models[i]}")
         print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
+        # TODO integrate normlaize columns instead
         while modelsEntered < comparisons:
             val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
             if val.isdigit() and int(val) < len(models) and val not in usedModels:
@@ -155,6 +157,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
                 filteredScoreDf = pd.concat([filteredScoreDf, scoreDf[scoreDf["id"] == models[int(val)]]], ignore_index=True)
                 filteredDistrDf = pd.concat([filteredDistrDf, distrDf[distrDf["id"] == models[int(val)]]], ignore_index=True)
                 filteredSplitDistrDf = pd.concat([filteredSplitDistrDf, splitDistrDf[splitDistrDf["id"] == models[int(val)]]], ignore_index=True)
+                # assert not filteredSplitDistrDf.empty, f"{models[int(val)]} but {splitDistrDf['id'].unique()}" # TODO rmeove
             else:
                 if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
                     val = [val]
@@ -164,6 +167,8 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
                 print("Model doesnt exist or was chosen already. Enter again")
     print("Models entered. Beginning visualization process")
     assert type(filteredScoreDf) is not list
+    assert not filteredScoreDf.empty
+    assert not filteredDistrDf.empty
     return filteredScoreDf, filteredDistrDf, filteredSplitDistrDf
 
 
@@ -257,40 +262,42 @@ def removeExperimentPrefix(dictDf):
     return iterations + steps + gen + curric
 
 
-def showDistrVisualization(aggregatedDf, columnsToVisualize, title="Environment Distribution", isSplit=False):
+def showDistrVisualization(df, columnsToVisualize, title="Environment Distribution", isSplit=False):
     fig, ax = plt.subplots(figsize=(12, 8))
     if isSplit:
         # TODO only works with 1 experiment unfortunately (or aggregates it all)
-        df = aggregatedDf
+        assert args.normalize
+
+        def filter_entries(entry):
+            return entry not in ['id', 'trained until'] and entry.endswith('n')
+
+        cols = list(filter(filter_entries, df.columns))
+
         df = df.melt(id_vars=['trained until', 'id'],
-                     value_vars=['MiniGrid-DoorKey-6x6', 'MiniGrid-DoorKey-8x8', 'MiniGrid-DoorKey-10x10', 'MiniGrid-DoorKey-12x12'],
-                     # TODO needs to be adjusted soon after dynObs runs
+                     value_vars=cols,
                      var_name='Environment',
                      value_name='Value')
         sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
-        # TODO fix this for dynamic obstacles
         plt.title("Environment Distribution at different Training Stages", fontsize=titleFontsize)
+        plt.ylim((0, 1))
         plt.show()
     else:
-        # TODO fix for dynamic obstacles
-        group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'
+        group_col = "group" if 'group' in df.columns else 'DataFrame'
         # sort by the numerical values of the string (50k, 75k, ...)
         if args.rhea or args.nsga or args.ga:
-            aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+            df['sort_col'] = df['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
         elif args.crossoverMutation:
             # add the numerical parts together (cross54_mut_56 => 54 + 56 = 110)
-            aggregatedDf['sort_col'] = aggregatedDf['id'].str.extractall(r'(\d+)').astype(int).sum(level=0)
+            df['sort_col'] = df['id'].str.extractall(r'(\d+)').astype(int).sum(level=0)
         else:
             # default: only sort by the ID string
-            aggregatedDf["sort_col"] = aggregatedDf["id"]
-        aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
-        aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
-
-        grouped_df = aggregatedDf[columnsToVisualize].groupby('id').agg(['mean', 'std'])
+            df["sort_col"] = df["id"]
+        df = df.sort_values(by=['sort_col', group_col])
+        df = df.drop('sort_col', axis=1)
+        grouped_df = df[columnsToVisualize].groupby('id').agg(['mean', 'std'])
         grouped_df = grouped_df.reset_index()
         melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
-        melted_df['id'] = pd.Categorical(melted_df['id'], categories=aggregatedDf['id'].unique(), ordered=True)
-        print("-------------", melted_df)
+        melted_df['id'] = pd.Categorical(melted_df['id'], categories=df['id'].unique(), ordered=True)
         # TODO vllt mit pivot table machen um das mit errorbar wieder hinzukriegen
         sns.barplot(data=melted_df[melted_df["Statistic"] == "mean"], x='id', y='Value', hue='Column', errorbar=args.errorbar)
         # TODO filter x ticks
@@ -306,7 +313,7 @@ def showDistrVisualization(aggregatedDf, columnsToVisualize, title="Environment 
         # Transform legend / labels to cut helper column characters
         legend = ax.legend(fontsize=labelFontsize)
         labels = []
-        sizes = ["6x6", "8x8", "10x10", "12x12"]  # TODO here too
+        sizes = [s[:-1] if s.endswith('n') else s for s in columnsToVisualize]
         for item in legend.get_texts():
             label = item.get_text()
             for size in sizes:
@@ -325,17 +332,35 @@ def includeNormalizedColumns(aggregatedDf, prefix):
     :param prefix: prefix to use for column names
     :return: updated DataFrame
     """
-    envSizes = ['6x6', '8x8', '10x10', '12x12']  # TODO dynamic
+    if not isDoorKey:
+        envSizes = ['5x5', '6x6', '8x8', '16x16']
+    else:
+        envSizes = ['6x6', '8x8', '10x10', '12x12']
     normalizedDistributions = {size: [] for size in envSizes}
-
-    for i, row in aggregatedDf.iterrows():
-        totalEnvs = sum(row[f"{size}{prefix}"] for size in envSizes)
+    # for splitdistr
+    if type(prefix) == list:
+        envSizes = prefix
+        normalizedDistributions = {size: [] for size in envSizes}
+        for i, row in aggregatedDf.iterrows():
+            for j, env in enumerate(envSizes):
+                normalizedDistributions[envSizes[j]].append(1.0 * row[f"{envSizes[j]}"])
+        total = 0
+        for env in normalizedDistributions:
+            total += sum(normalizedDistributions[env])
+        for env in normalizedDistributions:
+            normalizedDistributions[env] = sum(normalizedDistributions[env]) / total
         for size in envSizes:
-            normalizedDistributions[size].append(1.0 * row[f"{size}{prefix}"] / totalEnvs)
-
-    for size in envSizes:
-        column_name = f"{size}n"
-        aggregatedDf[column_name] = normalizedDistributions[size]
+            column_name = f"{size}n"
+            aggregatedDf[column_name] = normalizedDistributions[size]
+    else:
+        for i, row in aggregatedDf.iterrows():
+            environmentTotalOccurence = sum(row[f"{size}{prefix}"] for size in envSizes)
+            for size in envSizes:
+                normalizedDistributions[size].append(1.0 * row[f"{size}{prefix}"] / environmentTotalOccurence)
+        for size in envSizes:
+            column_name = f"{size}n"
+            aggregatedDf[column_name] = normalizedDistributions[size]
+    print(aggregatedDf)
     return aggregatedDf
 
 
@@ -378,9 +403,34 @@ def showTrainingTimePlot(aggregatedDf):
     plt.show()
 
 
+def handleDistributionVisualization(df):
+    column_prefixes = {'snapshotDistr': 's', 'curricDistr': 'c', 'allDistr': 'a'}
+    for arg, prefix in column_prefixes.items():
+        if getattr(args, arg):
+            if args.normalize:
+                df = includeNormalizedColumns(df, prefix)
+                if isDoorKey:
+                    columns_to_visualize = [f'6x6n', f'8x8n', f'10x10n', f'12x12n', 'id']
+                else:
+                    columns_to_visualize = [f'5x5n', f'6x6n', f'8x8n', f'16x16n', 'id']
+                title = "Normalized Environment Distributions"
+            else:
+                if isDoorKey:
+                    columns_to_visualize = [f'6x6{prefix}', f'8x8{prefix}', f'10x10{prefix}', f'12x12{prefix}', 'id']
+                else:
+                    columns_to_visualize = [f'5x5{prefix}', f'6x6{prefix}', f'8x8{prefix}', f'16x16{prefix}', 'id']
+
+                prefix = ""
+                if args.curricDistr:
+                    prefix = "Best Curricula "
+                elif args.snapshotDistr:
+                    prefix = "Best First Step "
+                title = prefix + "Environment Distribution"
+            showDistrVisualization(df, columns_to_visualize, title)
+
+
 def plotAggregatedBarplot(df):
-    assert type(df) is not list
-    print(df)
+    assert type(df) is not list and not df.empty
     """ if not args.crossoverMutation:
         for f in df:
             for fullModelName in f["id"]:
@@ -392,29 +442,18 @@ def plotAggregatedBarplot(df):
 
     if args.trainingTime:
         showTrainingTimePlot(df)
-
-    column_prefixes = {'snapshotDistr': 's', 'curricDistr': 'c', 'allDistr': 'a'}
     if args.splitDistr:
-        toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10", "MiniGrid-DoorKey-12x12"]
+        if not isDoorKey:
+            toVisualize = ["MiniGrid-Dynamic-Obstacles-5x5", "MiniGrid-Dynamic-Obstacles-6x6", "MiniGrid-Dynamic-Obstacles-8x8",
+                           "MiniGrid-Dynamic-Obstacles-16x16"]
+        else:
+            toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10",
+                           "MiniGrid-DoorKey-12x12"]  # todo i probably have to cut this in result so i can remove the minigrid prefix from this
+        if args.normalize:
+            df = includeNormalizedColumns(df, toVisualize)
         showDistrVisualization(df, toVisualize, "Split Environment Distribution", True)
     else:
-        for arg, prefix in column_prefixes.items():
-            if getattr(args, arg):
-                if args.normalize:
-                    df = includeNormalizedColumns(df, prefix)
-                    columns_to_visualize = [f'6x6n', f'8x8n', f'10x10n', f'12x12n', 'id']
-                    title = "Normalized Environment Distributions"
-                else:
-                    columns_to_visualize = [f'6x6{prefix}', f'8x8{prefix}', f'10x10{prefix}', f'12x12{prefix}', 'id']
-                    prefix = ""
-                    if args.curricDistr:
-                        prefix = "Best Curricula "
-                    elif args.snapshotDistr:
-                        prefix = "Best First Step "
-                    title = prefix + "Environment Distribution"
-                showDistrVisualization(df, columns_to_visualize, title)
-
-    print("---- Done ----")
+        handleDistributionVisualization(df)
 
 
 def main(comparisons: int):
@@ -488,4 +527,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.filter = args.comparisons == -1 and (
             args.crossoverMutation or args.splitDistr or args.iter or args.steps or args.gen or args.curric or args.rrhOnly or args.rhea or args.nsga or args.ga)
+    isDoorKey = "door" in args.env
     main(int(args.comparisons))

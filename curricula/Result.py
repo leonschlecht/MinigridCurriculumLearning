@@ -294,49 +294,88 @@ class Result:
                  "group": self.iterationsPerEnv,  # TODO refactor this (column name)
                  iterationSteps: self.iterationsList[i]})  #
 
-    def getDistributions(self):
+    def getDistributions(self, isDoorKey):
         # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
+
         keys = self.snapshotEnvDistribution.keys()
         snapshotHelper = [[] for _ in keys]
         allCurricHelper = [[] for _ in keys]
         bestCurricHelper = [[] for _ in keys]
         for k in keys:
-            if "6x6" in k:
-                snapshotHelper[0] = (self.snapshotEnvDistribution[k])
-                allCurricHelper[0] = (self.allCurricDistribution[k])
-                bestCurricHelper[0] = (self.bestCurriculaEnvDistribution[k])
-            elif "8x8" in k:
-                snapshotHelper[1] = (self.snapshotEnvDistribution[k])
-                allCurricHelper[1] = (self.allCurricDistribution[k])
-                bestCurricHelper[1] = (self.bestCurriculaEnvDistribution[k])
-            elif "10x10" in k:
-                snapshotHelper[2] = (self.snapshotEnvDistribution[k])
-                allCurricHelper[2] = (self.allCurricDistribution[k])
-                bestCurricHelper[2] = (self.bestCurriculaEnvDistribution[k])
+            if isDoorKey:
+                if "6x6" in k:
+                    snapshotHelper[0] = (self.snapshotEnvDistribution[k])
+                    allCurricHelper[0] = (self.allCurricDistribution[k])
+                    bestCurricHelper[0] = (self.bestCurriculaEnvDistribution[k])
+                elif "8x8" in k:
+                    snapshotHelper[1] = (self.snapshotEnvDistribution[k])
+                    allCurricHelper[1] = (self.allCurricDistribution[k])
+                    bestCurricHelper[1] = (self.bestCurriculaEnvDistribution[k])
+                elif "10x10" in k:
+                    snapshotHelper[2] = (self.snapshotEnvDistribution[k])
+                    allCurricHelper[2] = (self.allCurricDistribution[k])
+                    bestCurricHelper[2] = (self.bestCurriculaEnvDistribution[k])
+                else:
+                    snapshotHelper[3] = (self.snapshotEnvDistribution[k])
+                    allCurricHelper[3] = (self.allCurricDistribution[k])
+                    bestCurricHelper[3] = (self.bestCurriculaEnvDistribution[k])
             else:
-                snapshotHelper[3] = (self.snapshotEnvDistribution[k])
-                allCurricHelper[3] = (self.allCurricDistribution[k])
-                bestCurricHelper[3] = (self.bestCurriculaEnvDistribution[k])
-        return {
-            "6x6s": snapshotHelper[0],
-            "8x8s": snapshotHelper[1],
-            "10x10s": snapshotHelper[2],
-            "12x12s": snapshotHelper[3],
-            "6x6c": bestCurricHelper[0],
-            "8x8c": bestCurricHelper[1],
-            "10x10c": bestCurricHelper[2],
-            "12x12c": bestCurricHelper[3],
-            "6x6a": allCurricHelper[0],
-            "8x8a": allCurricHelper[1],
-            "10x10a": allCurricHelper[2],
-            "12x12a": allCurricHelper[3],
-            seedKey: self.seed,
-            "group": self.iterationsPerEnv,
-            iterationSteps: self.iterationsList[0],
-            sumTrainingTime: self.trainingTimeSum,
-            "id": self.modelName}
+                if "5x5" in k:
+                    snapshotHelper[0] = (self.snapshotEnvDistribution[k])
+                    allCurricHelper[0] = (self.allCurricDistribution[k])
+                    bestCurricHelper[0] = (self.bestCurriculaEnvDistribution[k])
+                elif "6x6" in k:
+                    snapshotHelper[1] = (self.snapshotEnvDistribution[k])
+                    allCurricHelper[1] = (self.allCurricDistribution[k])
+                    bestCurricHelper[1] = (self.bestCurriculaEnvDistribution[k])
+                elif "8x8" in k:
+                    snapshotHelper[2] = (self.snapshotEnvDistribution[k])
+                    allCurricHelper[2] = (self.allCurricDistribution[k])
+                    bestCurricHelper[2] = (self.bestCurriculaEnvDistribution[k])
+                else:  # 16x16
+                    snapshotHelper[3] = (self.snapshotEnvDistribution[k])
+                    allCurricHelper[3] = (self.allCurricDistribution[k])
+                    bestCurricHelper[3] = (self.bestCurriculaEnvDistribution[k])
+        if isDoorKey:
+            return {
+                "6x6s": snapshotHelper[0],
+                "8x8s": snapshotHelper[1],
+                "10x10s": snapshotHelper[2],
+                "12x12s": snapshotHelper[3],
+                "6x6c": bestCurricHelper[0],
+                "8x8c": bestCurricHelper[1],
+                "10x10c": bestCurricHelper[2],
+                "12x12c": bestCurricHelper[3],
+                "6x6a": allCurricHelper[0],
+                "8x8a": allCurricHelper[1],
+                "10x10a": allCurricHelper[2],
+                "12x12a": allCurricHelper[3],
+                seedKey: self.seed,
+                "group": self.iterationsPerEnv,
+                iterationSteps: self.iterationsList[0],
+                sumTrainingTime: self.trainingTimeSum,
+                "id": self.modelName}
+        else:
+            return {
+                "5x5s": snapshotHelper[0],
+                "6x6s": snapshotHelper[1],
+                "8x8s": snapshotHelper[2],
+                "16x16s": snapshotHelper[3],
+                "5x5c": bestCurricHelper[0],
+                "6x6c": bestCurricHelper[1],
+                "8x8c": bestCurricHelper[2],
+                "16x16c": bestCurricHelper[3],
+                "5x5a": allCurricHelper[0],
+                "6x6a": allCurricHelper[1],
+                "8x8a": allCurricHelper[2],
+                "16x16a": allCurricHelper[3],
+                seedKey: self.seed,
+                "group": self.iterationsPerEnv,
+                iterationSteps: self.iterationsList[0],
+                sumTrainingTime: self.trainingTimeSum,
+                "id": self.modelName}
 
-    def getSplitDistrList(self):
+    def getSplitDistrList(self, isDoorKey):
         data = []
         if self.loadedArgsDict[trainEvolutionary] and not self.canceled:
             keys = self.usedEnvEnumeration
@@ -348,5 +387,4 @@ class Result:
                 for key in keys:
                     row[key] = self.splitDistrBestCurric[i][key]
                 data.append(row)
-
         return data
