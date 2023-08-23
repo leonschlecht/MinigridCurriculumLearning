@@ -68,12 +68,15 @@ def getAllDfs(logfilePaths):
         # if no filter option ? --> then get the list of all
         if "old" in jsonPaths[0]:
             continue
-        if args.crossoverMutation and "_c" not in jsonPaths[0] and "_m" not in modelName:
+        if args.crossoverMutation and "_c" and "Mut" not in modelName and "Cross" not in modelName:
             continue
         if not isDoorKey and "Doorkey" in jsonPaths[0]:
             continue
         elif isDoorKey and "DynamicObstacle" in jsonPaths[0]:
             continue
+        if args.rrhOnly and "RndRH" not in jsonPaths[0]:
+            continue
+        # RRH Filter ?
         # TODO further filters ???
         tmpScoreDf, tmpDistrDf, tmpSplitDf = getSpecificModel(jsonPaths, modelName)
         scoreDf = pd.concat([scoreDf, tmpScoreDf], ignore_index=True)
@@ -89,6 +92,9 @@ def filterDf(filters: list[str], df, models, showCanceled=False):
     """
     Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
     """
+    if df.empty:
+        print("---Empty dF!---")
+        return df
 
     def passes_filters(colId, filterList):
         for filterOption in filterList:
@@ -598,7 +604,7 @@ def main(comparisons: int):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--env", default="DoorKey", help="Whether to use doorkey or dynamic obstacle or both")
+    parser.add_argument("--env", default="doorKey", help="Whether to use doorkey or dynamic obstacle or both")
     parser.add_argument("--title", default=None, type=str, help="Title of the distribution plots")
     parser.add_argument("--comparisons", default=-1, help="Choose how many models you want to compare")
     parser.add_argument("--crossoverMutation", action="store_true", default=False, help="Select the crossovermutation varied experiments")
@@ -631,5 +637,5 @@ if __name__ == "__main__":
     args.filter = args.comparisons == -1 and (
             args.crossoverMutation or args.splitDistr or
             args.iter or args.steps or args.rrhOnly or args.rhea or args.nsga or args.ga)
-    isDoorKey = args.env is None or "door" in args.env
+    isDoorKey = "door" in args.env
     main(int(args.comparisons))
