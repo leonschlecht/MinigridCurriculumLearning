@@ -5,8 +5,8 @@
 #SBATCH --partition=cpu_long_stud
 #SBATCH --exclude=cp2019-11,cc1l01
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=24G
+#SBATCH --mem=16G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
-srun -c 2 -v python3 trainCurriculum.py --procs 24 --numCurric 3 --stepsPerCurric 3 --nGen 3 --iterPerEnv 150000 --model 150k_3step_3gen_3curric --dynamicObstacle --noRewardShaping --seed 9152
+srun -c 2 -v python3 trainCurriculum.py --procs 24 --numCurric 3 --stepsPerCurric 3 --nGen 1 --iterPerEnv 150000 --model 150k_3step_1gen_3curric --noRewardShaping --seed 9152
 echo "---------- Cluster Job End ---------------------"
