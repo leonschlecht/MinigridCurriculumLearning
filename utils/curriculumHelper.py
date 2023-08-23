@@ -132,11 +132,13 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
     :return:
     """
     for env in selectedEnvsList:
-        size = int(env.split("-")[-1].split("x")[-1])  # DoorKey-5x5 ---> 5
+        size = int(env.split("-")[-1].split("x")[-1]) # DoorKey-5x5 ---> 5
+        size = int(selectedEnvsList[-1].split("-")[-1].split("x")[-1])
         custom_postfix = ENV_NAMES.CUSTOM_POSTFIX + str(maxStepsPercent)
 
         if "DoorKey" in env:
             entry_point = "minigrid.envs:DoorKeyEnv"
+            size = int(selectedEnvsList[-1].split("-")[-1].split("x")[-1])
             max_steps = int(getDoorKeyMaxSteps(size) * maxStepsPercent)
             kwargs = {"size": size, "max_steps": max_steps}
         elif "Dynamic-Obstacle" in env:
@@ -146,13 +148,11 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
             # TODO maybe add "agent_start_pos": None for random
         else:
             raise Exception("Env not found")
-        # TODO ?
         register(
             id=env + custom_postfix,
             entry_point=entry_point,
             kwargs=kwargs,
         )
-        print(env+custom_postfix)
 
 
 def calculateEnvDifficulty(iterationsDone: int, difficultyStepsize: int, selectedEnvsList: list) -> float:

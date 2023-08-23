@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=2gen
+#SBATCH --job-name=4step
 #SBATCH --output=GA_100nRS_%j_out.txt
 #SBATCH --time=71:59:00
 #SBATCH --partition=cpu_long_stud
@@ -8,7 +8,7 @@
 #SBATCH --mem=16G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
-srun -c 2 -v python3 trainCurriculum.py --procs 24 --noRewardShaping --numCurric 3 --stepsPerCurric 3 --nGen 2 --iterPerEnv 100000 --model 2_100k_3step_2gen_3curric --crossoverProb .8 --mutationProb .8 --seed 9152
+srun -c 2 -v python3 trainCurriculum.py --procs 24 --noRewardShaping --numCurric 3 --stepsPerCurric 4 --nGen 3 --iterPerEnv 25000 --model 2_25k_4step_3gen_3curric --crossoverProb .8 --mutationProb .8 --trainingIterations 1100000 --seed 2330
 echo "---------- Cluster Job End ---------------------"
 
 
