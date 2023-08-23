@@ -137,6 +137,7 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
 
         if "DoorKey" in env:
             entry_point = "minigrid.envs:DoorKeyEnv"
+            size = int(selectedEnvsList[-1].split("-")[-1].split("x")[-1])
             max_steps = int(getDoorKeyMaxSteps(size) * maxStepsPercent)
             kwargs = {"size": size, "max_steps": max_steps}
         elif "Dynamic-Obstacle" in env:
@@ -146,7 +147,6 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
             # TODO maybe add "agent_start_pos": None for random
         else:
             raise Exception("Env not found")
-
         register(
             id=env + custom_postfix,
             entry_point=entry_point,
