@@ -111,6 +111,7 @@ def getAllModels(logfilePaths: list[list]):
     splitDistrDf = pd.DataFrame()
 
     for logfilePath in logfilePaths:
+        print(logfilePath)
         tmpScoreDf, tmpDistrDf, tmpSplitDf = getSpecificModel(logfilePath[0], logfilePath[1])
         scoreDf = pd.concat([scoreDf, tmpScoreDf], ignore_index=True)
         fullDistrDf = pd.concat([fullDistrDf, tmpDistrDf], ignore_index=True)
