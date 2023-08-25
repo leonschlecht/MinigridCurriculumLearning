@@ -207,7 +207,10 @@ def plotMultipleLineplots(df, hue="id"):
     maxX = args.xIterations + OFFSET
     assert minX < maxX, "min X must be smaller than max X"
     ax.set_xlim((0, args.xIterations + OFFSET))
-    ax.set_ylim((0, 1))
+    if isDoorKey:
+        ax.set_ylim((0, 1))
+    else:
+        ax.set_ylim((-1, 1))
     legendTitle = ""
     if hue != "id":
         legendTitle = hue
