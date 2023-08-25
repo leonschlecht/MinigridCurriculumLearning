@@ -167,11 +167,11 @@ def printDfStats(df):
     std = {}
 
     for filtered in df["id"].unique():
-        score = np.sum(df[df["id"] == filtered][snapshotScoreKey])
-        sumScore[filtered] = score
-        avg[filtered] = np.average(df[snapshotScoreKey])
-        median[filtered] = np.median(df[snapshotScoreKey])
-        std[filtered] = np.std(df[snapshotScoreKey])
+        score = df[df["id"] == filtered][snapshotScoreKey]
+        sumScore[filtered] = np.sum(score)
+        avg[filtered] = round(np.average(score), 3)
+        median[filtered] = round(np.median(score), 3)
+        std[filtered] = round(np.std(score), 3)
     sorted_data = dict(sorted(sumScore.items(), key=lambda item: item[1]))
     print("best scores", sorted_data)
     sorted_data2 = dict(sorted(avg.items(), key=lambda item: item[1]))
@@ -192,7 +192,7 @@ def plotMultipleLineplots(df, hue="id"):
         yColumns = ["snapshotScore"]
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.set_theme(style="darkgrid")
-    # printDfStats(df) # TODO ? maybe args or just remove this part
+    # printDfStats(df) # TODO ? maybe as args or just remove this part
     for col in yColumns:
         sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette="tab10")
 
