@@ -111,6 +111,33 @@ def filterDf(filters: list[str], df, models, showCanceled=False):
     return filteredDf
 
 
+def getStep(tmp):
+    for s in tmp:
+        if "step" in s:
+            return s[0]
+    raise Exception("could not extract step")
+
+
+def getCurric(tmp):
+    for s in tmp:
+        if "curric" in s:
+            return s[0]
+    raise Exception("could not extract curric")
+
+
+def getGen(tmp):
+    for s in tmp:
+        if "gen" in s:
+            return s[0]
+    raise Exception("could not extract gen")
+
+def getIterstep(tmp):
+    for s in tmp:
+        if "k" in s:
+            return s[:-1]
+    raise Exception("could not extract gen")
+
+
 def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, distrDf, splitDistrDf) -> tuple:
     modelsEntered: int = 0
     usedModels = []
@@ -138,6 +165,52 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
         for i in range(len(models)):
             print(f"{i}: {models[i]}")
         print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
+        nRS = []
+        RS = []
+        for m in models:
+            if "nRS" in m:
+                nRS.append(m[:-3])
+            else:
+                RS.append(m[:-2])
+
+        from difflib import SequenceMatcher as SM
+
+        def similar(a, b):
+            return SM(None, a, b).ratio()
+
+        """
+        strings = models
+        similar_strings = []
+        for i in range(len(strings)):
+            for j in range(i + 1, len(strings)):
+                if similar(strings[i], strings[j]) >= 0.9:
+                    similar_strings.append((strings[i], strings[j]))
+
+        for pair in similar_strings:
+            v1 = pair[0]
+            skip = ["RndRH", "PPO", "C_"]
+            next = False
+            for val in skip:
+                if val in v1:
+                    next = True
+                    break
+            if not next and v1 != pair[1]:
+                tmp = v1.split("_")
+                tmp2 = pair[1].split("_")
+                step1 = getStep(tmp)
+                step2 = getStep(tmp2)
+                gen1 = getGen(tmp)
+                gen2 = getGen(tmp2)
+                curric1 = getCurric(tmp)
+                curric2 = getCurric(tmp2)
+                iter1 = getIterstep(tmp)
+                iter2 = getIterstep(tmp2)
+                rsDupl = "RS" in tmp and "RS" in tmp2
+                nrsDupl = "nRS" in tmp and "nRS" in tmp2
+                isUnique = not rsDupl and not nrsDupl
+                if step1 == step2 and gen1 == gen2 and curric1 == curric2 and iter1 == iter2 and isUnique:
+                    print(pair)
+                """
         while modelsEntered < comparisons:
             val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
             if val.isdigit() and int(val) < len(models) and val not in usedModels:
@@ -183,6 +256,34 @@ def printDfStats(df):
 
 
 def plotMultipleLineplots(df, hue="id"):
+    if "multi" in args.title:
+        def transform_label(label):
+            if "MultiObj_nRS" in label:
+                return "Multi Objective Variant"
+            elif "_RS" in label:
+                return "Single Objective Variant"
+            raise Exception(f"transformation failed for {label}")
+        df['id'] = df['id'].map(transform_label)
+    elif "Gamma" in args.title:
+        def transform_label(label):
+            return label
+            tmp = label.split("_")[-1]
+            assert "gamma" in tmp
+            transformedLabel = "Gamma 0." + tmp[-2]
+            return transformedLabel
+        #df['id'] = df['id'].map(transform_label)
+
+    elif "Reward Shaping" in args.title:
+        def transform_label(label):
+            tmp = label[3:]
+            if "nRS" in tmp:
+                tmp = tmp[:-len("_nRS_gamma70")]
+                tmp = "No Reward Shaping"
+            else:
+                tmp = tmp[:-3]
+                tmp = "Reward Shaping"
+            return tmp
+        df['id'] = df['id'].map(transform_label)
     sns.color_palette("tab10")
     if args.scores == "both":
         yColumns = ["snapshotScore", "bestCurricScore"]
@@ -214,8 +315,10 @@ def plotMultipleLineplots(df, hue="id"):
     legendTitle = ""
     if hue != "id":
         legendTitle = hue
-    plt.legend(loc="best", fontsize=labelFontsize, title=legendTitle)
-    plt.title("Evaluation Performance in all Environments", fontsize=titleFontsize)
+
+    plt.legend(loc="lower right", fontsize=labelFontsize, title=legendTitle)
+    title = args.title or "Evaluation Performance in all Environments"
+    plt.title(title, fontsize=titleFontsize)
     plt.yticks(fontsize=tickFontsize)
     plt.xticks(fontsize=tickFontsize)
     plt.show()
@@ -266,7 +369,7 @@ def removeExperimentPrefix(dictDf):
 def removeSuffixCharInLegend(ax, columnsToVisualize):
     legend = ax.legend(fontsize=labelFontsize)
     labels = []
-    sizes = [s[:-1] if s.endswith('n') else s for s in columnsToVisualize]
+    sizes = [s[:-1] if (s.endswith('n') or s.endswith('c')) else s for s in columnsToVisualize]
     for item in legend.get_texts():
         label = item.get_text()
         for size in sizes:
@@ -308,26 +411,35 @@ def showDistrVisualization(df, columnsToVisualize, title="Environment Distributi
         else:
             # default: only sort by the ID string
             df["sort_col"] = df["id"]
-        df = df.sort_values(by=['sort_col', group_col])
-        df = df.drop('sort_col', axis=1)
-        grouped_df = df[columnsToVisualize].groupby('id').agg(['mean', 'std'])
-        grouped_df = grouped_df.reset_index()
-        melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
-        melted_df['id'] = pd.Categorical(melted_df['id'], categories=df['id'].unique(), ordered=True)
-        # TODO vllt mit pivot table machen um das mit errorbar wieder hinzukriegen
-        sns.barplot(data=melted_df[melted_df["Statistic"] == "mean"], x='id', y='Value', hue='Column', errorbar=args.errorbar)
-        # TODO filter x ticks
-        plt.ylabel('Occurence', fontsize=labelFontsize)
-        plt.title(title, fontsize=titleFontsize)
-        plt.xlabel('')
-        plt.yticks(fontsize=tickFontsize)
-        plt.xticks(rotation=-30, ha='left', fontsize=labelFontsize - 2)
-        plt.subplots_adjust(bottom=0.2)
-        if args.normalize:
-            plt.ylim((0, 1))
 
-        removeSuffixCharInLegend(ax, columnsToVisualize)
-        plt.show()
+
+        if "NSGA-II" in title:
+            subset_df = df[['id', '6x6n', '8x8n', '10x10n', '12x12n']]
+            subset_df = subset_df.melt(id_vars='id', var_name='Column', value_name='Value')
+            sns.barplot(x='Column', y='Value', hue='id', data=subset_df, errorbar="se")
+            plt.xlabel('Environment')
+            plt.ylabel('Occurence')
+            plt.title(title)
+            plt.show()
+        else:
+            grouped_df = df[columnsToVisualize].groupby('id').agg(['mean', 'std'])
+            grouped_df = grouped_df.reset_index()
+            melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
+            melted_df['id'] = pd.Categorical(melted_df['id'], categories=df['id'].unique(), ordered=True)
+            # TODO vllt mit pivot table machen um das mit errorbar wieder hinzukriegen
+            sns.barplot(data=melted_df[melted_df["Statistic"] == "mean"], x='id', y='Value', hue='Column', errorbar=args.errorbar)
+            # TODO filter x ticks
+            plt.ylabel('Occurence', fontsize=labelFontsize)
+            plt.title(title, fontsize=titleFontsize)
+            plt.xlabel('')
+            plt.yticks(fontsize=tickFontsize)
+            plt.xticks(rotation=-30, ha='left', fontsize=labelFontsize - 2)
+            plt.subplots_adjust(bottom=0.2)
+            if args.normalize:
+                plt.ylim((0, 1))
+
+            removeSuffixCharInLegend(ax, columnsToVisualize)
+            plt.show()
 
 
 def includeNormalizedColumns(aggregatedDf, prefix):
@@ -418,6 +530,8 @@ def handleDistributionVisualization(df):
                 else:
                     columns_to_visualize = [f'5x5n', f'6x6n', f'8x8n', f'16x16n', 'id']
                 title = "Normalized Environment Distributions"
+                if args.title:
+                    title = args.title
             else:
                 if isDoorKey:
                     columns_to_visualize = [f'6x6{prefix}', f'8x8{prefix}', f'10x10{prefix}', f'12x12{prefix}', 'id']
@@ -430,6 +544,8 @@ def handleDistributionVisualization(df):
                 elif args.snapshotDistr:
                     prefix = "Best First Step "
                 title = prefix + "Environment Distribution"
+                if args.title:
+                    title = args.title
             showDistrVisualization(df, columns_to_visualize, title)
 
 
