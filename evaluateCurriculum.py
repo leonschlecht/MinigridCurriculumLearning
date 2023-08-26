@@ -1,20 +1,16 @@
 import argparse
 import os
-import time
 from collections import defaultdict
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import sys
-
-# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from curricula.Result import Result
-from utils import storage
 from utils.curriculumHelper import *
+
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # find out if i can go back 1 directory and then run the scripts. this would solve the same issue
 
@@ -379,29 +375,73 @@ def removeSuffixCharInLegend(ax, columnsToVisualize):
     for label, text in zip(legend.texts, labels):
         label.set_text(text)
 
+def plotNSGAMultivsSingleDistribution(df, ax, columnsToVisualize, title):
+    def transform_label(label):
+        if "MultiObj_nRS" in label:
+            return "Multi Objective Variant"
+        elif "_RS" in label:
+            return "Single Objective Variant"
+        raise Exception(f"transformation failed for {label}")
+
+    df['id'] = df['id'].map(transform_label)
+
+    subset_df = df[columnsToVisualize]
+    subset_df = subset_df.melt(id_vars='id', var_name='Column', value_name='Value')
+    # Remove the 'n' at the end of the column names
+    subset_df['Column'] = subset_df['Column'].str.rstrip('n')
+    sns.barplot(x='Column', y='Value', hue='id', data=subset_df, errorbar="se")
+    plt.xlabel('Environment', fontsize=labelFontsize)
+    plt.ylabel('Occurence', fontsize=labelFontsize)
+    if args.normalize:
+        plt.ylim((0, 1))
+    plt.title(title, fontsize=titleFontsize)
+    plt.yticks(fontsize=tickFontsize)
+    plt.xticks(fontsize=labelFontsize)
+    removeSuffixCharInLegend(ax, columnsToVisualize)
+
+    plt.show()
+    """
+    # the switched x axis and legend variant
+            subset_df = df[['id', '6x6n', '8x8n', '10x10n', '12x12n']]
+    subset_df = subset_df.melt(id_vars='id', var_name='Column', value_name='Value')
+
+    sns.barplot(x='Column', y='Value', hue='id', data=subset_df, errorbar="se")
+
+    plt.xlabel('Column Names')
+    plt.ylabel('Values')
+    plt.title('Bar Plot')
+    plt.show()
+
+
+    """
+
+
+def showSplitEnvDistribution(df, ax, columnsToVisualize):
+    # TODO only works with 1 experiment unfortunately (or aggregates it all)
+    assert args.normalize
+
+    def filter_entries(entry):
+        return entry not in ['id', 'trained until'] and entry.endswith('n')
+
+    cols = list(filter(filter_entries, df.columns))
+
+    df = df.melt(id_vars=['trained until', 'id'],
+                 value_vars=cols,
+                 var_name='Environment',
+                 value_name='Value')
+    sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
+    plt.title("Environment Distribution at different Training Stages", fontsize=titleFontsize)
+    plt.ylim((0, 1))
+    removeSuffixCharInLegend(ax, columnsToVisualize)
+    plt.show()
+
 
 def showDistrVisualization(df, columnsToVisualize, title="Environment Distribution", isSplit=False):
     fig, ax = plt.subplots(figsize=(12, 8))
     if isSplit:
-        # TODO only works with 1 experiment unfortunately (or aggregates it all)
-        assert args.normalize
-
-        def filter_entries(entry):
-            return entry not in ['id', 'trained until'] and entry.endswith('n')
-
-        cols = list(filter(filter_entries, df.columns))
-
-        df = df.melt(id_vars=['trained until', 'id'],
-                     value_vars=cols,
-                     var_name='Environment',
-                     value_name='Value')
-        sns.barplot(x='trained until', y='Value', hue='Environment', data=df)
-        plt.title("Environment Distribution at different Training Stages", fontsize=titleFontsize)
-        plt.ylim((0, 1))
-        removeSuffixCharInLegend(ax, columnsToVisualize)
-        plt.show()
+        showSplitEnvDistribution(df, ax, columnsToVisualize)
     else:
-        group_col = "group" if 'group' in df.columns else 'DataFrame'
+        group_col = "group" if 'group' in df.columns else 'DataFrame' # TODO ?
         # sort by the numerical values of the string (50k, 75k, ...)
         if args.rhea or args.nsga or args.ga:
             df['sort_col'] = df['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
@@ -412,34 +452,26 @@ def showDistrVisualization(df, columnsToVisualize, title="Environment Distributi
             # default: only sort by the ID string
             df["sort_col"] = df["id"]
 
+    if "NSGA-II" in title:
+        plotNSGAMultivsSingleDistribution(df, ax, columnsToVisualize, title)
+    else:
+        grouped_df = df[columnsToVisualize].groupby('id').agg(['mean', 'std'])
+        grouped_df = grouped_df.reset_index()
+        melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
+        melted_df['id'] = pd.Categorical(melted_df['id'], categories=df['id'].unique(), ordered=True)
+        sns.barplot(data=melted_df[melted_df["Statistic"] == "mean"], x='id', y='Value', hue='Column', errorbar=args.errorbar)
+        # TODO filter x ticks
+        plt.ylabel('Occurence', fontsize=labelFontsize)
+        plt.title(title, fontsize=titleFontsize)
+        plt.xlabel('')
+        plt.yticks(fontsize=tickFontsize)
+        plt.xticks(rotation=-30, ha='left', fontsize=labelFontsize - 2)
+        plt.subplots_adjust(bottom=0.2)
+        if args.normalize:
+            plt.ylim((0, 1))
 
-        if "NSGA-II" in title:
-            subset_df = df[['id', '6x6n', '8x8n', '10x10n', '12x12n']]
-            subset_df = subset_df.melt(id_vars='id', var_name='Column', value_name='Value')
-            sns.barplot(x='Column', y='Value', hue='id', data=subset_df, errorbar="se")
-            plt.xlabel('Environment')
-            plt.ylabel('Occurence')
-            plt.title(title)
-            plt.show()
-        else:
-            grouped_df = df[columnsToVisualize].groupby('id').agg(['mean', 'std'])
-            grouped_df = grouped_df.reset_index()
-            melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
-            melted_df['id'] = pd.Categorical(melted_df['id'], categories=df['id'].unique(), ordered=True)
-            # TODO vllt mit pivot table machen um das mit errorbar wieder hinzukriegen
-            sns.barplot(data=melted_df[melted_df["Statistic"] == "mean"], x='id', y='Value', hue='Column', errorbar=args.errorbar)
-            # TODO filter x ticks
-            plt.ylabel('Occurence', fontsize=labelFontsize)
-            plt.title(title, fontsize=titleFontsize)
-            plt.xlabel('')
-            plt.yticks(fontsize=tickFontsize)
-            plt.xticks(rotation=-30, ha='left', fontsize=labelFontsize - 2)
-            plt.subplots_adjust(bottom=0.2)
-            if args.normalize:
-                plt.ylim((0, 1))
-
-            removeSuffixCharInLegend(ax, columnsToVisualize)
-            plt.show()
+        removeSuffixCharInLegend(ax, columnsToVisualize)
+        plt.show()
 
 
 def includeNormalizedColumns(aggregatedDf, prefix):
