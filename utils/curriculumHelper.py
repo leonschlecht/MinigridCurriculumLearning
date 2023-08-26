@@ -66,7 +66,7 @@ def getDoorKeyMaxSteps(envSize: int) -> int:
     Returns the maximum steps allowed for a given doorkey environment size
     """
     DOORKEY_MAXSTEP_MULTIPLICATOR = 10
-    return envSize ** 2 * DOORKEY_MAXSTEP_MULTIPLICATOR
+    return 12 ** 2 * DOORKEY_MAXSTEP_MULTIPLICATOR
 
 
 def saveTrainingInfoToFile(path, jsonBody):
@@ -137,7 +137,7 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
 
         if "DoorKey" in env:
             entry_point = "minigrid.envs:DoorKeyEnv"
-            size = int(selectedEnvsList[-1].split("-")[-1].split("x")[-1])
+            # size = int(selectedEnvsList[-1].split("-")[-1].split("x")[-1])
             max_steps = int(getDoorKeyMaxSteps(size) * maxStepsPercent)
             kwargs = {"size": size, "max_steps": max_steps}
         elif "Dynamic-Obstacle" in env:
@@ -152,7 +152,7 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
             entry_point=entry_point,
             kwargs=kwargs,
         )
-        print(env+custom_postfix)
+        # print(env+custom_postfix, kwargs)
 
 
 def calculateEnvDifficulty(iterationsDone: int, difficultyStepsize: int, selectedEnvsList: list) -> float:
