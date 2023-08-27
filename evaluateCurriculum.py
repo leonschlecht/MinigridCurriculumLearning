@@ -84,12 +84,19 @@ def getAllDfs(logfilePaths):
     return scoreDf, fullDistrDf, splitDistrDf
 
 
-def filterDf(filters: list[str], df, models, showCanceled=False):
+def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove param
     """
     Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
     """
     if df.empty:
         print("---Empty dF!---")
+        return df
+
+    if filters[0] == "PPO":
+        PPO_Runs = ["PPO10x10_RS", "PPO8x8_RS", "PPO12x12_RS", "PPO6x6_RS",
+                    # "GA_100k_3step_3gen_3curric_RS"# TODO ?
+                    ]
+        df = df[df["id"].isin(PPO_Runs)]
         return df
 
     def passes_filters(colId, filterList):
@@ -127,6 +134,7 @@ def getGen(tmp):
             return s[0]
     raise Exception("could not extract gen")
 
+
 def getIterstep(tmp):
     for s in tmp:
         if "k" in s:
@@ -152,15 +160,19 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             filters.append("NSGA")
         if args.rrhOnly:
             filters.append("RndRH")
+        if args.ppoOnly:
+            filters.append("PPO")
         if args.iter != 0:
             filters.append(str(args.iter) + "k")
         filteredScoreDf = filterDf(filters, scoreDf, models, showCanceled=args.showCanceled)
         filteredDistrDf = filterDf(filters, distrDf, models, showCanceled=args.showCanceled)
         filteredSplitDistrDf = filterDf(filters, splitDistrDf, models, showCanceled=args.showCanceled)
+
     else:
         for i in range(len(models)):
             print(f"{i}: {models[i]}")
         print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
+        """
         nRS = []
         RS = []
         for m in models:
@@ -174,7 +186,6 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
         def similar(a, b):
             return SM(None, a, b).ratio()
 
-        """
         strings = models
         similar_strings = []
         for i in range(len(strings)):
@@ -251,35 +262,39 @@ def printDfStats(df):
     print("\nstd scores", sorted_data4)
 
 
-def plotMultipleLineplots(df, hue="id"):
-    if "multi" in args.title:
-        def transform_label(label):
-            if "MultiObj_nRS" in label:
-                return "Multi Objective Variant"
-            elif "_RS" in label:
-                return "Single Objective Variant"
-            raise Exception(f"transformation failed for {label}")
-        df['id'] = df['id'].map(transform_label)
-    elif "Gamma" in args.title:
-        def transform_label(label):
-            return label
-            tmp = label.split("_")[-1]
-            assert "gamma" in tmp
-            transformedLabel = "Gamma 0." + tmp[-2]
-            return transformedLabel
-        #df['id'] = df['id'].map(transform_label)
+def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
+    if args.title is not None:
+        if "multi" in args.title:
+            def transform_label(label):
+                if "MultiObj_nRS" in label:
+                    return "Multi Objective Variant"
+                elif "_RS" in label:
+                    return "Single Objective Variant"
+                raise Exception(f"transformation failed for {label}")
 
-    elif "Reward Shaping" in args.title:
-        def transform_label(label):
-            tmp = label[3:]
-            if "nRS" in tmp:
-                tmp = tmp[:-len("_nRS_gamma70")]
-                tmp = "No Reward Shaping"
-            else:
-                tmp = tmp[:-3]
-                tmp = "Reward Shaping"
-            return tmp
-        df['id'] = df['id'].map(transform_label)
+            df['id'] = df['id'].map(transform_label)
+        elif "Gamma" in args.title:
+            def transform_label(label):
+                # TODO ?
+                return label
+                tmp = label.split("_")[-1]
+                assert "gamma" in tmp
+                transformedLabel = "Gamma 0." + tmp[-2]
+                return transformedLabel
+            # df['id'] = df['id'].map(transform_label)
+
+        elif "Reward Shaping" in args.title:
+            def transform_label(label):
+                tmp = label[3:]
+                if "nRS" in tmp:
+                    tmp = tmp[:-len("_nRS_gamma70")]
+                    tmp = "No Reward Shaping"
+                else:
+                    tmp = tmp[:-3]
+                    tmp = "Reward Shaping"
+                return tmp
+
+            df['id'] = df['id'].map(transform_label)
     sns.color_palette("tab10")
     if args.scores == "both":
         yColumns = ["snapshotScore", "bestCurricScore"]
@@ -312,7 +327,7 @@ def plotMultipleLineplots(df, hue="id"):
     if hue != "id":
         legendTitle = hue
 
-    plt.legend(loc="lower right", fontsize=labelFontsize, title=legendTitle)
+    plt.legend(loc=legendLoc, fontsize=labelFontsize, title=legendTitle)
     title = args.title or "Evaluation Performance in all Environments"
     plt.title(title, fontsize=titleFontsize)
     plt.yticks(fontsize=tickFontsize)
@@ -374,6 +389,7 @@ def removeSuffixCharInLegend(ax, columnsToVisualize):
                 break
     for label, text in zip(legend.texts, labels):
         label.set_text(text)
+
 
 def plotNSGAMultivsSingleDistribution(df, ax, columnsToVisualize, title):
     def transform_label(label):
@@ -441,7 +457,7 @@ def showDistrVisualization(df, columnsToVisualize, title="Environment Distributi
     if isSplit:
         showSplitEnvDistribution(df, ax, columnsToVisualize)
     else:
-        group_col = "group" if 'group' in df.columns else 'DataFrame' # TODO ?
+        group_col = "group" if 'group' in df.columns else 'DataFrame'  # TODO ?
         # sort by the numerical values of the string (50k, 75k, ...)
         if args.rhea or args.nsga or args.ga:
             df['sort_col'] = df['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
@@ -719,8 +735,20 @@ def showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf):
         plotAggregatedBarplot(filteredFullDistrDf)
 
 
+def showPPOPlot(filteredScoreDf):
+    if not args.ppoOnly:
+        return
+    df = filteredScoreDf
+    # Define the pattern and transformation
+    pattern = re.compile(r'PPO(\d+)x(\d+)_RS')
+    transformation = r'PPO Trained \1x\2'
+    # Apply the transformation using regular expressions
+    df['id'] = df['id'].str.replace(pattern, transformation)
+    # TODO maybe add RHEA run for comparison
+    plotMultipleLineplots(df, legendLoc="upper right")
+
 def main(comparisons: int):
-    sns.set(font_scale=2)
+    # sns.set(font_scale=2)
     pathList = ["storage", "_evaluate"]
     evalDirBasePath = os.path.join(*pathList)
     statusJson = "status.json"
@@ -744,6 +772,7 @@ def main(comparisons: int):
         plotMultipleLineplots(filteredScoreDf)
 
     showGroupedScorePlots(filteredScoreDf)
+    showPPOPlot(filteredScoreDf)
     showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf)
 
     # TODO DF save as csv
@@ -769,7 +798,7 @@ if __name__ == "__main__":
     parser.add_argument("--normalize", action="store_true", default=False, help="Whether or not to normlaize the env distributions")
 
     parser.add_argument("--iter", default=0, type=int, help="filter for iterations")
-    parser.add_argument("--xIterations", default=1100000, type=int, help="#of iterations to show on the xaxis")
+    parser.add_argument("--xIterations", default=1000000, type=int, help="#of iterations to show on the xaxis")
     parser.add_argument("--steps", action="store_true", default=False, help="filter for #curricSteps")
     parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
     parser.add_argument("--iterGroup", action="store_true", default=False, help="Whether to group by iterationSteps")
@@ -782,11 +811,15 @@ if __name__ == "__main__":
     parser.add_argument("--rrh", action="store_true", default=False, help="Include RRH runs, even if --rhea was speicifed")
     parser.add_argument("--rrhOnly", action="store_true", default=False, help="Only RRH runs")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
+    parser.add_argument("--ppoOnly", action="store_true", default=False, help="Whether to show only ppo runs")
     parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
+    # TODO remove old filter options
     args = parser.parse_args()
-    args.rhea = args.curricLen or args.iterGroup or args.gen or args.curricCount
+    args.rhea = args.rhea or args.curricLen or args.iterGroup or args.gen or args.curricCount
     args.filter = args.comparisons == -1 and (
-            args.crossoverMutation or args.splitDistr or
+            args.crossoverMutation or args.splitDistr or args.ppoOnly or
             args.iter or args.steps or args.rrhOnly or args.rhea or args.nsga or args.ga)
     isDoorKey = "door" in args.env
+    if args.ppoOnly:
+        args.xIterations = 10000000
     main(int(args.comparisons))

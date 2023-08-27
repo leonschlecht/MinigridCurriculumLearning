@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import numpy as np
 from matplotlib import pyplot as plt, cm
 
@@ -5,25 +7,43 @@ from curricula import RollingHorizonEvolutionaryAlgorithm
 from utils.curriculumHelper import *
 
 
-def getTransformedReward(evaluationDictionary):
+def getTransformedReward(evaluationDictionary, isRHEA):
     """
     Helper function that transforms the string of the json containing all the rewards (as strings!) to an actual dict with lists
     :return:
     """
     rawRewardStr = evaluationDictionary["rawRewards"]
     transformedRawReward = {}
-    for epoch in rawRewardStr:
-        transformedRawReward[epoch] = {}
-        for gen in rawRewardStr[epoch]:
-            transformedRawReward[epoch][gen] = {}
-            for curric in rawRewardStr[epoch][gen]:
-                transformedRawReward[epoch][gen][curric] = []
-                s = (rawRewardStr[epoch][gen][curric])[1:-1]
-                tmp = s.split("\n")
-                for curricStep in tmp:
-                    numbers = re.findall(r'[0-9]*\.?[0-9]+', curricStep)
-                    numbers = [float(n) for n in numbers]
-                    transformedRawReward[epoch][gen][curric].append(numbers)
+    if isRHEA:
+        for epoch in rawRewardStr:
+            transformedRawReward[epoch] = {}
+            for gen in rawRewardStr[epoch]:
+                transformedRawReward[epoch][gen] = {}
+                for curric in rawRewardStr[epoch][gen]:
+                    transformedRawReward[epoch][gen][curric] = []
+                    s = (rawRewardStr[epoch][gen][curric])[1:-1]
+                    tmp = s.split("\n")
+                    for curricStep in tmp:
+                        numbers = re.findall(r'[0-9]*\.?[0-9]+', curricStep)
+                        numbers = [float(n) for n in numbers]
+                        transformedRawReward[epoch][gen][curric].append(numbers)
+    else:
+        for epoch in rawRewardStr:
+            return rawRewardStr
+            transformedRawReward[epoch] = {}
+            print("pre",rawRewardStr[epoch])
+            exit()
+            for gen in rawRewardStr[epoch]:
+                transformedRawReward[epoch][gen] = {}
+                for curric in rawRewardStr[epoch][gen]:
+                    transformedRawReward[epoch][gen][curric] = []
+                    s = (rawRewardStr[epoch][gen][curric])[1:-1]
+                    tmp = s.split("\n")
+                    for curricStep in tmp:
+                        numbers = re.findall(r'[0-9]*\.?[0-9]+', curricStep)
+                        numbers = [float(n) for n in numbers]
+                        transformedRawReward[epoch][gen][curric].append(numbers)
+        exit()
     return transformedRawReward
 
 
@@ -66,6 +86,11 @@ class Result:
         numCurric = float(self.loadedArgsDict[numCurricKey])
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
 
+        if "rawRewards" in evaluationDictionary.keys():
+            self.rawReward = getTransformedReward(evaluationDictionary, self.loadedArgsDict[trainEvolutionary])
+            env1, env2, env3, env4 = self.getEnvRewards()
+        else:
+            self.rawReward = None
         if self.loadedArgsDict[trainEvolutionary]:  # TODO move to method
             self.epochDict = self.getEpochDict(self.rewardsDict)
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
@@ -86,8 +111,6 @@ class Result:
 
             assert len(self.formattedSelectedEnvList) == len(self.snapShotScores), \
                 "Something went went wrong with creating the formatted selected env list"
-            if "newLog" in self.modelName:
-                self.rawReward = getTransformedReward(evaluationDictionary)
 
             if not self.canceled:
                 """
@@ -120,8 +143,8 @@ class Result:
             self.snapshotEnvDistribution = {env: 0 for env in usedEnvEnumeration}
 
             for helper in self.fullEnvDict:
-                for tmp in self.fullEnvDict[helper]:
-                    for t in tmp:
+                for bestGenDict in self.fullEnvDict[helper]:
+                    for t in bestGenDict:
                         for env in t:
                             envStrRaw = env.split("-custom")[0]  # TODO this is duplicate in other method
                             self.allCurricDistribution[envStrRaw] += 1
@@ -388,3 +411,94 @@ class Result:
                     row[key] = self.splitDistrBestCurric[i][key]
                 data.append(row)
         return data
+
+    def getEnvRewards(self):
+        snapshots = []
+        curricScore = []
+        helper = ["", ""]
+        winner = []
+        self.gamma = float(self.loadedArgsDict["gamma"])
+        bestGenDict = defaultdict(int)  # counts which generation had the best curricula throughout training
+        env1 = []
+        env2 = []
+        env3 = []
+        env4 = []
+        for epoch in self.rawReward:
+            bestCurricScore = -1
+            for gen in self.rawReward[epoch]:
+                for curric in self.rawReward[epoch][gen]:
+                    rewards = (self.rawReward[epoch][gen][curric])
+                    currentCurricScore = 0
+                    for i in range(len(rewards)):
+                        currentCurricScore += np.sum(rewards[i]) * self.gamma ** i
+                    if currentCurricScore > bestCurricScore:
+                        bestCurricScore = currentCurricScore
+                        helper = [gen, curric, rewards]
+            curricScore.append(bestCurricScore)
+            snapshot = np.sum(helper[2][0])
+            snapshots.append(snapshot)
+            bestGenDict[helper[0]] += 1
+            env1.append(sum(reward[0] for reward in helper[2]) / 3)
+            env2.append(sum(reward[1] for reward in helper[2]) / 3)
+            env3.append(sum(reward[2] for reward in helper[2]) / 3)
+            env4.append(sum(reward[3] for reward in helper[2]) / 3)
+            # TODO hier auch trainevol param
+
+        if self.modelName == "PPO6x6_RS":
+            print("rr", self.rawReward)
+            for reward in self.rawReward:
+                print("reward", reward)
+            exit()
+            import matplotlib.pyplot as plt
+            plt.figure(figsize=(10, 6))
+            plt.plot(self.iterationsList, env1, color='blue', label='env1')
+            plt.plot(self.iterationsList, env2, color='red', label='env2')
+            plt.plot(self.iterationsList, env3, color='green', label='env3')
+            plt.plot(self.iterationsList, env4, color='purple', label='env4')
+            plt.xlabel('Iterations')
+            plt.ylim([0, 1])
+            plt.legend()
+            plt.show()
+        return env1, env2, env3, env4
+        """
+        fig, axs = plt.subplots(2, 2, figsize=(10, 10))
+        plt.ylim((0, 1))
+
+        # Plot for env1
+        axs[0, 0].plot(self.iterationsList, env1)
+        axs[0, 0].set_title('env1')
+
+        # Plot for env2
+        axs[0, 1].plot(self.iterationsList, env2)
+        axs[0, 1].set_title('env2')
+
+        # Plot for env3
+        axs[1, 0].plot(self.iterationsList, env3)
+        axs[1, 0].set_title('env3')
+
+        # Plot for env4
+        axs[1, 1].plot(self.iterationsList, env4)
+        axs[1, 1].set_title('env4')
+
+        # Labeling the x-axis
+        for ax in axs.flat:
+            ax.set(xlabel='Iterations')
+            ax.set_ylim([0, 1])
+
+        # Adding some space between the plots
+        fig.tight_layout()
+
+        # Display the plots
+        plt.show()
+
+        winner.append([helper[0], helper[1]])
+        # print(snapshot, self.snapShotScores[len(snapshots)-1])
+        print(self.modelName, self.seed)
+        print(bestGenDict)
+        print(env1)
+        self.bestGenDict = bestGenDict
+        print(env1)  # TODO normalize ???
+        exit()
+        print("------")
+        """
+
