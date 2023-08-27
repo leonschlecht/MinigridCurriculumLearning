@@ -1,0 +1,464 @@
+------------Cluster Job Start-----------------------
+srun: defined options
+srun: -------------------- --------------------
+srun: (null)              : paris1
+srun: cpus-per-task       : 2
+srun: jobid               : 1149509
+srun: job-name            : dk
+srun: mem                 : 2G
+srun: nodes               : 1
+srun: verbose             : 1
+srun: -------------------- --------------------
+srun: end of defined options
+srun: jobid 1149509: nodes(1):`paris1', cpu counts: 2(x1)
+srun: launch/slurm: launch_p_step_launch: CpuBindType=(null type)
+srun: launching StepId=1149509.0 on host paris1, 1 tasks: 0
+srun: route/default: init: route default plugin loaded
+srun: launch/slurm: _task_start: Node paris1, 1 tasks started
+pygame 2.4.0 (SDL 2.26.4, Python 3.10.9)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Using DoorKey
+Device: cpu
+Creating model. . .
+ACModel(
+  (image_conv): Sequential(
+    (0): Conv2d(3, 16, kernel_size=(2, 2), stride=(1, 1))
+    (1): ReLU()
+    (2): MaxPool2d(kernel_size=(2, 2), stride=(2, 2), padding=0, dilation=1, ceil_mode=False)
+    (3): Conv2d(16, 64, kernel_size=(2, 2), stride=(1, 1))
+    (4): ReLU()
+  )
+  (actor): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=7, bias=True)
+  )
+  (critic): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+Created model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_0
+
+The training will go on for 34 epochs, seed: 8515
+
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen1 for 150528 frames. Duration 150.651597738266. Fps: 999.1795789747897. totalF 150528
+Evaluate agent [0.21566176326835856, 0.025166666507720946, 0.09554687514901161, 0.0] duration: 77.952073097229
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen1 for 150528 frames. Duration 150.1973271369934. Fps: 1002.201589530984. totalF 301056
+Evaluate agent [0.9846249938011169, 0.9696666638056437, 0.9539999961853027, 0.9334583242734273] duration: 8.342174291610718
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen1 for 150528 frames. Duration 149.86947441101074. Fps: 1004.3939941177299. totalF 451584
+Evaluate agent [0.984375003973643, 0.962333333492279, 0.9368333339691162, 0.8648749907811483] duration: 11.431532859802246
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen1 for 150528 frames. Duration 149.95211911201477. Fps: 1003.8404318084698. totalF 150528
+Evaluate agent [0.5294166664282481, 0.13562499980131784, 0.03333333333333333, 0.0] duration: 78.32426500320435
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen1 for 150528 frames. Duration 149.34670042991638. Fps: 1007.9097801738042. totalF 301056
+Evaluate agent [0.2783823547994389, 0.0878333330154419, 0.022250000635782877, 0.0] duration: 78.87938618659973
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen1 for 150528 frames. Duration 148.9269630908966. Fps: 1010.7504838336508. totalF 451584
+Evaluate agent [0.9850416700045268, 0.9721666614214579, 0.9414062462747097, 0.8555833260218303] duration: 11.051716804504395
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen1 for 150528 frames. Duration 148.41376280784607. Fps: 1014.2455601970773. totalF 150528
+Evaluate agent [0.9757499972979228, 0.9432916641235352, 0.9188750068346659, 0.7054166674613953] duration: 22.298532247543335
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen1 for 150528 frames. Duration 151.1815013885498. Fps: 995.6773720161024. totalF 301056
+Evaluate agent [0.9837109372019768, 0.9773749947547913, 0.9605416615804037, 0.9347500046094258] duration: 6.12201189994812
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen1 for 150528 frames. Duration 149.74848461151123. Fps: 1005.2054976750586. totalF 451584
+Evaluate agent [0.9844921864569187, 0.9771249969800313, 0.9649583379427592, 0.9480416615804036] duration: 5.606692790985107
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen2 for 150528 frames. Duration 151.42136216163635. Fps: 994.1001576733755. totalF 150528
+Evaluate agent [0.21566176326835856, 0.025166666507720946, 0.09554687514901161, 0.0] duration: 79.20612740516663
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen2 for 150528 frames. Duration 149.39826464653015. Fps: 1007.56190412347. totalF 301056
+Evaluate agent [0.9846249938011169, 0.9696666638056437, 0.9539999961853027, 0.9334583242734273] duration: 8.218103647232056
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen2 for 150528 frames. Duration 150.27143096923828. Fps: 1001.7073706499424. totalF 451584
+Evaluate agent [0.9856250007947286, 0.9743333379427592, 0.9650416652361552, 0.9510416666666667] duration: 5.893777847290039
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen2 for 150528 frames. Duration 148.92777180671692. Fps: 1010.7449952004916. totalF 150528
+Evaluate agent [0.9757499972979228, 0.9432916641235352, 0.9188750068346659, 0.7054166674613953] duration: 22.373112201690674
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen2 for 150528 frames. Duration 151.26130437850952. Fps: 995.1520689212455. totalF 301056
+Evaluate agent [0.9837109372019768, 0.9773749947547913, 0.9605416615804037, 0.9347500046094258] duration: 6.1146080493927
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen2 for 150528 frames. Duration 149.03887057304382. Fps: 1009.9915506688328. totalF 451584
+Evaluate agent [0.9840416669845581, 0.9767499963442484, 0.9678333361943563, 0.9517916719118754] duration: 5.571723222732544
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen2 for 150528 frames. Duration 151.1217885017395. Fps: 996.0707949023997. totalF 150528
+Evaluate agent [0.21566176326835856, 0.025166666507720946, 0.09554687514901161, 0.0] duration: 78.84273743629456
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen2 for 150528 frames. Duration 150.6622257232666. Fps: 999.1090950460725. totalF 301056
+Evaluate agent [0.9846249938011169, 0.9696666638056437, 0.9539999961853027, 0.9334583242734273] duration: 8.434352159500122
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen2 for 150528 frames. Duration 150.66689682006836. Fps: 999.0781198591072. totalF 451584
+Evaluate agent [0.9834583361943563, 0.9759166638056437, 0.9536666631698608, 0.9294583320617675] duration: 7.296536207199097
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen3 for 150528 frames. Duration 150.2783031463623. Fps: 1001.661562903026. totalF 150528
+Evaluate agent [0.5294166664282481, 0.13562499980131784, 0.03333333333333333, 0.0] duration: 78.32478380203247
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen3 for 150528 frames. Duration 150.5325882434845. Fps: 999.9695199322749. totalF 301056
+Evaluate agent [0.2619485311648425, 0.16332031041383743, 0.07674999634424845, 0.0] duration: 78.98988914489746
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric0_gen3 for 150528 frames. Duration 149.92329168319702. Fps: 1004.0334514404925. totalF 451584
+Evaluate agent [0.9828333298365275, 0.9710833311080933, 0.9600416739781698, 0.9391666769981384] duration: 7.119563102722168
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen3 for 150528 frames. Duration 148.6054584980011. Fps: 1012.9372199475753. totalF 150528
+Evaluate agent [0.9757499972979228, 0.9432916641235352, 0.9188750068346659, 0.7054166674613953] duration: 22.284167289733887
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen3 for 150528 frames. Duration 151.2429859638214. Fps: 995.2726008464787. totalF 301056
+Evaluate agent [0.9824218824505806, 0.9757500012715657, 0.9578749934832255, 0.9430416703224183] duration: 6.968367099761963
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric1_gen3 for 150528 frames. Duration 150.0208864212036. Fps: 1003.3802865113902. totalF 451584
+Evaluate agent [0.9847499966621399, 0.9790808874018052, 0.9669583320617676, 0.953291658560435] duration: 5.604098081588745
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen3 for 150528 frames. Duration 150.12926650047302. Fps: 1002.6559345077844. totalF 150528
+Evaluate agent [0.9757499972979228, 0.9432916641235352, 0.9188750068346659, 0.7054166674613953] duration: 22.091563940048218
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen3 for 150528 frames. Duration 150.32105135917664. Fps: 1001.3767109726294. totalF 301056
+Evaluate agent [0.9799166719118754, 0.9765416741371155, 0.9670416673024496, 0.9418333331743877] duration: 5.478956937789917
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_1_curric2_gen3 for 150528 frames. Duration 149.94905591011047. Fps: 1003.8609385459324. totalF 451584
+Evaluate agent [0.9829999963442485, 0.9790833314259847, 0.9669999957084656, 0.9491250038146972] duration: 5.767073154449463
+Best results in epoch 1 came from curriculum [['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'], ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'], ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0']]
+Raw Reward of best curriculum: 10.163482092698416.             Snapshot Reward 3.543333335717519. That is 0.886 of maxReward
+
+EPOCH: 1 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen1 for 150528 frames. Duration 150.93868470191956. Fps: 997.2791289209218. totalF 301055
+Evaluate agent [0.7930416623751323, 0.1678125038743019, 0.14800000190734863, 0.03258333404858907] duration: 66.42815399169922
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen1 for 150528 frames. Duration 147.03094696998596. Fps: 1023.7844692024456. totalF 451583
+Evaluate agent [0.9849166591962178, 0.9747499942779541, 0.965750002861023, 0.9379166642824809] duration: 6.29178524017334
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen1 for 150528 frames. Duration 150.06093668937683. Fps: 1003.1124909715177. totalF 602111
+Evaluate agent [0.3701838228632422, 0.0318750003973643, 0.042333332697550456, 0.0] duration: 76.95315051078796
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen1 for 150528 frames. Duration 149.53373003005981. Fps: 1006.6491350796928. totalF 301055
+Evaluate agent [0.9833333373069764, 0.9321666558583578, 0.7321666667858759, 0.2855208358830876] duration: 42.538846015930176
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen1 for 150528 frames. Duration 149.48006987571716. Fps: 1007.0105006316502. totalF 451583
+Evaluate agent [0.8212499976158142, 0.3791118413209915, 0.07625000178813934, 0.05187499970197677] duration: 65.90397477149963
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen1 for 150528 frames. Duration 148.35718750953674. Fps: 1014.6323378523451. totalF 602111
+Evaluate agent [0.9867500027020772, 0.9745000084241231, 0.9617187529802322, 0.9347499966621399] duration: 6.984472274780273
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen1 for 150528 frames. Duration 149.60136556625366. Fps: 1006.1940238997081. totalF 301055
+Evaluate agent [0.7930416623751323, 0.1678125038743019, 0.14800000190734863, 0.03258333404858907] duration: 66.4528226852417
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen1 for 150528 frames. Duration 148.67092657089233. Fps: 1012.4911673851857. totalF 451583
+Evaluate agent [0.6850000003973643, 0.08519531041383743, 0.0, 0.0] duration: 73.56817269325256
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen1 for 150528 frames. Duration 148.88828921318054. Fps: 1011.0130272534175. totalF 602111
+Evaluate agent [0.32333333210812676, 0.12222656421363354, 0.07195833325386047, 0.0] duration: 76.62966847419739
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen2 for 150528 frames. Duration 149.74171686172485. Fps: 1005.2509290981432. totalF 301055
+Evaluate agent [0.7930416623751323, 0.1678125038743019, 0.14800000190734863, 0.03258333404858907] duration: 66.28071022033691
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen2 for 150528 frames. Duration 147.24547338485718. Fps: 1022.2928864275729. totalF 451583
+Evaluate agent [0.9833750009536744, 0.9556666612625122, 0.9132500012715657, 0.8157083431879679] duration: 16.909299612045288
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen2 for 150528 frames. Duration 149.05433559417725. Fps: 1009.8867597507195. totalF 602111
+Evaluate agent [0.8088333368301391, 0.19437500238418579, 0.0, 0.07019531354308128] duration: 66.71135377883911
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen2 for 150528 frames. Duration 148.70717978477478. Fps: 1012.2443329088784. totalF 301055
+Evaluate agent [0.9833333373069764, 0.9321666558583578, 0.7321666667858759, 0.2855208358830876] duration: 42.70719027519226
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen2 for 150528 frames. Duration 149.47243070602417. Fps: 1007.0619664709399. totalF 451583
+Evaluate agent [0.9855833331743876, 0.9753333369890849, 0.9635833342870076, 0.937499996026357] duration: 5.868323087692261
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen2 for 150528 frames. Duration 147.6611680984497. Fps: 1019.4149344642791. totalF 602111
+Evaluate agent [0.9862916787465413, 0.9745220612077152, 0.9608749945958456, 0.9293750047683715] duration: 6.145637512207031
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen2 for 150528 frames. Duration 150.70535492897034. Fps: 998.8231677032716. totalF 301055
+Evaluate agent [0.7239583293596904, 0.31525735206463756, 0.025833332538604738, 0.0] duration: 68.83113718032837
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen2 for 150528 frames. Duration 150.2809236049652. Fps: 1001.6440968627812. totalF 451583
+Evaluate agent [0.9822656251490116, 0.9295416673024496, 0.7437083284060161, 0.13300000031789144] duration: 40.4923255443573
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen2 for 150528 frames. Duration 151.00843596458435. Fps: 996.8184826131368. totalF 602111
+Evaluate agent [0.6304583350817362, 0.0847916692495346, 0.0, 0.0] duration: 74.05280041694641
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen3 for 150528 frames. Duration 149.40648984909058. Fps: 1007.5064353097528. totalF 301055
+Evaluate agent [0.9833333373069764, 0.9321666558583578, 0.7321666667858759, 0.2855208358830876] duration: 42.641422748565674
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen3 for 150528 frames. Duration 150.78483510017395. Fps: 998.2966781771966. totalF 451583
+Evaluate agent [0.8212499976158142, 0.3791118413209915, 0.07625000178813934, 0.05187499970197677] duration: 65.90335273742676
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric0_gen3 for 150528 frames. Duration 148.91728925704956. Fps: 1010.8161433167787. totalF 602111
+Evaluate agent [0.9834166606267293, 0.9463750084241231, 0.8930833379427592, 0.5380000025033951] duration: 30.93323826789856
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen3 for 150528 frames. Duration 149.11312294006348. Fps: 1009.4886153011847. totalF 301055
+Evaluate agent [0.9817083358764649, 0.962583327293396, 0.8501666744550069, 0.7126249969005585] duration: 31.7039315700531
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen3 for 150528 frames. Duration 150.99528050422668. Fps: 996.9053304006173. totalF 451583
+Evaluate agent [0.9864583333333333, 0.9771249969800313, 0.968916674455007, 0.9301250020662943] duration: 5.772364377975464
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric1_gen3 for 150528 frames. Duration 149.70984530448914. Fps: 1005.4649358153223. totalF 602111
+Evaluate agent [0.9848750034968058, 0.9695416649182638, 0.9522916674613953, 0.9401249965031941] duration: 7.282275915145874
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen3 for 150528 frames. Duration 150.59810638427734. Fps: 999.534480306821. totalF 301055
+Evaluate agent [0.9833333373069764, 0.9321666558583578, 0.7321666667858759, 0.2855208358830876] duration: 42.76711297035217
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen3 for 150528 frames. Duration 151.0089681148529. Fps: 996.8149698600212. totalF 451583
+Evaluate agent [0.7441249966621399, 0.18867187201976776, 0.039374999205271405, 0.0] duration: 68.74833488464355
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_2_curric2_gen3 for 150528 frames. Duration 149.73987340927124. Fps: 1005.263304775039. totalF 602111
+Evaluate agent [0.9858333388964335, 0.977999993165334, 0.9587500055631002, 0.9489583333333333] duration: 5.464416980743408
+Best results in epoch 2 came from curriculum [['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'], ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'], ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0']]
+Raw Reward of best curriculum: 10.09938083990415.             Snapshot Reward 3.5070833345254266. That is 0.877 of maxReward
+
+EPOCH: 2 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen1 for 150528 frames. Duration 149.22307133674622. Fps: 1008.7448184222733. totalF 451582
+Evaluate agent [0.9839062504470348, 0.9744583249092102, 0.9646666646003723, 0.9099166671435038] duration: 7.244926452636719
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen1 for 150528 frames. Duration 151.14988923072815. Fps: 995.8856123951315. totalF 602110
+Evaluate agent [0.98412500222524, 0.9732499996821086, 0.9623437523841858, 0.9274583379427592] duration: 6.701809406280518
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen1 for 150528 frames. Duration 151.40478086471558. Fps: 994.2090278807048. totalF 752638
+Evaluate agent [0.9832812510430813, 0.9763281270861626, 0.9571666757265727, 0.9433750073115031] duration: 5.812884330749512
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen1 for 150528 frames. Duration 147.3309257030487. Fps: 1021.699953907811. totalF 451582
+Evaluate agent [0.9851249972979228, 0.9505416631698609, 0.9049583355585734, 0.7489583333333333] duration: 18.274640560150146
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen1 for 150528 frames. Duration 150.3299422264099. Fps: 1001.3174871928827. totalF 602110
+Evaluate agent [0.9854583342870077, 0.9798333366711934, 0.9668333371480305, 0.9421249945958455] duration: 5.810248851776123
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen1 for 150528 frames. Duration 150.21135783195496. Fps: 1002.107977536554. totalF 752638
+Evaluate agent [0.9849583268165588, 0.9696249961853027, 0.9516666650772094, 0.9290833353996277] duration: 7.829609155654907
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen1 for 150528 frames. Duration 149.82824087142944. Fps: 1004.6704087593943. totalF 451582
+Evaluate agent [0.9831249952316284, 0.9773828014731407, 0.9695000131924947, 0.943791667620341] duration: 6.193197011947632
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen1 for 150528 frames. Duration 149.01513361930847. Fps: 1010.1524344806245. totalF 602110
+Evaluate agent [0.9860416650772095, 0.9340833346048991, 0.44055920682455363, 0.14037499825159708] duration: 43.561676025390625
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen1 for 150528 frames. Duration 149.9474959373474. Fps: 1003.871382172965. totalF 752638
+Evaluate agent [0.8037083347638448, 0.2877941236776464, 0.08237500190734863, 0.0] duration: 66.96041297912598
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen2 for 150528 frames. Duration 147.71406316757202. Fps: 1019.0498912025441. totalF 451582
+Evaluate agent [0.9851249972979228, 0.9505416631698609, 0.9049583355585734, 0.7489583333333333] duration: 18.220728397369385
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen2 for 150528 frames. Duration 147.71407461166382. Fps: 1019.0498122520411. totalF 602110
+Evaluate agent [0.9831666628519694, 0.978291662534078, 0.965791666507721, 0.9337500015894572] duration: 6.263808727264404
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-12x12-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen2 for 150528 frames. Duration 150.6748456954956. Fps: 999.0254133341383. totalF 752638
+Evaluate agent [0.9856666644414266, 0.9731666644414266, 0.952833334604899, 0.9117916663487752] duration: 7.943612337112427
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen2 for 150528 frames. Duration 149.56782722473145. Fps: 1006.4196478152073. totalF 451582
+Evaluate agent [0.9839062504470348, 0.9744583249092102, 0.9646666646003723, 0.9099166671435038] duration: 7.209723472595215
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen2 for 150528 frames. Duration 151.5459427833557. Fps: 993.28294268616. totalF 602110
+Evaluate agent [0.98412500222524, 0.9732499996821086, 0.9623437523841858, 0.9274583379427592] duration: 6.693187713623047
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen2 for 150528 frames. Duration 150.76321697235107. Fps: 998.4398251969232. totalF 752638
+Evaluate agent [0.9845416665077209, 0.9780078046023846, 0.9699166655540467, 0.9606666684150695] duration: 5.349038600921631
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen2 for 150528 frames. Duration 149.6142933368683. Fps: 1006.1070813673826. totalF 451582
+Evaluate agent [0.9830833315849304, 0.975208334128062, 0.9492499987284343, 0.9262500047683716] duration: 7.644656419754028
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen2 for 150528 frames. Duration 150.78701066970825. Fps: 998.2822746564318. totalF 602110
+Evaluate agent [0.984416667620341, 0.9787083347638448, 0.9634166638056437, 0.9482499957084656] duration: 5.854491949081421
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen2 for 150528 frames. Duration 149.75161004066467. Fps: 1005.184518277463. totalF 752638
+Evaluate agent [0.9849583347638448, 0.974791657924652, 0.968625009059906, 0.9400416612625122] duration: 5.833031177520752
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen3 for 150528 frames. Duration 148.15176439285278. Fps: 1016.0391988369856. totalF 451582
+Evaluate agent [0.9830833315849304, 0.975208334128062, 0.9492499987284343, 0.9262500047683716] duration: 7.64908242225647
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen3 for 150528 frames. Duration 150.1034598350525. Fps: 1002.8283169849252. totalF 602110
+Evaluate agent [0.9836666663487752, 0.9769166628519694, 0.965624996026357, 0.9351250052452087] duration: 6.03764271736145
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric0_gen3 for 150528 frames. Duration 149.14671850204468. Fps: 1009.2612262061695. totalF 752638
+Evaluate agent [0.9831250029451707, 0.9704166611035665, 0.955000001937151, 0.9495000004768371] duration: 6.178670883178711
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-6x6-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen3 for 150528 frames. Duration 149.03816294670105. Fps: 1009.9963460622615. totalF 451582
+Evaluate agent [0.9830833315849304, 0.975208334128062, 0.9492499987284343, 0.9262500047683716] duration: 7.604022979736328
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen3 for 150528 frames. Duration 150.0777997970581. Fps: 1002.9997788050642. totalF 602110
+Evaluate agent [0.984416667620341, 0.9787083347638448, 0.9634166638056437, 0.9482499957084656] duration: 5.893047571182251
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric1_gen3 for 150528 frames. Duration 147.3808789253235. Fps: 1021.3536592916583. totalF 752638
+Evaluate agent [0.9839999993642171, 0.9777500033378601, 0.9678333361943563, 0.9504166682561238] duration: 5.254866123199463
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen3 for 150528 frames. Duration 150.23675084114075. Fps: 1001.938601289156. totalF 451582
+Evaluate agent [0.9831249952316284, 0.9773828014731407, 0.9695000131924947, 0.943791667620341] duration: 6.312035322189331
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen3 for 150528 frames. Duration 149.52475953102112. Fps: 1006.7095273861366. totalF 602110
+Evaluate agent [0.9814062491059303, 0.9729999979337056, 0.962458336353302, 0.9574583331743877] duration: 5.570178985595703
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_3_curric2_gen3 for 150528 frames. Duration 150.66146731376648. Fps: 999.1141244264631. totalF 752638
+Evaluate agent [0.9801171869039536, 0.9747083306312561, 0.9615000049273174, 0.9403333385785421] duration: 6.260215997695923
+Best results in epoch 3 came from curriculum [['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'], ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'], ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0']]
+Raw Reward of best curriculum: 10.484583779871464.             Snapshot Reward 3.8737994775176046. That is 0.968 of maxReward
+
+EPOCH: 3 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen1 for 150528 frames. Duration 151.3911828994751. Fps: 994.2983277959572. totalF 602109
+Evaluate agent [0.9805833379427592, 0.9755416591962178, 0.9597499966621399, 0.9422083298365275] duration: 6.588145732879639
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen1 for 150528 frames. Duration 151.41991114616394. Fps: 994.1096838624942. totalF 752637
+Evaluate agent [0.9850833296775818, 0.9770312383770943, 0.968750003973643, 0.9440000017484029] duration: 5.9092230796813965
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen1 for 150528 frames. Duration 150.41902947425842. Fps: 1000.724446408958. totalF 903165
+Evaluate agent [0.9828125089406967, 0.9786249915758769, 0.9666666587193807, 0.9524999936421712] duration: 5.010666608810425
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen1 for 150528 frames. Duration 151.34747433662415. Fps: 994.5854772918015. totalF 602109
+Evaluate agent [0.9814062491059303, 0.9729999979337056, 0.962458336353302, 0.9574583331743877] duration: 5.543525218963623
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen1 for 150528 frames. Duration 150.24915862083435. Fps: 1001.8558598379199. totalF 752637
+Evaluate agent [0.9822916706403096, 0.9764583309491476, 0.9695416688919067, 0.95] duration: 5.482585430145264
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen1 for 150528 frames. Duration 151.6376609802246. Fps: 992.682154465774. totalF 903165
+Evaluate agent [0.980546873062849, 0.9729999979337056, 0.9547500014305115, 0.9466666738192241] duration: 6.731608867645264
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen1 for 150528 frames. Duration 150.28800320625305. Fps: 1001.5969125188095. totalF 602109
+Evaluate agent [0.9835416754086812, 0.9742916623751322, 0.965750002861023, 0.9453333377838135] duration: 6.12885046005249
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen1 for 150528 frames. Duration 151.6713593006134. Fps: 992.4616004901277. totalF 752637
+Evaluate agent [0.9713333408037822, 0.9668750047683716, 0.9427916725476583, 0.8914999961853027] duration: 9.035499572753906
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen1 for 150528 frames. Duration 149.88354659080505. Fps: 1004.2996941549186. totalF 903165
+Evaluate agent [0.9844583352406819, 0.9764062501490116, 0.9666796922683716, 0.9490416646003723] duration: 6.048482179641724
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen2 for 150528 frames. Duration 151.3374466896057. Fps: 994.6513787082328. totalF 602109
+Evaluate agent [0.9814062491059303, 0.9729999979337056, 0.962458336353302, 0.9574583331743877] duration: 5.635004043579102
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen2 for 150528 frames. Duration 150.78315615653992. Fps: 998.3077940332074. totalF 752637
+Evaluate agent [0.9857499957084656, 0.9753749926884969, 0.965624996026357, 0.946875] duration: 5.602273225784302
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen2 for 150528 frames. Duration 152.46843886375427. Fps: 987.273176808164. totalF 903165
+Evaluate agent [0.9823749979337056, 0.9730833371480306, 0.9678749998410543, 0.9568749984105428] duration: 5.139341115951538
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen2 for 150528 frames. Duration 152.16716480255127. Fps: 989.2278678867533. totalF 602109
+Evaluate agent [0.9805833379427592, 0.9755416591962178, 0.9597499966621399, 0.9422083298365275] duration: 6.947746276855469
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen2 for 150528 frames. Duration 150.72652745246887. Fps: 998.6828632237183. totalF 752637
+Evaluate agent [0.9850833296775818, 0.9770312383770943, 0.968750003973643, 0.9440000017484029] duration: 5.792195796966553
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen2 for 150528 frames. Duration 148.71710538864136. Fps: 1012.1767741957204. totalF 903165
+Evaluate agent [0.9850781224668026, 0.9773749907811483, 0.9660416762034099, 0.9492968693375587] duration: 5.156541347503662
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen2 for 150528 frames. Duration 151.07415795326233. Fps: 996.3848353638926. totalF 602109
+Evaluate agent [0.9805833379427592, 0.9755416591962178, 0.9597499966621399, 0.9422083298365275] duration: 6.6651082038879395
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen2 for 150528 frames. Duration 150.64945197105408. Fps: 999.1938107343569. totalF 752637
+Evaluate agent [0.9796093739569187, 0.9769999941190084, 0.9629166722297668, 0.9320416649182638] duration: 6.866165399551392
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen2 for 150528 frames. Duration 150.81751680374146. Fps: 998.0803502810737. totalF 903165
+Evaluate agent [0.9816666722297669, 0.9734583338101704, 0.962541667620341, 0.9346666693687439] duration: 6.720080375671387
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen3 for 150528 frames. Duration 153.18151092529297. Fps: 982.6773420025404. totalF 602109
+Evaluate agent [0.9805833379427592, 0.9755416591962178, 0.9597499966621399, 0.9422083298365275] duration: 6.651943683624268
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen3 for 150528 frames. Duration 150.17538261413574. Fps: 1002.348037206406. totalF 752637
+Evaluate agent [0.9796093739569187, 0.9769999941190084, 0.9629166722297668, 0.9320416649182638] duration: 6.817997694015503
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric0_gen3 for 150528 frames. Duration 149.90566444396973. Fps: 1004.1515146097958. totalF 903165
+Evaluate agent [0.9816666722297669, 0.9734583338101704, 0.962541667620341, 0.9346666693687439] duration: 6.728754043579102
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen3 for 150528 frames. Duration 151.28715777397156. Fps: 994.9820078244462. totalF 602109
+Evaluate agent [0.9814062491059303, 0.9729999979337056, 0.962458336353302, 0.9574583331743877] duration: 5.537735462188721
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen3 for 150528 frames. Duration 150.10557198524475. Fps: 1002.8142060895433. totalF 752637
+Evaluate agent [0.9800000078976154, 0.9770703203976154, 0.9641249974568685, 0.9460416674613953] duration: 5.732086658477783
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-10x10-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric1_gen3 for 150528 frames. Duration 151.6070041656494. Fps: 992.882887096229. totalF 903165
+Evaluate agent [0.9819166660308838, 0.972083330154419, 0.9495416680971781, 0.9255833347638448] duration: 7.6648945808410645
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen3 for 150528 frames. Duration 151.0586977005005. Fps: 996.4868113615497. totalF 602109
+Evaluate agent [0.9814062491059303, 0.9729999979337056, 0.962458336353302, 0.9574583331743877] duration: 5.564187288284302
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen3 for 150528 frames. Duration 151.20231938362122. Fps: 995.5402841281133. totalF 752637
+Evaluate agent [0.9857499957084656, 0.9753749926884969, 0.965624996026357, 0.946875] duration: 5.6992027759552
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_4_curric2_gen3 for 150528 frames. Duration 151.89183735847473. Fps: 991.0209963735182. totalF 903165
+Evaluate agent [0.9866666674613953, 0.9761250058809916, 0.9695416688919067, 0.9509166677792867] duration: 5.460869312286377
+Best results in epoch 4 came from curriculum [['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'], ['MiniGrid-DoorKey-10x10-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0'], ['MiniGrid-DoorKey-12x12-custom-diff1.0', 'MiniGrid-DoorKey-8x8-custom-diff1.0']]
+Raw Reward of best curriculum: 10.506017910659313.             Snapshot Reward 3.8743229165673254. That is 0.969 of maxReward
+
+EPOCH: 4 SUCCESS (total: 34)
+ 
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen1 for 150528 frames. Duration 151.7677125930786. Fps: 991.8315129621637. totalF 752636
+Evaluate agent [0.9788287043571472, 0.9714494864145915, 0.9594582637151082, 0.9391215205192566] duration: 5.939017295837402
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen1 for 150528 frames. Duration 150.41106963157654. Fps: 1000.777405337984. totalF 903164
+Evaluate agent [0.983748177687327, 0.9733821312586467, 0.9638067324956258, 0.9501464128494262] duration: 5.5303053855896
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen1 for 150528 frames. Duration 150.81296515464783. Fps: 998.1104730992085. totalF 1053692
+Evaluate agent [0.9814202070236206, 0.9705572836101055, 0.9439970664680004, 0.9425915042559306] duration: 6.87608003616333
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen1 for 150528 frames. Duration 149.5410783290863. Fps: 1006.599669347989. totalF 752636
+Evaluate agent [0.9825182994206746, 0.9730746746063232, 0.9630161007245381, 0.937979503472646] duration: 6.155901908874512
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-12x12-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen1 for 150528 frames. Duration 152.51719450950623. Fps: 986.9575721222551. totalF 903164
+Evaluate agent [0.9783016085624695, 0.9764869995415211, 0.9621376236279805, 0.9526500741640727] duration: 5.582513809204102
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen1 for 150528 frames. Duration 150.99039721488953. Fps: 996.9375720349193. totalF 1053692
+Evaluate agent [0.9832403063774109, 0.9734699924786886, 0.9698160663247108, 0.953509334474802] duration: 4.594611644744873
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric2_gen1 for 150528 frames. Duration 149.58191299438477. Fps: 1006.3248756930308. totalF 752636
+Evaluate agent [0.9837920983632406, 0.975885804494222, 0.9604245980580648, 0.9416691064834595] duration: 6.1448445320129395
+
+Trained on ['MiniGrid-DoorKey-6x6-custom-diff0.948946', 'MiniGrid-DoorKey-6x6-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric2_gen1 for 150528 frames. Duration 149.4458131790161. Fps: 1007.2413324800714. totalF 903164
+Evaluate agent [0.9843191782633464, 0.9678916533788046, 0.9593704303105672, 0.9096046884854635] duration: 8.337971925735474
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.948946', 'MiniGrid-DoorKey-12x12-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric2_gen1 for 150528 frames. Duration 151.30309295654297. Fps: 994.8772167085468. totalF 1053692
+Evaluate agent [0.9832403063774109, 0.972204428166151, 0.9606442093849182, 0.9443484663963317] duration: 6.021023750305176
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen2 for 150528 frames. Duration 151.46056175231934. Fps: 993.8428740687999. totalF 752636
+Evaluate agent [0.9825182994206746, 0.9730746746063232, 0.9630161007245381, 0.937979503472646] duration: 6.073027610778809
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen2 for 150528 frames. Duration 151.21143460273743. Fps: 995.4802716836002. totalF 903164
+Evaluate agent [0.9813323656717936, 0.9733382185300191, 0.9636749625205994, 0.9414055665334066] duration: 6.014376878738403
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen2 for 150528 frames. Duration 150.5677206516266. Fps: 999.7361941095031. totalF 1053692
+Evaluate agent [0.9839403331279755, 0.9766325036684672, 0.9636749625205994, 0.9523426055908203] duration: 5.294420957565308
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen2 for 150528 frames. Duration 149.05085515975952. Fps: 1009.910341263438. totalF 752636
+Evaluate agent [0.9825182994206746, 0.9730746746063232, 0.9630161007245381, 0.937979503472646] duration: 6.023701190948486
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-12x12-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen2 for 150528 frames. Duration 150.62159490585327. Fps: 999.3786089842445. totalF 903164
+Evaluate agent [0.9783016085624695, 0.9764869995415211, 0.9621376236279805, 0.9526500741640727] duration: 5.627626180648804
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-6x6-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen2 for 150528 frames. Duration 149.67676949501038. Fps: 1005.6871250486068. totalF 1053692
+Evaluate agent [0.98528550863266, 0.9776427547136942, 0.9675841848055522, 0.9526061495145162] duration: 4.645469903945923
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric2_gen2 for 150528 frames. Duration 151.60718655586243. Fps: 992.8816926137945. totalF 752636
+Evaluate agent [0.980541729927063, 0.9730307459831238, 0.959897510210673, 0.9477745334307353] duration: 6.7892773151397705
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric2_gen2 for 150528 frames. Duration 150.5643572807312. Fps: 999.7585266434379. totalF 903164
+Evaluate agent [0.9829859558273765, 0.9734260638554891, 0.9708784778912862, 0.9535285433133444] duration: 5.540109634399414
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric2_gen2 for 150528 frames. Duration 151.62184381484985. Fps: 992.785710902015. totalF 1053692
+Evaluate agent [0.9826061526934305, 0.9760614951451619, 0.9675402601559957, 0.9549341162045797] duration: 5.464560031890869
+
+Trained on ['MiniGrid-DoorKey-12x12-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen3 for 150528 frames. Duration 151.45903706550598. Fps: 993.8528787483093. totalF 752636
+Evaluate agent [0.9826226197183132, 0.9759928621351719, 0.963455339272817, 0.9561639825503031] duration: 5.001264333724976
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen3 for 150528 frames. Duration 150.7601284980774. Fps: 998.4602792502903. totalF 903164
+Evaluate agent [0.9826226234436035, 0.9730307459831238, 0.9670571009318034, 0.9511566638946534] duration: 5.345845460891724
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric0_gen3 for 150528 frames. Duration 150.64288306236267. Fps: 999.2373814147256. totalF 1053692
+Evaluate agent [0.9825622240702311, 0.9766764203707378, 0.969121519724528, 0.9602488994598388] duration: 4.7552125453948975
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-10x10-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen3 for 150528 frames. Duration 150.41055965423584. Fps: 1000.7807985425633. totalF 752636
+Evaluate agent [0.9788287043571472, 0.9714494864145915, 0.9594582637151082, 0.9391215205192566] duration: 5.9647533893585205
+
+Trained on ['MiniGrid-DoorKey-8x8-custom-diff0.948946', 'MiniGrid-DoorKey-12x12-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen3 for 150528 frames. Duration 150.60480427742004. Fps: 999.4900277066954. totalF 903164
+Evaluate agent [0.9829136212666829, 0.971405561765035, 0.9602488994598388, 0.9410541733105977] duration: 5.312303066253662
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric1_gen3 for 150528 frames. Duration 150.04088616371155. Fps: 1003.246540651306. totalF 1053692
+Evaluate agent [0.9818814024329185, 0.9750073154767355, 0.9670131762822469, 0.9499267856280009] duration: 5.331135034561157
+
+Trained on ['MiniGrid-DoorKey-10x10-custom-diff0.948946', 'MiniGrid-DoorKey-8x8-custom-diff0.948946'] using model 5_multiSingle_150k_3step_3gen_3curric_Door_noRS_s8515/epoch_5_curric2_gen3 for 150528 frames. Duration 148.53316235542297. Fps: 1013.430250948294. totalF 752636
+Evaluate agent [0.9825182994206746, 0.9730746746063232, 0.9630161007245381, 0.937979503472646] duration: 5.976578950881958
