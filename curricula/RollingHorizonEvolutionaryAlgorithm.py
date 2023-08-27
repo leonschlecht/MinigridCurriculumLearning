@@ -79,7 +79,7 @@ class RollingHorizonEvolutionaryAlgorithm(RollingHorizon):
         res = minimize(curricProblem,
                        algorithm,
                        termination=('n_gen', self.nGen),
-                       seed=self.seed,
+                       seed=self.seed+epoch,
                        save_history=True,
                        verbose=False)
         self.resX = res.X

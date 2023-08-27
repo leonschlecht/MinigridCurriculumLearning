@@ -8,7 +8,7 @@
 #SBATCH --mem=2G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
-srun -c 2 -v python3 trainCurriculum.py --procs 24 --noRewardShaping --stepsPerCurric 1 --nGen 5 --numCurric 3 --iterPerEnv 100000 --model 4_100k_1step_5gen_3curric --crossoverProb 0.6 --mutationProb 0.6 --seed 8515
+srun -c 2 -v python3 trainCurriculum.py --procs 24 --stepsPerCurric 2 --nGen 4 --numCurric 3 --iterPerEnv 100000 --model 5_100k_2step_4gen_3curric --crossoverProb 0.6 --mutationProb 0.6 --noRewardShaping --seed 8515
 echo "---------- Cluster Job End ---------------------"
 
 
