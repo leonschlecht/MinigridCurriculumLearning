@@ -10,12 +10,7 @@ import seaborn as sns
 from curricula.Result import Result
 from utils.curriculumHelper import *
 
-# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# find out if i can go back 1 directory and then run the scripts. this would solve the same issue
-
 OFFSET = 1000
-
 
 def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
@@ -172,52 +167,6 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
         for i in range(len(models)):
             print(f"{i}: {models[i]}")
         print("filter options: NSGA, GA, RndRH, allParalell. \n\t iter[number]")
-        """
-        nRS = []
-        RS = []
-        for m in models:
-            if "nRS" in m:
-                nRS.append(m[:-3])
-            else:
-                RS.append(m[:-2])
-
-        from difflib import SequenceMatcher as SM
-
-        def similar(a, b):
-            return SM(None, a, b).ratio()
-
-        strings = models
-        similar_strings = []
-        for i in range(len(strings)):
-            for j in range(i + 1, len(strings)):
-                if similar(strings[i], strings[j]) >= 0.9:
-                    similar_strings.append((strings[i], strings[j]))
-
-        for pair in similar_strings:
-            v1 = pair[0]
-            skip = ["RndRH", "PPO", "C_"]
-            next = False
-            for val in skip:
-                if val in v1:
-                    next = True
-                    break
-            if not next and v1 != pair[1]:
-                tmp = v1.split("_")
-                tmp2 = pair[1].split("_")
-                step1 = getStep(tmp)
-                step2 = getStep(tmp2)
-                gen1 = getGen(tmp)
-                gen2 = getGen(tmp2)
-                curric1 = getCurric(tmp)
-                curric2 = getCurric(tmp2)
-                iter1 = getIterstep(tmp)
-                iter2 = getIterstep(tmp2)
-                rsDupl = "RS" in tmp and "RS" in tmp2
-                nrsDupl = "nRS" in tmp and "nRS" in tmp2
-                isUnique = not rsDupl and not nrsDupl
-                if step1 == step2 and gen1 == gen2 and curric1 == curric2 and iter1 == iter2 and isUnique:
-                    print(pair)
-                """
         while modelsEntered < comparisons:
             val = (input(f"Enter model number ({modelsEntered}/{comparisons}): "))
             if val.isdigit() and int(val) < len(models) and val not in usedModels:
@@ -427,8 +376,6 @@ def plotNSGAMultivsSingleDistribution(df, ax, columnsToVisualize, title):
     plt.ylabel('Values')
     plt.title('Bar Plot')
     plt.show()
-
-
     """
 
 

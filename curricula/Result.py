@@ -7,7 +7,7 @@ from curricula import RollingHorizonEvolutionaryAlgorithm
 from utils.curriculumHelper import *
 
 
-def getTransformedReward(evaluationDictionary, isRHEA):
+def getTransformedReward(evaluationDictionary, isRHEA, isRRH):
     """
     Helper function that transforms the string of the json containing all the rewards (as strings!) to an actual dict with lists
     :return:
@@ -27,23 +27,20 @@ def getTransformedReward(evaluationDictionary, isRHEA):
                         numbers = re.findall(r'[0-9]*\.?[0-9]+', curricStep)
                         numbers = [float(n) for n in numbers]
                         transformedRawReward[epoch][gen][curric].append(numbers)
-    else:
+    elif isRRH:
         for epoch in rawRewardStr:
-            return rawRewardStr
             transformedRawReward[epoch] = {}
-            print("pre",rawRewardStr[epoch])
-            exit()
-            for gen in rawRewardStr[epoch]:
-                transformedRawReward[epoch][gen] = {}
-                for curric in rawRewardStr[epoch][gen]:
-                    transformedRawReward[epoch][gen][curric] = []
-                    s = (rawRewardStr[epoch][gen][curric])[1:-1]
-                    tmp = s.split("\n")
-                    for curricStep in tmp:
-                        numbers = re.findall(r'[0-9]*\.?[0-9]+', curricStep)
-                        numbers = [float(n) for n in numbers]
-                        transformedRawReward[epoch][gen][curric].append(numbers)
-        exit()
+            for curric in rawRewardStr[epoch]:
+                transformedRawReward[epoch][curric] = {}
+                transformedRawReward[epoch][curric] = []
+                s = (rawRewardStr[epoch][curric])[1:-1]
+                tmp = s.split("\n")
+                for curricStep in tmp:
+                    numbers = re.findall(r'[0-9]*\.?[0-9]+', curricStep)
+                    numbers = [float(n) for n in numbers]
+                    transformedRawReward[epoch][curric].append(numbers)
+    else:
+        return rawRewardStr
     return transformedRawReward
 
 
@@ -85,12 +82,23 @@ class Result:
         avgEpochRewards = []
         numCurric = float(self.loadedArgsDict[numCurricKey])
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
+        curricLen = int(self.loadedArgsDict["stepsPerCurric"])
+        self.gamma = float(self.loadedArgsDict["gamma"])
 
         if "rawRewards" in evaluationDictionary.keys():
-            self.rawReward = getTransformedReward(evaluationDictionary, self.loadedArgsDict[trainEvolutionary])
-            env1, env2, env3, env4 = self.getEnvRewards()
+            self.rawReward = getTransformedReward(evaluationDictionary, self.loadedArgsDict[trainEvolutionary],
+                                                  self.loadedArgsDict[trainRandomRH] == "True")
+            env1, env2, env3, env4, bestGenDict = self.getEnvRewards(self.loadedArgsDict[trainEvolutionary],
+                                                                     self.loadedArgsDict[trainRandomRH] == "True",
+                                                                     curricLen)
+            self.env1 = env1
+            self.env2 = env2
+            self.env3 = env3
+            self.env4 = env4
+            self.bestGenDict = bestGenDict
         else:
             self.rawReward = None
+
         if self.loadedArgsDict[trainEvolutionary]:  # TODO move to method
             self.epochDict = self.getEpochDict(self.rewardsDict)
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
@@ -135,7 +143,6 @@ class Result:
                 # plt.yticks(range(len(unique_envs)), unique_envs)
                 plt.show()
                 """
-
 
         elif self.loadedArgsDict[trainRandomRH] == "True":
             self.allCurricDistribution = {env: 0 for env in usedEnvEnumeration}
@@ -267,7 +274,8 @@ class Result:
             splitDistrSum = 0
             for split in splitDistributions:
                 splitDistrSum += sum(split.values())
-            assert sum(bestCurriculaEnvDistribution.values()) == splitDistrSum, "Splitting the env distribution went wrong"
+            assert sum(
+                bestCurriculaEnvDistribution.values()) == splitDistrSum, "Splitting the env distribution went wrong"
         return bestCurriculaEnvDistribution, splitDistributions
 
     def getListOrDictEntry(self, selectedEnvList, entry):
@@ -302,9 +310,7 @@ class Result:
         if iterationsPerEnvKey in trainingInfoDict.keys():
             iterationsPerEnv = int(trainingInfoDict[iterationsPerEnvKey])
         else:
-            iterationsPerEnv = int(loadedArgsDict[
-                                       oldArgsIterPerEnvName])  # TODO this might become deprecated if I change iterPerEnv -> stepsPerEnv
-
+            iterationsPerEnv = int(loadedArgsDict[oldArgsIterPerEnvName])
         return iterationsPerEnv
 
     def getScoreAtStepI(self, i):
@@ -312,6 +318,10 @@ class Result:
         return ({"snapshotScore": self.snapShotScores[i],
                  "bestCurricScore": self.bestCurricScore[i],
                  "avgEpochRewards": self.avgEpochRewards[i],
+                 "env1": self.env1[i],
+                 "env2": self.env2[i],
+                 "env3": self.env3[i],
+                 "env4": self.env4[i],
                  "id": self.modelName,
                  "seed": self.seed,
                  "group": self.iterationsPerEnv,  # TODO refactor this (column name)
@@ -412,93 +422,64 @@ class Result:
                 data.append(row)
         return data
 
-    def getEnvRewards(self):
+    def getEnvRewards(self, isEvolutionary: bool, isRRH: bool, curricLen: int):
         snapshots = []
         curricScore = []
-        helper = ["", ""]
-        winner = []
-        self.gamma = float(self.loadedArgsDict["gamma"])
         bestGenDict = defaultdict(int)  # counts which generation had the best curricula throughout training
         env1 = []
         env2 = []
         env3 = []
         env4 = []
-        for epoch in self.rawReward:
-            bestCurricScore = -1
-            for gen in self.rawReward[epoch]:
-                for curric in self.rawReward[epoch][gen]:
-                    rewards = (self.rawReward[epoch][gen][curric])
+        if isEvolutionary:
+            for epoch in self.rawReward:
+                bestCurricScore = -1
+                for gen in self.rawReward[epoch]:
+                    for curric in self.rawReward[epoch][gen]:
+                        rewards = (self.rawReward[epoch][gen][curric])
+                        currentCurricScore = 0
+                        for i in range(len(rewards)):
+                            currentCurricScore += np.sum(rewards[i]) * self.gamma ** i
+                        if currentCurricScore > bestCurricScore:
+                            bestCurricScore = currentCurricScore
+                            helper = [gen, curric, rewards]
+                curricScore.append(bestCurricScore)
+                snapshot = np.sum(helper[2][0])
+                snapshots.append(snapshot)
+                bestGenDict[helper[0]] += 1
+                env1.append(sum(reward[0] for reward in helper[2]) / curricLen)
+                env2.append(sum(reward[1] for reward in helper[2]) / curricLen)
+                env3.append(sum(reward[2] for reward in helper[2]) / curricLen)
+                env4.append(sum(reward[3] for reward in helper[2]) / curricLen)
+                # TODO das df anpassen
+                # Vllt 1 PPO Plot draufgehen lassen ;
+                # Ist der 9c RRH Run gut ? Flals ja fuck
+                # 1-2 weitere sachen machen (bestCurric vs actual snapshot BASIEREND Auf neuen runs! (oder halt nicht wenns kacke ist)
+                # Selected Env Plot
+                # evtl heute, sonst morgen: den curric progression plot (du hast ja hier auch papier und sowas!)
+        elif isRRH:
+            print(self.rawReward)
+            for epoch in self.rawReward:
+                bestCurricScore = -1
+                for curric in self.rawReward[epoch]:
+                    rewards = (self.rawReward[epoch][curric])
                     currentCurricScore = 0
                     for i in range(len(rewards)):
                         currentCurricScore += np.sum(rewards[i]) * self.gamma ** i
                     if currentCurricScore > bestCurricScore:
                         bestCurricScore = currentCurricScore
-                        helper = [gen, curric, rewards]
-            curricScore.append(bestCurricScore)
-            snapshot = np.sum(helper[2][0])
-            snapshots.append(snapshot)
-            bestGenDict[helper[0]] += 1
-            env1.append(sum(reward[0] for reward in helper[2]) / 3)
-            env2.append(sum(reward[1] for reward in helper[2]) / 3)
-            env3.append(sum(reward[2] for reward in helper[2]) / 3)
-            env4.append(sum(reward[3] for reward in helper[2]) / 3)
-            # TODO hier auch trainevol param
-
-        if self.modelName == "PPO6x6_RS":
-            print("rr", self.rawReward)
-            for reward in self.rawReward:
-                print("reward", reward)
-            exit()
-            import matplotlib.pyplot as plt
-            plt.figure(figsize=(10, 6))
-            plt.plot(self.iterationsList, env1, color='blue', label='env1')
-            plt.plot(self.iterationsList, env2, color='red', label='env2')
-            plt.plot(self.iterationsList, env3, color='green', label='env3')
-            plt.plot(self.iterationsList, env4, color='purple', label='env4')
-            plt.xlabel('Iterations')
-            plt.ylim([0, 1])
-            plt.legend()
-            plt.show()
-        return env1, env2, env3, env4
-        """
-        fig, axs = plt.subplots(2, 2, figsize=(10, 10))
-        plt.ylim((0, 1))
-
-        # Plot for env1
-        axs[0, 0].plot(self.iterationsList, env1)
-        axs[0, 0].set_title('env1')
-
-        # Plot for env2
-        axs[0, 1].plot(self.iterationsList, env2)
-        axs[0, 1].set_title('env2')
-
-        # Plot for env3
-        axs[1, 0].plot(self.iterationsList, env3)
-        axs[1, 0].set_title('env3')
-
-        # Plot for env4
-        axs[1, 1].plot(self.iterationsList, env4)
-        axs[1, 1].set_title('env4')
-
-        # Labeling the x-axis
-        for ax in axs.flat:
-            ax.set(xlabel='Iterations')
-            ax.set_ylim([0, 1])
-
-        # Adding some space between the plots
-        fig.tight_layout()
-
-        # Display the plots
-        plt.show()
-
-        winner.append([helper[0], helper[1]])
-        # print(snapshot, self.snapShotScores[len(snapshots)-1])
-        print(self.modelName, self.seed)
-        print(bestGenDict)
-        print(env1)
-        self.bestGenDict = bestGenDict
-        print(env1)  # TODO normalize ???
-        exit()
-        print("------")
-        """
-
+                        helper = [curric, rewards]
+                curricScore.append(bestCurricScore)
+                snapshot = np.sum(helper[1][0])
+                snapshots.append(snapshot)
+                env1.append(sum(reward[0] for reward in helper[1]) / curricLen)
+                env2.append(sum(reward[1] for reward in helper[1]) / curricLen)
+                env3.append(sum(reward[2] for reward in helper[1]) / curricLen)
+                env4.append(sum(reward[3] for reward in helper[1]) / curricLen)
+        else:
+            for epoch in self.rawReward:
+                currentReward = self.rawReward[epoch]
+                env1.append(currentReward[0] / 6) # TODO this is not accurate for dynamic obnstacle !!
+                env2.append(currentReward[1] / 8)
+                env3.append(currentReward[2] / 10)
+                env4.append(currentReward[3] / 12)
+        return env1, env2, env3, env4, bestGenDict
