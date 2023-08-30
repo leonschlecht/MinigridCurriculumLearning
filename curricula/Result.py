@@ -1,10 +1,12 @@
 from collections import defaultdict
 
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt, cm
 
 from curricula import RollingHorizonEvolutionaryAlgorithm
 from utils.curriculumHelper import *
+import seaborn as sns
 
 
 def getTransformedReward(evaluationDictionary, isRHEA, isRRH):
@@ -84,25 +86,6 @@ class Result:
         usedEnvEnumeration = evaluationDictionary[usedEnvEnumerationKey]
         curricLen = int(self.loadedArgsDict["stepsPerCurric"])
         self.gamma = float(self.loadedArgsDict["gamma"])
-
-        if "rawRewards" in evaluationDictionary.keys():
-            self.rawReward = getTransformedReward(evaluationDictionary, self.loadedArgsDict[trainEvolutionary],
-                                                  self.loadedArgsDict[trainRandomRH] == "True")
-            env1, env2, env3, env4, bestGenDict = self.getEnvRewards(self.loadedArgsDict[trainEvolutionary],
-                                                                     self.loadedArgsDict[trainRandomRH] == "True",
-                                                                     curricLen)
-            self.env1 = env1
-            self.env2 = env2
-            self.env3 = env3
-            self.env4 = env4
-            self.bestGenDict = bestGenDict
-        else:
-            self.rawReward = None
-            self.env1 = None
-            self.env2 = None
-            self.env3 = None
-            self.env4 = None
-
         if self.loadedArgsDict[trainEvolutionary]:  # TODO move to method
             self.epochDict = self.getEpochDict(self.rewardsDict)
             self.noOfGens: float = float(self.loadedArgsDict[nGenerations])
@@ -126,6 +109,7 @@ class Result:
 
             if not self.canceled:
                 """
+                # TODO selected env plot
                 x = self.iterationsList
                 y = self.formattedSelectedEnvList
                 y1 = list(zip(*y))[0]
@@ -193,6 +177,24 @@ class Result:
         self.avgEpochRewards = avgEpochRewards
         self.bestCurricScore = bestCurricScores
         self.usedEnvEnumeration = usedEnvEnumeration
+
+        if "rawRewards" in evaluationDictionary.keys():
+            self.rawReward = getTransformedReward(evaluationDictionary, self.loadedArgsDict[trainEvolutionary],
+                                                  self.loadedArgsDict[trainRandomRH] == "True")
+            env1, env2, env3, env4, bestGenDict = self.getEnvRewards(self.loadedArgsDict[trainEvolutionary],
+                                                                     self.loadedArgsDict[trainRandomRH] == "True",
+                                                                     curricLen)
+            self.env1 = env1
+            self.env2 = env2
+            self.env3 = env3
+            self.env4 = env4
+            self.bestGenDict = bestGenDict
+        else:
+            self.rawReward = None
+            self.env1 = None
+            self.env2 = None
+            self.env3 = None
+            self.env4 = None
 
         errorPrefix = f"model: {self.modelName}_s{self.loadedArgsDict[seedKey]}:"
         assert self.bestCurricScore != []
@@ -320,20 +322,20 @@ class Result:
     def getScoreAtStepI(self, i):
         assert self.snapShotScores[i] < 1
         if self.env1 is not None:
-            envThingy = {"env1": self.env1[i],
+            envScores = {"env1": self.env1[i],
                          "env2": self.env2[i],
                          "env3": self.env3[i],
                          "env4": self.env4[i]}
         else:
-            envThingy = {}
+            envScores = {}
         return ({"snapshotScore": self.snapShotScores[i],
                  "bestCurricScore": self.bestCurricScore[i],
                  "avgEpochRewards": self.avgEpochRewards[i],
-                 **envThingy,
+                 **envScores,
                  "id": self.modelName,
                  "seed": self.seed,
                  "group": self.iterationsPerEnv,  # TODO refactor this (column name)
-                 iterationSteps: self.iterationsList[i]})  #
+                 iterationSteps: self.iterationsList[i]})
 
     def getDistributions(self, isDoorKey):
         # Create DF2 that contains the distributions etc. (iterationNr column does not make sense here)
@@ -432,51 +434,73 @@ class Result:
 
     def getEnvRewards(self, isEvolutionary: bool, isRRH: bool, curricLen: int):
         snapshots = []
-        curricScore = []
+        bestCurricScores = []
         bestGenDict = defaultdict(int)  # counts which generation had the best curricula throughout training
         env1 = []
         env2 = []
         env3 = []
         env4 = []
         if isEvolutionary:
+            allCurricScores = []
             for epoch in self.rawReward:
-                bestCurricScore = -1
+                bestCurriculumScore = -1
+                allCurricScores.append([])
+                bo = self.modelName == "5_RSRun_100k_3step_3gen_3curric_nRS"
                 for gen in self.rawReward[epoch]:
                     for curric in self.rawReward[epoch][gen]:
                         rewards = (self.rawReward[epoch][gen][curric])
                         currentCurricScore = 0
                         for i in range(len(rewards)):
                             currentCurricScore += np.sum(rewards[i]) * self.gamma ** i
-                        if currentCurricScore > bestCurricScore:
-                            bestCurricScore = currentCurricScore
+                        allCurricScores[-1].append(currentCurricScore / self.curricMaxReward)
+
+                        if currentCurricScore > bestCurriculumScore:
+                            bestCurriculumScore = currentCurricScore
                             helper = [gen, curric, rewards]
-                curricScore.append(bestCurricScore)
-                snapshot = np.sum(helper[2][0])
-                snapshots.append(snapshot)
+                bestCurricScores.append(bestCurriculumScore / self.curricMaxReward)
+                snapshots.append(np.sum(helper[2][0]))
                 bestGenDict[helper[0]] += 1
                 env1.append(sum(reward[0] for reward in helper[2]) / curricLen)
                 env2.append(sum(reward[1] for reward in helper[2]) / curricLen)
                 env3.append(sum(reward[2] for reward in helper[2]) / curricLen)
                 env4.append(sum(reward[3] for reward in helper[2]) / curricLen)
-                # TODO das df anpassen
-                # Vllt 1 PPO Plot draufgehen lassen ;
-                # Ist der 9c RRH Run gut ? Flals ja fuck
-                # 1-2 weitere sachen machen (bestCurric vs actual snapshot BASIEREND Auf neuen runs! (oder halt nicht wenns kacke ist)
-                # Selected Env Plot
-                # evtl heute, sonst morgen: den curric progression plot (du hast ja hier auch papier und sowas!)
+
+                if bo and len(allCurricScores) == 12:
+                    fig, ax = plt.subplots(figsize=(12, 8))
+                    transposed_list = list(zip(*allCurricScores))
+                    sns.set_theme(style="darkgrid")
+                    df = pd.DataFrame(transposed_list)
+                    df = df.transpose()
+                    iterationsColumn = self.iterationsList[:len(allCurricScores)]
+                    df['iterationSteps'] = iterationsColumn
+
+                    for column in df:
+                        if column != "iterationSteps":
+                            sns.scatterplot(data=df, x="iterationSteps", y=column, )
+
+                    df2 = pd.DataFrame(bestCurricScores)
+                    df2["iterationSteps"] = iterationsColumn
+                    sns.lineplot(data=df2, x="iterationSteps", y=0)
+                    plt.title("Potential Curriculum Progression", fontsize=titleFontsize)
+                    plt.ylabel("Reward", fontsize=labelFontsize)
+                    plt.xlabel("Iteration Steps", fontsize=labelFontsize)
+                    plt.xlim(right=self.iterationsList[len(bestCurricScores) - 1] + 20000, left=0)
+                    plt.xticks(fontsize=tickFontsize)
+                    plt.yticks(fontsize=tickFontsize)
+                    plt.tight_layout()
+                    plt.show()
         elif isRRH:
-            print(self.rawReward)
             for epoch in self.rawReward:
-                bestCurricScore = -1
+                bestCurriculumScore = -1
                 for curric in self.rawReward[epoch]:
                     rewards = (self.rawReward[epoch][curric])
                     currentCurricScore = 0
                     for i in range(len(rewards)):
                         currentCurricScore += np.sum(rewards[i]) * self.gamma ** i
-                    if currentCurricScore > bestCurricScore:
-                        bestCurricScore = currentCurricScore
+                    if currentCurricScore > bestCurriculumScore:
+                        bestCurriculumScore = currentCurricScore
                         helper = [curric, rewards]
-                curricScore.append(bestCurricScore)
+                bestCurricScores.append(bestCurriculumScore)
                 snapshot = np.sum(helper[1][0])
                 snapshots.append(snapshot)
                 env1.append(sum(reward[0] for reward in helper[1]) / curricLen)
