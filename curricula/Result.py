@@ -98,6 +98,10 @@ class Result:
             self.bestGenDict = bestGenDict
         else:
             self.rawReward = None
+            self.env1 = None
+            self.env2 = None
+            self.env3 = None
+            self.env4 = None
 
         if self.loadedArgsDict[trainEvolutionary]:  # TODO move to method
             self.epochDict = self.getEpochDict(self.rewardsDict)
@@ -315,13 +319,17 @@ class Result:
 
     def getScoreAtStepI(self, i):
         assert self.snapShotScores[i] < 1
+        if self.env1 is not None:
+            envThingy = {"env1": self.env1[i],
+                         "env2": self.env2[i],
+                         "env3": self.env3[i],
+                         "env4": self.env4[i]}
+        else:
+            envThingy = {}
         return ({"snapshotScore": self.snapShotScores[i],
                  "bestCurricScore": self.bestCurricScore[i],
                  "avgEpochRewards": self.avgEpochRewards[i],
-                 "env1": self.env1[i],
-                 "env2": self.env2[i],
-                 "env3": self.env3[i],
-                 "env4": self.env4[i],
+                 **envThingy,
                  "id": self.modelName,
                  "seed": self.seed,
                  "group": self.iterationsPerEnv,  # TODO refactor this (column name)
@@ -478,7 +486,7 @@ class Result:
         else:
             for epoch in self.rawReward:
                 currentReward = self.rawReward[epoch]
-                env1.append(currentReward[0] / 6) # TODO this is not accurate for dynamic obnstacle !!
+                env1.append(currentReward[0] / 6)  # TODO this is not accurate for dynamic obnstacle !!
                 env2.append(currentReward[1] / 8)
                 env3.append(currentReward[2] / 10)
                 env4.append(currentReward[3] / 12)
