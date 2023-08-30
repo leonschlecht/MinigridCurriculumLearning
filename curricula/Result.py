@@ -101,36 +101,53 @@ class Result:
             self.bestCurriculaEnvDistribution, self.splitDistrBestCurric = \
                 self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
             formatHelperList = [[env for env in self.selectedEnvDict[epoch]] for epoch in self.selectedEnvDict]
-            # keep only the env size part, e.g. 6x6
-            self.formattedSelectedEnvList = [[env.split("-")[2] for env in sublist] for sublist in formatHelperList]
-
+            # keep only the env size part, e.g. 6 of MiniGrid-DoorKey-6x6
+            self.formattedSelectedEnvList = [[int(env.split("-")[2].split("x")[0]) for env in sublist] for sublist in formatHelperList]
             assert len(self.formattedSelectedEnvList) == len(self.snapShotScores), \
                 "Something went went wrong with creating the formatted selected env list"
 
-            if not self.canceled:
-                """
-                # TODO selected env plot
-                x = self.iterationsList
-                y = self.formattedSelectedEnvList
-                y1 = list(zip(*y))[0]
-                y2 = list(zip(*y))[1]
+            if not self.canceled and self.modelName != "Canceled":
+                if self.modelName == "5_RSRun_100k_3step_3gen_3curric_nRS":
+                    fig, axs = plt.subplots(2, 1)
 
-                y_combined = y1 + y2
-                unique_y = np.unique(y_combined)
-                num_unique_y = 4
-                assert len(unique_y) == 4, f"There should be 4 envs not, {unique_y}"
-                cmap = cm.get_cmap("Set3", num_unique_y)  # Get the Set3 colormap with the number of unique y-values
+                    df = pd.DataFrame()
+                    df["snapshot"] = self.snapShotScores
+                    df["iter"] = self.iterationsList
+                    sns.lineplot(data=df, x="iter", y="snapshot", ax=axs[0])
 
-                colors = [cmap(i) for i in range(num_unique_y)]
-                color_mapping = dict(zip(unique_y, colors))
-                plt.scatter(x, y1, color=[color_mapping[y] for y in y1], s=5)
-                plt.scatter(x, y2, color=[color_mapping[y] for y in y2], s=5)
+                    x = self.iterationsList
+                    y = self.formattedSelectedEnvList
+                    y1 = list(zip(*y))[0]
+                    y2 = list(zip(*y))[1]
 
-                #unique_envs = list(set([env for sublist in y for env in sublist]))
-                #unique_envs.sort(key=lambda env: int(env.split('x')[0]), reverse=False)
-                # plt.yticks(range(len(unique_envs)), unique_envs)
-                plt.show()
-                """
+                    y_combined = y1 + y2
+                    unique_y = np.unique(y_combined)
+                    num_unique_y = len(unique_y)
+                    cmap = cm.get_cmap("viridis", num_unique_y)
+
+                    colors = [cmap(i) for i in range(num_unique_y)]
+                    color_mapping = dict(zip(unique_y, colors))
+                    size = 10
+
+                    plt.scatter(x, y1, color=[color_mapping[y] for y in y1], s=size)
+                    plt.scatter(x, y2, color=[color_mapping[y] for y in y2], s=size+20, marker="x")
+                    yticks = [6, 8, 10, 12]
+                    ytick_labels = ["6x6", "8x8", "10x10", "12x12"]
+                    plt.yticks(yticks, ytick_labels)
+                    """
+                        ax.set_ylabel("Average Reward", fontsize=labelFontsize)
+    ax.set_xlabel("Iterations", fontsize=labelFontsize)"""
+                    plt.title("Selected Environments")
+
+
+                    # Plot the data in the top subplot
+                    # axs[0].plot(x, y)
+                    axs[0].set_title('Subplot 1')
+
+                    # Plot the data in the bottom subplot
+                    axs[1].set_title('Subplot 2')
+                    plt.tight_layout()
+                    plt.show()
 
         elif self.loadedArgsDict[trainRandomRH] == "True":
             self.allCurricDistribution = {env: 0 for env in usedEnvEnumeration}
@@ -445,7 +462,7 @@ class Result:
             for epoch in self.rawReward:
                 bestCurriculumScore = -1
                 allCurricScores.append([])
-                bo = self.modelName == "5_RSRun_100k_3step_3gen_3curric_nRS"
+                bo = False and self.modelName == "5_RSRun_100k_3step_3gen_3curric_nRS"
                 for gen in self.rawReward[epoch]:
                     for curric in self.rawReward[epoch][gen]:
                         rewards = (self.rawReward[epoch][gen][curric])

@@ -1,5 +1,69 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
+        if bo and len(allCurricScores) == 12: # TODO fix this: Line color should be same as BEST scatter point; maybe just use 1 color for scatter: BEST or not best ;; then match that color for the corresponding lineplot
+
+
+d? - (bestCurric vs actual snapshot BASIEREND Auf neuen runs! (oder halt nicht wenns kacke ist);
+---- irgendwie bringt das nicht so viel bzw sieht halt fast immer identisch aus. Ich könnte sonst sowas machen wie gruppieren und schauen wie nah die beinander sind, aber das bringt nicht viel i guess ?
+- Selected Env Plot --> WENN überhaupt nehme ich ihn ohne performance überblick weil man daraus einfach nix ablesen kann
+d - curric progression plot
+
+
+
+DO:
+- gucken ob sich das noch lohnt mit dem curricScore für multi obj zu fixen im result (irgendwie ist bei curricRewards etwas nicht richtig überschreiben worden) [müsste eig nur aufsummieren jeweils in der curricScore spalte] bzw bin mir auch nicht sicher ob das nicht verbuggt ist und an manchen stellen dann nicht richtig übernommen wurde, also idk)
+
+- Ordner gruppieren(dyn obstacle runs)
+- Dyn obstacle auswertung (vor allem score, aber auch environment distribution
+
+- Überlegen, ob ich die Auswertung deutlich verkürzen kann, weil sich macnhes doppelt (lohnen sich diese plots am anfang halt überhaupt ; oder sollte ich vllt doch erst lieber beim vergleich mit den baselines einzelne runs zeigen?)
+-
+
+
+
+DK
+100 324 (damit es fairer als 323 ist)
+RRH 100k 9c 3s
+RRH 150k 6c 3s
+-------
+
+- PLOT: Wie nah ist das bestCurriculum am snapshot score? Evtl kombinieren mit den Gruppierten plots teilweise ? [geht nur mit neuen runs]: - Vllt links snaphsotscore & rechts curricScore. ?
+- PLOT: methode, um y achse korrekt zu sortieren (string vs nummern) [@distributions]
+- PLOT: selected Env plot ( + subplot dass die performance dadrüber ist)
+- PLOT: Performance subplots: zB links snapshot & rechts curricScore (evtl auch wieder gruppiert)
+- PLOT: top 5 nsga vs top 5 ga grouped
+
+
+- als csv ein mal das komplette dataframe speichern
+- vllt sind die stepsizes auch zu groß? Aber andererseits conflicted das iwann mit PPO, wegen den festen schritten i guess
+- Auswirkungen von seed auf performance ?? vllt gibts ja immer einen, wo alle verkakcen / easy vorankommen...
+- env distribution dyn obstacle
+- reward shaping vs ohne
+- gamma vergleich
+- Baselines mit mind. 1 RHEA CL run zeigen (zumindest spcl und ap, weil es empty ist)
+((Dynamic Obstacle Runs)) -> Mindestens eine Grafik mit allen runs)
+
+
+- ich müsstem al mehr das narvekar survey anschauen i guess ???
+- evtl mit dem /benchmark ordner ausprobieren, damit ich nicht alles im root habe
+- schauen wie HEM / ACL funktioniert, weil das schon irgendwie komisch wäre bei doorkey (die anderen steps wären dann gar nicht notwendig gewesen)
+- TSCL ausprobierne per code ? weil es ja kein teacher network gibt sondern die heuristik genutzt werden könnte
+- [13] Devin Soni. Introduction to evolutionary algorithms ---> Die Url muss in der bibliography auftauchen??
+- Warum haben wir Minigrid genommen? gibt nichts vergleichbares für uns; aber auch ewgen doorkey und so. Ist schon eshr spezifisch, müsste evtl begründet werden
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+VariablenNamen:
+- iterationSteps
+- curricLength ( _3cstep
+- nGen ( _3gen)
+- curricCount (oder doch lieber numCurric?) (_3curric)
+- paraEnv
+- curricScore
+
+
+
+
 python3 .\evaluateCurriculum.py --iterGroup --env door --xIterations 5000000
 python3 .\evaluateCurriculum.py --gen --env door --xIterations 5000000
 python3 .\evaluateCurriculum.py --curricCount  --env door --xIterations 5000000
