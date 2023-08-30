@@ -12,6 +12,13 @@ from utils.curriculumHelper import *
 
 OFFSET = 1000
 
+
+"""
+My Evaluation Script :) 
+Please ignore the horrendous things here
+Most of them were done out of frustration and low time!
+"""
+
 def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
     results = []
