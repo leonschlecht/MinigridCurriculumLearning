@@ -12,6 +12,7 @@ from utils.curriculumHelper import *
 
 OFFSET = 1000
 
+
 def getSpecificModel(specificModelList: list, modelName: str):
     assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
     results = []
@@ -97,9 +98,10 @@ def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove
     def passes_filters(colId, filterList):
         for filterOption in filterList:
             if filterOption in colId:
-                if filterOption == 'GA' and 'NSGA' in colId or \
+                if (filterOption == 'GA' and 'NSGA' in colId) or \
                         (filterOption == '50k' and ('150k' in colId or '250k' in colId)) or \
-                        (not showCanceled and "C_" in colId):
+                        ("GA" in filterOption and "const" in colId) or \
+                        (not showCanceled and "C_" in colId):  # TODO maybe args for const param
                     return False
             else:
                 return False
@@ -146,7 +148,8 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
     if args.filter:
         filters = []
         if args.rhea:
-            filters.append("GA_")  # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
+            # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
+            filters.append("GA_")
             if args.rrh:
                 filters.append("RRH")  # todo ???
         if args.ga:
@@ -172,9 +175,12 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             if val.isdigit() and int(val) < len(models) and val not in usedModels:
                 modelsEntered += 1
                 usedModels.append(val)
-                filteredScoreDf = pd.concat([filteredScoreDf, scoreDf[scoreDf["id"] == models[int(val)]]], ignore_index=True)
-                filteredDistrDf = pd.concat([filteredDistrDf, distrDf[distrDf["id"] == models[int(val)]]], ignore_index=True)
-                filteredSplitDistrDf = pd.concat([filteredSplitDistrDf, splitDistrDf[splitDistrDf["id"] == models[int(val)]]], ignore_index=True)
+                filteredScoreDf = pd.concat([filteredScoreDf, scoreDf[scoreDf["id"] == models[int(val)]]],
+                                            ignore_index=True)
+                filteredDistrDf = pd.concat([filteredDistrDf, distrDf[distrDf["id"] == models[int(val)]]],
+                                            ignore_index=True)
+                filteredSplitDistrDf = pd.concat(
+                    [filteredSplitDistrDf, splitDistrDf[splitDistrDf["id"] == models[int(val)]]], ignore_index=True)
             else:
                 if val == "RndRH" or val == "NSGA" or val == "GA" or val == "allParalell":
                     val = [val]
@@ -244,7 +250,6 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
                 return tmp
 
             df['id'] = df['id'].map(transform_label)
-    sns.color_palette("tab10")
     if args.scores == "both":
         yColumns = ["snapshotScore", "bestCurricScore"]
     elif args.scores == "curric":
@@ -254,8 +259,20 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.set_theme(style="darkgrid")
     # printDfStats(df) # TODO ? maybe as args or just remove this part
+    x = "iterationSteps"
     for col in yColumns:
-        sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette="tab10")
+        y = col
+        #window_size = 1  # adjust as needed
+        #smoothed_data = df[y].rolling(window=window_size, min_periods=1).mean()
+
+        # Plot the EMA curve
+        sns.lineplot(data=df, x=x, y=y, hue=hue, palette=palette)
+
+        #plt.show()
+        #sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette, #
+                     # estimator=np.median
+
+           #          )
 
     ax.set_ylabel("Average Reward", fontsize=labelFontsize)
     ax.set_xlabel("Iterations", fontsize=labelFontsize)
@@ -422,7 +439,8 @@ def showDistrVisualization(df, columnsToVisualize, title="Environment Distributi
         grouped_df = grouped_df.reset_index()
         melted_df = grouped_df.melt(id_vars='id', var_name=['Column', 'Statistic'], value_name='Value')
         melted_df['id'] = pd.Categorical(melted_df['id'], categories=df['id'].unique(), ordered=True)
-        sns.barplot(data=melted_df[melted_df["Statistic"] == "mean"], x='id', y='Value', hue='Column', errorbar=args.errorbar)
+        sns.barplot(data=melted_df[melted_df["Statistic"] == "mean"], x='id', y='Value', hue='Column',
+                    errorbar=args.errorbar)
         # TODO filter x ticks
         plt.ylabel('Occurence', fontsize=labelFontsize)
         plt.title(title, fontsize=titleFontsize)
@@ -479,7 +497,8 @@ def showTrainingTimePlot(aggregatedDf):
     fig, ax = plt.subplots(figsize=(12, 8))
     group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
     if args.rhea or args.nsga or args.ga:
-        aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype('int')
+        aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype(
+            'int')
         aggregatedDf = aggregatedDf.sort_values(by=['sort_col', group_col])
         aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
         sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
@@ -559,7 +578,8 @@ def plotAggregatedBarplot(df):
         showTrainingTimePlot(df)
     if args.splitDistr:
         if not isDoorKey:
-            toVisualize = ["MiniGrid-Dynamic-Obstacles-5x5", "MiniGrid-Dynamic-Obstacles-6x6", "MiniGrid-Dynamic-Obstacles-8x8",
+            toVisualize = ["MiniGrid-Dynamic-Obstacles-5x5", "MiniGrid-Dynamic-Obstacles-6x6",
+                           "MiniGrid-Dynamic-Obstacles-8x8",
                            "MiniGrid-Dynamic-Obstacles-16x16"]
         else:
             toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10",
@@ -571,7 +591,7 @@ def plotAggregatedBarplot(df):
         handleDistributionVisualization(df)
 
 
-def getGetNrFromModelName(modelName):
+def getGenNrFromModelName(modelName):
     splitModelName = modelName.split("_")
     for sub in splitModelName:
         if "gen" in sub:
@@ -581,14 +601,14 @@ def getGetNrFromModelName(modelName):
 
 def showFilteredGenPlot(df):
     genColumn = "nGen"
-    df[genColumn] = df['id'].apply(getGetNrFromModelName)
+    df[genColumn] = df['id'].apply(getGenNrFromModelName)
     nGenDict = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0}
     usedIds = []
     for i, row in df.iterrows():
         id = row["id"]
         if id not in usedIds:
             usedIds.append(id)
-            genNr = str(getGetNrFromModelName(id))
+            genNr = str(getGenNrFromModelName(id))
             nGenDict[genNr] += 1
     print("nGen Dict", nGenDict)
     df = df[df[genColumn] <= 3]
@@ -597,7 +617,7 @@ def showFilteredGenPlot(df):
 
 
 def showFilteredIterationSteps(df):
-    iterationStepsDict = {"25000": 0, "50000": 0, "75000": 0, "100000": 0, "150000": 0, "250000": 0}
+    iterationStepsDict = defaultdict(int)
     usedIds = []
     for i, row in df.iterrows():
         id = row["id"]
@@ -606,10 +626,10 @@ def showFilteredIterationSteps(df):
             iterStep = row["group"]
             iterationStepsDict[str(iterStep)] += 1
     print("iterations Dict", iterationStepsDict)
-    df = df[df["group"] != 25000]
     df = df[df["group"] != 250000]
-    df["iterationSteps "] = df["group"]  # TODO idk why i originally named this group
-    plotMultipleLineplots(df, "iterationSteps ")
+    groupName = "iterationSteps "
+    df[groupName] = df["group"]  # TODO why is this originally named this group
+    plotMultipleLineplots(df, groupName)
 
 
 def getCurricCountFromModelName(modelName):
@@ -634,8 +654,10 @@ def showFilteredCurricCount(df):
         id = row["id"]
         if id not in usedIds:
             usedIds.append(id)
-            curricCountDict[str(getCurricCountFromModelName(id))] += 1
-    df = df[df[curricCountColumn] != 7]
+            curricCountDict["curricCount_"+str(getCurricCountFromModelName(id))] += 1
+    df = df[df[curricCountColumn] != 7] # only 1 run
+    df = df[df[curricCountColumn] != 5] # only 1 run
+    # df = df[df[curricCountColumn] == 2] # only 1 run
     print("curricCount Dict", curricCountDict)
     plotMultipleLineplots(df, curricCountColumn)
 
@@ -694,6 +716,7 @@ def showPPOPlot(filteredScoreDf):
     # TODO maybe add RHEA run for comparison
     plotMultipleLineplots(df, legendLoc="upper right")
 
+
 def main(comparisons: int):
     # sns.set(font_scale=2)
     pathList = ["storage", "_evaluate"]
@@ -734,15 +757,20 @@ if __name__ == "__main__":
     parser.add_argument("--env", default="doorKey", help="Whether to use doorkey or dynamic obstacle or both")
     parser.add_argument("--title", default=None, type=str, help="Title of the distribution plots")
     parser.add_argument("--comparisons", default=-1, help="Choose how many models you want to compare")
-    parser.add_argument("--crossoverMutation", action="store_true", default=False, help="Select the crossovermutation varied experiments")
-    parser.add_argument("--splitDistr", action="store_true", default=False, help="Whether to show the split distribution (in 1kk steps)")
+    parser.add_argument("--crossoverMutation", action="store_true", default=False,
+                        help="Select the crossovermutation varied experiments")
+    parser.add_argument("--splitDistr", action="store_true", default=False,
+                        help="Whether to show the split distribution (in 1kk steps)")
 
     parser.add_argument("--trainingTime", action="store_true", default=False, help="Show training time plots")
-    parser.add_argument("--snapshotDistr", action="store_true", default=False, help="Show first step distribution plots")
-    parser.add_argument("--curricDistr", action="store_true", default=False, help="show all best curricula distributions plots")
+    parser.add_argument("--snapshotDistr", action="store_true", default=False,
+                        help="Show first step distribution plots")
+    parser.add_argument("--curricDistr", action="store_true", default=False,
+                        help="show all best curricula distributions plots")
     parser.add_argument("--allDistr", action="store_true", default=False, help="Show all distribution plots")
     parser.add_argument("--scores", default=None, help="Whether to plot snapshot, curric or both scores")
-    parser.add_argument("--normalize", action="store_true", default=False, help="Whether or not to normlaize the env distributions")
+    parser.add_argument("--normalize", action="store_true", default=False,
+                        help="Whether or not to normlaize the env distributions")
 
     parser.add_argument("--iter", default=0, type=int, help="filter for iterations")
     parser.add_argument("--xIterations", default=1000000, type=int, help="#of iterations to show on the xaxis")
@@ -755,11 +783,13 @@ if __name__ == "__main__":
     parser.add_argument("--rhea", action="store_true", default=False, help="Only using rhea runs")
     parser.add_argument("--nsga", action="store_true", default=False, help="Only using GA runs")
     parser.add_argument("--ga", action="store_true", default=False, help="Only using NSGA runs")
-    parser.add_argument("--rrh", action="store_true", default=False, help="Include RRH runs, even if --rhea was speicifed")
+    parser.add_argument("--rrh", action="store_true", default=False,
+                        help="Include RRH runs, even if --rhea was speicifed")
     parser.add_argument("--rrhOnly", action="store_true", default=False, help="Only RRH runs")
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     parser.add_argument("--ppoOnly", action="store_true", default=False, help="Whether to show only ppo runs")
-    parser.add_argument("--errorbar", default=None, type=str, help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
+    parser.add_argument("--errorbar", default=None, type=str,
+                        help="What type of errorbar to show on the lineplots. (Such as sd, ci etc)")
     # TODO remove old filter options
     args = parser.parse_args()
     args.rhea = args.rhea or args.curricLen or args.iterGroup or args.gen or args.curricCount
@@ -767,6 +797,9 @@ if __name__ == "__main__":
             args.crossoverMutation or args.splitDistr or args.ppoOnly or
             args.iter or args.steps or args.rrhOnly or args.rhea or args.nsga or args.ga)
     isDoorKey = "door" in args.env
+    palette = sns.color_palette("tab10", n_colors=5)
+    palette = sns.color_palette("Set1", n_colors=5)
+
     if args.ppoOnly:
         args.xIterations = 10000000
     main(int(args.comparisons))
