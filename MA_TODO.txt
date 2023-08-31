@@ -1,18 +1,18 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-        if bo and len(allCurricScores) == 12: # TODO fix this: Line color should be same as BEST scatter point; maybe just use 1 color for scatter: BEST or not best ;; then match that color for the corresponding lineplot
+python3 .\evaluateCurriculum.py --iterGroup --env door --xIterations 5000000
+python3 .\evaluateCurriculum.py --gen --env door --xIterations 5000000
+python3 .\evaluateCurriculum.py --curricCount  --env door --xIterations 5000000
+python3 .\evaluateCurriculum.py --curricLen --env door --xIterations 5000000
 
+python3 .\evaluateCurriculum.py --comparisons 2 --curricDistr --normalize --title 'NSGA-II Multi vs Single Objective Environment Distribution'
+python3 scores: gamma, multi, rs --> TITLE
 
-d? - (bestCurric vs actual snapshot BASIEREND Auf neuen runs! (oder halt nicht wenns kacke ist);
----- irgendwie bringt das nicht so viel bzw sieht halt fast immer identisch aus. Ich könnte sonst sowas machen wie gruppieren und schauen wie nah die beinander sind, aber das bringt nicht viel i guess ?
-- Selected Env Plot --> WENN überhaupt nehme ich ihn ohne performance überblick weil man daraus einfach nix ablesen kann
-d - curric progression plot
 
 
 
 DO:
 - gucken ob sich das noch lohnt mit dem curricScore für multi obj zu fixen im result (irgendwie ist bei curricRewards etwas nicht richtig überschreiben worden) [müsste eig nur aufsummieren jeweils in der curricScore spalte] bzw bin mir auch nicht sicher ob das nicht verbuggt ist und an manchen stellen dann nicht richtig übernommen wurde, also idk)
-
 - Ordner gruppieren(dyn obstacle runs)
 - Dyn obstacle auswertung (vor allem score, aber auch environment distribution
 
@@ -29,17 +29,11 @@ RRH 150k 6c 3s
 
 - PLOT: Wie nah ist das bestCurriculum am snapshot score? Evtl kombinieren mit den Gruppierten plots teilweise ? [geht nur mit neuen runs]: - Vllt links snaphsotscore & rechts curricScore. ?
 - PLOT: methode, um y achse korrekt zu sortieren (string vs nummern) [@distributions]
-- PLOT: selected Env plot ( + subplot dass die performance dadrüber ist)
-- PLOT: Performance subplots: zB links snapshot & rechts curricScore (evtl auch wieder gruppiert)
 - PLOT: top 5 nsga vs top 5 ga grouped
 
-
 - als csv ein mal das komplette dataframe speichern
-- vllt sind die stepsizes auch zu groß? Aber andererseits conflicted das iwann mit PPO, wegen den festen schritten i guess
 - Auswirkungen von seed auf performance ?? vllt gibts ja immer einen, wo alle verkakcen / easy vorankommen...
 - env distribution dyn obstacle
-- reward shaping vs ohne
-- gamma vergleich
 - Baselines mit mind. 1 RHEA CL run zeigen (zumindest spcl und ap, weil es empty ist)
 ((Dynamic Obstacle Runs)) -> Mindestens eine Grafik mit allen runs)
 
@@ -62,18 +56,6 @@ VariablenNamen:
 - curricScore
 
 
-
-
-python3 .\evaluateCurriculum.py --iterGroup --env door --xIterations 5000000
-python3 .\evaluateCurriculum.py --gen --env door --xIterations 5000000
-python3 .\evaluateCurriculum.py --curricCount  --env door --xIterations 5000000
-python3 .\evaluateCurriculum.py --curricLen --env door --xIterations 5000000
-
-python3 .\evaluateCurriculum.py --comparisons 2 --curricDistr --normalize --title 'NSGA-II Multi vs Single Objective Environment Distribution'
-python3 scores: gamma, multi, rs --> TITLE
-
-
-
 @alex:
 - Training time: sonst vergleichen die leute ja immer nur epochs / iterations & nicht sowas wie RH dass man quasi wasted simulations hat ?
 - Wie oft zitieren? Also manchmal ergibt es sich im absatz durch They usw ja von selbst ?
@@ -85,11 +67,9 @@ python3 scores: gamma, multi, rs --> TITLE
 
 
 ------------
-- env progression plot
-- mal schauen, wie es insgeasmt wirkt und ob diese overall performance plots überhaupt sinnvoll sind (vllt kann ich da ja auch noch was sparen ?)
 
 
-- curriculum progression plot (die hoffnung / idee) -- evtl in experimental setup oder bei RH in basic ?
+- curriculum progression plot (die hoffnung / idee) -- evtl in experimental setup oder bei RH in basic ? [evtl händisch erstellen ? 3curricula; 3-5 x ticks; gestirchelte linien usw]
 - Reward / Gen Plot bzw vllt bester reward pro generation zeigen ??
 - env1 usw plot
 - curric score vs snapshot score ---> muss ich für die neuen runs erstn och erstellen im eval
@@ -100,10 +80,7 @@ python3 scores: gamma, multi, rs --> TITLE
 - Docstirngs & README & benchmark stuff anfangen zu schreiben
 - Wie EA Initialisieren, wenn man train != eval envs. man könnte evtl. mehr envs zum Training verwenden könnte, als man in der Evaluierung benutzt, um Kosten zu sparen (zB TrainingsEnv: 6,8,10,12,14,16 und evaluierung mit 6, 8, 12, 16. Wie würde sich der EA dadurch verändern? Für single obj macht es glaube ich keinen Unterschied, aber für Multi Obj?
 - AP aufteilen als oberklasse und 4 unterklassen
-- NSGA vs GA vergleichs plot (der nicht so scuffed ist)
 - RHEA cl vs RRH variance plot
-- evtl kann RHEA CL besser als SPLCL aus einem lokalen optimum entkommen, weil der EA ihm die chance dazu gibt (vs statische Reihenfolge)
-
 
 
 ================================================================================================

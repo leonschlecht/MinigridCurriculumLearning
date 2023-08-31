@@ -102,52 +102,13 @@ class Result:
                 self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
             formatHelperList = [[env for env in self.selectedEnvDict[epoch]] for epoch in self.selectedEnvDict]
             # keep only the env size part, e.g. 6 of MiniGrid-DoorKey-6x6
-            self.formattedSelectedEnvList = [[int(env.split("-")[2].split("x")[0]) for env in sublist] for sublist in formatHelperList]
+            self.formattedSelectedEnvList = [[int(env.split("-")[2].split("x")[0]) for env in sublist] for sublist in
+                                             formatHelperList]
             assert len(self.formattedSelectedEnvList) == len(self.snapShotScores), \
                 "Something went went wrong with creating the formatted selected env list"
 
             if not self.canceled and self.modelName != "Canceled":
-                if self.modelName == "5_RSRun_100k_3step_3gen_3curric_nRS":
-                    fig, axs = plt.subplots(2, 1)
-
-                    df = pd.DataFrame()
-                    df["snapshot"] = self.snapShotScores
-                    df["iter"] = self.iterationsList
-                    sns.lineplot(data=df, x="iter", y="snapshot", ax=axs[0])
-
-                    x = self.iterationsList
-                    y = self.formattedSelectedEnvList
-                    y1 = list(zip(*y))[0]
-                    y2 = list(zip(*y))[1]
-
-                    y_combined = y1 + y2
-                    unique_y = np.unique(y_combined)
-                    num_unique_y = len(unique_y)
-                    cmap = cm.get_cmap("viridis", num_unique_y)
-
-                    colors = [cmap(i) for i in range(num_unique_y)]
-                    color_mapping = dict(zip(unique_y, colors))
-                    size = 10
-
-                    plt.scatter(x, y1, color=[color_mapping[y] for y in y1], s=size)
-                    plt.scatter(x, y2, color=[color_mapping[y] for y in y2], s=size+20, marker="x")
-                    yticks = [6, 8, 10, 12]
-                    ytick_labels = ["6x6", "8x8", "10x10", "12x12"]
-                    plt.yticks(yticks, ytick_labels)
-                    """
-                        ax.set_ylabel("Average Reward", fontsize=labelFontsize)
-    ax.set_xlabel("Iterations", fontsize=labelFontsize)"""
-                    plt.title("Selected Environments")
-
-
-                    # Plot the data in the top subplot
-                    # axs[0].plot(x, y)
-                    axs[0].set_title('Subplot 1')
-
-                    # Plot the data in the bottom subplot
-                    axs[1].set_title('Subplot 2')
-                    plt.tight_layout()
-                    plt.show()
+                self.selectedEnvPlot()
 
         elif self.loadedArgsDict[trainRandomRH] == "True":
             self.allCurricDistribution = {env: 0 for env in usedEnvEnumeration}
@@ -226,6 +187,48 @@ class Result:
         assert sum(self.bestCurriculaEnvDistribution.values()) > 0
         assert len(self.snapShotScores) == len(self.bestCurricScore) == len(self.avgEpochRewards), \
             f"{errorPrefix} {len(self.snapShotScores)}, {len(self.bestCurricScore)}, {len(self.avgEpochRewards)}"
+
+    def selectedEnvPlot(self):
+        if False and self.modelName == "5_RSRun_100k_3step_3gen_3curric_nRS":
+            fig, axs = plt.subplots(2, 1)
+
+            df = pd.DataFrame()
+            df["snapshot"] = self.snapShotScores
+            df["iter"] = self.iterationsList
+            sns.lineplot(data=df, x="iter", y="snapshot", ax=axs[0])
+
+            x = self.iterationsList
+            y = self.formattedSelectedEnvList
+            y1 = list(zip(*y))[0]
+            y2 = list(zip(*y))[1]
+
+            y_combined = y1 + y2
+            unique_y = np.unique(y_combined)
+            num_unique_y = len(unique_y)
+            cmap = cm.get_cmap("viridis", num_unique_y)
+
+            colors = [cmap(i) for i in range(num_unique_y)]
+            color_mapping = dict(zip(unique_y, colors))
+            size = 10
+
+            plt.scatter(x, y1, color=[color_mapping[y] for y in y1], s=size)
+            plt.scatter(x, y2, color=[color_mapping[y] for y in y2], s=size + 20, marker="x")
+            yticks = [6, 8, 10, 12]
+            ytick_labels = ["6x6", "8x8", "10x10", "12x12"]
+            plt.yticks(yticks, ytick_labels)
+            """
+                ax.set_ylabel("Average Reward", fontsize=labelFontsize)
+    ax.set_xlabel("Iterations", fontsize=labelFontsize)"""
+            plt.title("Selected Environments")
+
+            # Plot the data in the top subplot
+            # axs[0].plot(x, y)
+            axs[0].set_title('Performance')
+
+            # Plot the data in the bottom subplot
+            axs[1].set_title('Selected Environments')
+            plt.tight_layout()
+            # plt.show()
 
     @staticmethod
     def getTrainEvolutionary(param):
@@ -462,7 +465,7 @@ class Result:
             for epoch in self.rawReward:
                 bestCurriculumScore = -1
                 allCurricScores.append([])
-                bo = False and self.modelName == "5_RSRun_100k_3step_3gen_3curric_nRS"
+                bo = self.modelName == "5_RSRun_100k_3step_3gen_3curric_nRS"
                 for gen in self.rawReward[epoch]:
                     for curric in self.rawReward[epoch][gen]:
                         rewards = (self.rawReward[epoch][gen][curric])
@@ -482,30 +485,7 @@ class Result:
                 env3.append(sum(reward[2] for reward in helper[2]) / curricLen)
                 env4.append(sum(reward[3] for reward in helper[2]) / curricLen)
 
-                if bo and len(allCurricScores) == 12:
-                    fig, ax = plt.subplots(figsize=(12, 8))
-                    transposed_list = list(zip(*allCurricScores))
-                    sns.set_theme(style="darkgrid")
-                    df = pd.DataFrame(transposed_list)
-                    df = df.transpose()
-                    iterationsColumn = self.iterationsList[:len(allCurricScores)]
-                    df['iterationSteps'] = iterationsColumn
-
-                    for column in df:
-                        if column != "iterationSteps":
-                            sns.scatterplot(data=df, x="iterationSteps", y=column, )
-
-                    df2 = pd.DataFrame(bestCurricScores)
-                    df2["iterationSteps"] = iterationsColumn
-                    sns.lineplot(data=df2, x="iterationSteps", y=0)
-                    plt.title("Potential Curriculum Progression", fontsize=titleFontsize)
-                    plt.ylabel("Reward", fontsize=labelFontsize)
-                    plt.xlabel("Iteration Steps", fontsize=labelFontsize)
-                    plt.xlim(right=self.iterationsList[len(bestCurricScores) - 1] + 20000, left=0)
-                    plt.xticks(fontsize=tickFontsize)
-                    plt.yticks(fontsize=tickFontsize)
-                    plt.tight_layout()
-                    plt.show()
+                self.CurricProgressionPlot(allCurricScores, bestCurricScores)
         elif isRRH:
             for epoch in self.rawReward:
                 bestCurriculumScore = -1
@@ -532,3 +512,30 @@ class Result:
                 env3.append(currentReward[2] / 10)
                 env4.append(currentReward[3] / 12)
         return env1, env2, env3, env4, bestGenDict
+
+    def CurricProgressionPlot(self, allCurricScores, bestCurricScores):
+        if False and len(allCurricScores) == 12:
+            # TODO fix this: Line color should be same as BEST scatter point; maybe just use 1 color for scatter: BEST or not best ;; then match that color for the corresponding lineplot
+            fig, ax = plt.subplots(figsize=(12, 8))
+            transposed_list = list(zip(*allCurricScores))
+            sns.set_theme(style="darkgrid")
+            df = pd.DataFrame(transposed_list)
+            df = df.transpose()
+            iterationsColumn = self.iterationsList[:len(allCurricScores)]
+            df['iterationSteps'] = iterationsColumn
+
+            for column in df:
+                if column != "iterationSteps":
+                    sns.scatterplot(data=df, x="iterationSteps", y=column, )
+
+            df2 = pd.DataFrame(bestCurricScores)
+            df2["iterationSteps"] = iterationsColumn
+            sns.lineplot(data=df2, x="iterationSteps", y=0)
+            plt.title("Potential Curriculum Progression", fontsize=titleFontsize)
+            plt.ylabel("Reward", fontsize=labelFontsize)
+            plt.xlabel("Iteration Steps", fontsize=labelFontsize)
+            plt.xlim(right=self.iterationsList[len(bestCurricScores) - 1] + 20000, left=0)
+            plt.xticks(fontsize=tickFontsize)
+            plt.yticks(fontsize=tickFontsize)
+            plt.tight_layout()
+            plt.show()
