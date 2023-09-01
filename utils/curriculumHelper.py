@@ -54,10 +54,10 @@ NEXT_ENVS = "NextEnvs"
 
 # Evaluation font sizes
 # TODO maybe use different file for this
-labelFontsize = 16
+labelFontsize = 18
 titleFontsize = 20
-legendFontSize = 14  # TODO why is this still so big sometimes ?
-tickFontsize = 12
+legendFontSize = 16  # TODO why is this still so big sometimes ?
+tickFontsize = 14
 
 
 # Env sizes

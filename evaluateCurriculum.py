@@ -262,17 +262,10 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     x = "iterationSteps"
     for col in yColumns:
         y = col
-        #window_size = 1  # adjust as needed
-        #smoothed_data = df[y].rolling(window=window_size, min_periods=1).mean()
-
-        # Plot the EMA curve
-        sns.lineplot(data=df, x=x, y=y, hue=hue, palette=palette)
-
-        #plt.show()
-        #sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette, #
+        # sns.lineplot(data=df, x=x, y=y, hue=hue, )
+        sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette,  #
                      # estimator=np.median
-
-           #          )
+                     )
 
     ax.set_ylabel("Average Reward", fontsize=labelFontsize)
     ax.set_xlabel("Iterations", fontsize=labelFontsize)
@@ -296,6 +289,7 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     plt.legend(loc=legendLoc, fontsize=labelFontsize, title=legendTitle)
     title = args.title or "Evaluation Performance in all Environments"
     plt.title(title, fontsize=titleFontsize)
+    plt.tight_layout()
     plt.yticks(fontsize=tickFontsize)
     plt.xticks(fontsize=tickFontsize)
     plt.show()
@@ -654,9 +648,9 @@ def showFilteredCurricCount(df):
         id = row["id"]
         if id not in usedIds:
             usedIds.append(id)
-            curricCountDict["curricCount_"+str(getCurricCountFromModelName(id))] += 1
-    df = df[df[curricCountColumn] != 7] # only 1 run
-    df = df[df[curricCountColumn] != 5] # only 1 run
+            curricCountDict["curricCount_" + str(getCurricCountFromModelName(id))] += 1
+    df = df[df[curricCountColumn] != 7]  # only 1 run
+    df = df[df[curricCountColumn] != 5]  # only 1 run
     # df = df[df[curricCountColumn] == 2] # only 1 run
     print("curricCount Dict", curricCountDict)
     plotMultipleLineplots(df, curricCountColumn)
