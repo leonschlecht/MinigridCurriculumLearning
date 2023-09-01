@@ -1,6 +1,8 @@
 import argparse
 import os
+import time
 from collections import defaultdict
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -101,6 +103,7 @@ def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove
                 if (filterOption == 'GA' and 'NSGA' in colId) or \
                         (filterOption == '50k' and ('150k' in colId or '250k' in colId)) or \
                         ("GA" in filterOption and "const" in colId) or \
+                        ("250k" in colId) or \
                         (not showCanceled and "C_" in colId):  # TODO maybe args for const param
                     return False
             else:
@@ -258,14 +261,15 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
         yColumns = ["snapshotScore"]
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.set_theme(style="darkgrid")
-    # printDfStats(df) # TODO ? maybe as args or just remove this part
+    # printDfStats(df) # TODO ? maybe as args or just remove this part / use it to get best n models
     x = "iterationSteps"
     for col in yColumns:
         y = col
         # sns.lineplot(data=df, x=x, y=y, hue=hue, )
-        sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette,  #
-                     # estimator=np.median
+        sns.lineplot(data=df, x='iterationSteps', y=y, hue=hue, ax=ax, palette=palette, errorbar=None,
+                     # estimator=np.median, sizes=(.25, 2.5)
                      )
+
 
     ax.set_ylabel("Average Reward", fontsize=labelFontsize)
     ax.set_xlabel("Iterations", fontsize=labelFontsize)
@@ -596,7 +600,7 @@ def getGenNrFromModelName(modelName):
 def showFilteredGenPlot(df):
     genColumn = "nGen"
     df[genColumn] = df['id'].apply(getGenNrFromModelName)
-    nGenDict = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0}
+    nGenDict = defaultdict(int)
     usedIds = []
     for i, row in df.iterrows():
         id = row["id"]
@@ -605,9 +609,20 @@ def showFilteredGenPlot(df):
             genNr = str(getGenNrFromModelName(id))
             nGenDict[genNr] += 1
     print("nGen Dict", nGenDict)
-    df = df[df[genColumn] <= 3]
-    df = df[df[genColumn] >= 1]
-    plotMultipleLineplots(df, genColumn)
+    t = 2 == 2+1
+    if t:
+        df = df[df[genColumn] >= 1]
+        df = df[df[genColumn] <= 3]
+        plotMultipleLineplots(df, genColumn)
+    else:
+        # df = df[df["iterationSteps"] <= 333333]
+        df = df[df[genColumn] == 2]
+
+        #filepath = Path(f'./out_{time.time()}.csv')
+        #filepath.parent.mkdir(parents=True, exist_ok=True)
+        #df.to_csv(filepath, index=False)
+        plotMultipleLineplots(df, )
+        plotMultipleLineplots(df, genColumn)
 
 
 def showFilteredIterationSteps(df):
@@ -791,8 +806,8 @@ if __name__ == "__main__":
             args.crossoverMutation or args.splitDistr or args.ppoOnly or
             args.iter or args.steps or args.rrhOnly or args.rhea or args.nsga or args.ga)
     isDoorKey = "door" in args.env
-    palette = sns.color_palette("tab10", n_colors=5)
-    palette = sns.color_palette("Set1", n_colors=5)
+    #palette = sns.color_palette("tab10", n_colors=5)
+    palette = sns.color_palette("Set1", n_colors=15)
 
     if args.ppoOnly:
         args.xIterations = 10000000
