@@ -211,13 +211,18 @@ def printDfStats(df):
         median[filtered] = round(np.median(score), 3)
         std[filtered] = round(np.std(score), 3)
     sorted_data = dict(sorted(sumScore.items(), key=lambda item: item[1]))
-    print("best scores", sorted_data)
+    # print("best scores", sorted_data)
     sorted_data2 = dict(sorted(avg.items(), key=lambda item: item[1]))
-    print("\navg scores", sorted_data2)
+    # print("\navg scores", sorted_data2)
     sorted_data3 = dict(sorted(median.items(), key=lambda item: item[1]))
     print("\nmedian scores", sorted_data3)
     sorted_data4 = dict(sorted(std.items(), key=lambda item: item[1]))
-    print("\nstd scores", sorted_data4)
+    # print("\nstd scores", sorted_data4)
+
+    tmpDf = pd.DataFrame(median.items(), columns=['id', 'median_score'])
+    filtered_df = tmpDf[tmpDf['median_score'] >= 0.78]
+    ids = (filtered_df["id"].unique())
+    return ids
 
 
 def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
@@ -266,8 +271,8 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     for col in yColumns:
         y = col
         # sns.lineplot(data=df, x=x, y=y, hue=hue, )
-        sns.lineplot(data=df, x='iterationSteps', y=y, hue=hue, ax=ax, palette=palette, errorbar=None,
-                     # estimator=np.median, sizes=(.25, 2.5)
+        sns.lineplot(data=df, x='iterationSteps', y=y, hue=hue, ax=ax, palette=palette, errorbar=args.errorbar,
+                     # estimator=np.median,
                      )
 
 
@@ -609,14 +614,13 @@ def showFilteredGenPlot(df):
             genNr = str(getGenNrFromModelName(id))
             nGenDict[genNr] += 1
     print("nGen Dict", nGenDict)
-    t = 2 == 2+1
+    t = 4 == 4
     if t:
-        df = df[df[genColumn] >= 1]
-        df = df[df[genColumn] <= 3]
+        df = df[df[genColumn] < 5]
         plotMultipleLineplots(df, genColumn)
     else:
         # df = df[df["iterationSteps"] <= 333333]
-        df = df[df[genColumn] == 2]
+        df = df[df[genColumn] == 5]
 
         #filepath = Path(f'./out_{time.time()}.csv')
         #filepath.parent.mkdir(parents=True, exist_ok=True)
@@ -663,12 +667,20 @@ def showFilteredCurricCount(df):
         id = row["id"]
         if id not in usedIds:
             usedIds.append(id)
-            curricCountDict["curricCount_" + str(getCurricCountFromModelName(id))] += 1
+            curricCountDict[str(getCurricCountFromModelName(id)) + " curricula"] += 1
+    ids = printDfStats(df)
+
     df = df[df[curricCountColumn] != 7]  # only 1 run
     df = df[df[curricCountColumn] != 5]  # only 1 run
-    # df = df[df[curricCountColumn] == 2] # only 1 run
     print("curricCount Dict", curricCountDict)
-    plotMultipleLineplots(df, curricCountColumn)
+    t = 3 == 3
+    if t:
+        df = df[(df[curricCountColumn] != 3) | (df['id'].isin(ids))]
+        plotMultipleLineplots(df, curricCountColumn)
+    else:
+        df = df[df[curricCountColumn] == 1]
+        plotMultipleLineplots(df, )
+        plotMultipleLineplots(df, curricCountColumn)
 
 
 def getCurricLenFromModelName(modelName):
@@ -690,9 +702,15 @@ def showFilteredCurricLen(df):
             usedIds.append(id)
             genNr = str(getCurricLenFromModelName(id))
             curricLenDict[genNr] += 1
-    df = df[df[curricLenCol] != 7]
+    df = df[df[curricLenCol] != 7] # only 1 run
     print("curricLen Dict", curricLenDict)
-    plotMultipleLineplots(df, curricLenCol)
+    t = 2 == 3
+    if t:
+        plotMultipleLineplots(df, curricLenCol)
+    else:
+        df = df[df[curricLenCol] == 3]
+        plotMultipleLineplots(df,)
+        plotMultipleLineplots(df, curricLenCol)
 
 
 def showGroupedScorePlots(filteredScoreDf):
