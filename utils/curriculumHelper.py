@@ -66,7 +66,7 @@ def getDoorKeyMaxSteps(envSize: int) -> int:
     Returns the maximum steps allowed for a given doorkey environment size
     """
     DOORKEY_MAXSTEP_MULTIPLICATOR = 10
-    return 12 ** 2 * DOORKEY_MAXSTEP_MULTIPLICATOR
+    return envSize ** 2 * DOORKEY_MAXSTEP_MULTIPLICATOR
 
 
 def saveTrainingInfoToFile(path, jsonBody):
@@ -132,13 +132,10 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
     :return:
     """
     for env in selectedEnvsList:
-        size = int(env.split("-")[-1].split("x")[-1]) # DoorKey-5x5 ---> 5
-        size = int(selectedEnvsList[-1].split("-")[-1].split("x")[-1])
+        size = int(env.split("-")[-1].split("x")[-1])  # DoorKey-5x5 ---> 5
         custom_postfix = ENV_NAMES.CUSTOM_POSTFIX + str(maxStepsPercent)
-
         if "DoorKey" in env:
             entry_point = "minigrid.envs:DoorKeyEnv"
-            # size = int(selectedEnvsList[-1].split("-")[-1].split("x")[-1])
             max_steps = int(getDoorKeyMaxSteps(size) * maxStepsPercent)
             kwargs = {"size": size, "max_steps": max_steps}
         elif "Dynamic-Obstacle" in env:
@@ -153,7 +150,7 @@ def registerEnvs(selectedEnvsList: list, maxStepsPercent: float) -> None:
             entry_point=entry_point,
             kwargs=kwargs,
         )
-        # print(env+custom_postfix, kwargs)
+        # print(env + custom_postfix, kwargs)
 
 
 def calculateEnvDifficulty(iterationsDone: int, difficultyStepsize: int, selectedEnvsList: list) -> float:
