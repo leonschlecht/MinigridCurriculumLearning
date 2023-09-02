@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import natsort
 
 from curricula.Result import Result
 from utils.curriculumHelper import *
@@ -218,7 +219,8 @@ def printDfStats(df):
     # print("\nstd scores", sorted_data4)
 
     tmpDf = pd.DataFrame(median.items(), columns=['id', 'median_score'])
-    filtered_df = tmpDf[tmpDf['median_score'] >= 0.84]
+    filtered_df = df
+    filtered_df = tmpDf[tmpDf['median_score'] >= 0.5]  # TODO dont use this if there is few runs
     ids = (filtered_df["id"].unique())
     print("unique", len(ids))
     return ids
@@ -257,6 +259,40 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
                 return tmp
 
             df['id'] = df['id'].map(transform_label)
+        elif "Dyn" in args.title:
+            def transform_label(label):
+                if "AP" in label:
+                    return "All Parallel"
+                if "SPCL" in label:
+                    return "SPCL"
+                if "RndRH" in label:
+                    return "Random RH" # comment this line if you dont want to group by RRH
+                    splitStr = label.split("_")[2:]
+                    resultStr = ""
+                    for split in splitStr:
+                        resultStr += split
+                        if "gen" in split:
+                            break
+                        resultStr += " "
+                    return resultStr
+                if "PPO" in label:
+                    return label
+                # cut the initials, like '1_GA_"
+                result = label[5:]
+                result = result.split("_")
+                transformedLabel = ""
+                for r in result:
+                    transformedLabel += r
+                    if "curric" in r:
+                        break
+                    transformedLabel += " "
+                    # Add additional space to make 50k and 150k appear same length in legend
+                    if r == result[0] and len(r) == 3:
+                        transformedLabel += "  "
+                assert transformedLabel != ""
+                return transformedLabel
+
+            df['id'] = df['id'].map(transform_label)
     if args.scores == "both":
         yColumns = ["snapshotScore", "bestCurricScore"]
     elif args.scores == "curric":
@@ -266,15 +302,15 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.set_theme(style="darkgrid")
     # printDfStats(df) # TODO ? maybe as args or just remove this part / use it to get best n models
-    x = "iterationSteps"
     for col in yColumns:
         y = col
-        # sns.lineplot(data=df, x=x, y=y, hue=hue, )
         sns.lineplot(data=df, x='iterationSteps', y=y, hue=hue, ax=ax, palette=palette, errorbar=args.errorbar,
-                     estimator=np.median,
+                     # estimator=np.median,
                      )
 
-
+    handles, labels = ax.get_legend_handles_labels()
+    sorted_labels = natsort.natsorted(labels)
+    sorted_handles = [handles[labels.index(label)] for label in sorted_labels]
     ax.set_ylabel("Average Reward", fontsize=labelFontsize)
     ax.set_xlabel("Iterations", fontsize=labelFontsize)
 
@@ -282,19 +318,22 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     # Edit this out to move the legend out of the plot
     # ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     # ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
-    minX = 0
-    maxX = args.xIterations + OFFSET
-    assert minX < maxX, "min X must be smaller than max X"
-    ax.set_xlim((0, args.xIterations + OFFSET))
     if isDoorKey:
-        ax.set_ylim((0, 1))
+        minY = 0
     else:
-        ax.set_ylim((-1, 1))
+        minY = -1
+    maxX = args.xIterations + OFFSET
+    minX = 0
+    assert minX < maxX, "min X must be smaller than max X"
+    ax.set_xlim((minX, args.xIterations + OFFSET))
+    ax.set_ylim((minY, 1))
+
     legendTitle = ""
     if hue != "id":
         legendTitle = hue
 
-    plt.legend(loc=legendLoc, fontsize=labelFontsize, title=legendTitle)
+    ax.legend(sorted_handles, sorted_labels, loc=legendLoc, fontsize=labelFontsize, title=legendTitle)
+
     title = args.title or "Evaluation Performance in all Environments"
     plt.title(title, fontsize=titleFontsize)
     plt.tight_layout()
@@ -622,9 +661,9 @@ def showFilteredGenPlot(df):
         df = df[df[genColumn] == 5]
         # import time
         # from pathlib import Path
-        #filepath = Path(f'./out_{time.time()}.csv')
-        #filepath.parent.mkdir(parents=True, exist_ok=True)
-        #df.to_csv(filepath, index=False)
+        # filepath = Path(f'./out_{time.time()}.csv')
+        # filepath.parent.mkdir(parents=True, exist_ok=True)
+        # df.to_csv(filepath, index=False)
         plotMultipleLineplots(df, )
         plotMultipleLineplots(df, genColumn)
 
@@ -702,7 +741,7 @@ def showFilteredCurricLen(df):
             usedIds.append(id)
             genNr = str(getCurricLenFromModelName(id))
             curricLenDict[genNr] += 1
-    df = df[df[curricLenCol] != 7] # only 1 run
+    df = df[df[curricLenCol] != 7]  # only 1 run
     print("curricLen Dict", curricLenDict)
     t = 6 == 7
     if t:
@@ -712,7 +751,7 @@ def showFilteredCurricLen(df):
         df = df[(df['id'].isin(ids))]
         # df = df[(df[curricLenCol] != 3) | (df['id'].isin(ids))]
         df = df[df[curricLenCol] == 3]
-        plotMultipleLineplots(df,)
+        plotMultipleLineplots(df, )
         plotMultipleLineplots(df, curricLenCol)
 
 
@@ -823,7 +862,7 @@ if __name__ == "__main__":
             args.crossoverMutation or args.splitDistr or args.ppoOnly or
             args.iter or args.steps or args.rrhOnly or args.rhea or args.nsga or args.ga)
     isDoorKey = "door" in args.env
-    #palette = sns.color_palette("tab10", n_colors=5)
+    # palette = sns.color_palette("tab10", n_colors=5)
     palette = sns.color_palette("Set1", n_colors=15)
 
     if args.ppoOnly:
