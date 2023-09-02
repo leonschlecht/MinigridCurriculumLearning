@@ -212,21 +212,26 @@ def printDfStats(df):
     sorted_data = dict(sorted(sumScore.items(), key=lambda item: item[1]))
     # print("best scores", sorted_data)
     sorted_data2 = dict(sorted(avg.items(), key=lambda item: item[1]))
-    # print("\navg scores", sorted_data2)
+    print("\navg scores", sorted_data2)
     sorted_data3 = dict(sorted(median.items(), key=lambda item: item[1]))
-    print("\nmedian scores", sorted_data3)
+    # print("\nmedian scores", sorted_data3)
     sorted_data4 = dict(sorted(std.items(), key=lambda item: item[1]))
     # print("\nstd scores", sorted_data4)
 
-    tmpDf = pd.DataFrame(median.items(), columns=['id', 'median_score'])
+    tmpDf = pd.DataFrame(avg.items(), columns=['id', 'average'])
     filtered_df = df
-    filtered_df = tmpDf[tmpDf['median_score'] >= 0.5]  # TODO dont use this if there is few runs
+    filtered_df = tmpDf[tmpDf['average'] >= 0.86]  # TODO dont use this if there is few runs
     ids = (filtered_df["id"].unique())
     print("unique", len(ids))
     return ids
 
 
 def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
+    ids = printDfStats(df)
+    df = df[df['id'].str.contains('SPCL') | df['id'].isin(ids)]
+
+    # df = df[("RndRH" in df["id"])]
+    assert len(df["id"].unique()) != 0, f"df: {df}"
     if args.title is not None:
         if "multi" in args.title:
             def transform_label(label):
@@ -259,19 +264,19 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
                 return tmp
 
             df['id'] = df['id'].map(transform_label)
-        elif "Dyn" in args.title:
+        elif "Dyn" in args.title or "Door" in args.title:
             def transform_label(label):
-                if "AP" in label:
+                if "AP" in label or "AllPara" in label:
                     return "All Parallel"
                 if "SPCL" in label:
                     return "SPCL"
                 if "RndRH" in label:
-                    return "Random RH" # comment this line if you dont want to group by RRH
+                    return "Random RH"  # comment this line if you dont want to group by RRH
                     splitStr = label.split("_")[2:]
                     resultStr = ""
                     for split in splitStr:
                         resultStr += split
-                        if "gen" in split:
+                        if "curric" in split:
                             break
                         resultStr += " "
                     return resultStr
@@ -667,7 +672,7 @@ def showFilteredGenPlot(df):
         # filepath.parent.mkdir(parents=True, exist_ok=True)
         # df.to_csv(filepath, index=False)
         plotMultipleLineplots(df, )
-        plotMultipleLineplots(df, genColumn)
+        # plotMultipleLineplots(df, genColumn)
 
 
 def showFilteredIterationSteps(df):
@@ -680,10 +685,10 @@ def showFilteredIterationSteps(df):
             iterStep = row["group"]
             iterationStepsDict[str(iterStep)] += 1
     print("iterations Dict", iterationStepsDict)
-    df = df[df["group"] != 250000]
+    df = df[df["group"] == 50000]
     groupName = "iterationSteps "
     df[groupName] = df["group"]  # TODO why is this originally named this group
-    plotMultipleLineplots(df, groupName)
+    plotMultipleLineplots(df, )
 
 
 def getCurricCountFromModelName(modelName):
@@ -745,7 +750,7 @@ def showFilteredCurricLen(df):
             curricLenDict[genNr] += 1
     df = df[df[curricLenCol] != 7]  # only 1 run
     print("curricLen Dict", curricLenDict)
-    t = 6 == 7
+    t = 6 == 6
     if t:
         plotMultipleLineplots(df, curricLenCol)
     else:
@@ -851,8 +856,8 @@ if __name__ == "__main__":
     parser.add_argument("--nsga", action="store_true", default=False, help="Only using GA runs")
     parser.add_argument("--ga", action="store_true", default=False, help="Only using NSGA runs")
     parser.add_argument("--rrh", action="store_true", default=False,
-                        help="Include RRH runs, even if --rhea was speicifed")
-    parser.add_argument("--rrhOnly", action="store_true", default=False, help="Only RRH runs")
+                        help="Include RRH runs, even if --rhea was speicifed")  # todo remove this part
+    parser.add_argument("--rrhOnly", action="store_true", default=False, help="Only RRH runs")  # todo doesnt work anymore ?
     parser.add_argument("--showCanceled", action="store_true", default=False, help="Whether to use canceled runs too")
     parser.add_argument("--ppoOnly", action="store_true", default=False, help="Whether to show only ppo runs")
     parser.add_argument("--errorbar", default=None, type=str,
@@ -865,7 +870,10 @@ if __name__ == "__main__":
             args.iter or args.steps or args.rrhOnly or args.rhea or args.nsga or args.ga)
     isDoorKey = "door" in args.env
     # palette = sns.color_palette("tab10", n_colors=5)
-    palette = sns.color_palette("Set1", n_colors=15)
+
+    if args.comparisons == -1:
+        args.comparisons = 10
+    palette = sns.color_palette("Set1", n_colors=int(args.comparisons))
 
     if args.ppoOnly:
         args.xIterations = 10000000
