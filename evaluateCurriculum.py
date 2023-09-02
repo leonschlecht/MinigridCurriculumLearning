@@ -213,6 +213,9 @@ def printDfStats(df):
     # print("best scores", sorted_data)
     sorted_data2 = dict(sorted(avg.items(), key=lambda item: item[1]))
     print("\navg scores", sorted_data2)
+    for item in sorted_data2.items():
+        print(item[1], item[0])
+    exit()
     sorted_data3 = dict(sorted(median.items(), key=lambda item: item[1]))
     # print("\nmedian scores", sorted_data3)
     sorted_data4 = dict(sorted(std.items(), key=lambda item: item[1]))
@@ -228,7 +231,7 @@ def printDfStats(df):
 
 def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     ids = printDfStats(df)
-    df = df[df['id'].str.contains('SPCL') | df['id'].isin(ids)]
+    # df = df[df['id'].str.contains('PPO') | df['id'].isin(ids)] # TODO ?
 
     # df = df[("RndRH" in df["id"])]
     assert len(df["id"].unique()) != 0, f"df: {df}"
@@ -284,7 +287,7 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
                     tmp = label.split("_")
                     return tmp[0] + " " + tmp[1]
                 # cut the initials, like '1_GA_"
-                return "RHEA CL"
+                # return "RHEA CL" # uncomment this if you want to group RHEA CL runs
                 result = label[5:]
                 result = result.split("_")
                 transformedLabel = ""
@@ -791,6 +794,7 @@ def showPPOPlot(filteredScoreDf):
     df['id'] = df['id'].str.replace(pattern, transformation)
     # TODO maybe add RHEA run for comparison
     plotMultipleLineplots(df, legendLoc="upper right")
+    # TODO remove ? This became broken i think
 
 
 def main(comparisons: int):
