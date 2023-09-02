@@ -1,8 +1,6 @@
 import argparse
 import os
-import time
 from collections import defaultdict
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -220,8 +218,9 @@ def printDfStats(df):
     # print("\nstd scores", sorted_data4)
 
     tmpDf = pd.DataFrame(median.items(), columns=['id', 'median_score'])
-    filtered_df = tmpDf[tmpDf['median_score'] >= 0.78]
+    filtered_df = tmpDf[tmpDf['median_score'] >= 0.84]
     ids = (filtered_df["id"].unique())
+    print("unique", len(ids))
     return ids
 
 
@@ -272,7 +271,7 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
         y = col
         # sns.lineplot(data=df, x=x, y=y, hue=hue, )
         sns.lineplot(data=df, x='iterationSteps', y=y, hue=hue, ax=ax, palette=palette, errorbar=args.errorbar,
-                     # estimator=np.median,
+                     estimator=np.median,
                      )
 
 
@@ -621,7 +620,8 @@ def showFilteredGenPlot(df):
     else:
         # df = df[df["iterationSteps"] <= 333333]
         df = df[df[genColumn] == 5]
-
+        # import time
+        # from pathlib import Path
         #filepath = Path(f'./out_{time.time()}.csv')
         #filepath.parent.mkdir(parents=True, exist_ok=True)
         #df.to_csv(filepath, index=False)
@@ -673,7 +673,7 @@ def showFilteredCurricCount(df):
     df = df[df[curricCountColumn] != 7]  # only 1 run
     df = df[df[curricCountColumn] != 5]  # only 1 run
     print("curricCount Dict", curricCountDict)
-    t = 3 == 3
+    t = 7 == 7
     if t:
         df = df[(df[curricCountColumn] != 3) | (df['id'].isin(ids))]
         plotMultipleLineplots(df, curricCountColumn)
@@ -704,10 +704,13 @@ def showFilteredCurricLen(df):
             curricLenDict[genNr] += 1
     df = df[df[curricLenCol] != 7] # only 1 run
     print("curricLen Dict", curricLenDict)
-    t = 2 == 3
+    t = 6 == 7
     if t:
         plotMultipleLineplots(df, curricLenCol)
     else:
+        ids = printDfStats(df)
+        df = df[(df['id'].isin(ids))]
+        # df = df[(df[curricLenCol] != 3) | (df['id'].isin(ids))]
         df = df[df[curricLenCol] == 3]
         plotMultipleLineplots(df,)
         plotMultipleLineplots(df, curricLenCol)
@@ -772,10 +775,6 @@ def main(comparisons: int):
     showPPOPlot(filteredScoreDf)
     showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf)
 
-    # TODO DF save as csv
-    # filepath = Path('./out.csv')
-    # filepath.parent.mkdir(parents=True, exist_ok=True)
-    # scoreDf.to_csv(filepath, index=False)
     print("Evaluaiton finished!")
 
 

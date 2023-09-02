@@ -8,6 +8,12 @@
 - can visualize with scripts.evaluateCurriculum
 - train a model with scripts.trainCurriuclum
 
+
+
+TODO
+- wie funktioniert das ganze: mit dem _CANDIDATE usw, wie dann weitergemacht wird. 
+- Dass man reloaden kann und zu beginn der epoche weitermachen kann
+
 -------------------
 
 Evaluation:

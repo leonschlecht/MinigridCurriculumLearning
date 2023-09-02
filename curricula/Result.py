@@ -102,7 +102,7 @@ class Result:
                 self.getBestCurriculaEnvDistribution(self.bestCurriculaDict, usedEnvEnumeration)
             formatHelperList = [[env for env in self.selectedEnvDict[epoch]] for epoch in self.selectedEnvDict]
             # keep only the env size part, e.g. 6 of MiniGrid-DoorKey-6x6
-            self.formattedSelectedEnvList = [[int(env.split("-")[2].split("x")[0]) for env in sublist] for sublist in
+            self.formattedSelectedEnvList = [[int(env.split("x")[0].split("-")[-1]) for env in envs] for envs in
                                              formatHelperList]
             assert len(self.formattedSelectedEnvList) == len(self.snapShotScores), \
                 "Something went went wrong with creating the formatted selected env list"
