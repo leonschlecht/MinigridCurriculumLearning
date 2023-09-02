@@ -5,7 +5,7 @@
 #SBATCH --partition=cpu_normal_stud
 #SBATCH --exclude=cp2019-11,cc1l01
 #SBATCH --cpus-per-task=2
-#SBATCH --mem=24G
+#SBATCH --mem=4G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
 srun -c 2 -v python3 trainCurriculum.py --trainAllParalell  --model PPO_16x16b --iterPerEnv 50000 --procs 16 --ppoEnv 3 --dynamicObstacle --seed 1

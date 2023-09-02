@@ -276,8 +276,10 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
                         resultStr += " "
                     return resultStr
                 if "PPO" in label:
-                    return label
+                    tmp = label.split("_")
+                    return tmp[0] + " " + tmp[1]
                 # cut the initials, like '1_GA_"
+                return "RHEA CL"
                 result = label[5:]
                 result = result.split("_")
                 transformedLabel = ""
