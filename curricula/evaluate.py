@@ -24,7 +24,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     # Load agent
     model_dir = utils.get_model_dir(model)
     agent = utils.Agent(env.observation_space, env.action_space, model_dir,
-                        argmax=args.argmax, num_envs=args.procs,
+                        argmax=args.argmax, num_envs=envsToLoad,
                         use_memory=args.memory, use_text=args.text)
 
     # Initialize logs
@@ -35,8 +35,8 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
     obss = env.reset()
 
     log_done_counter = 0
-    log_episode_return = torch.zeros(args.procs, device=device)
-    log_episode_num_frames = torch.zeros(args.procs, device=device)
+    log_episode_return = torch.zeros(envsToLoad, device=device)
+    log_episode_num_frames = torch.zeros(envsToLoad, device=device)
 
     while log_done_counter < args.episodes:
         actions = agent.get_actions(obss)
@@ -45,7 +45,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
         agent.analyze_feedbacks(rewards, dones)
 
         log_episode_return += torch.tensor(rewards, device=device, dtype=torch.float)
-        log_episode_num_frames += torch.ones(args.procs, device=device)
+        log_episode_num_frames += torch.ones(envsToLoad, device=device)
 
         for i, done in enumerate(dones):
             if done:
@@ -61,7 +61,7 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
 
     # Print logs
     num_frames = sum(logs["num_frames_per_episode"])
-    evalTime = end_time - start_time
+    evalTime = end_time - start_time + .0001
     fps = num_frames / evalTime
     return_per_episode = utils.synthesize(logs["return_per_episode"])
     num_frames_per_episode = utils.synthesize(logs["num_frames_per_episode"])
@@ -93,21 +93,23 @@ def evaluateAll(model, envs, args, txtLogger) -> dict:
     return results
 
 
-def evaluateAgent(model, difficulty, args, txtLogger) -> int:
+def evaluateAgent(model, difficulty, args, txtLogger, envList: list) -> list:
     """
     Evaluates and calculates the average performance in ALL environments
     Called from other classes to start the evaluation
+    :param envList:
     :param txtLogger:
     :param model: the name of the model
     :param difficulty:
     :param args: the command line arugments
     :return: the average reward
     """
-    rewardSum = 0
-    envs = getEnvListThroughDifficulty(difficulty)
+    startTime = time.time()
+    rewards = []
+    envs = getEnvListThroughDifficulty(difficulty, envList)
     evaluationResult = evaluateAll(model, envs, args, txtLogger)
     for evalEnv in envs:
         currentReward = float(evaluationResult[evalEnv]["meanRet"]) * getRewardMultiplier(evalEnv, args.noRewardShaping)
-        rewardSum += currentReward
-    print("Evaluate agent TEST", rewardSum)
-    return rewardSum
+        rewards.append(currentReward)
+    print("Evaluate agent", rewards, "duration:", time.time() - startTime)
+    return rewards

@@ -25,12 +25,12 @@ def synthesize(array):
     return d
 
 
-def getEnvListThroughDifficulty(difficulty: int) -> list:
+def getEnvListThroughDifficulty(difficulty: int, rawEnvList: list) -> list:
     envList = []
-    for i in range(len(ENV_NAMES.ALL_ENVS)):
-        envList.append(getEnvFromDifficulty(i, difficulty))
+    for i in range(len(rawEnvList)):
+        envList.append(getEnvFromDifficulty(i, rawEnvList, difficulty))
     return envList
 
 
-def getEnvFromDifficulty(index: int, envDifficulty) -> str:
-    return ENV_NAMES.ALL_ENVS[index] + ENV_NAMES.CUSTOM_POSTFIX + str(envDifficulty)
+def getEnvFromDifficulty(index: int, envList: list, envDifficulty) -> str:
+    return envList[index] + ENV_NAMES.CUSTOM_POSTFIX + str(envDifficulty)

@@ -1,183 +1,86 @@
 eval "$(~/tmp/Anaconda/home/schlecht/AnacondaNeu/bin/conda shell.bash hook)"
 
-pc tmp datei rüberschieben
-
-RRH mit 6 numCurric oder so machen
-- interneal / external validation ?
-
-Other question is, how can you maximize the spike pre 1kk iterations?
-Stackedbarplot performance (NSGA vs GA vs RRH vs AP vs SPLCL)
-
-Neue Fragen
-- Feste begriffe einführen, wie ich zB die hyperparameter nenne. zB curricStep statt "for every step of a curriculum"
-Experimente:
-- mit anderem ALgorithmus ( SAC / TD3 )
-- mit anderen Gamma raten
-- mit / ohne Rewardshaping vergleichen
-- mit anderen curricLengths (--stepsPerCurric)
-
-Experiment Ideen:
-- episoden pro eval verringern ( ziel schneller evaluieren)
-- andere envGrößen
-- andere Viewsize
-- Andere Minigrid Envs?
-- Ganz andere Envs?
+python .\evaluateCurriculum.py --iterGroup --env door --xIterations 5000000
+python .\evaluateCurriculum.py --gen --env door --xIterations 5000000
+python .\evaluateCurriculum.py --curricCount  --env door --xIterations 5000000
+python .\evaluateCurriculum.py --curricLen --env door --xIterations 5000000
+--showCanceled ?
+python .\evaluateCurriculum.py --comparisons 2 --curricDistr --normalize --title 'NSGA-II Multi vs Single Objective Environment Distribution'
+python scores: gamma, multi, rs im TITLE für bestimmte Filter usw
 
 
 
 
-- ggf neue experimente queuen, die den stepSize etwas rumprobieren (oderz umidnst schuaen wasi chs chonp robiert hatte und warum ich das nicht weiterverfolgt hatte usw)
-- evtl mehr expeirmente mit norewardshasping machen
--- alte models automatisch löschen (ic hglaube das könnte schon ziemlich viel zeit sparen, damit git schneller ist und vllta uf dem cluster weniger schiefläuft. Aber ich weiß nicht genau, ob das blöd ist, wenn im Cluster immer so viel hin und hergeschrieben wird)
+DO:
+- gucken ob sich das noch lohnt mit dem curricScore für multi obj zu fixen im result (irgendwie ist bei curricRewards etwas nicht richtig überschreiben worden) [müsste eig nur aufsummieren jeweils in der curricScore spalte] bzw bin mir auch nicht sicher ob das nicht verbuggt ist und an manchen stellen dann nicht richtig übernommen wurde, also idk)
 
 
-Heute:
-- Kapitel 4 V1 fertig
-- überlegen, welche Grafiken in Kapitel 4 passen könnten
-- mit dem SAC weiterprobieren
+-------
 
-- Grafik mit SPLCL Runs (bzw allen)
-- 6 8 10 12 switch baseline (welches CL ist das? Gibt es iwi eine Literatur, die das vorschlägt)
+- PLOT: Wie nah ist das bestCurriculum am snapshot score? Evtl kombinieren mit den Gruppierten plots teilweise ? [geht nur mit neuen runs]: - Vllt links snaphsotscore & rechts curricScore. ?
+- PLOT: methode, um y achse korrekt zu sortieren (string vs nummern) [@distributions]
+- PLOT: top 5 nsga vs top 5 ga grouped
 
-Morgen:
-- überlegen, wie ich alle 1kk env distribution oder so hinbekomme ( AUFGABENSTELLUNG !!!)
-- Kapitel 4 fertig;
-- Kapitel 5 etwas verfeinert
-- Überlegen, welche runs noch fehlen (und die dann starten)
-
-Fr:
-- Kapitel 5 fertig
-- Kapitel 6 etwas verfeinert
-- Runs alle rüberkopiert, crMu Run5050 nach -> 54 56
-
-Sa: Kapitel 6 fertig
-
-So:
-Proofreading K4,5,6 & abschicken
+- als csv ein mal das komplette dataframe speichern
+- Auswirkungen von seed auf performance ?? vllt gibts ja immer einen, wo alle verkakcen / easy vorankommen...
+- env distribution dyn obstacle
+- Baselines mit mind. 1 RHEA CL run zeigen (zumindest spcl und ap, weil es empty ist)
+((Dynamic Obstacle Runs)) -> Mindestens eine Grafik mit allen runs)
 
 
-Andere Todos:
-- Experimente:
--   - Mehr Runs ohne Rewrad Shaping
-    - mit anderem algorithmus
-    - mit anderen Gamma raten (evtl kombinieren mit curric Längen)
-     mit anderen curricLengths (--stepsPerCurric)
-     - weniger episoden pro eval
-     - andere EnvGrößen & viewsize
-     - andere minigrid envs?
-- SPLCL runs rüberkopieren
-- Grafiken zu SPLCL runs erstellen
-- Time investieren in Groupbarchart (brauch generell für eig alles ist das useful)
-- Verbessern der benutzen grafiken für die MA (--> vorher überlegen, welche ich eigentlihc brauche bzw. welche ich generieren kann und was für aussagen ich treffen möchte)
-- eval README(und ggf kleine doc schreiben dmait es consistent ist und ich nicht jedes mal in iwelche probelem laufe)
-- Kapitel 4 schreiben
-- Kapitel 5 schreiben
-- Kapitel 6 schreiben
+- ich müsstem al mehr das narvekar survey anschauen i guess ???
+- evtl mit dem /benchmark ordner ausprobieren, damit ich nicht alles im root habe
+- schauen wie HEM / ACL funktioniert, weil das schon irgendwie komisch wäre bei doorkey (die anderen steps wären dann gar nicht notwendig gewesen)
+- TSCL ausprobierne per code ? weil es ja kein teacher network gibt sondern die heuristik genutzt werden könnte
+- [13] Devin Soni. Introduction to evolutionary algorithms ---> Die Url muss in der bibliography auftauchen??
+- Warum haben wir Minigrid genommen? gibt nichts vergleichbares für uns; aber auch ewgen doorkey und so. Ist schon eshr spezifisch, müsste evtl begründet werden
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+VariablenNamen:
+- iterationSteps
+- curricLength ( _3cstep
+- nGen ( _3gen)
+- curricCount (oder doch lieber numCurric?) (_3curric)
+- paraEnv
+- curricScore
 
 
-Todos:
-- scatterplot evtl für training time (NSGA, ..)
-- xtick 45 grad & ---> verschieben ha=right (- rotation=45, ha='right')
-- filter nach Methode (zB 100k, oder alle 3Gen, ...) --> schauen was ich noch nicht alles implemetneirt habe und wonach ich noch filtern önnte
-- Idee vom RHEA CL Plot machen (kannst ja eigene daten erstellen dafür)
-    - auch ein mal actual progression visualisieren (wie sich etwas in 1 epoche entwickelt hat)
-!! Baselines mal genauer aufschlüsseln und schaune was ich schon habe, bzw was ich noch leicht implementieren könnte
-- filter nach Methode (zB 100k, oder alle 3Gen, ...)
-
-
-- I could use difficult for the pool of available curricula as well (to better adjust to the models performacne); so it would have more to choose from, but then the evol optim would take a lot longer
--Plot: time of 2 curric vs 3 curric vs 4 curric
-Plot: Env distribution of NSGA vs GA (vs random rh vs splcl)
-(plot: promising experiments that were cut due to training time)
-
-- env distributions anschuaen,
-- env distribution normalisieren
-- 2 Grafiken einbinden (objetive function smoothing Nr1, und vllt die data driven / model driven #2)
-- Baseline trainieren ohne CL (random order der samples) --> Quasi 1 epoch mit 4 batches ( --> frag alex dazu)
-stackedBarplot: heatmap: zeile curricula, spalte environments; Rot markeiren was oft ist und weiß was weniger
+@alex:
+- Training time: sonst vergleichen die leute ja immer nur epochs / iterations & nicht sowas wie RH dass man quasi wasted simulations hat ?
+- Wie oft zitieren? Also manchmal ergibt es sich im absatz durch They usw ja von selbst ?
+- Wie erkläre ich das mit TSCL? / Warum ich das nicht benutzt habe
+- limitations & future work dopplungen ?
+- Lieber 1. schritt des curriculums oder gesamten curriculum score zeigen (Was algo sieht vs was wirklich ist)
 
 
 
 
----------------------------
-Low Prio
-- (Multiobjective für NSGA machen)
+------------
 
 
-Ideen
--------------------- FRAGEN ZUR MA -------------------
-General Q:
-- anderer termin ok
-- etwas burnt out
-- plots auf falscher seite (Tipps?)
-- Benutzen von "we"?
-- Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleiche
-- SAC / ...  (wie am besten einbetten; erst mit minigrid gangbar machen -> dann ?)
-- Was für "cherry on top gibt es denn noch"?
-- [1][2], oder [1,2]
-- Wie umgeht man dass der plot nicht im falschen kapitel landet ? (und auch balance zwischen Plotgröße und Lesbarkeit)
+- curriculum progression plot (die hoffnung / idee) -- evtl in experimental setup oder bei RH in basic ? [evtl händisch erstellen ? 3curricula; 3-5 x ticks; gestirchelte linien usw]
+- Reward / Gen Plot bzw vllt bester reward pro generation zeigen ??
+- env1 usw plot
+- curric score vs snapshot score ---> muss ich für die neuen runs erstn och erstellen im eval
+- gen1 distr, vs gen2 distr, vs gen3 distr
+
+- Ne Grafik, die zeigt, dass Gamma relevant ist und was sonst passieren könnte (Alle Curric Gleichgewichtet -> Schlechter snapshot gefahr
+- Sind die nRS > RS oder tritt das nicht immer auf???
+- Docstirngs & README & benchmark stuff anfangen zu schreiben
+- Wie EA Initialisieren, wenn man train != eval envs. man könnte evtl. mehr envs zum Training verwenden könnte, als man in der Evaluierung benutzt, um Kosten zu sparen (zB TrainingsEnv: 6,8,10,12,14,16 und evaluierung mit 6, 8, 12, 16. Wie würde sich der EA dadurch verändern? Für single obj macht es glaube ich keinen Unterschied, aber für Multi Obj?
+- AP aufteilen als oberklasse und 4 unterklassen
+- RHEA cl vs RRH variance plot
 
 
-================
+================================================================================================
+feedback
+- more objectives = more sophisticated = larger pop required --> Quelle. (Habe ich selber argumentiert)
+- "du beginnst das kapitel damit, dass man keinen einzelnen state-of-the-art definieren kann, sondern es von der jeweiligen anwendung abhängt. kann man guidelines geben in welchen fall welcher der vorgestellten algorithmen gut funktioniert und in welchen fällen vielleicht alle noch nachlegen müssten?"
+- Du musst keine fastest method finden. Wenn die Endperformance in eigentlich allen Varianten ähnlich ist, warum ist diese Info dann nicht hilfreich?
+- curricCount impacT: aber bei GA gab es doch das ergebnis auch ? (warum sollte das ein "recht wahrscheinliches ergebnis" sein bei NSGA?
 
-- Pool der available curricula verändern (schrieben aufgefallen)
-
--------------------- FRAGEN ZUR MA -------------------
-Fragen zur MA
-- Schreibstil, wie sehr den leser involvieren? "Now we are looking at ...", "As you can imagine ..."
-- Wann erkläre ich denn das 1. mal unseren Ansatz? In den Basics bei RHEA? Weil in RW (Kapitel 3) möchte ich ja existierende sahen etwas mit unserem ansatz vergleiche
-- Von welchem Wissensstand gehe ich für die Basics aus / was ist die Zielgruppe?
-- Was für "cherry on top gibt es denn noch"?
-- [1][2], oder [1,2]
-- Std dev oder 95 CI ?
-- appraoch vs algorithm
-- Von welchem Wissensstand gehe ich für die Basics aus / was ist die Zielgruppe?
-
-
-
-
----------------------------------
-
-Finde heraus wie weit alle experimente gekommen sind. --> Dann entscheide ggf mit 4kk
-
-- automatische model-benennung statt model param
-- alte modelnamen löschen (also die obvious debug waren bzw abgebrochen, damit ich merh üebrsicht im ls habe)
-
-
-
-
-Random Notes / Ideas:
-- optimize training times: early stopping / depending on threshold; or use a timelimit --> then combine w other methods (but probably bad since bad information to the EA)
-- Ggf nicht immer 1. Schritt übernehmen des RHEA (ggf dynamisch machen), dynamische iterationLenghts1
-- Ggf penalize, dass man immer gleiche envs nimmt ? Iwi encouragen dass er auch neue / sschwierige sachen ausprobiert (--> ggfh ängt das auch mit RH length zusammen)
-- Ein automatischer Difficulty measurer wäre gut. Vllt kombinieren mit einem pre-trained model (dafür gabs iwo ein Paper)
-- I could use difficult for the pool of available curricula as well (to better adjust to the models performacne); so it would have more to choose from, but then the evol optim would take a lot longer
-- Überlegen wie man eine TSCL baseline machen könnte (bzw warum ich das nicht tue)
-
-
-Irgendwann Recherche:
-- Wo performt hard-to-easy besser als CL und warum? Was ist die Idee dahinter überhaupt?
-
-
-
-
-- Ausprobieren mit 8 Envs oder so (zB mit den Empties)
-- Ggf den Eval so umändern, dass man sich auf aktuellen Skill fokussiert (also zB nur 8x8 für alle "ähnlichen" vs immer alles durch; gerade bei > 4 envs wird es auch schwer.
-    ; ggf auch iwi past in betracht ziehen
-    Man könnte wahrscheinlich auch besser paralelisieren (wenn args.procs > args.episodes ist)
-
-
-
-
-=============================================================
-
-# TODO plot the snapshot vs curricReward problem ---> do some experiments. How does the curricLength influence results? How does gamma influence results?
-Random Gedanken
-- Das Unlearning Problem: wie genau funktionieren die updates überhaupt (2560 update schritte, oder 1x pro level)
-- RH Probleme? Was wenn man zB erst 2 Mio mal 16x16 trainieren muss, bevor man Fortschritte sieht? Wenn 1 Horizon bei 500k ist & die Iterationen pro Env noch niedriger sind
-- minimize ersetzen auf das .hasNext() und dann abbrechen bei konvergenz (falls man später viele Gens machen will) --> could save time with EA
-
-===========================================================================================
+=================================0
 
 Changelog / Erkenntnisse
 - Versucht 8x8 zu selten,16x16 sowieso
@@ -230,21 +133,11 @@ exerimente laufen lassen
 schreiben
 
 
--------------===============================
-Meetingnotes:
-einschärnkungen auch benenne ( alle kombinationen nicht möglich zu testen) -> es geht um Gefühl kriegen
-
------------------------
-
-ALTE NOTES
-- ggf nur 1 leichte Env ist zu wenig
-- 100k iterationen pro step zu wenig
-
-=============---------------------------------------------------===
+-------------===============================-----------------------=============---------------------------------------------------===
 ZUR MA
 60-80 Seiten
 Pareto optimum (die linie für evol)
-Sobel Sampling (funzt wahrsch nur für reel-wertige)
+Sobel Sampling
 am ende ggf bayesian optimization ( zB 2 Params gleichzeitg variieren lasesn)
 
 
@@ -254,17 +147,18 @@ am ende ggf bayesian optimization ( zB 2 Params gleichzeitg variieren lasesn)
 ============================================================
 SEEDLISTE
  1
- 9152
- 2330
  1214
- 8515
+ 2330
+8515
+ 9152
 
+ 185
+ 1517
+ 3053
  2529
  8258
- 1517
-  185
- 3053
 
+-------------------
  9030
  4221
  2450
