@@ -209,29 +209,41 @@ def printDfStats(df):
         avg[filtered] = round(np.average(score), 3)
         median[filtered] = round(np.median(score), 3)
         std[filtered] = round(np.std(score), 3)
-    sorted_data = dict(sorted(sumScore.items(), key=lambda item: item[1]))
-    # print("best scores", sorted_data)
-    sorted_data2 = dict(sorted(avg.items(), key=lambda item: item[1]))
-    print("\navg scores", sorted_data2)
-    for item in sorted_data2.items():
-        print(item[1], item[0])
-    exit()
-    sorted_data3 = dict(sorted(median.items(), key=lambda item: item[1]))
-    # print("\nmedian scores", sorted_data3)
-    sorted_data4 = dict(sorted(std.items(), key=lambda item: item[1]))
-    # print("\nstd scores", sorted_data4)
+    #sumScore = dict(sorted(sumScore.items(), key=lambda item: item[1]))
+   # print("best scores", sumScore)
+    averageScore = dict(sorted(avg.items(), key=lambda item: item[1]))
+    print("\navg scores", averageScore)
+    medianScore = dict(sorted(median.items(), key=lambda item: item[1]))
+    print("\nmedian scores", medianScore)
+    #StdDeviationScore = dict(sorted(std.items(), key=lambda item: item[1]))
+    #print("\nstd scores", StdDeviationScore)
 
     tmpDf = pd.DataFrame(avg.items(), columns=['id', 'average'])
     filtered_df = df
-    filtered_df = tmpDf[tmpDf['average'] >= 0.86]  # TODO dont use this if there is few runs
+    filtered_df = tmpDf[tmpDf['average'] >= 0.84]  # TODO dont use this if there is few runs
     ids = (filtered_df["id"].unique())
-    print("unique", len(ids))
+    res = {}
+    j = 0
+    for i in averageScore.items():
+        print(i)
+        res[i[0]] = i[1]
+        j += 1
+    j = 0
+    print("----------")
+    for i in medianScore.items():
+        print(i)
+        res[i[0]] += i[1]
+        j += 1
+    sortedS = dict(sorted(res.items(), key=lambda item: item[1]))
+    for r in sortedS.items():
+        print(r)
+    print("unique", len(ids), ids)
     return ids
 
 
 def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     ids = printDfStats(df)
-    # df = df[df['id'].str.contains('PPO') | df['id'].isin(ids)] # TODO ?
+    df = df[df['id'].isin(ids)]
 
     # df = df[("RndRH" in df["id"])]
     assert len(df["id"].unique()) != 0, f"df: {df}"
@@ -269,6 +281,10 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
             df['id'] = df['id'].map(transform_label)
         elif "Dyn" in args.title or "Door" in args.title:
             def transform_label(label):
+                if "NSGA" in label:
+                    return "NSGA-II"
+                elif "GA" in label:
+                    return "GA"
                 if "AP" in label or "AllPara" in label:
                     return "All Parallel"
                 if "SPCL" in label:
@@ -303,6 +319,7 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
                 return transformedLabel
 
             df['id'] = df['id'].map(transform_label)
+
     if args.scores == "both":
         yColumns = ["snapshotScore", "bestCurricScore"]
     elif args.scores == "curric":
@@ -314,9 +331,22 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     # printDfStats(df) # TODO ? maybe as args or just remove this part / use it to get best n models
     for col in yColumns:
         y = col
-        sns.lineplot(data=df, x='iterationSteps', y=y, hue=hue, ax=ax, palette=palette, errorbar=args.errorbar,
+        # sns.lineplot(data=df, x="x", y="y", style="id", dashes=line_styles)
+        #df["style"] = df[df["id"].str.contains("2step")]
+        ax = sns.lineplot(data=df, x='iterationSteps', y=y, hue=hue, ax=ax, palette=palette, errorbar=args.errorbar,
                      # estimator=np.median,
+                    #style="style"
                      )
+        """lines = ax.lines
+
+        for line in lines:
+            if "child" in line.get_label():
+                continue
+            print(line.get_label())
+            if "3step" in line.get_label():
+                line.set_linestyle("-")  # Solid line
+            else:
+                line.set_linestyle("--")  # Dashed line"""
 
     handles, labels = ax.get_legend_handles_labels()
     sorted_labels = natsort.natsorted(labels)
@@ -664,7 +694,7 @@ def showFilteredGenPlot(df):
     print("nGen Dict", nGenDict)
     t = 4 == 4
     if t:
-        df = df[df[genColumn] < 5]
+        # df = df[df[genColumn] < 6]
         plotMultipleLineplots(df, genColumn)
     else:
         # df = df[df["iterationSteps"] <= 333333]
@@ -675,7 +705,7 @@ def showFilteredGenPlot(df):
         # filepath.parent.mkdir(parents=True, exist_ok=True)
         # df.to_csv(filepath, index=False)
         plotMultipleLineplots(df, )
-        # plotMultipleLineplots(df, genColumn)
+        plotMultipleLineplots(df, genColumn)
 
 
 def showFilteredIterationSteps(df):
@@ -831,7 +861,7 @@ def main(comparisons: int):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", default="doorKey", help="Whether to use doorkey or dynamic obstacle or both")
-    parser.add_argument("--title", default=None, type=str, help="Title of the distribution plots")
+    parser.add_argument("--title", default="GA vs NSGA-II Performance in DoorKey", type=str, help="Title of the distribution plots")
     parser.add_argument("--comparisons", default=-1, help="Choose how many models you want to compare")
     parser.add_argument("--crossoverMutation", action="store_true", default=False,
                         help="Select the crossovermutation varied experiments")
@@ -876,7 +906,7 @@ if __name__ == "__main__":
     # palette = sns.color_palette("tab10", n_colors=5)
 
     if args.comparisons == -1:
-        args.comparisons = 10
+        args.comparisons = 2
     palette = sns.color_palette("Set1", n_colors=int(args.comparisons))
 
     if args.ppoOnly:
