@@ -209,117 +209,125 @@ def printDfStats(df):
         avg[filtered] = round(np.average(score), 3)
         median[filtered] = round(np.median(score), 3)
         std[filtered] = round(np.std(score), 3)
-    #sumScore = dict(sorted(sumScore.items(), key=lambda item: item[1]))
-   # print("best scores", sumScore)
+    # sumScore = dict(sorted(sumScore.items(), key=lambda item: item[1]))
+    # print("best scores", sumScore)
     averageScore = dict(sorted(avg.items(), key=lambda item: item[1]))
     print("\navg scores", averageScore)
     medianScore = dict(sorted(median.items(), key=lambda item: item[1]))
     print("\nmedian scores", medianScore)
-    #StdDeviationScore = dict(sorted(std.items(), key=lambda item: item[1]))
-    #print("\nstd scores", StdDeviationScore)
+    # StdDeviationScore = dict(sorted(std.items(), key=lambda item: item[1]))
+    # print("\nstd scores", StdDeviationScore)
 
     tmpDf = pd.DataFrame(avg.items(), columns=['id', 'average'])
     filtered_df = df
-    filtered_df = tmpDf[tmpDf['average'] >= 0.84]  # TODO dont use this if there is few runs
+    # filtered_df = tmpDf[tmpDf['average'] >= 0.84]  # TODO dont use this if there is few runs
     ids = (filtered_df["id"].unique())
     res = {}
     j = 0
     for i in averageScore.items():
-        print(i)
         res[i[0]] = i[1]
         j += 1
     j = 0
     print("----------")
     for i in medianScore.items():
-        print(i)
         res[i[0]] += i[1]
         j += 1
     sortedS = dict(sorted(res.items(), key=lambda item: item[1]))
     for r in sortedS.items():
         print(r)
-    print("unique", len(ids), ids)
+    print("unique", len(ids))
     return ids
+
+
+def transformRSLabel(label):
+    tmp = label[3:]
+    if "nRS" in tmp:
+        tmp = "No Reward Shaping"
+    else:
+        tmp = "Reward Shaping"
+    return tmp
+
+
+def transformGammaLabel(label):
+    # TODO ?
+    return label
+    tmp = label.split("_")[-1]
+    assert "gamma" in tmp
+    transformedLabel = "Gamma 0." + tmp[-2]
+    return transformedLabel
+
+
+def transformEnvLabel(label):
+    """if "NSGA" in label:
+        return "NSGA-II"
+    elif "GA" in label:
+        return "GA"
+    """
+    if "AP" in label or "AllPara" in label:
+        return "All Parallel"
+    if "SPCL" in label:
+        return "SPCL"
+    if "RndRH" in label:
+        return "Random RH"  # comment this line if you dont want to group by RRH
+        splitStr = label.split("_")[2:]
+        resultStr = ""
+        for split in splitStr:
+            resultStr += split
+            if "curric" in split:
+                break
+            resultStr += " "
+        return resultStr
+    if "PPO" in label:
+        tmp = label.split("_")
+        return tmp[0] + " " + tmp[1]
+
+    # cut the initials, like '1_GA_"
+    # return "RHEA CL" # uncomment this if you want to group RHEA CL runs
+    result = label[5:]
+    result = result.split("_")
+    transformedLabel = ""
+    for r in result:
+        transformedLabel += r
+        if "curric" in r:
+            break
+        transformedLabel += " "
+        # Add additional space to make 50k and 150k appear same length in legend
+        if r == result[0] and len(r) == 3:
+            transformedLabel += "  "
+    transformedLabel = ""
+    tmp = label.split("_")
+    for part in tmp:
+        if "step" in part or "gen" in part or "curric" in part:
+            transformedLabel += part + " "
+    if tmp[0] == "C":
+        transformedLabel += "(C)"
+    assert transformedLabel != "", f"{label}"
+    return transformedLabel
+
+
+def transformMultiObjLabel(label):
+    if "MultiObj_nRS" in label:
+        return "Multi Objective Variant"
+    elif "_RS" in label:
+        return "Single Objective Variant"
+    raise Exception(f"transformation failed for {label}")
 
 
 def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     ids = printDfStats(df)
-    df = df[df['id'].isin(ids)]
-
     # df = df[("RndRH" in df["id"])]
     assert len(df["id"].unique()) != 0, f"df: {df}"
     if args.title is not None:
         if "multi" in args.title:
-            def transform_label(label):
-                if "MultiObj_nRS" in label:
-                    return "Multi Objective Variant"
-                elif "_RS" in label:
-                    return "Single Objective Variant"
-                raise Exception(f"transformation failed for {label}")
-
-            df['id'] = df['id'].map(transform_label)
+            df['id'] = df['id'].map(transformMultiObjLabel)
         elif "Gamma" in args.title:
-            def transform_label(label):
-                # TODO ?
-                return label
-                tmp = label.split("_")[-1]
-                assert "gamma" in tmp
-                transformedLabel = "Gamma 0." + tmp[-2]
-                return transformedLabel
-            # df['id'] = df['id'].map(transform_label)
-
+            df['id'] = df['id'].map(transformGammaLabel)
         elif "Reward Shaping" in args.title:
-            def transform_label(label):
-                tmp = label[3:]
-                if "nRS" in tmp:
-                    tmp = tmp[:-len("_nRS_gamma70")]
-                    tmp = "No Reward Shaping"
-                else:
-                    tmp = tmp[:-3]
-                    tmp = "Reward Shaping"
-                return tmp
-
-            df['id'] = df['id'].map(transform_label)
+            df['id'] = df['id'].map(transformRSLabel)
         elif "Dyn" in args.title or "Door" in args.title:
-            def transform_label(label):
-                if "NSGA" in label:
-                    return "NSGA-II"
-                elif "GA" in label:
-                    return "GA"
-                if "AP" in label or "AllPara" in label:
-                    return "All Parallel"
-                if "SPCL" in label:
-                    return "SPCL"
-                if "RndRH" in label:
-                    return "Random RH"  # comment this line if you dont want to group by RRH
-                    splitStr = label.split("_")[2:]
-                    resultStr = ""
-                    for split in splitStr:
-                        resultStr += split
-                        if "curric" in split:
-                            break
-                        resultStr += " "
-                    return resultStr
-                if "PPO" in label:
-                    tmp = label.split("_")
-                    return tmp[0] + " " + tmp[1]
-                # cut the initials, like '1_GA_"
-                # return "RHEA CL" # uncomment this if you want to group RHEA CL runs
-                result = label[5:]
-                result = result.split("_")
-                transformedLabel = ""
-                for r in result:
-                    transformedLabel += r
-                    if "curric" in r:
-                        break
-                    transformedLabel += " "
-                    # Add additional space to make 50k and 150k appear same length in legend
-                    if r == result[0] and len(r) == 3:
-                        transformedLabel += "  "
-                assert transformedLabel != ""
-                return transformedLabel
-
-            df['id'] = df['id'].map(transform_label)
-
+            df['id'] = df['id'].map(transformEnvLabel)
+        elif "Performance of" in args.title:
+            df["id"] = df["id"].map(transformEnvLabel)
     if args.scores == "both":
         yColumns = ["snapshotScore", "bestCurricScore"]
     elif args.scores == "curric":
@@ -328,15 +336,26 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
         yColumns = ["snapshotScore"]
     fig, ax = plt.subplots(figsize=(12, 8))
     sns.set_theme(style="darkgrid")
-    # printDfStats(df) # TODO ? maybe as args or just remove this part / use it to get best n models
     for col in yColumns:
-        y = col
-        # sns.lineplot(data=df, x="x", y="y", style="id", dashes=line_styles)
-        #df["style"] = df[df["id"].str.contains("2step")]
-        ax = sns.lineplot(data=df, x='iterationSteps', y=y, hue=hue, ax=ax, palette=palette, errorbar=args.errorbar,
-                     # estimator=np.median,
-                    #style="style"
-                     )
+        # todo for the gamma runs !!!
+        """
+        # df["style"] = df[df["id"].str.contains("snapshotScore")]
+        df["tmp"] = df["id"].astype("str") + "_" + col
+        if "snapshotScore" in col:
+            palette = sns.color_palette("Set1", n_colors=1 + int(args.comparisons))
+
+        else:
+            palette = sns.color_palette("tab10", n_colors=5)
+        """
+        #df1 = df[df["id"].str.contains("C_")]
+        #df2 = df[~df["id"].str.contains("C_")]
+        ax = sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette,
+                          linestyle="-"
+                          )
+        #ax = sns.lineplot(data=df2, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette,
+         #                 linestyle="-"
+          #                )
+        # ax.lines[0].set_linestyle("--")
         """lines = ax.lines
 
         for line in lines:
@@ -718,10 +737,43 @@ def showFilteredIterationSteps(df):
             iterStep = row["group"]
             iterationStepsDict[str(iterStep)] += 1
     print("iterations Dict", iterationStepsDict)
-    df = df[df["group"] == 50000]
     groupName = "iterationSteps "
-    df[groupName] = df["group"]  # TODO why is this originally named this group
-    plotMultipleLineplots(df, )
+    df[groupName] = df["group"]
+
+    # dashed line for canceled runs
+    # legend transformation
+    df = df[~df["id"].str.contains("1PE")]
+    args.title = "Initial Performance of the 25k Runs"
+    plotMultipleLineplots(df[df["group"] == 25000], )
+    args.title = "Initial Performance of the 50k Runs"
+    runs = [
+        '0_GA_50k_3step_3gen_3curric_RS',
+        'C_almost_NSGA_50k_3step_5gen_3curric_RS']
+    tmp = df[df["id"].isin(runs)]
+    args.errorbar = "se"
+    plotMultipleLineplots(tmp, )
+
+    vals = ['0_GA_75k_2step_3gen_3curric_nRS', '0_GA_75k_3step_3gen_3curric_RS', '2_GA_75k_3step_2gen_3curric_Door_RS_FF',
+            'NSGA_75k_3step_2gen_4curric_RS']
+    tmp = df[df["id"].isin(vals)]
+    args.title = "Initial Performance of 75k Runs"
+    plotMultipleLineplots(tmp, )
+
+    runs = ["NSGA_100k_3step_5gen_2curric_RS",
+            "2_GA_100k_4step_3gen_3curric_Door_nRS_gamma70",
+            "5_GA_RSRun_100k_3step_3gen_3curric_nRS",
+            "5_GA_100k_2step_4gen_3curric_nRS",
+            "4_GA_100k_1step_5gen_3curric_nRS"]
+    args.title = "Initial Performance of the 100k Runs"
+    tmp = df[df["id"].isin(runs)]
+    plotMultipleLineplots(tmp, )
+
+    args.title = "Initial Performance of 150k Runs"
+    tmp = ['2_GA_150k_3step_1gen_3curric_Door_nRS',
+           '3_GA_150k_3step_2gen_3curric_Door_nRS',
+           '0_GA_150k_3step_2gen_4curric_RS',
+           '5_GA_150k_3step_3gen_3curric_nRS_multiSingle']
+    plotMultipleLineplots(df[df["id"].isin(tmp)], )
 
 
 def getCurricCountFromModelName(modelName):
@@ -783,7 +835,7 @@ def showFilteredCurricLen(df):
             curricLenDict[genNr] += 1
     df = df[df[curricLenCol] != 7]  # only 1 run
     print("curricLen Dict", curricLenDict)
-    t = 6 == 6
+    t = 6 == 7
     if t:
         plotMultipleLineplots(df, curricLenCol)
     else:
@@ -798,12 +850,14 @@ def showFilteredCurricLen(df):
 def showGroupedScorePlots(filteredScoreDf):
     if args.gen:
         showFilteredGenPlot(filteredScoreDf)
-    if args.iterGroup:
+    elif args.iterGroup:
         showFilteredIterationSteps(filteredScoreDf)
-    if args.curricCount:
+    elif args.curricCount:
         showFilteredCurricCount(filteredScoreDf)
-    if args.curricLen:
+    elif args.curricLen:
         showFilteredCurricLen(filteredScoreDf)
+    else:
+        plotMultipleLineplots(filteredScoreDf)
 
 
 def showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf):
@@ -848,9 +902,6 @@ def main(comparisons: int):
     filteredScoreDf, filteredFullDistrDf, filteredSplitDistrDf = \
         getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf, splitDistrDf)
 
-    if args.scores is not None:
-        plotMultipleLineplots(filteredScoreDf)
-
     showGroupedScorePlots(filteredScoreDf)
     showPPOPlot(filteredScoreDf)
     showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf)
@@ -861,7 +912,7 @@ def main(comparisons: int):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", default="doorKey", help="Whether to use doorkey or dynamic obstacle or both")
-    parser.add_argument("--title", default="GA vs NSGA-II Performance in DoorKey", type=str, help="Title of the distribution plots")
+    parser.add_argument("--title", default=None, type=str, help="Title of the distribution plots")
     parser.add_argument("--comparisons", default=-1, help="Choose how many models you want to compare")
     parser.add_argument("--crossoverMutation", action="store_true", default=False,
                         help="Select the crossovermutation varied experiments")
@@ -879,7 +930,7 @@ if __name__ == "__main__":
                         help="Whether or not to normlaize the env distributions")
 
     parser.add_argument("--iter", default=0, type=int, help="filter for iterations")
-    parser.add_argument("--xIterations", default=1000000, type=int, help="#of iterations to show on the xaxis")
+    parser.add_argument("--xIterations", default=5000000, type=int, help="#of iterations to show on the xaxis")
     parser.add_argument("--steps", action="store_true", default=False, help="filter for #curricSteps")
     parser.add_argument("--gen", action="store_true", default=False, help="Whether to filter #gen")
     parser.add_argument("--iterGroup", action="store_true", default=False, help="Whether to group by iterationSteps")
@@ -906,8 +957,8 @@ if __name__ == "__main__":
     # palette = sns.color_palette("tab10", n_colors=5)
 
     if args.comparisons == -1:
-        args.comparisons = 2
-    palette = sns.color_palette("Set1", n_colors=int(args.comparisons))
+        args.comparisons = 10
+    palette = sns.color_palette("Set1", n_colors=1 + int(args.comparisons))
 
     if args.ppoOnly:
         args.xIterations = 10000000

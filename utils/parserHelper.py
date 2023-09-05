@@ -27,7 +27,7 @@ def initializeArgParser():
     parser.add_argument("--iterPerEnv", default=150000, type=int,
                         help="Determines the amount of iterations per environment during training")
     parser.add_argument("--paraEnv", default=2, type=int,
-                        help="The amount of envs to be trained on parallel at each timestep of the RH of a curriculum")
+                        help="The amount of envs to be trained on parallel at each timestep of the RH of a curriculum. (NOT the processes in total. See --procs)")
     parser.add_argument("--stepsPerCurric", default=3, type=int,
                         help="Determines the amount of steps used per curriculum during training. --paraEnv determines how many envs to be used")
     parser.add_argument("--numCurric", default=3, type=int,
