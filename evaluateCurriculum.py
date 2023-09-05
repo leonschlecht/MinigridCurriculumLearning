@@ -86,10 +86,10 @@ def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove
     Given a list of models and the main dataframe, it filters all the relevant id columns matching the @val prefix
     """
     if df.empty:
-        print("---Empty dF!---")
+        print("---Empty df!---")
         return df
 
-    if filters[0] == "PPO":
+    if len(filters) > 0 and filters[0] == "PPO":
         PPO_Runs = ["PPO10x10_RS", "PPO8x8_RS", "PPO12x12_RS", "PPO6x6_RS",
                     # "GA_100k_3step_3gen_3curric_RS"# TODO ?
                     ]
@@ -103,6 +103,7 @@ def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove
                         (filterOption == '50k' and ('150k' in colId or '250k' in colId)) or \
                         ("GA" in filterOption and "const" in colId) or \
                         ("250k" in colId) or \
+                        ("_RS") in colId or \
                         (not showCanceled and "C_" in colId):  # TODO maybe args for const param
                     return False
             else:
@@ -313,9 +314,15 @@ def transformMultiObjLabel(label):
     raise Exception(f"transformation failed for {label}")
 
 
+def transformCrossoverMutationLabel(label):
+    tmp = label.split("_")
+    result = "Mutation: 0." + tmp[0][-2:] + " " + "Crossover: 0." + tmp[1][-2:]
+    return result
+
+
 def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
     ids = printDfStats(df)
-    # df = df[("RndRH" in df["id"])]
+    df = df[df["id"].isin(ids)]
     assert len(df["id"].unique()) != 0, f"df: {df}"
     if args.title is not None:
         if "multi" in args.title:
@@ -328,6 +335,8 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
             df['id'] = df['id'].map(transformEnvLabel)
         elif "Performance of" in args.title:
             df["id"] = df["id"].map(transformEnvLabel)
+        elif "Crossover" in args.title:
+            df["id"] = df["id"].map(transformCrossoverMutationLabel)
     if args.scores == "both":
         yColumns = ["snapshotScore", "bestCurricScore"]
     elif args.scores == "curric":
@@ -347,14 +356,14 @@ def plotMultipleLineplots(df, hue="id", legendLoc="lower right"):
         else:
             palette = sns.color_palette("tab10", n_colors=5)
         """
-        #df1 = df[df["id"].str.contains("C_")]
-        #df2 = df[~df["id"].str.contains("C_")]
+        # df1 = df[df["id"].str.contains("C_")]
+        # df2 = df[~df["id"].str.contains("C_")]
         ax = sns.lineplot(data=df, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette,
                           linestyle="-"
                           )
-        #ax = sns.lineplot(data=df2, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette,
-         #                 linestyle="-"
-          #                )
+        # ax = sns.lineplot(data=df2, x='iterationSteps', y=col, hue=hue, ax=ax, errorbar=args.errorbar, palette=palette,
+        #                 linestyle="-"
+        #                )
         # ax.lines[0].set_linestyle("--")
         """lines = ax.lines
 
@@ -459,7 +468,7 @@ def removeSuffixCharInLegend(ax, columnsToVisualize):
 
 def plotNSGAMultivsSingleDistribution(df, ax, columnsToVisualize, title):
     def transform_label(label):
-        if "MultiObj_nRS" in label:
+        if "MultiObj_nRS" in label or "multi" in label:
             return "Multi Objective Variant"
         elif "_RS" in label:
             return "Single Objective Variant"
@@ -800,9 +809,6 @@ def showFilteredCurricCount(df):
             usedIds.append(id)
             curricCountDict[str(getCurricCountFromModelName(id)) + " curricula"] += 1
     ids = printDfStats(df)
-
-    df = df[df[curricCountColumn] != 7]  # only 1 run
-    df = df[df[curricCountColumn] != 5]  # only 1 run
     print("curricCount Dict", curricCountDict)
     t = 7 == 7
     if t:
@@ -835,7 +841,7 @@ def showFilteredCurricLen(df):
             curricLenDict[genNr] += 1
     df = df[df[curricLenCol] != 7]  # only 1 run
     print("curricLen Dict", curricLenDict)
-    t = 6 == 7
+    t = 6 == 6
     if t:
         plotMultipleLineplots(df, curricLenCol)
     else:
@@ -856,7 +862,7 @@ def showGroupedScorePlots(filteredScoreDf):
         showFilteredCurricCount(filteredScoreDf)
     elif args.curricLen:
         showFilteredCurricLen(filteredScoreDf)
-    else:
+    elif args.scores is not None:
         plotMultipleLineplots(filteredScoreDf)
 
 
@@ -866,19 +872,6 @@ def showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf):
     else:
         plotAggregatedBarplot(filteredFullDistrDf)
 
-
-def showPPOPlot(filteredScoreDf):
-    if not args.ppoOnly:
-        return
-    df = filteredScoreDf
-    # Define the pattern and transformation
-    pattern = re.compile(r'PPO(\d+)x(\d+)_RS')
-    transformation = r'PPO Trained \1x\2'
-    # Apply the transformation using regular expressions
-    df['id'] = df['id'].str.replace(pattern, transformation)
-    # TODO maybe add RHEA run for comparison
-    plotMultipleLineplots(df, legendLoc="upper right")
-    # TODO remove ? This became broken i think
 
 
 def main(comparisons: int):
@@ -901,9 +894,7 @@ def main(comparisons: int):
 
     filteredScoreDf, filteredFullDistrDf, filteredSplitDistrDf = \
         getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf, splitDistrDf)
-
     showGroupedScorePlots(filteredScoreDf)
-    showPPOPlot(filteredScoreDf)
     showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf)
 
     print("Evaluaiton finished!")
@@ -957,8 +948,9 @@ if __name__ == "__main__":
     # palette = sns.color_palette("tab10", n_colors=5)
 
     if args.comparisons == -1:
-        args.comparisons = 10
-    palette = sns.color_palette("Set1", n_colors=1 + int(args.comparisons))
+        args.comparisons = 20
+    palette = sns.color_palette("icefire", n_colors=8)
+    palette = sns.color_palette("deep", n_colors=8)
 
     if args.ppoOnly:
         args.xIterations = 10000000
