@@ -19,7 +19,7 @@ def initializeArgParser():
     parser.add_argument("--ppoEnv", default=-1, type=int,
                         help="Adds the option to use --allParalell with PPO only for a single environment. Number corresponds to evironment index in array of all envs")
     parser.add_argument("--allSimultaneous", default=True, action="store_false",
-                        help="If set, SPCL will be performed. --trainallParalell must be set too")
+                        help="If set, SPCL will be performed. --trainallParalell must be set too") # TODO should be renamed to --spcl or something
     parser.add_argument("--trainRandomRH", default=False, action="store_true",
                         help="Decides what training method will be used. If set, Full Random RH will be used")
 
@@ -27,7 +27,7 @@ def initializeArgParser():
     parser.add_argument("--iterPerEnv", default=150000, type=int,
                         help="Determines the amount of iterations per environment during training")
     parser.add_argument("--paraEnv", default=2, type=int,
-                        help="The amount of envs to be trained on parallel at each timestep of the RH of a curriculum")
+                        help="The amount of envs to be trained on parallel at each timestep of the RH of a curriculum. (NOT the processes in total. See --procs)")
     parser.add_argument("--stepsPerCurric", default=3, type=int,
                         help="Determines the amount of steps used per curriculum during training. --paraEnv determines how many envs to be used")
     parser.add_argument("--numCurric", default=3, type=int,

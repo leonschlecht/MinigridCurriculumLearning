@@ -1,3 +1,7 @@
+Tensorboard
+tensorboard --logdir path\To\Repo\storage
+
+
 # MinigridCurriculumLearning
 - Manually change the algorithm in the code. No mention of the algorithm in the final logs
 - doesnt delete previous epoch models. Much is duplicated and redundant / bloats up the storage folder a bit with tfevents etc
