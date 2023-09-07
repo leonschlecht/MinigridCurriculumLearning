@@ -89,11 +89,7 @@ def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove
         print("---Empty df!---")
         return df
 
-    if len(filters) > 0 and filters[0] == "PPO":
-        PPO_Runs = ["PPO10x10_RS", "PPO8x8_RS", "PPO12x12_RS", "PPO6x6_RS",
-                    # "GA_100k_3step_3gen_3curric_RS"# TODO ?
-                    ]
-        df = df[df["id"].isin(PPO_Runs)]
+    if args.all:
         return df
 
     def passes_filters(colId, filterList):
@@ -103,7 +99,6 @@ def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove
                         (filterOption == '50k' and ('150k' in colId or '250k' in colId)) or \
                         ("GA" in filterOption and "const" in colId) or \
                         ("250k" in colId) or \
-                        ("_RS") in colId or \
                         (not showCanceled and "C_" in colId):  # TODO maybe args for const param
                     return False
             else:
@@ -258,12 +253,15 @@ def transformGammaLabel(label):
     return transformedLabel
 
 
-def transformEnvLabel(label):
-    """if "NSGA" in label:
+def transformNsgaVsGa(label):
+    if "NSGA" in label:
         return "NSGA-II"
     elif "GA" in label:
         return "GA"
-    """
+    raise Exception("Incorrect label for transformation")
+
+
+def transformEnvLabel(label, groupRHEA=False):
     if "AP" in label or "AllPara" in label:
         return "All Parallel"
     if "SPCL" in label:
@@ -281,14 +279,16 @@ def transformEnvLabel(label):
     if "PPO" in label:
         tmp = label.split("_")
         return tmp[0] + " " + tmp[1]
-
     # cut the initials, like '1_GA_"
-    # return "RHEA CL" # uncomment this if you want to group RHEA CL runs
+    if groupRHEA:
+        return "RHEA CL"
     result = label[5:]
     result = result.split("_")
     transformedLabel = ""
     for r in result:
         transformedLabel += r
+        if "k" in r:
+            return r
         if "curric" in r:
             break
         transformedLabel += " "
@@ -298,7 +298,7 @@ def transformEnvLabel(label):
     transformedLabel = ""
     tmp = label.split("_")
     for part in tmp:
-        if "step" in part or "gen" in part or "curric" in part:
+        if "k" in part or "step" in part or "gen" in part:
             transformedLabel += part + " "
     if tmp[0] == "C":
         transformedLabel += "(C)"
@@ -433,7 +433,7 @@ def removeExperimentPrefix(dictDf):
     if filteredWord == "GA" or filteredWord == "NSGA" or filteredWord == "RndRH":
         iterations = words[1] + "_"
         steps = words[2].split("tep")[0] + "_"  # cut "3step" to 3s
-    else:  # TODO probably not needed
+    else:
         iterations = ""
         steps = ""
 
@@ -522,11 +522,16 @@ def showSplitEnvDistribution(df, ax, columnsToVisualize):
     plt.title("Environment Distribution at different Training Stages", fontsize=titleFontsize)
     plt.ylim((0, 1))
     removeSuffixCharInLegend(ax, columnsToVisualize)
+    plt.tight_layout()
     plt.show()
 
 
 def showDistrVisualization(df, columnsToVisualize, title="Environment Distribution", isSplit=False):
     fig, ax = plt.subplots(figsize=(12, 8))
+
+    df['id'] = df['id'].map(transformEnvLabel)
+    # df["id"] = df["id"].map(transformNsgaVsGa)
+
     if isSplit:
         showSplitEnvDistribution(df, ax, columnsToVisualize)
     else:
@@ -541,7 +546,7 @@ def showDistrVisualization(df, columnsToVisualize, title="Environment Distributi
             # default: only sort by the ID string
             df["sort_col"] = df["id"]
 
-    if "NSGA-II" in title:
+    if "NSGA-II" in title and "Multi" in title:
         plotNSGAMultivsSingleDistribution(df, ax, columnsToVisualize, title)
     else:
         grouped_df = df[columnsToVisualize].groupby('id').agg(['mean', 'std'])
@@ -555,12 +560,14 @@ def showDistrVisualization(df, columnsToVisualize, title="Environment Distributi
         plt.title(title, fontsize=titleFontsize)
         plt.xlabel('')
         plt.yticks(fontsize=tickFontsize)
-        plt.xticks(rotation=-30, ha='left', fontsize=labelFontsize - 2)
+        # plt.xticks(rotation=-15, ha='left', fontsize=labelFontsize - 2)
+        plt.xticks(fontsize=labelFontsize - 2)
         plt.subplots_adjust(bottom=0.2)
         if args.normalize:
             plt.ylim((0, 1))
 
         removeSuffixCharInLegend(ax, columnsToVisualize)
+        plt.tight_layout()
         plt.show()
 
 
@@ -603,8 +610,26 @@ def includeNormalizedColumns(aggregatedDf, prefix):
 
 
 def showTrainingTimePlot(aggregatedDf):
+    """
+    ['0_GA_75k_2step_3gen_3curric_nRS' '0_GA_75k_3step_3gen_3curric_RS'
+ '2_GA_75k_3step_1gen_3curric_Door_RS'
+ '2_GA_75k_3step_2gen_3curric_Door_RS_FF'
+ '4_GA_75k_3step_1gen_3curric_nRS' '4_GA_75k_3step_2gen_3curric_nRS'
+ 'NSGA_75k_3step_2gen_4curric_RS'
+ 'NSGA_75k_3step_3gen_3curric_MultiObj_nRS'
+ 'NSGA_75k_3step_3gen_3curric_RS']
+
+    """
+    # aggregatedDf["id"] = aggregatedDf[aggregatedDf["id"].isin(getValidRuns(aggregatedDf["id"]))]
+    aggregatedDf['id'] = aggregatedDf['id'].map(lambda x: transformEnvLabel(x, True))  # Example for boolean transformation
+    aggregatedDf = aggregatedDf[~aggregatedDf["id"].str.contains("PPO 10x10")]
+
+    print(aggregatedDf)
+
     fig, ax = plt.subplots(figsize=(12, 8))
     group_col = "group" if 'group' in aggregatedDf.columns else 'DataFrame'  # TODO probably not for every experiment
+    # sns.barplot(x='id', y='sumTrainingTime', data=aggregatedDf, ax=ax)
+
     if args.rhea or args.nsga or args.ga:
         aggregatedDf['sort_col'] = aggregatedDf['id'].str.split('_', n=1, expand=True)[0].str.replace('k', '').astype(
             'int')
@@ -612,20 +637,25 @@ def showTrainingTimePlot(aggregatedDf):
         aggregatedDf = aggregatedDf.drop('sort_col', axis=1)
         sns.barplot(x='id', y='sumTrainingTime', hue=group_col, dodge=False, data=aggregatedDf, ax=ax)
     else:
-        sns.barplot(x='id', y='sumTrainingTime', data=aggregatedDf, ax=ax)
+        df = aggregatedDf.sort_values(by='sumTrainingTime', ascending=False)
+        sns.barplot(x='id', y='sumTrainingTime', data=df, ax=ax)
 
-    plt.ylabel('training time (hours)', fontsize=labelFontsize)
-    plt.xlabel('')
-    title = "Training Time"
+    plt.ylabel('Training Time (Hours)', fontsize=labelFontsize)
     # ax.legend(loc='upper right', bbox_to_anchor=(0.5, -0.2), fontsize="14") # TODO fix fontsize
 
     if args.title:
         title = args.title
+    else:
+        title = " Training Time"
+
     plt.title(title, fontsize=titleFontsize)
-    plt.xticks(rotation=-45, ha='left', fontsize=tickFontsize)
-    plt.subplots_adjust(bottom=0.3)
+    # plt.xticks(rotation=-45, ha='left', fontsize=tickFontsize)
+    plt.xticks(fontsize=tickFontsize)
+    # plt.subplots_adjust(bottom=0.3)
 
     # TODO the legend part might be specific to some of the settings and not universal
+
+    """
     if args.rhea:
         legend = ax.legend()
         labels = [int(item.get_text()) for item in legend.get_texts()]
@@ -638,7 +668,10 @@ def showTrainingTimePlot(aggregatedDf):
             labelI = "_".join(labelI.split("_")[1:])
             labels[i] = labelI
         ax.set_xticklabels(labels)
+    """
     ax.set_ylim((0, 96))
+    plt.tight_layout()
+    plt.legend([], [], frameon=False)
     plt.show()
 
 
@@ -692,7 +725,7 @@ def plotAggregatedBarplot(df):
                            "MiniGrid-Dynamic-Obstacles-16x16"]
         else:
             toVisualize = ["MiniGrid-DoorKey-6x6", "MiniGrid-DoorKey-8x8", "MiniGrid-DoorKey-10x10",
-                           "MiniGrid-DoorKey-12x12"]  # todo i probably have to cut this in result so i can remove the minigrid prefix from this
+                           "MiniGrid-DoorKey-12x12"]
         if args.normalize:
             df = includeNormalizedColumns(df, toVisualize)
         showDistrVisualization(df, toVisualize, "Split Environment Distribution", True)
@@ -873,7 +906,6 @@ def showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf):
         plotAggregatedBarplot(filteredFullDistrDf)
 
 
-
 def main(comparisons: int):
     # sns.set(font_scale=2)
     pathList = ["storage", "_evaluate"]
@@ -894,6 +926,8 @@ def main(comparisons: int):
 
     filteredScoreDf, filteredFullDistrDf, filteredSplitDistrDf = \
         getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf, splitDistrDf)
+
+    ### here
     showGroupedScorePlots(filteredScoreDf)
     showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf)
 
@@ -929,6 +963,7 @@ if __name__ == "__main__":
     parser.add_argument("--curricCount", action="store_true", default=False, help="Whether to group by curricCount")
 
     parser.add_argument("--rhea", action="store_true", default=False, help="Only using rhea runs")
+    parser.add_argument("--all", action="store_true", default=False, help="Skip filtering step")
     parser.add_argument("--nsga", action="store_true", default=False, help="Only using GA runs")
     parser.add_argument("--ga", action="store_true", default=False, help="Only using NSGA runs")
     parser.add_argument("--rrh", action="store_true", default=False,
@@ -942,15 +977,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.rhea = args.rhea or args.curricLen or args.iterGroup or args.gen or args.curricCount
     args.filter = args.comparisons == -1 and (
-            args.crossoverMutation or args.splitDistr or args.ppoOnly or
+            args.crossoverMutation or args.splitDistr or args.ppoOnly or args.all or
             args.iter or args.steps or args.rrhOnly or args.rhea or args.nsga or args.ga)
     isDoorKey = "door" in args.env
     # palette = sns.color_palette("tab10", n_colors=5)
 
     if args.comparisons == -1:
         args.comparisons = 20
-    palette = sns.color_palette("icefire", n_colors=8)
-    palette = sns.color_palette("deep", n_colors=8)
+    palette = sns.color_palette("Set1", n_colors=8)
+    # palette = sns.color_palette("deep", n_colors=8)
 
     if args.ppoOnly:
         args.xIterations = 10000000

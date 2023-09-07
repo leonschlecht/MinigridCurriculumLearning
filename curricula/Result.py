@@ -478,7 +478,7 @@ class Result:
                             bestCurriculumScore = currentCurricScore
                             helper = [gen, curric, rewards]
                 bestCurricScores.append(bestCurriculumScore / self.curricMaxReward)
-                snapshots.append(np.sum(helper[2][0]))
+                snapshots.append(np.sum(helper[2][0]) / self.stepMaxReward)
                 bestGenDict[helper[0]] += 1
                 env1.append(sum(reward[0] for reward in helper[2]) / curricLen)
                 env2.append(sum(reward[1] for reward in helper[2]) / curricLen)
@@ -486,6 +486,8 @@ class Result:
                 env4.append(sum(reward[3] for reward in helper[2]) / curricLen)
 
                 self.CurricProgressionPlot(allCurricScores, bestCurricScores)
+            self.snapShotScores = snapshots
+            self.bestCurricScore = bestCurricScores
         elif isRRH:
             for epoch in self.rawReward:
                 bestCurriculumScore = -1
