@@ -7,8 +7,19 @@ from utils import ENV_NAMES
 
 
 class CurriculumProblem(Problem):
+    """
+    The Problem used for the PYMOO optimization in RHEA CL
+    """
     def __init__(self, curricula: list, n_obj, n_ieq_constr, xu, paraEnvs: int,
                  rheaObj: RollingHorizonEvolutionaryAlgorithm):
+        """
+        :param curricula: the list of curricula
+        :param n_obj: the amount of objectives you want to optimize
+        :param n_ieq_constr: the amount of inequality constraints
+        :param xu: the upper limit for x. (The lower limit is assumed 0)
+        :param paraEnvs: The amount of parallel envs to be trained on
+        :param rheaObj: the reference to the RHEA class
+        """
         assert len(curricula) > 0
         assert rheaObj is not None
         self.rheaObj = rheaObj
@@ -22,12 +33,6 @@ class CurriculumProblem(Problem):
                          xu=xu)
         self.curricula = curricula
         self.gen = 0
-        # TODO maybe try to avoid homogenous curricula with ieq constraints (?)
-
-        # F: what we want to maximize: ---> pymoo minimizes, so it should be -reward
-        # G:# Inequality constraint;
-        # H is EQ constraint: maybe we can experiment with the length of each curriculum;
-        #   and maybe with iterations_per_env (so that each horizon has same length still)
 
     def _evaluate(self, x, out, *args, **kwargs):
         self.gen += 1

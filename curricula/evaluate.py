@@ -9,7 +9,9 @@ from utils.curriculumHelper import getRewardMultiplier
 
 
 def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
-    # TODO decide if using args.argmax or not for evaluation
+    """
+    Execute evaluation in a single env, and return the results dictionary
+    """
     # Load environments
     envs = []
     if args.procs > args.episodes:
@@ -82,6 +84,9 @@ def startEvaluationInOneEnv(args, model, evalEnv, txtLogger) -> dict:
 
 
 def evaluateAll(model, envs, args, txtLogger) -> dict:
+    """
+    Executes the evaluation in all envs and returns the full results dictionary
+    """
     utils.seed(args.seed)
     results = {"model": model}
     for evaluationEnv in envs:

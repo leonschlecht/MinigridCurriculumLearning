@@ -4,8 +4,8 @@ from datetime import datetime
 from gymnasium.envs.registration import register
 from utils import ENV_NAMES
 
-###### DEFINE CONSTANTS AND DICTIONARY KEYS #####
 
+###### DEFINE CONSTANTS AND DICTIONARY KEYS #####
 GEN_PREFIX = 'gen'
 
 # Dictionary keys
@@ -53,10 +53,9 @@ allCurricDistributoinKey = "allCurricDistribution"
 NEXT_ENVS = "NextEnvs"
 
 # Evaluation font sizes
-# TODO maybe use different file for this
 labelFontsize = 18
 titleFontsize = 20
-legendFontSize = 16  # TODO why is this still so big sometimes ?
+legendFontSize = 16
 tickFontsize = 14
 
 
@@ -86,6 +85,9 @@ def printFinalLogs(trainingInfoJson, txtLogger) -> None:
 
 
 def calculateCurricStepMaxReward(allEnvs: list, noRewardShaping: bool) -> float:
+    """
+    Calcuulates the maximum possible reward in a curriculum step
+    """
     reward = 0
     for env in allEnvs:
         reward += getRewardMultiplier(env, noRewardShaping)
@@ -94,6 +96,9 @@ def calculateCurricStepMaxReward(allEnvs: list, noRewardShaping: bool) -> float:
 
 
 def calculateCurricMaxReward(curricLength, stepMaxReward, gamma) -> float:
+    """
+    Calculate the maximum possible reward the agent can obtain in a curriculum
+    """
     maxReward = 0
     for j in range(curricLength):
         maxReward += ((gamma ** j) * stepMaxReward)
@@ -102,8 +107,8 @@ def calculateCurricMaxReward(curricLength, stepMaxReward, gamma) -> float:
 
 def getRewardMultiplier(evalEnv, noRewardShaping: bool):
     """
-
-    :param evalEnv:
+    Used To get the reward multiplier for the evaluation env
+    :param evalEnv: the current env being evaluated
     :param noRewardShaping: whether or not to use rewardshaping (reward depend on env size or not)
     :return:
     """
@@ -121,6 +126,9 @@ def getDynamicObstacleMaxSteps(size):
 
 
 def getNObstacles(size):
+    """
+    Returns the amount of obstacles in the Dynamic Obstacle environment
+    """
     return size // 2
 
 

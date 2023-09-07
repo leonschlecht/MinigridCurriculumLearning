@@ -95,8 +95,5 @@ def initializeArgParser():
     args = parser.parse_args()
     args.mem = args.recurrence > 1
     args.trainEvolutionary = not (args.trainRandomRH or args.trainAllParalell)
-
-    # TODO create some logic to ensure proper usage and not using some wrong args params combinations
     # TODO create object for type safety
     return args
-# TODO move eval parser here too
