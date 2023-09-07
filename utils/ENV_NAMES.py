@@ -1,4 +1,7 @@
 class ENV_NAMES:
+    """
+    This class contains all the full environment names that are used for the training process
+    """
     DOORKEY_5x5 = "MiniGrid-DoorKey-5x5"
     DOORKEY_6x6 = "MiniGrid-DoorKey-6x6"
     DOORKEY_8x8 = "MiniGrid-DoorKey-8x8"

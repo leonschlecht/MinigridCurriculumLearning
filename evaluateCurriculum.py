@@ -15,6 +15,9 @@ OFFSET = 1000
 
 
 def getSpecificModel(specificModelList: list, modelName: str):
+    """
+    Returns the performance and misc. info dfs as tuple for the given modellist and modelname
+    """
     assert specificModelList != [], f"Model List must not be empty. Modelname {modelName}"
     results = []
     for logPath in specificModelList:
@@ -93,6 +96,12 @@ def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove
         return df
 
     def passes_filters(colId, filterList):
+        """
+        Helper method to filtere the specified items out of the df
+        :param colId:
+        :param filterList:
+        :return:
+        """
         for filterOption in filterList:
             if filterOption in colId:
                 if (filterOption == 'GA' and 'NSGA' in colId) or \
@@ -104,12 +113,14 @@ def filterDf(filters: list[str], df, models, showCanceled=False):  # TODO remove
             else:
                 return False
         return True
-
     filteredDf = df[df['id'].apply(lambda x: passes_filters(x, filters))]
     return filteredDf
 
 
 def getStep(tmp):
+    """
+    Returns the curriculum len from the given string. 3step -> 3
+    """
     for s in tmp:
         if "step" in s:
             return s[0]
@@ -117,6 +128,9 @@ def getStep(tmp):
 
 
 def getCurric(tmp):
+    """
+    Returns the curric amount from the given string. 3curric -> 3
+    """
     for s in tmp:
         if "curric" in s:
             return s[0]
@@ -124,6 +138,9 @@ def getCurric(tmp):
 
 
 def getGen(tmp):
+    """
+    Returns the gen from the given string ("3gen") -> 3
+    """
     for s in tmp:
         if "gen" in s:
             return s[0]
@@ -131,13 +148,26 @@ def getGen(tmp):
 
 
 def getIterstep(tmp):
+    """
+    Returns the itertion step from the given string. 100k -> 100
+    """
     for s in tmp:
         if "k" in s:
             return s[:-1]
-    raise Exception("could not extract gen")
+    raise Exception("could not extract iterstep")
 
 
 def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, distrDf, splitDistrDf) -> tuple:
+    """
+    Method to get the current selection of models that will be used for the analysis. Either be user input or
+    by pre-specified filters
+    :param models: the list of the model names
+    :param comparisons: how many models the user can select
+    :param scoreDf: the performance DF
+    :param distrDf: the df containing the env distributions and training time
+    :param splitDistrDf: the df containing the split env distribution, 1m for each step
+    :return:
+    """
     modelsEntered: int = 0
     usedModels = []
     filteredScoreDf = pd.DataFrame()
@@ -149,7 +179,7 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
             # slightly hacky to avoid the "GA" == duplicate check above (since NSGA is also in GA string)
             filters.append("GA_")
             if args.rrh:
-                filters.append("RRH")  # todo ???
+                filters.append("RRH")
         if args.ga:
             filters.append("GA")
         if args.nsga:
@@ -194,6 +224,11 @@ def getUserInputForMultipleComparisons(models: list, comparisons: int, scoreDf, 
 
 
 def printDfStats(df):
+    """
+    Helper method to optionally filter the best runs of the given df
+    Also prints the median an average scores of the experiments in the df
+    :return:
+    """
     sumScore = {}
     avg = {}
     median = {}
@@ -205,14 +240,10 @@ def printDfStats(df):
         avg[filtered] = round(np.average(score), 3)
         median[filtered] = round(np.median(score), 3)
         std[filtered] = round(np.std(score), 3)
-    # sumScore = dict(sorted(sumScore.items(), key=lambda item: item[1]))
-    # print("best scores", sumScore)
     averageScore = dict(sorted(avg.items(), key=lambda item: item[1]))
     print("\navg scores", averageScore)
     medianScore = dict(sorted(median.items(), key=lambda item: item[1]))
     print("\nmedian scores", medianScore)
-    # StdDeviationScore = dict(sorted(std.items(), key=lambda item: item[1]))
-    # print("\nstd scores", StdDeviationScore)
 
     tmpDf = pd.DataFrame(avg.items(), columns=['id', 'average'])
     filtered_df = df
@@ -224,7 +255,6 @@ def printDfStats(df):
         res[i[0]] = i[1]
         j += 1
     j = 0
-    print("----------")
     for i in medianScore.items():
         res[i[0]] += i[1]
         j += 1
@@ -781,41 +811,7 @@ def showFilteredIterationSteps(df):
     print("iterations Dict", iterationStepsDict)
     groupName = "iterationSteps "
     df[groupName] = df["group"]
-
-    # dashed line for canceled runs
-    # legend transformation
-    df = df[~df["id"].str.contains("1PE")]
-    args.title = "Initial Performance of the 25k Runs"
-    plotMultipleLineplots(df[df["group"] == 25000], )
-    args.title = "Initial Performance of the 50k Runs"
-    runs = [
-        '0_GA_50k_3step_3gen_3curric_RS',
-        'C_almost_NSGA_50k_3step_5gen_3curric_RS']
-    tmp = df[df["id"].isin(runs)]
-    args.errorbar = "se"
-    plotMultipleLineplots(tmp, )
-
-    vals = ['0_GA_75k_2step_3gen_3curric_nRS', '0_GA_75k_3step_3gen_3curric_RS', '2_GA_75k_3step_2gen_3curric_Door_RS_FF',
-            'NSGA_75k_3step_2gen_4curric_RS']
-    tmp = df[df["id"].isin(vals)]
-    args.title = "Initial Performance of 75k Runs"
-    plotMultipleLineplots(tmp, )
-
-    runs = ["NSGA_100k_3step_5gen_2curric_RS",
-            "2_GA_100k_4step_3gen_3curric_Door_nRS_gamma70",
-            "5_GA_RSRun_100k_3step_3gen_3curric_nRS",
-            "5_GA_100k_2step_4gen_3curric_nRS",
-            "4_GA_100k_1step_5gen_3curric_nRS"]
-    args.title = "Initial Performance of the 100k Runs"
-    tmp = df[df["id"].isin(runs)]
-    plotMultipleLineplots(tmp, )
-
-    args.title = "Initial Performance of 150k Runs"
-    tmp = ['2_GA_150k_3step_1gen_3curric_Door_nRS',
-           '3_GA_150k_3step_2gen_3curric_Door_nRS',
-           '0_GA_150k_3step_2gen_4curric_RS',
-           '5_GA_150k_3step_3gen_3curric_nRS_multiSingle']
-    plotMultipleLineplots(df[df["id"].isin(tmp)], )
+    plotMultipleLineplots(df, groupName)
 
 
 def getCurricCountFromModelName(modelName):
@@ -927,10 +923,8 @@ def main(comparisons: int):
     filteredScoreDf, filteredFullDistrDf, filteredSplitDistrDf = \
         getUserInputForMultipleComparisons(models, comparisons, scoreDf, distrDf, splitDistrDf)
 
-    ### here
     showGroupedScorePlots(filteredScoreDf)
     showDistributionPlots(filteredSplitDistrDf, filteredFullDistrDf)
-
     print("Evaluaiton finished!")
 
 

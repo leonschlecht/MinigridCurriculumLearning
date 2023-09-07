@@ -8,10 +8,10 @@
 #SBATCH --mem=4G
 #SBATCH --verbose
 echo "------------Cluster Job Start-----------------------"
-srun -c 2 -v python3 trainCurriculum.py --trainAllParalell  --model APNc --iterPerEnv 50000 --procs 16 --seed 1
-srun -c 2 -v python3 trainCurriculum.py --trainAllParalell  --model APNcs --iterPerEnv 50000 --procs 16 --seed 1214
-srun -c 2 -v python3 trainCurriculum.py --trainAllParalell  --model APNc --iterPerEnv 50000 --procs 16 --seed 2330
-srun -c 2 -v python3 trainCurriculum.py --trainAllParalell  --model APNc --iterPerEnv 50000 --procs 16 --seed 9152
+srun -c 2 -v python3 ../trainCurriculum.py --trainAllParalell  --model APNc --iterPerEnv 50000 --procs 16 --seed 1
+srun -c 2 -v python3 ../trainCurriculum.py --trainAllParalell  --model APNcs --iterPerEnv 50000 --procs 16 --seed 1214
+srun -c 2 -v python3 ../trainCurriculum.py --trainAllParalell  --model APNc --iterPerEnv 50000 --procs 16 --seed 2330
+srun -c 2 -v python3 ../trainCurriculum.py --trainAllParalell  --model APNc --iterPerEnv 50000 --procs 16 --seed 9152
 echo "---------- Cluster Job End ---------------------"
 
 
