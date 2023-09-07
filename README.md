@@ -1,36 +1,48 @@
 # RHEA CL (MiniGrid)
-This is the repository of my master thesis. 
-We conducted research of using the combination of Curriculum Learning (CL) with Rolling Horizon Evolutionary Algorithms (RHEA).
-All the logs  (in /storage) and scripts (in ./) are contained in this repository.
-The PPO implementation and rough overview of this repository is taken from https://github.com/lcswillems/rl-starter-files
-----
 
-### Training an agent:
-- install requirements: pip3 install requirements.txt -r
-Training with RHEA CL:
-- run script: python3 trainCurriculum.py --procs 24 --stepsPerCurric 3 --nGen 4 --numCurric 2 --iterPerEnv 100000 --model 150k_3step_4gen_2curric --noRewardShaping --seed 1 
-- See full list of parameters with --help
-- If you want to change the environments, you need to do so in the ENV_NAMES.py file, and then update the trainCurriculum.py file so that you select this environment
+This repository contains the source code and materials for my master's thesis, which explores the combination of Curriculum Learning (CL) with Rolling Horizon Evolutionary Algorithms (RHEA). The PPO implementation and a rough overview of this repository are based on [lcswillems/rl-starter-files](https://github.com/lcswillems/rl-starter-files).
 
-----
+## Getting Started
 
-### Evaluation script:
-Example for showing the Performance plot, grouped by iterationSteps
-- python3 ./evaluateCurriculum.py --iterGroup --rhea --scores curric
-- Need to either specifiy --scores, --trainingTime, --curricDistr or --splitDistr
-- Allows for filtering of 1 hyperparameter, or comparison of n models. Start the script with --comparisons
-- There are filter Options like --rhea, --ga, --nsga, --env etc available as well. Unfortunately, not everything will work 100% as expected, as some quickfixes were implemented to make specific plots work
----
-### Visualization
-You can visualize the performance of an agent.
-For example, in the 5x5 MiniGrid-DoorKey:
-python3 ./visualize.py --model <modelName> --env MiniGrid-DoorKey-8x8-v0
+### Prerequisites
 
---------
+Make sure you have the required dependencies installed. We used python 3.9
+```bash
+pip3 install -r requirements.txt
+```
 
-### Some further notes:
-- If you cancel an experiment, which you want to continue, it will start at the beginning of the last epoch. This might lead to having to re-do 1 or 2 generations. You need to make sure that the args parameters are still correctly set.
-- all logs and model files are stored in /storage
-- Can train RHEA CL, Random RH, AllParallel (training all envs at simulatneously), SPCL
-- You can also look at tensorboard to see the reward during training with this command: tensorboard --logdir path\To\Repo\storage
-- The sobol sampling points and the max step reduction plots are in the ./helperPlots directory
+## Training an Agent
+To train an agent using RHEA CL, run the following command:
+```bash
+python3 trainCurriculum.py --procs 24 --stepsPerCurric 3 --nGen 4 --numCurric 2 --iterPerEnv 100000 --model 150k_3step_4gen_2curric --noRewardShaping --seed 1
+```
+
+You can see a full list of parameters by using the --help flag. If you want to change the environments, update the ENV_NAMES.py file and the trainCurriculum.py file to select the desired environment.
+
+## Evaluation Script
+To evaluate the agent's performance and generate performance plots, use the following command as an example:
+```bash
+python3 evaluateCurriculum.py --iterGroup --rhea --scores curric
+```
+
+You can specify various options like --scores, --trainingTime, --curricDistr, or --splitDistr for filtering and comparisons. Filter options such as --rhea, --ga, --nsga, and --env are available. Note that some quick fixes have been implemented to make specific plots work.
+
+## Visualization
+After you trained an agent, you can visualize the agent's performance using the following command as an example:
+```bash
+python3 visualize.py --model <modelName/epoch_Nr> --env MiniGrid-DoorKey-8x8-v0
+```
+
+
+## Additional Notes
+- If you cancel an experiment and wish to continue, it will start at the beginning of the last epoch, possibly requiring redoing 1 or 2 generations. Ensure that the arguments are correctly set.
+- All logs and model files are stored in the /storage directory.
+- You can train RHEA CL, Random RH, AllParallel (training all environments simultaneously), and SPCL.
+- To view training rewards over time, use TensorBoard with the following command:
+```bash
+tensorboard --logdir path/To/Repo/storage
+```
+Sobol sampling points and max step reduction plots can be found in the ./helperPlots directory.
+
+
+Feel free to explore the repository and experiment with the code for your research purposes.
